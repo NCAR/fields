@@ -1,0 +1,106 @@
+
+R version 3.2.3 (2015-12-10) -- "Wooden Christmas-Tree"
+Copyright (C) 2015 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # fields, Tools for spatial data
+> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
+> # University Corporation for Atmospheric Research
+> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+> 
+> library( fields)
+Loading required package: spam
+Loading required package: grid
+Spam version 1.3-0 (2015-10-24) is loaded.
+Type 'help( Spam)' or 'demo( spam)' for a short introduction 
+and overview of this package.
+Help for individual functions is also obtained by adding the
+suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
+
+Attaching package: 'spam'
+
+The following objects are masked from 'package:base':
+
+    backsolve, forwardsolve
+
+Loading required package: maps
+
+ # maps v3.1: updated 'world': all lakes moved to separate new #
+ # 'lakes' database. Type '?world' or 'news(package="maps")'.  #
+
+
+> options( echo=FALSE)
+NULL
+Testing:  addToDiag
+PASSED test at tolerance  1e-08
+Testing:  spam vs no spam
+PASSED test at tolerance  1e-08
+Testing:  Krig mKrig d coef
+PASSED test at tolerance  1e-08
+Testing:  Krig mKrig c coef
+PASSED test at tolerance  1e-08
+Testing:  test of predict at new locations
+PASSED test at tolerance  1e-08
+Testing:  test of matrix Y predicts
+PASSED test at tolerance  1e-08
+PASSED test at tolerance  1e-08
+Testing:  predictSurface with mKrig
+PASSED test at tolerance  1e-08
+Testing:  Wendland/no spam
+PASSED test at tolerance  1e-08
+Testing:  Wendland/spam
+PASSED test at tolerance  1e-08
+Testing:  new coef c no spam
+PASSED test at tolerance  1e-08
+Testing:  new d coef no spam
+PASSED test at tolerance  1e-08
+Testing:  new coef c spam
+PASSED test at tolerance  1e-08
+Testing:  new d coef spam
+PASSED test at tolerance  1e-08
+Testing:  nzero in call to mKrig
+PASSED test at tolerance  1e-08
+Testing:  mKrig vs. Krig for ozone2
+PASSED test at tolerance  1e-08
+Testing:  predict Wendland  mKrig vs Krig
+PASSED test at tolerance  1e-08
+Warning message:
+In fastTps(xdat, ydat, theta = 0.3) : fastTps will interpolate observations
+Testing:  fastTps interp1
+PASSED test at tolerance  1e-08
+Testing:  fastTps interp2
+PASSED test at tolerance  0.01
+[1] "testing using distance matrix"
+Testing:  predict: stationary.cov versus Exp.cov
+PASSED test at tolerance  1e-08
+Testing:  predict: no distance matrix versus compact distance matrix
+PASSED test at tolerance  1e-08
+Testing:  predict: no distance matrix versus distance matrix
+PASSED test at tolerance  1e-08
+[1] "testing using predictSE"
+Testing:  predictSE: stationary.cov with exponential versus Exp.cov
+PASSED test at tolerance  1e-08
+Testing:  predictSE: no distance matrix versus compact distance matrix
+PASSED test at tolerance  1e-08
+Testing:  predictSE: no distance matrix versus distance matrix
+PASSED test at tolerance  1e-08
+all done with mKrig tests
+> 
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  1.322   0.105   1.421 

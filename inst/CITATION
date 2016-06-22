@@ -1,0 +1,19 @@
+
+NOTE<- paste( "R package version", meta$Version )
+bibentry(bibtype="Misc",
+   mheader = "Please cite fields including its version and DOI as",
+   title = "fields: Tools for spatial data",
+    author = c(
+               person("Douglas Nychka"),           
+	       person("Reinhard Furrer"),
+	       person("John Paige"),
+	       person("Stephan Sain")
+	       ),
+	       note = NOTE,
+    organization = "University Corporation for Atmospheric Research",
+    address = "Boulder, CO, USA",
+    year = 2015,
+    url = "www.image.ucar.edu/fields",
+    doi ="10.5065/D6W957CT"
+    )
+

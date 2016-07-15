@@ -167,16 +167,18 @@ recomputed.
 }
 \item{onlyUpper}{
 For internal use only, not meant to be set by the user.  Automatically 
-set to \code{TRUE} by \code{mKrig.MLE} if \code{lambda.profile} 
-is set to \code{TRUE}, but set to \code{FALSE} for the final 
-parameter fit so output is compatible with rest of \code{fields}.
+set to \code{TRUE} by \code{mKrigMLEJoint} or \code{mKrigMLEGrid} if 
+\code{lambda.profile} is set to \code{TRUE}, but set to \code{FALSE} 
+for the final parameter fit so output is compatible with rest of 
+\code{fields}.
 
 If \code{TRUE}, only the upper triangle and diagonal of the covariance 
 matrix is computed to save time (although if a non-compact distance 
 matrix is used, the onlyUpper argument is set to FALSE).  If \code{FALSE}, 
 the entire covariance matrix is computed.  In general, it should 
-only be set to \code{TRUE} for \code{mKrig.MLE}, and the default 
-is set to \code{FALSE} so it is compatible with all \code{fields}.
+only be set to \code{TRUE} for \code{mKrigMLEJoint} and \code{mKrigMLEGrid}, 
+and the default is set to \code{FALSE} so it is compatible with all of
+\code{fields}.
 }
 
 \item{\dots}{ Any other arguments that will be passed to the

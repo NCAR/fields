@@ -69,7 +69,7 @@ Matern and great circle distance.
 functions and thus handle very large numbers of spatial locations. 
  \code{\link{QTps}} A easy to use extension of thin plate splines for quantile and robust surface fitting.
 
-\item \code{\link{mKrig.MLE}} for maximum likelihood estimates of covariance parameters. This function also 
+\item \code{\link{mKrigMLEGrid}} for maximum likelihood estimates of covariance parameters. This function also 
 handles replicate fields assumed to be independent realizations at the same locations.  
 
 }

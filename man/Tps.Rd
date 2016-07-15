@@ -95,7 +95,7 @@ distances are in kilometers}
 
 \item{lambda}{Smoothing parameter the ratio of error variance to
             process variance, default is zero which corresponds to
-            interpolation. See fastTps.MLE to estimate this paramter
+            interpolation. See fastTpsMLE to estimate this paramter
             from the data.}
 
 \item{find.trA}{If TRUE will estimate the effective degrees of freedom

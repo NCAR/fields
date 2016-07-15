@@ -114,6 +114,12 @@
 \alias{compactTOMatOLD}
 
 \alias{MLESpatialProcess.fast}
+\alias{MLESpatialProcess.fastOLD}
+\alias{MLESpatialProcessOLD}
+
+\alias{mKrig.MLE}
+\alias{mKrig.MLE.joint}
+\alias{fastTps.MLE}
 
 \title{
   Fields internal and secondary functions 
@@ -251,13 +257,36 @@ surface(object , ...)
 
 unscale (x, x.center, x.scale) 
 
-MLESpatialProcess.fast(x, y, lambda.start = NULL, theta.start = NULL,
+MLESpatialProcess.fast(x, y, lambda.start=.5, theta.start = NULL, 
+  cov.function = "stationary.cov", 
+  cov.args = list(Covariance = "Matern", smoothness = 1), 
+  Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
+
+MLESpatialProcess.fastOLD(x, y, lambda.start = NULL, theta.start = NULL,
  cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", smoothness = 1),
  relative.tolerance = 0.001, Distance = "rdist", verbose = FALSE, ...)
+ 
+MLESpatialProcessOLD(x, y, theta.grid=NULL, par.grid=NULL, lambda.grid=NULL, 
+  cov.function = "stationary.cov", 
+  cov.args = list(Covariance = "Matern", smoothness = 1), 
+  optim.args = NULL, ngrid = 10, niter = 15, tol = 0.01, 
+  Distance = "rdist", nstep.cv = 50, verbose = FALSE, 
+  doMKrig=FALSE, ...)
 
+mKrig.MLE(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", cov.args = NULL, 
+  Z = NULL, par.grid = NULL, lambda = NULL, lambda.profile = TRUE, 
+  verbose = FALSE, relative.tolerance = 1e-04, ...)
 
-
-
+mKrig.MLE.joint(x, y, weights = rep(1, nrow(x)), 
+                lambda.guess = 1, cov.params.guess=NULL, 
+                cov.fun="stationary.cov", cov.args=NULL, 
+                Z = NULL, optim.args=NULL, find.trA.MLE = FALSE, 
+                ..., verbose = FALSE)
+                
+fastTps.MLE(x, y, weights = rep(1, nrow(x)), 
+  Z = NULL, ..., par.grid=NULL, theta, lambda = NULL,
+  lambda.profile = TRUE, 
+  verbose = FALSE, relative.tolerance = 1e-04)
 }
 \keyword{internal}
 % docclass is function

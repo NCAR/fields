@@ -156,7 +156,7 @@ Doug Nychka%%  ~~who you are~~
 }
 
 \seealso{
-Tps, MLESpatialProcess, mKrig.MLE, plot.Krig, predict.Krig, predictSE.Krig,
+Tps, MLESpatialProcess, mKrigMLEGrid, plot.Krig, predict.Krig, predictSE.Krig,
 sim.Krig
 }
 \examples{

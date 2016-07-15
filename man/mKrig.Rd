@@ -301,7 +301,7 @@ to \code{np} then these are the diagonal elements of A(lamdba).}
   y<-y[good]
   x<- ozone2$lon.lat[good,]
 # nearly interpolate using defaults (Exponential covariance range = 2.0)
-# see also mKrig.MLE to choose lambda by maxmimum likelihood
+# see also mKrigMLEGrid to choose lambda by maxmimum likelihood
   out<- mKrig( x,y, theta = 2.0, lambda=.01)
   out.p<- predictSurface( out)
   surface( out.p)
@@ -311,7 +311,7 @@ to \code{np} then these are the diagonal elements of A(lamdba).}
 
 ##############################################################################
 # an example using a "Z" covariate and the Matern family
-#  again see mKrig.MLE to choose parameters by MLE.
+#  again see mKrigMLEGrid to choose parameters by MLE.
 data(COmonthlyMet)
 yCO<- CO.tmin.MAM.climate
 good<- !is.na( yCO)

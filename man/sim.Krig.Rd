@@ -308,7 +308,7 @@ O3.sim4<- sim.mKrig.approx( O3.fit.Wendland, xMissing, nx=80, ny=80, gridRefinem
   good<- !is.na( y)
   y<-y[good]
   x<- ozone2$lon.lat[good,]
-  O3FitMLE<- fastTps.MLE( x,y, theta=1.5 )
+  O3FitMLE<- fastTpsMLE( x,y, theta=1.5 )
   O3Obj<- fastTps( x,y, theta=1.5, lambda=O3FitMLE$lambda.MLE)
 # creating a quick grid list based on ranges of locations
   grid.list<- fields.x.to.grid( O3Obj$x, nx=100, ny=100)

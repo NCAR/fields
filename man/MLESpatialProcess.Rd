@@ -31,12 +31,10 @@ Maximizes the likelihood to determine the nugget variance (sigma^2), the sill
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-MLESpatialProcess(x, y, theta.grid=NULL, par.grid=NULL, lambda.grid=NULL, 
+MLESpatialProcess(x, y, lambda.start=.5, theta.start = NULL, 
                   cov.function = "stationary.cov", 
                   cov.args = list(Covariance = "Matern", smoothness = 1), 
-                  optim.args = NULL, ngrid = 10, niter = 15, tol = 0.01, 
-                  Distance = "rdist", nstep.cv = 50, verbose = FALSE, 
-                  doMKrig=FALSE, ...)
+                  Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
                            
 }
 %- maybe also 'usage' for other objects documented here.
@@ -48,33 +46,11 @@ A matrix of spatial locations with rows indexing location
 \item{y}{
 Spatial observations
 }
-\item{theta.grid}{
-Grid of theta parameter values to use for grid search in maximizing 
-  the Likelilood. The defualt is do an initial grid search on ngrid 
-  points with the range at the 3 an d 97 quantiles of the pairwise 
-  distances.  If only two points are passed then this is used as the 
-  range for a sequence of ngrid points.  Note that this is only used 
-  when \code{doMKrig==FALSE}.
+\item{lambda.start}{
+The initial guess for lambda, the nugget to sill ratio.
 }
-\item{par.grid}{
-Grid list of covariance parameters and the values to use in the grid 
-  search for maximizing the Likelilood. All combinations of parameter 
-  values are used in the grid search.  If only two values 
-  for a parameter are passed then this is used as the range for a 
-  sequence of ngrid points.  If a full set of parameter values 
-  is passed, it is recommended they be distributed on a log scale.  
-  Make sure to put all fixed parameters in cov.args rather than 
-  par.grid.  Note that this is only used when \code{doMKrig==TRUE}.
-}
-\item{lambda.grid}{
-Grid list of lambda values to use for grid search in maximizing 
-  the Likelilood. If NULL, automatically set to \code{10^seq(-6, 1, by=1)}  
-  If only two points are passed then this is used as the range 
-  for a sequence of ngrid points.  If a full grid.list of 
-  parameter values is passed, it is recommended they be distributed 
-  on a log scale.  If lambda is fixed, put the fixed value as a ... 
-  argument rather than in lambda.grid.  Note that this is only used when 
-  \code{doMKrig==TRUE}
+\item{theta.start}{
+The initial guess for theta, the correlation range parameter.
 }
 \item{cov.function}{
 The name of the covariance function (See help on Krig for details. )
@@ -84,55 +60,30 @@ A list with arguments for the covariance functions. These are
   usually parameters and other options such as the type of 
   distance function. 
 }
-\item{ngrid}{
-Number of points in grid search over parameters. 
-}
-\item{nstep.cv}{
-Number of grid points to use in GCV or REML coarse
-	search for optimum.  Note that this is only used 
-  when \code{doMKrig==FALSE}.
-}
 \item{optim.args}{
-Additional arguments that would also be included in calls to the optim 
-  function in the final joint likelihood maximization with initial 
-  lambda and covariance guesses set to the Tps maximum.  The default 
-  value in this function is:
+Additional arguments passed to the optim function for likelihood 
+  maximization.  The default value is:
   \code{optim.args = list(method = "BFGS", 
-                        control=list(fnscale = -1, 
-                                     ndeps = rep(log(1.1), 2), 
-                                     reltol=1e-02, maxit=3))}
-  Note that this argument is only used when \code{doMKrig==TRUE}.
-}
-\item{niter}{
-Max number of iterations for the golden section search to maximize over theta.
-    Note that this is only used when \code{doMKrig==FALSE}.
-}
-\item{tol}{
-Tolerance to declare convergence. 
-}
-\item{doMKrig}{
-If \code{TRUE}, uses \code{mKrig}.  If \code{FALSE}, uses \code{Krig}.  This 
-  will also change which input arguments are used.
+                    control = list(fnscale = -1, parscale = c(0.5, 0.5), 
+                                   ndeps = c(0.05,0.05)))}
 }
 \item{Distance}{
-Distance function to use in covariance.
+Distance function to use in covariance. Used for setting initial guess 
+  and range for theta.
 }
 \item{verbose}{
 If TRUE print out intermediate information for debugging. 
 }
 \item{\dots}{
-Additional arguments to pass to the Krig or mKrig function depending on 
-  which is used.
+Additional arguments to pass to the mKrig function.
 }
 }
 \details{
-	MLESpatialProcess is designed to be a robust but perhaps slow function to 
+	MLESpatialProcess is designed to be a simple and easy to use function to 
 	maximize the likelihood for a Gaussian spatial process. For certain fixed,
 	covariance parameters, the likelihood is maximized over the nugget and sill
-	parameters using the \code{Krig} or \code{mKrig} function. An outer 
-  optimization finds the maximum over other specified covariance parameters 
-  as well. See the help(Krig) for details of the restricted maximum 
-  likelihood criterion (REML).
+	parameters using the \code{mKrig} function.  \code{lambda} and \code{theta} 
+	are optimized using the \code{mKrigMLEJoint} function on a log scale.
 	
 	MLESpatialProcess.fast uses the \code{optim}
 	function to maximize the likelihood computed from the \code{mKrig} function. It is more
@@ -142,14 +93,7 @@ Additional arguments to pass to the Krig or mKrig function depending on
 	Note the likelihood can be maximized analytically over the  parameters of the fixed part and with the nugget (sigma) and sill (rho)  reduced to the single parameter lambda= sigma^2/rho. So fixing any other covariance parameters the likelihood is maximzed numerically over lambda and theta. The differences between these two functions is due to the differences between the definition of the
 	restricted likelihood used in Krig and the conventional likelihood used in mKrig.
 	 
-  In general, it is recommended to perform joint optimization using 
-  \code{mKrig}, which evaluates the log-likelihood over the grid of 
-  lambda and covariance parameter values, interpolating them with a 
-  thin-plate spline.  Afterwards, a final joint optimization is 
-  performed using \code{mKrig.MLE.joint} with the initial guess set 
-  to the thin-plate spline maximum.  It may be more advantageous to 
-  use \code{Krig}, however, when only performing optimization over 
-  lambda.
+  
 }
 \value{
 	\code{MLESpatialProcess}:
@@ -186,11 +130,10 @@ Doug Nychka, John Paige
 }
 
 \seealso{
-\code{\link{Krig}}, \code{\link{mKrig.MLE}}, \code{\link{mKrig.MLE.joint}}, \code{\link{optim}}, \code{\link{fastTps.MLE}}, \code{\link{spatialProcess}}
+\code{\link{Krig}}, \code{\link{mKrigMLEGrid}}, \code{\link{mKrigMLEJoint}}, \code{\link{optim}}, \code{\link{fastTps.MLE}}, \code{\link{spatialProcess}}
 }
 \examples{
 #
-# examples with doMKrig==TRUE
 #
 
 #generate observation locations
@@ -207,91 +150,50 @@ y = t(chol(Sigma))\%*\% (rnorm(n))  +  trueLambda* rnorm( n)
 
 #Use exponential covariance, assume the true range parameter is known
 out = MLESpatialProcess(x, y, 
-                        cov.args=list(Covariance="Exponential", range=trueTheta), 
-                        doMKrig=TRUE)
+                        cov.args=list(Covariance="Exponential", range=trueTheta)
+                        )
 
 #Use exponential covariance, use a range to determine MLE of range parameter
 \dontrun{
-testThetas = seq(from=trueTheta/2, to=2*trueTheta, length=6)
-par.grid=list(theta=testThetas)
-out = MLESpatialProcess(x, y, 
-                        cov.args=list(Covariance="Exponential"), 
-                        par.grid=par.grid, doMKrig=TRUE)                        
-
-#Use exponential covariance, use a range to determine MLE of range 
-#parameter, set custom lambda.grid
-testLambdas= seq(from=trueLambda/2, to=2*trueLambda, length=6)
-out = MLESpatialProcess(x, y, cov.args=list(Covariance="Exponential"), 
-                        lambda.grid=testLambdas, par.grid=par.grid, doMKrig=TRUE)
 
 #Use Matern covariance, compute joint MLE of range, smoothness, and lambda.  
 #This may take a few seconds
 testSmoothness = c(.5, 1, 2)
-par.grid=list(range=testThetas, smoothness=testSmoothness)
-out = MLESpatialProcess(x, y, cov.args=list(Covariance="Matern"), 
-                        par.grid=par.grid, doMKrig=TRUE)
+for( nu in testSmoothness){
+  out = MLESpatialProcess(x, y, cov.args=list(Covariance="Matern"), smoothness=nu) 
+  print( out$summary)
 }
 
-#
-# examples with doMKrig==FALSE
-#
-	N<- 100
-  set.seed(123)
-  x<- matrix(runif(2*N), N,2)
-  theta<- .2
-  Sigma<-  Matern( rdist(x,x)/theta , smoothness=1.0)
-  Sigma.5<- chol( Sigma)
-  sigma<- .1
-#  F.true<- t( Sigma.5)%*%  rnorm(N)
-  F.true<- t( Sigma.5) \%*\%  rnorm(N)
-  Y<-  F.true +  sigma*rnorm(N)
-# find MLE for  sigma rho and theta  smoothness fixed  first
-# data set
-  obj<- MLESpatialProcess( x,Y)
-  obj$pars
-  # profile likelihood over theta
-  plot(obj$eval.grid[,1], obj$eval.grid[,6], xlab="theta",
-  ylab= "log Profile likelihood", type="p" )
-  xline( obj$pars["theta"], col="red")
-# log likelihood surface over theta and  log lambda
-image.plot( obj$logLikelihoodSurface$x,
-               obj$logLikelihoodSurface$y, obj$logLikelihoodSurface$z,
-               xlab="theta (range)", ylab="log lambda" )
-# MLE               
-  points( obj$pars[1], log(obj$pars[2]), pch=16, col="magenta", cex=1.2)      
+}
 
-# using "fast" version  
-obj.fast<- MLESpatialProcess.fast( x,Y)
-obj.fast$pars 
-# points where likelihood evaluated:
-quilt.plot( log( obj.fast$eval.grid[,1:2] ), obj.fast$eval.grid[,7],
-                   xlab="log(theta)",ylab="log(lambda)")
-
-# parameters are slightly different due to the differences of REML and the full likelihood.
-                 
 # example with a covariate  
 \dontrun{
 data(COmonthlyMet)
-obj2<-  MLESpatialProcess( CO.loc, CO.tmean.MAM.climate)
-obj3<-  MLESpatialProcess( CO.loc, CO.tmean.MAM.climate, Z= CO.elev)
 ind<- !is.na( CO.tmean.MAM.climate)
-obj4<-  MLESpatialProcess.fast( CO.loc[ind,], CO.tmean.MAM.climate[ind],
-               Z= CO.elev[ind])
+x<- CO.loc[ind,]
+y<- CO.tmean.MAM.climate[ind]
+elev<- CO.elev[ind]
+obj2<-  MLESpatialProcess( x,y)
+obj3<-  MLESpatialProcess( x,y, Z=elev)
+
 # elevation makes a difference
-obj2$pars
-obj3$pars
-obj4$pars
+obj2$summary
+obj3$summary
+
   }
  \dontrun{
 # fits for ozone data
 data( ozone2) 	 
 NDays<- nrow( ozone2$y)
-O3MLE<- matrix( NA, nrow= NDays, ncol=4)
-dimnames(O3MLE)<- list(NULL, c("theta",  "lambda", "rho",    "sigma"))
+O3MLE<- matrix( NA, nrow= NDays, ncol=9)
 for( day in 1: NDays){
 	cat( day, " ")
-	O3MLE[day,]<- MLESpatialProcess( ozone2$lon.lat, ozone2$y[day,],
-	 Distance="rdist.earth")$pars
+	ind<- !is.na(ozone2$y[day,] )
+	x<- ozone2$lon.lat[ind,]
+	y<- ozone2$y[day,ind]
+	print( length( y))
+	O3MLE[day,]<- MLESpatialProcess( x,y,
+	            Distance="rdist.earth")$summary
 }
 plot( log(O3MLE[,1]), log(O3MLE[,3]))
 }  

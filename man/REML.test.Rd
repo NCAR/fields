@@ -137,7 +137,7 @@ estimates.  Note that due to the setup of the golden section search
 the computation actually minimizes minus the log likelihood.
 \code{MLE.Matern.fast} is a similar function but replaces the
 optimaiztion step computed by Krig to a tighter set of code in the
-function \code{MLE.objective.fn}.  See also \code{mKrig.MLE} for an
+function \code{MLE.objective.fn}.  See also \code{mKrigMLEGrid} for an
 alternative and streamlined function using \code{mKrig} rather than
 \code{Krig}.
 }

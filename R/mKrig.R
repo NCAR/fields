@@ -21,11 +21,10 @@
 mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov", 
                   cov.args = NULL, Z = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, ...) {
+                  iseed = 123, llambda = NULL, na.rm=TRUE,  ...) {
   
   #pull extra covariance arguments from ...
   cov.args = c(cov.args, list(...))
-  
   #
   #If cov.args$find.trA is true, set onlyUpper to FALSE (onlyUpper doesn't
   #play nice with predict.mKrig, called by mKrig.trace)
@@ -42,29 +41,39 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   #
   # check for duplicate x's.
   # stop if there are any
-  if (any(duplicated(cat.matrix(x)))) 
+  if (any(duplicated(cat.matrix(x)))) {
     stop("locations are not unique see help(mKrig) ")
-  if (any(is.na(y))) 
-    stop("Missing values in y should be removed")
-  if (!is.null(Z)) {
-    Z <- as.matrix(Z)
   }
-  
+  # next function also omits NAs from x,y,weights, and Z  if na.rm=TRUE.
+  object<- mKrigCheckXY( x, y, weights, Z, na.rm = na.rm)
   # create fixed part of model as m-1 order polynomial
-  Tmatrix <- cbind(fields.mkpoly(x, m), Z)
+  # NOTE: if m==0 then fields.mkpoly returns a NULL to 
+  # indicate no polynomial part.
+  Tmatrix <- cbind(fields.mkpoly(object$x, m), object$Z)
   # set some dimensions
-  np <- nrow(x)
-  nt <- ncol(Tmatrix)
-  nZ <- ifelse(is.null(Z), 0, ncol(Z))
+    np <- nrow(object$x)
+  if( is.null(Tmatrix) ){
+    nt<- 0
+    }
+  else{
+    nt<- ncol(Tmatrix) 
+  }
+  if( is.null(object$Z)){
+    nZ<- 0
+  }
+  else{
+    nZ<- ncol(object$Z)
+  }
   ind.drift <- c(rep(TRUE, (nt - nZ)), rep(FALSE, nZ)) 
+  
   # as a place holder for reduced rank Kriging, distinguish between
   # observations locations and  the locations to evaluate covariance.
   # (this is will also allow predict.mKrig to handle a Krig object)
-  knots <- x
+  # knots <- x
   # covariance matrix at observation locations
   # NOTE: if cov.function is a sparse constuct then Mc will be sparse.
   # see e.g. wendland.cov
-  Mc <- do.call(cov.function, c(cov.args, list(x1 = x, x2 = x)))
+  Mc <- do.call(cov.function, c(cov.args, list(x1 = object$x, x2 = object$x)))
   #
   # decide how to handle the pivoting.
   # one wants to do pivoting if the matrix is sparse.
@@ -86,9 +95,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   # NOTE: diag must be a overloaded function to handle sparse format.
   if (lambda != 0) {
     if(! sparse.flag)
-      invisible(.Call("addToDiagC", Mc, as.double(lambda/weights), nrow(Mc)))
+      invisible(.Call("addToDiagC", Mc, as.double(lambda/object$weights), nrow(Mc)))
     else
-      diag(Mc) = diag(Mc) + lambda/weights
+      diag(Mc) = diag(Mc) + lambda/object$weights
   }
   # At this point Mc is proportional to the covariance matrix of the
   # observation vector, y.
@@ -99,36 +108,50 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   # If chol.args is NULL then this is the same as
   #              Mc<-chol(Mc), chol.args))
   Mc <- do.call("chol", c(list(x = Mc), chol.args))
-  
+ 
   lnDetCov <- 2 * sum(log(diag(Mc)))
   
-  # Efficent way to multply inverse of Mc times the Tmatrix
-  VT <- forwardsolve(Mc, x = Tmatrix, transpose = TRUE, upper.tri = TRUE)
-  qr.VT <- qr(VT)
-  # start linear algebra to find solution
+  #
+  # start linear algebra to find estimates and likelihood
   # Note that all these expressions make sense if y is a matrix
   # of several data sets and one is solving for the coefficients
   # of all of these at once. In this case d.coef and c.coef are matrices
   #
+  if( !is.null(Tmatrix)){
+  # Efficent way to multply inverse of Mc times the Tmatrix  
+  VT <- forwardsolve(Mc, x = Tmatrix, k=ncol(Mc), transpose = TRUE, upper.tri = TRUE)
+  qr.VT <- qr(VT)
+  
   # now do generalized least squares for d
-  d.coef <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
-                                                  y, upper.tri = TRUE)))
-  # and then find c.
-  # find the coefficents for the spatial part.
-  c.coef <- as.matrix(forwardsolve(Mc, transpose = TRUE, y - 
-                                     Tmatrix %*% d.coef, upper.tri = TRUE))
+    d.coef <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
+                                                  object$y, upper.tri = TRUE)))
+    resid<-  object$y - Tmatrix %*% d.coef
+  # GLS covariance matrix for fixed part.
+    Rinv <- solve(qr.R(qr.VT))
+    Omega <- Rinv %*% t(Rinv)
+  }
+  else{
+# much is set to NULL because not fixed part of model    
+    nt<- 0
+    resid<- object$y
+    Rinv<- NULL
+    Omega<- NULL
+    qr.VT<- NULL
+    d.coef<- NULL
+  }
+  # and now find c.
+  #  the coefficents for the spatial part.
+  c.coef <- as.matrix(forwardsolve(Mc, transpose = TRUE,
+                                   resid, upper.tri = TRUE))
   # save intermediate result this is   t(y- T d.coef)( M^{-1}) ( y- T d.coef)
   quad.form <- c(colSums(as.matrix(c.coef^2)))
   # find c coefficients
   c.coef <- as.matrix(backsolve(Mc, c.coef))
-  # GLS covariance matrix for fixed part.
-  Rinv <- solve(qr.R(qr.VT))
-  Omega <- Rinv %*% t(Rinv)
   # MLE estimate of rho and sigma
   #    rhohat <- c(colSums(as.matrix(c.coef * y)))/(np - nt)
   # NOTE if y is a matrix then each of these are vectors of parameters.
   rho.MLE <- quad.form/np
-  rhohat <- c(colSums(as.matrix(c.coef * y)))/np
+  rhohat <- c(colSums(as.matrix(c.coef * object$y)))/np
   shat.MLE <- sigma.MLE <- sqrt(lambda * rho.MLE)
   # the  log profile likehood with  rhohat  and  dhat substituted
   # leaving a profile for just lambda.
@@ -154,8 +177,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
     cov.args$onlyUpper = FALSE
   if(!is.null(cov.args$distMat))
     cov.args$distMat = NA
-  out <- list(d = (d.coef), c = (c.coef), nt = nt, np = np, 
-              lambda.fixed = lambda, x = x, y=y, weights=weights, knots = knots,
+  object <- c( object, list( 
+               d = (d.coef), c = (c.coef), nt = nt, np = np, 
+              lambda.fixed = lambda, 
               cov.function.name = cov.function, 
               args = cov.args, m = m, chol.args = chol.args, call = match.call(), 
               nonzero.entries = nzero, shat.MLE = sigma.MLE, sigma.MLE = sigma.MLE, 
@@ -164,29 +188,30 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
               lnProfileLike.FULL = lnProfileLike.FULL, lnDetCov = lnDetCov, 
               quad.form = quad.form, Omega = Omega, qr.VT = qr.VT, 
               Mc = Mc, Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ)
+  )
   #
   # find the residuals directly from solution
   # to avoid a call to predict
-  out$residuals <- lambda * c.coef/weights
-  out$fitted.values <- y - out$residuals
+  object$residuals <- lambda * c.coef/object$weights
+  object$fitted.values <- object$y - object$residuals
   # estimate effective degrees of freedom using Monte Carlo trace method.
   if (find.trA) {
-    out2 <- mKrig.trace(out, iseed, NtrA)
-    out$eff.df <- out2$eff.df
-    out$trA.info <- out2$trA.info
-    out$GCV <- (sum(out$residuals^2)/np)/(1 - out2$eff.df/np)^2
+    object2 <- mKrig.trace(object, iseed, NtrA)
+    object$eff.df <- object2$eff.df
+    object$trA.info <- object2$trA.info
+    object$GCV <- (sum(object$residuals^2)/np)/(1 - object2$eff.df/np)^2
     if (NtrA < np) {
-      out$GCV.info <- (sum(out$residuals^2)/np)/(1 - out2$trA.info/np)^2
+      object$GCV.info <- (sum(object$residuals^2)/np)/(1 - object2$trA.info/np)^2
     }
     else {
-      out$GCV.info <- NA
+      object$GCV.info <- NA
     }
   }
   else {
-    out$eff.df <- NA
-    out$trA.info <- NA
-    out$GCV <- NA
+    object$eff.df <- NA
+    object$trA.info <- NA
+    object$GCV <- NA
   }
-  class(out) <- "mKrig"
-  return(out)
+  class(object) <- "mKrig"
+  return(object)
 }

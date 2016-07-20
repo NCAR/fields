@@ -18,23 +18,34 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-spatialProcess <- function(x, y, cov.function = "stationary.cov", 
-	cov.args = list(Covariance = "Matern", smoothness = 1),
-	 ngrid=10, theta.grid = NULL, ...) {
-	MLEfit <- MLESpatialProcess(x, y, cov.function = cov.function, 
-		cov.args = cov.args, ngrid=ngrid, theta.grid = theta.grid,
+spatialProcess <- function(x, y,  weights = rep(1, nrow(x)), 
+                           cov.function = "stationary.cov", 
+   	cov.args = list(Covariance = "Matern", smoothness = 1),
+    	Z = NULL,
+	 theta.start=NULL, lambda.start=.5, na.rm=TRUE, verbose=FALSE, ...) {
+  if( verbose){
+    cat("extra arguments from ... " , names( list(...)) , fill=TRUE) 
+  }
+# NOTE MLEspatialProcess omits NAs
+	MLEInfo <- MLESpatialProcess(x, y, weights=weights, Z=Z, cov.function = cov.function, 
+		cov.args = cov.args, theta.start=theta.start, lambda.start = lambda.start,
+		verbose=verbose,
 		 ...)
+	if( verbose){
+	  print( MLEfit$summary )
+	  print( MLEfit$pars.MLE)
+	}
 # now fit spatial model with MLE for theta (range parameter)
-# reestimate the other parameters for simplicity to get the complete Krig
-# object.		
-	obj <- Krig(x, y, cov.function = cov.function, cov.args = cov.args, 
-		theta = MLEfit$pars[1],  
-		method = "REML", give.warnings=TRUE, 
-		...)
-	obj <- c(obj, MLEfit)
-	obj$theta.MLE<- MLEfit$pars[1]
+# reestimate the other parameters for simplicity to get the complete mKrig object
+	obj <- mKrig(x, y, weights=weights,Z=Z ,
+	              cov.function = cov.function, cov.args = cov.args, 
+	            	theta  = MLEInfo$MLEJoint$pars.MLE[2],
+	              lambda = MLEInfo$MLEJoint$pars.MLE[1],
+	               na.rm = na.rm,
+	            	...)
+	obj <- c(obj, list(MLEInfo = MLEInfo))
 # replace call with this top level one
-    obj$call<- match.call()	
+  obj$call<- match.call()	
 	class(obj) <- c( "spatialProcess","Krig")
  
 	return(obj)

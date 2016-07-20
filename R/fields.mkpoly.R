@@ -19,8 +19,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "fields.mkpoly" <- function(x, m = 2) {
-    if (m < 1) 
-        stop("'m' has to be larger than zero.")
+    if (m < 0) 
+        stop("'m' has to be zero or larger.")
+    if( m==0){
+      warning("There is no polynomial fixed component")
+      return( NULL)
+    }
     if (!is.matrix(x)) 
         x <- as.matrix(x)
     d <- ncol(x)

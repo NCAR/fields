@@ -390,7 +390,7 @@ Krig.check.xY <- function(x, Y, Z, weights, na.rm,
     #
     Y <- as.matrix(Y)
     if (ncol(Y) != 1) {
-        stop("Krig can handle matrix Y data")
+        stop("Krig can not handle matrix Y data. See mKrig.")
     }
     #
     #default weights ( reciprocal variance of errors).

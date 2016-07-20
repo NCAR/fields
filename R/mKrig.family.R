@@ -76,11 +76,17 @@ mKrig.coef <- function(object, y) {
     if( any(is.na(y))){
     	stop("mKrig can not omit missing values in observation vecotor")
     }
+   if( object$nt>0){
     d.coef <- as.matrix(qr.coef(object$qr.VT, forwardsolve(object$Mc, 
         transpose = TRUE, y, upper.tri = TRUE)))
     #  residuals from subtracting off fixed part
     #  of model as m-1 order polynomial
     resid <- y - object$Tmatrix %*% d.coef
+   }
+  else{
+    d.coef<- NULL
+    resid <- y
+  }
     # and now find c.
     c.coef <- forwardsolve(object$Mc, transpose = TRUE, resid, 
         upper.tri = TRUE)
@@ -108,7 +114,14 @@ print.mKrig <- function(x, digits = 4, ...) {
     }
     
     c1 <- c(c1, "Degree of polynomial null space ( base model):")
-    c2 <- c(c2, x$m - 1)
+    
+    
+    if(x$m !=0 ){
+      c2 <- c(c2, x$m - 1)
+    }
+    else{
+      c2 <- c(c2, NA)
+    }
     c1 <- c(c1, "Total number of parameters in base model")
     c2 <- c(c2, x$nt)
     if (x$nZ > 0) {
@@ -186,7 +199,7 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     if (is.null(xnew)) {
         xnew <- object$x
     }
-    if (is.null(Z)) {
+    if (is.null(Z) & (length(object$ind.drift) >0 )) {
         Z <- object$Tmatrix[, !object$ind.drift]
     }
     if (!is.null(ynew)) {
@@ -200,10 +213,13 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     }
     # fixed part of the model this a polynomial of degree m-1
     # Tmatrix <- fields.mkpoly(xnew, m=object$m)
+    # only do this if nt>0
     #
+    if( object$nt>0){
     if (derivative == 0) {
         if (drop.Z | object$nZ == 0) {
             # just evaluate polynomial and not the Z covariate
+           
             temp1 <- fields.mkpoly(xnew, m = object$m) %*% d.coef[object$ind.drift, 
                 ]
         }
@@ -222,6 +238,7 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     if (just.fixed) {
         return(temp1)
     }
+    }  
     # add nonparametric part. Covariance basis functions
     # times coefficients.
     # syntax is the name of the function and then a list with
@@ -239,5 +256,10 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
             cov.args))
     }
     # add two parts together and coerce to vector
-    return((temp1 + temp2))
+    if( object$nt>0){
+      return((temp1 + temp2))
+    }
+    else{
+      return(  temp2)
+    }
 }

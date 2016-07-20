@@ -49,8 +49,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
                   list(...))
   
   lnProfileLike.max <- -1e+20
-  
-  # find NG --  number of parameters to try
+# find NG --  number of parameters to try
   par.grid <- data.frame(par.grid)
   if (nrow(par.grid) == 0) {
     if (is.null(lambda)) {
@@ -63,7 +62,6 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
   else {
     NG <- nrow(par.grid)
   }
-  
   # output matrix to summarize results
   summary <- matrix(NA, nrow = NG, ncol = 8)
   dimnames(summary) <- list(NULL, c("EffDf", "lnProfLike", 
@@ -122,12 +120,6 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
                                    ndeps = 0.05, reltol = relative.tolerance))
       llambda.opt <- look$par
       optim.counts <- look$counts
-      
-      # call to 1-d search
-      #            opt.summary <- optimize(temp.fn, interval= llambda.start + c(-8,8), maximum=TRUE)
-      #            llambda.opt <- opt.summary$maximum
-      #            optim.counts<- c(nrow(capture.evaluations)-1, NA)
-      
       # accumulate the new matrix of lnlambda and ln likelihoods (omitting first row of NAs)
       lnLike.eval <- c(lnLike.eval, list(capture.evaluations[-1, ]))
     }
@@ -136,7 +128,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
       llambda.opt <- llambda.start
     }
     
-    # final fit at optimal value (or starting value if not refinement/maximization for lambda)
+# final fit at optimal value (or starting value if not refinement/maximization for lambda)
     obj <- do.call("mKrig", c(mKrig.args, list(lambda = exp(llambda.opt), 
                                                cov.args=c(cov.args.temp, cov.args))))
     if (obj$lnProfileLike.FULL > lnProfileLike.max) {
@@ -145,7 +137,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
       lambda.best <- exp(llambda.opt)
     }
     
-    # save results of the kth covariance model evaluation
+# save results of the kth covariance model evaluation
     summary[k, 1:8] <- c(obj$eff.df, obj$lnProfileLike.FULL, 
                          obj$GCV, obj$sigma.MLE.FULL, obj$rho.MLE.FULL, llambda.opt, 
                          optim.counts)

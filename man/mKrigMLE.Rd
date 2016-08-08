@@ -29,20 +29,23 @@ Maximizes likelihood for the process marginal variance (rho) and
  many covariance models or covariance parameter values.
 }
 \description{
-This function is designed to explore the likelihood surface for
+These function are designed to explore the likelihood surface for
 different covariance parameters with the option of maximizing over
-sigma and rho.
+sigma and rho. They used the \code{mKrig} base are designed for computational efficiency.
 }
 \usage{
-mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", cov.args = NULL, 
-          Z = NULL, par.grid = NULL, lambda = NULL, lambda.profile = TRUE, 
-          verbose = FALSE, relative.tolerance = 1e-04, ...)
+mKrigMLEGrid
+(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
+    cov.fun = "stationary.cov", cov.args = NULL, na.rm = TRUE, 
+    par.grid = NULL, lambda = NULL, lambda.profile = TRUE,
+    relative.tolerance = 1e-04, 
+    REML = FALSE, verbose = FALSE)
 
-mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), 
-                lambda.guess = 1, cov.params.guess=NULL, 
-                cov.fun="stationary.cov", cov.args=NULL, 
-                Z = NULL, optim.args=NULL, find.trA.MLE = FALSE, 
-                ..., verbose = FALSE)
+mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
+    na.rm = TRUE, cov.fun = "stationary.cov", cov.args = NULL, 
+    lambda.guess = 1, cov.params.guess = NULL, optim.args = NULL, 
+    parTransform = NULL, REML = FALSE, verbose = FALSE) 
+
 
 fastTpsMLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
                  par.grid=NULL, theta, lambda = NULL, lambda.profile = TRUE,
@@ -62,6 +65,11 @@ Vector or matrix of observations at spatial locations,
   vector of observations. If y is a matrix the columns are 
   assumed to be independent observations vectors generated 
   from the same covariance and measurment error model.
+}
+\item{mKrig.args}{A list of additional parameters to supply to the base 
+\code{mKrig} function that are distinct from the covariance model. 
+For example \code{mKrig.args= list( m=1 )} will set the polynomial to be 
+just a constant term (degree = m -1 = 0).
 }
 \item{cov.fun}{
 The name, a text string, of the covariance function.
@@ -133,11 +141,7 @@ If TRUE will estimate the effective degrees of freedom using
   solutions of the linear system but the cholesky decomposition is 
   reused.
 }
-\item{\dots}{
-Additional arguments that would also be included in a call to 
-  \code{mKrig} to specify the covariance model and fixed model 
-  covariables.
-}
+
   \item{verbose}{
 %%     ~~Describe \code{verbose} here~~
 If \code{TRUE} print out interesting intermediate results.
@@ -207,8 +211,6 @@ http://www.image.ucar.edu/~nychka/Fields/
 Douglas W. Nychka, John Paige
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 \code{\link{mKrig}}
@@ -216,7 +218,24 @@ Douglas W. Nychka, John Paige
 \code{\link{stationary.cov}}
 \code{\link{optim}}
 }
+
 \examples{
+#perform joint likelihood maximization over lambda and theta. 
+#optim can get a bad answer with poor initial guesses.
+data(ozone2)
+x<- ozone2$lon.lat
+y<- ozone2$y[16,]
+obj<- mKrigMLEJoint(x,y, 
+                      cov.args=list(Covariance="Matern", smoothness=1.0), 
+                      cov.params.guess=list(theta=.2), lambda.guess=.1)
+
+# check  lnLikeihood evaluations that were culled from optim
+# these are in obj$lnLike.eval
+# funny ranges are set to avoid outlining and very low likelihood value
+
+quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
+             xlim=c(-1.2,-.40), ylim=c( -1,1), zlim=c( -625, -610))
+
 # some synthetic data
   N<- 100
   set.seed(123)
@@ -225,54 +244,54 @@ Douglas W. Nychka, John Paige
   Sigma<-  Matern( rdist(x,x)/theta , smoothness=1.0)
   Sigma.5<- chol( Sigma)
   sigma<- .1
-  M<-5 #  Five (5) independent spatial data sets
+  M<-50 #  fifty independent spatial data sets -- little overhead in MLE across
+  # indedpendent realizations.
+  #F.true<- t( Sigma.5)%*% matrix( rnorm(N*M), N,M)  
   F.true<- t( Sigma.5)\%*\% matrix( rnorm(N*M), N,M)
   Y<-  F.true +  sigma* matrix( rnorm(N*M), N,M)
-# find MLE for lambda with range and smoothness fixed in Matern for first
-# data set
-  obj<- mKrigMLEGrid( x,Y[,1], Covariance="Matern", theta=.2, smoothness=1.0)
+# find MLE for lambda with grid of ranges 
+# and smoothness fixed in Matern
+
+ par.grid<- list( theta= seq( .05,.3,,20))
+  obj<- mKrigMLEGrid( x,Y, cov.args= list(Covariance="Matern", smoothness=1.0), 
+        par.grid = par.grid
+                    )
   obj$summary # take a look
-  fit<- mKrig( x,Y[,1], Covariance="Matern", theta=.2,
-                                   smoothness=1.0, lambda= obj$lambda.best) 
-#
-# search over the range parameter and use all 5 replications for combined
-# likelihood
-\dontrun{
-  par.grid<- list( theta= seq(.1,.25,,6))
-# default starting value for lambda is .02 subsequent ones use previous optimum.
-  obj<- mKrigMLEGrid( x,Y, Covariance="Matern",lambda=c(.02,rep(NA,4)),
-                                  smoothness=1.0, par.grid=par.grid)
-}
-
-#perform joint likelihood maximization over lambda and theta. 
-#optim can get a bad answer with poor initial guesses.
-set.seed(123)
-obj<- mKrigMLEJoint(x,Y[,1], 
-                      cov.args=list(Covariance="Matern", smoothness=1.0), 
-                      cov.params.guess=list(theta=.2), lambda.guess=.1)
-
-#look at lnLik evaluations
-obj$lnLik.eval
+# profile over theta
+  plot( par.grid$theta, obj$summary[,"lnProfileLike.FULL"], type="b")
 
 \dontrun{
 #perform joint likelihood maximization over lambda, theta, and smoothness.  
 #optim can get a bad answer with poor initial guesses.
-set.seed(123)
-obj<- mKrigMLEJoint(x,Y[,1], 
-                      cov.args=list(Covariance="Matern"), 
-                      cov.params.guess=list(theta=.2, smoothness=1), lambda.guess=.1)
+obj2<- mKrigMLEJoint(x,Y, 
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.guess=list(theta=.2),
+                       lambda.guess=.1)
 
-#look at lnLik evaluations
-obj$lnLik.eval
-
-#generate surface plot of results of joint likelihood maximization
-#NOTE: mKrigMLEJoint returns mKrig object while mKrigMLEGrid doesn't, 
-#so this won't work for mKrigMLEGrid.
-surface(obj)
+#look at lnLikelihood  evaluations
+obj2$summary
+#compare to REML
+obj3<- mKrigMLEJoint(x,Y, 
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.guess=list(theta=.2),
+                       lambda.guess=.1, REML=TRUE)
+}
+\dontrun{
+#look at lnLikelihood  evaluations
+obj3$summary
+# check convergence of MLE to true fit with no fixed part
+# 
+obj4<- mKrigMLEJoint(x,Y, 
+                      mKrig.args= list( m=0),
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.guess=list(theta=.2),
+                       lambda.guess=.1, REML=TRUE)
+#look at lnLikelihood  evaluations
+obj4$summary
+# nails it!
 }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ Kriging }
-\keyword{ MLE }
-\keyword{ spatial }
+
+\keyword{spatial}

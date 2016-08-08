@@ -29,9 +29,10 @@ Maximizes likelihood for the process marginal variance (rho) and
  many covariance models or covariance parameter values.
 }
 \description{
-This function is designed to explore the likelihood surface for
+These functions are designed to explore the likelihood surface for
 different covariance parameters with the option of maximizing over
-sigma and rho.
+sigma and rho. They are depreciated and my be omitted in later versions of 
+fields with their roles   being replaced by other functions. See details below.
 }
 \usage{
 mKrig.MLE(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", cov.args = NULL, 
@@ -150,6 +151,9 @@ Tolerance used to declare convergence when
   fastTps)}
 }
 \details{
+The "mKrig" prefixed functions are depreciated and are replaced in functionality 
+by \code{\link{mKrigMLEJoint}} and \code{\link{mKrigMLEGrid}}.
+
 The observational model follows the same as that described in the
 \code{Krig} function and thus the two primary covariance parameters
 for a stationary model are the nugget standard deviation (sigma) and

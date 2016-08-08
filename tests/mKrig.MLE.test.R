@@ -41,7 +41,8 @@ guessLambda = trueLambda
 print("testing using distance matrix")
 
 set.seed(1)
-out1 = mKrig.MLE(x, y, lambda=guessLambda, par.grid=par.grid, cov.args= list(Distance="rdist"))
+out1 = mKrig.MLE(x, y, lambda=guessLambda, par.grid=par.grid,
+                 cov.args= list(Distance="rdist"))
 lambda.MLE = out1$lambda.MLE
 theta.MLE = out1$cov.args.MLE$theta
 

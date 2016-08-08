@@ -19,87 +19,71 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2
 
-mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", 
-                         cov.args = NULL, Z = NULL, par.grid = NULL, lambda = NULL, 
-                         lambda.profile = TRUE, verbose = FALSE, 
-                         relative.tolerance = 1e-04, ...) {
-  
+mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
+                       mKrig.args = NULL,
+                          cov.fun = "stationary.cov", 
+                         cov.args = NULL,
+                           na.rm = TRUE, 
+                         par.grid = NULL, 
+                           lambda = NULL, 
+                   lambda.profile = TRUE, 
+               relative.tolerance = 1e-04,
+                             REML = FALSE,
+                          verbose = FALSE) {
+  if( na.rm){
+    obj<- mKrigCheckXY(x, y, weights, Z, na.rm)
+    x<- obj$x
+    y<- obj$y
+    weights<- obj$weights
+    Z<- obj$Z
+  }
   #check which optimization options the covariance function supports
+  #precompute distance matrix if possible so it only needs to be computed once
   supportsDistMat = supportsArg(cov.fun, "distMat")
-  
   #precompute distance matrix if possible so it only needs to be computed once
   if(supportsDistMat) {
-    
-    #Get distance function and arguments if available.  Otherwise use 'dist' function
-    #to compute upper triangle of distance matrix
+    #Get distance function and arguments if available
+    #If user left all distance settings NULL, use rdist with compact option.
+    #Use rdist function by default in general.
     #
-    Dist.fun= c(cov.args, list(...))$Distance
-    Dist.args=c(cov.args, list(...))$Dist.args
-    
-    if(is.null(Dist.fun))
-      Dist.fun = "dist"
-    
-    distMat = do.call(Dist.fun, c(list(x), Dist.args))
-  }
-  
-  # mKrig.args has all the arguments needed to call mKrig except lambda and cov.args
-  if(supportsDistMat)
-    cov.args = c(cov.args, list(distMat=distMat, onlyUpper=TRUE))
-  mKrig.args <- c(list(x = x, y = y, weights = weights, Z = Z, cov.fun=cov.fun), 
-                  list(...))
-  
+    if(is.null(cov.args$Distance)) {
+      cov.args$Distance  <-  "rdist"
+      cov.args$Dist.args <- list(compact=TRUE)
+    }
+    cov.args$distMat<-do.call(cov.args$Distance, c( list(x), cov.args$Dist.args) )
+    cov.args$onlyUpper<- TRUE
+    }
+
   lnProfileLike.max <- -1e+20
 # find NG --  number of parameters to try
   par.grid <- data.frame(par.grid)
   if (nrow(par.grid) == 0) {
-    if (is.null(lambda)) {
-      NG <- 1
-    }
-    else {
-      NG <- length(lambda)
-    }
+    NG<- ifelse(is.null(lambda), 1, length( lambda)) 
   }
   else {
     NG <- nrow(par.grid)
   }
-  # output matrix to summarize results
-  summary <- matrix(NA, nrow = NG, ncol = 8)
-  dimnames(summary) <- list(NULL, c("EffDf", "lnProfLike", 
-                                    "GCV", "sigma.MLE", "rho.MLE", "llambda.MLE", "counts eval", 
-                                    "counts grad"))
   lambda.best <- NA
-  
   # default for lambda is 1.0 for first value and exp(llambda.opt) for subsequent ones
   # this is controlled by NAs for lambda starting values.
   if (is.null(lambda)) {
     lambda <- rep(NA, NG)
   }
+  # output matrix to summarize results
+  summary <- matrix(NA, nrow = NG, ncol = 8)
   
-  # default starting value for lambda is 1 or log lambda is 0
-  llambda.opt <- 0
+  # default starting value for lambda is .5 or log lambda is 0
+  lambda.opt <- .5
   optim.counts <- c(NA, NA)
   lnLike.eval <- list()
-  
   # Define the objective function as a tricksy call to mKrig
   # if Y is a matrix of replicated data sets use the log likelihood for the complete data sets
-  temp.fn <- function(x) {
-    # NOTE: FULL refers to estimates collapsed across the replicates if Y is a matrix
-    # assign to hold only a few components returned by mKrig
-    hold <- do.call("mKrig", c(mKrig.args, list(find.trA = FALSE, lambda = exp(x), 
-                                                cov.args=c(cov.args.temp, cov.args)))
-    )[c("lambda.fixed", "rho.MLE.FULL", "sigma.MLE.FULL", "lnProfileLike.FULL")]
-    
-    # add this evalution to an  object (i.e. here a matrix) in the calling frame
-    temp.eval <- get("capture.evaluations")
-    assign("capture.evaluations", rbind(temp.eval, unlist(hold)), 
-           envir = capture.env)
-    return(hold$lnProfileLike.FULL)
-  }
+ 
   #
   # begin loop over covariance arguments
+  lnLike.eval<- list()
   for (k in 1:NG) {
-    llambda.start <- ifelse(is.na(lambda[k]), llambda.opt, log(lambda[k]))
-    
+    lambda.start <- ifelse(is.na(lambda[k]), lambda.opt, (lambda[k]))
     # list of covariance arguments from par.grid with right names (some R arcania!)
     # note that this only works because 1) temp.fn will search in this frame for this object
     # par.grid has been coerced to a data frame so one has a concept of a row subscript.
@@ -107,45 +91,58 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.co
     names(cov.args.temp) <- names(par.grid)
     
     #optimize over lambda if lambda.profile is TRUE
+    optim.args = list(method = "BFGS", 
+                      control = list(fnscale = -1, parscale = c(0.5), 
+                                     ndeps = c(0.05)))
     if (lambda.profile) {
       # set up matrix to store evaluations from within optim
-      capture.evaluations <- matrix(NA, ncol = 4, nrow = 1, 
-                                    dimnames = list(NULL, c("lambda", "rho.MLE", 
-                                                            "sigma.MLE", "lnProfileLike.FULL")))
-      capture.env <- environment()
-      
-      # call to optim
-      look <- optim(llambda.start, temp.fn, method = "BFGS", 
-                    control = list(fnscale = -1, parscale = 0.1, 
-                                   ndeps = 0.05, reltol = relative.tolerance))
-      llambda.opt <- look$par
-      optim.counts <- look$counts
-      # accumulate the new matrix of lnlambda and ln likelihoods (omitting first row of NAs)
-      lnLike.eval <- c(lnLike.eval, list(capture.evaluations[-1, ]))
+    MLEfit0 <- mKrigMLEJoint(x, y, weights=weights, Z=Z, 
+                             lambda.guess = lambda.start, 
+                         cov.params.guess = NULL, 
+                                  cov.fun = cov.fun,
+                               optim.args = optim.args,
+                                 cov.args = cov.args,
+                                    na.rm = na.rm,
+                               mKrig.args = mKrig.args,
+                                     REML = REML,
+                                  verbose = verbose)
+    lnLike.eval<- c( lnLike.eval, list(MLEfit0$lnLike.eval))
+    lambda.opt<- MLEfit0$pars.MLE[1]
     }
     else {
       # no refinement for lambda so just save the the 'start' value as final one.
-      llambda.opt <- llambda.start
+      lambda.opt <- lambda.start
     }
     
 # final fit at optimal value (or starting value if not refinement/maximization for lambda)
-    obj <- do.call("mKrig", c(mKrig.args, list(lambda = exp(llambda.opt), 
-                                               cov.args=c(cov.args.temp, cov.args))))
-    if (obj$lnProfileLike.FULL > lnProfileLike.max) {
+    obj <- do.call("mKrig", c(
+      list(x = x, y = y, weights = weights, Z = Z, na.rm = na.rm),
+                                    mKrig.args,
+      list(lambda=lambda.opt),
+      list( cov.fun= cov.fun, cov.args=c(cov.args.temp, cov.args)))
+      )
+    nameCriterion<- ifelse( !REML,
+                            "lnProfileLike.FULL",
+                            "lnProfileREML.FULL" )
+    if (obj[[nameCriterion]] > lnProfileLike.max) {
       lnProfileLike.max <- obj$lnProfileLike.FULL
       cov.args.MLE <- cov.args.temp
-      lambda.best <- exp(llambda.opt)
+      lambda.best <- lambda.opt
     }
     
 # save results of the kth covariance model evaluation
-    summary[k, 1:8] <- c(obj$eff.df, obj$lnProfileLike.FULL, 
-                         obj$GCV, obj$sigma.MLE.FULL, obj$rho.MLE.FULL, llambda.opt, 
+    summary[k, 1:8] <- c(obj$eff.df, obj[[nameCriterion]], 
+                         obj$GCV, obj$sigma.MLE.FULL, obj$rho.MLE.FULL, lambda.opt, 
                          optim.counts)
+    dimnames(summary) <- list(NULL, c("EffDf",nameCriterion , 
+                                      "GCV", "sigma.MLE", "rho.MLE", "lambda.MLE", "counts eval", 
+                                      "counts grad"))
     if (verbose) {
       cat("Summary: ", k, summary[k, 1:8], fill = TRUE)
     }
   }
   return(list(summary = summary, par.grid = par.grid, cov.args.MLE = cov.args.MLE, 
-              mKrig.args = list(...), lambda.best = lambda.best, lambda.MLE = lambda.best, 
-              call = match.call(), lnLike.eval = lnLike.eval))
+              lambda.best = lambda.best, lambda.MLE = lambda.best, 
+              call = match.call(), lnLike.eval = lnLike.eval)
+         )
 }

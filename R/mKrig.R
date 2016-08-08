@@ -18,13 +18,16 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov", 
-                  cov.args = NULL, Z = NULL, lambda = 0, m = 2, 
+mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
+                  cov.function="stationary.cov", 
+                  cov.args = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, na.rm=TRUE,  ...) {
+                  iseed = 123, llambda = NULL, na.rm=FALSE, ...) {
   
-  #pull extra covariance arguments from ...
-  cov.args = c(cov.args, list(...))
+  # pull extra covariance arguments from ...  and overwrite
+  # any arguments already named in cov.args
+  ind<- match( names( cov.args), names(list(...) ) )
+  cov.args = c(cov.args[is.na(ind)], list(...))
   #
   #If cov.args$find.trA is true, set onlyUpper to FALSE (onlyUpper doesn't
   #play nice with predict.mKrig, called by mKrig.trace)
@@ -69,11 +72,11 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   # as a place holder for reduced rank Kriging, distinguish between
   # observations locations and  the locations to evaluate covariance.
   # (this is will also allow predict.mKrig to handle a Krig object)
-  # knots <- x
+  object$knots <- object$x
   # covariance matrix at observation locations
   # NOTE: if cov.function is a sparse constuct then Mc will be sparse.
   # see e.g. wendland.cov
-  Mc <- do.call(cov.function, c(cov.args, list(x1 = object$x, x2 = object$x)))
+  Mc <- do.call(cov.function, c(cov.args, list(x1 = object$knots, x2 = object$knots)))
   #
   # decide how to handle the pivoting.
   # one wants to do pivoting if the matrix is sparse.
@@ -99,6 +102,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
     else
       diag(Mc) = diag(Mc) + lambda/object$weights
   }
+  #  MARK LINE Mc
   # At this point Mc is proportional to the covariance matrix of the
   # observation vector, y.
   #
@@ -129,18 +133,30 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   # GLS covariance matrix for fixed part.
     Rinv <- solve(qr.R(qr.VT))
     Omega <- Rinv %*% t(Rinv)
+#    
+#  Omega is  solve(t(Tmatrix)%*%solve( Sigma)%*%Tmatrix)
+# proportional to fixed effects covariance matrix.    
+#  Sigma = cov.function( x,x) + lambda/object$weights
+#  this is proportional to the covariance matrix for the GLS estimates of
+#  the fixed linear part of the model. 
+#     
+    R2diag<-  diag( qr.R(qr.VT) )^2
+    lnDetOmega<- -1* sum( log(R2diag) ) 
   }
   else{
-# much is set to NULL because not fixed part of model    
+# much is set to NULL because no fixed part of model    
     nt<- 0
     resid<- object$y
     Rinv<- NULL
     Omega<- NULL
     qr.VT<- NULL
     d.coef<- NULL
+    lnDetOmega <- 0
   }
   # and now find c.
   #  the coefficents for the spatial part.
+  # if linear fixed part included resid as the residuals from the 
+  # GLS regression.
   c.coef <- as.matrix(forwardsolve(Mc, transpose = TRUE,
                                    resid, upper.tri = TRUE))
   # save intermediate result this is   t(y- T d.coef)( M^{-1}) ( y- T d.coef)
@@ -155,17 +171,27 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   shat.MLE <- sigma.MLE <- sqrt(lambda * rho.MLE)
   # the  log profile likehood with  rhohat  and  dhat substituted
   # leaving a profile for just lambda.
-  # NOTE if y is a matrix then each of this is a vector of log profile
+  # NOTE if y is a matrix then this is a vector of log profile
   # likelihood values.
   lnProfileLike <- (-np/2 - log(2 * pi) * (np/2) - (np/2) * 
                       log(rho.MLE) - (1/2) * lnDetCov)
+  # see section 4.2 handbook of spatial statistics (Zimmermanchapter)
+  lnProfileREML <-  lnProfileLike + (1/2) * lnDetOmega
   rho.MLE.FULL <- mean(rho.MLE)
   sigma.MLE.FULL <- sqrt(lambda * rho.MLE.FULL)
   # if y is a matrix then compute the combined likelihood
   # under the assumption that the columns of y are replicated
   # fields
   lnProfileLike.FULL <- sum((-np/2 - log(2 * pi) * (np/2) - 
-                               (np/2) * log(rho.MLE.FULL) - (1/2) * lnDetCov))
+                               (np/2) * log(rho.MLE.FULL) 
+                               - (1/2) * lnDetCov)
+                            )
+  lnProfileREML.FULL <- sum((-np/2 - log(2 * pi) * (np/2) - 
+                               (np/2) * log(rho.MLE.FULL) 
+                             - (1/2) * lnDetCov
+                             + (1/2) * lnDetOmega  )
+                            )
+  
   #
   # return coefficients and   include lambda as a check because
   # results are meaningless for other values of lambda
@@ -178,15 +204,19 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
   if(!is.null(cov.args$distMat))
     cov.args$distMat = NA
   object <- c( object, list( 
-               d = (d.coef), c = (c.coef), nt = nt, np = np, 
+               d = d.coef, c = c.coef, nt = nt, np = np, 
               lambda.fixed = lambda, 
               cov.function.name = cov.function, 
               args = cov.args, m = m, chol.args = chol.args, call = match.call(), 
               nonzero.entries = nzero, shat.MLE = sigma.MLE, sigma.MLE = sigma.MLE, 
               rho.MLE = rho.MLE, rhohat = rho.MLE, lnProfileLike = lnProfileLike, 
               rho.MLE.FULL = rho.MLE.FULL, sigma.MLE.FULL = sigma.MLE.FULL, 
-              lnProfileLike.FULL = lnProfileLike.FULL, lnDetCov = lnDetCov, 
-              quad.form = quad.form, Omega = Omega, qr.VT = qr.VT, 
+              lnProfileLike.FULL = lnProfileLike.FULL,
+              lnProfileREML.FULL =  lnProfileREML.FULL,
+              lnProfileREML =  lnProfileREML,
+              lnDetCov = lnDetCov, 
+              quad.form = quad.form, Omega = Omega,lnDetOmega=lnDetOmega,
+              qr.VT = qr.VT, 
               Mc = Mc, Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ)
   )
   #

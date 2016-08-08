@@ -19,81 +19,83 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 
-MLESpatialProcess <- function(x, y,
-                              weights = rep(1, nrow(x)),
-                          lambda.start = .5,
+MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
+                            mKrig.args = NULL,
+                            cov.function = "stationary.cov", 
+                            cov.args = list(Covariance = "Matern",
+                                            smoothness = 1), 
+                          lambda.guess = .5,
                            theta.start = NULL, 
                            theta.range = NULL,
                                  gridN = 20,
-                          cov.function = "stationary.cov", 
-                              cov.args = list(Covariance = "Matern", smoothness = 1), 
-                                     Z = NULL,
-                              Distance = "rdist",
                             optim.args = NULL,
+                                 na.rm = TRUE,
                                verbose = FALSE,
                                ...) {
   if( verbose){
-    cat("extra arguments:" , full=TRUE)
+    cat(" MLESpatialProcess extra arguments:" , full=TRUE)
      print( names( list(...)))
   }
-  # set the distance argument in cov.args if necessary
-  if(supportsArg(cov.function, arg="Distance") && is.null(cov.args$Distance))
-    cov.args = c(cov.args, list(Distance = Distance))
+  # combine  list(...) with cov.args and omit duplicates favoring the ... value
+  ind<- match( names( cov.args), names(list(...) ) )
+  cov.args = c(cov.args[is.na(ind)], list(...))
   #
   # if range or starting guess for range is missing use quantiles of pairwise
   # distances among data.  Use median pairwise distance as starting guess
-  
   if( is.null( theta.range) ){
-    pairwiseD<- do.call(Distance, list(x))
-    theta.range<- quantile( pairwiseD[col(pairwiseD) > row( pairwiseD) ], c(.05,.95))
+    if( is.null( cov.args$Distance)){
+      pairwiseD<- dist(x)
+    }
+    else{
+    pairwiseD<- do.call(cov.args$Distance, list(x))
+    pairwiseD<- pairwiseD[col(pairwiseD) > row( pairwiseD) ]
+    }
+    theta.range<- quantile( pairwiseD, c(.02,.97))
+    if (is.null(theta.start)) {
+      theta.start<-  exp(mean( log(theta.range)))
+    }
   }
+  print( theta.range)
+  #  evaluate likelihood for a grid of theta on log scale maximizing over lambda.
+  # set all arguments for the optim function
   thetaGrid<- seq( theta.range[1], theta.range[2], length.out=gridN )
   par.grid<- list( theta= thetaGrid)
-  
-  obj<- mKrigCheckXY( x, y, weights, Z, na.rm=TRUE)
-  
-  #
-  if (is.null(theta.start)) {
-    pairwiseD<- do.call(Distance, list(x))
-    theta.start <- median( pairwiseD[col(pairwiseD) > row( pairwiseD) ])
-  }
-#    
-  
-  # set all arguments for the optim function
+  MLEGrid<- mKrigMLEGrid(x, y,  weights = weights, Z= Z, 
+                         mKrig.args = mKrig.args,
+                         cov.fun = cov.function, 
+                       cov.args  = cov.args,
+                        par.grid = par.grid, 
+                          lambda = lambda.guess, 
+                  lambda.profile = TRUE, 
+                           na.rm = na.rm,
+                         verbose = verbose) 
+  #refine MLE for lambda and theta
   if(is.null(optim.args)) {
     optim.args = list(method = "BFGS", 
                       control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                      ndeps = c(0.05,0.05)))
   }
-  # do parameter optimization
-  
-  MLEGrid<- mKrigMLEGrid(obj$x, obj$y,  weights = obj$weights, Z= obj$Z,
-                         cov.fun = "stationary.cov", 
-                         cov.args  = list(Covariance = "Matern", smoothness = 1.0),
-                         par.grid = par.grid, 
-                         lambda = lambda.start, 
-                         lambda.profile = TRUE, 
-                         verbose = verbose) 
-  
-  MLEJoint = do.call("mKrigMLEJoint", c(list(obj$x, obj$y,
-                                               weights = obj$weights,
-                                          lambda.guess = lambda.start, 
+  MLEJoint = mKrigMLEJoint(x, y, weights = weights,  Z = Z,
+                           mKrig.args = mKrig.args,
+                           cov.fun = cov.function,
+                           cov.args = cov.args, 
+                                          lambda.guess = lambda.guess, 
                                       cov.params.guess = list(theta=theta.start), 
-                                               cov.fun = cov.function,
-                                              cov.args = cov.args, 
                                             optim.args = optim.args,
-                                                     Z = obj$Z,
-                                               verbose = verbose),
-                                                  list(...))
-                                     )
-  lambda.start<-   10^(seq( -2,1,,gridN))
-  par.grid<- list( theta= rep(MLEJoint$MLEInfo$MLEJoint$pars.MLE[2], gridN) )
-  MLEProfileLambda <- mKrigMLEGrid(obj$x, obj$y,  weights = obj$weights, Z= obj$Z,
-                                          cov.fun = "stationary.cov", 
-                                          cov.args  = list(Covariance = "Matern", smoothness = 1.0),
-                                          par.grid = par.grid, 
-                                          lambda = lambda.start, 
-                                          lambda.profile = FALSE, 
+                                                 na.rm = na.rm,
+                                               verbose = verbose)
+  # evaluate likelihood on grid of log lambda with MLE for theta
+  #NOTE lambda.profile = FALSE makes this work.
+  lambdaGrid<-   10^(seq( -2,1,,gridN))
+  par.grid<- list( theta= rep(MLEJoint$pars.MLE[2], gridN) )
+  MLEProfileLambda <- mKrigMLEGrid(x, y,  weights = weights, Z= Z,
+                                          cov.fun = cov.function, 
+                                        cov.args  = cov.args,
+                                       mKrig.args = mKrig.args,
+                                         par.grid = par.grid, 
+                                           lambda = lambdaGrid, 
+                                   lambda.profile = FALSE, 
+                                            na.rm = na.rm,
                                           verbose = verbose) 
   return(
      list(MLEGrid= MLEGrid, MLEJoint=MLEJoint, 

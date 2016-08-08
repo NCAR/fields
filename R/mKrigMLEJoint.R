@@ -19,20 +19,30 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2   
 
-mKrigMLEJoint <- function(x, y, weights = rep(1, nrow(x)), 
-                            lambda.guess = 1, cov.params.guess=NULL, 
+mKrigMLEJoint <- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
+                            mKrig.args = NULL,
+                            na.rm= TRUE,
                             cov.fun="stationary.cov", cov.args=NULL, 
-                            Z = NULL, optim.args=NULL, find.trA.MLE = FALSE,
-                            na.rm=TRUE, 
-                            ..., parTransform = NULL, verbose = FALSE) {
-  
+                            lambda.guess = 1, cov.params.guess=NULL,
+                            optim.args=NULL, 
+                            parTransform = NULL, 
+                            REML = FALSE, 
+                          verbose = FALSE) {
+  # overwrite basic data to remove NAs this has be done in case distance 
+  # matrices are precomputed (see below)
+  if( na.rm){
+    obj<- mKrigCheckXY(x, y, weights, Z, na.rm)
+    x<- obj$x
+    y<- obj$y
+    weights<- obj$weights
+    Z<- obj$Z
+  }
   #set default optim.args if necessary
   if(is.null(optim.args)){
     optim.args = list(method = "BFGS", 
                       control=list(fnscale = -1, ndeps = rep(log(1.1), length(cov.params.guess)+1), 
                                    reltol=1e-04, maxit=10))
- 
-  }
+ }
 # main way to keep track of parameters to optimize -- lambda always included  
 parNames<- c( "lambda", names(cov.params.guess))
 if( is.null(parTransform)){
@@ -51,11 +61,11 @@ if(verbose){
 #check which optimization options the covariance function supports
   supportsDistMat = supportsArg(cov.fun, "distMat")
 #precompute distance matrix if possible so it only needs to be computed once
-  if(supportsDistMat) {
+  if(supportsDistMat & is.null( cov.args$distMat)) {
     #Get distance function and arguments if available
     #
-    Dist.fun= c(cov.args, list(...))$Distance
-    Dist.args=c(cov.args, list(...))$Dist.args
+    Dist.fun= c(cov.args)$Distance
+    Dist.args=c(cov.args)$Dist.args
     
     #If user left all distance settings NULL, use rdist with compact option.
     #Use rdist function by default in general.
@@ -65,16 +75,17 @@ if(verbose){
       if(is.null(Dist.args))
         Dist.args = list(compact=TRUE)
     }
-    
   distMat = do.call(Dist.fun, c(list(x), Dist.args))
   #set cov.args for optimal performance
   cov.args = c(cov.args, list(distMat=distMat, onlyUpper=TRUE))
   }
 # these are all the arguments needed to call mKrig except lambda and cov.args
-  mKrig.args <- c(list(x = x, y = y, weights = weights, Z = Z,
-                       cov.fun=cov.fun, na.rm=na.rm), 
-                  list(...))
-  mKrig.args$find.trA = find.trA.MLE
+  mKrig.args <- c(list(x = x, y = y, weights = weights, Z = Z),
+                   mKrig.args,
+                  list(cov.fun=cov.fun) 
+                  )
+# reset so trace switch is not found for each evaluation of the likelihood.   
+  mKrig.args$find.trA = FALSE
 # output matrix to summarize results
   ncolSummary = 7 + length(parNames)
   summary <- matrix(NA, nrow = 1, ncol = ncolSummary)
@@ -86,47 +97,55 @@ if(verbose){
   
   #
   # optimize over (some) covariance parameters and lambda
-  capture.evaluations <- matrix(NA, ncol = length(parNames) + 3 , nrow = 1,
+  capture.evaluations <- matrix(NA, ncol = length(parNames) + 4 , nrow = 1,
        dimnames = list(NULL,
                        c(   parNames,
                            "rho.MLE",
                          "sigma.MLE", 
-                "lnProfileLike.FULL")
+                "lnProfileLike.FULL",
+                "lnProfileREML.FULL")
                          )
                           ) 
   capture.env <- environment()
 # call to optim with initial guess (default is log scaling )
   init.guess <- parTransform( unlist(c(lambda.guess, cov.params.guess)), inv=FALSE)
-  look <- do.call(optim, c(    list(par=init.guess),
+  optimResults <- do.call(optim, c(    list(par=init.guess),
                             list(mKrigJointTemp.fn),
                                          optim.args,
                            list(  parNames = parNames,
                               parTransform = parTransform,
                                 mKrig.args = mKrig.args,
                                   cov.args = cov.args, 
-                               capture.env = capture.env)
+                               capture.env = capture.env,
+                                      REML = REML)
                            )
                   )
 #get optim results
-  optim.counts <- look$counts
-  parOptimum<- parTransform(look$par, inv=TRUE)
+  optim.counts <- optimResults$counts
+  parOptimum<- parTransform(optimResults$par, inv=TRUE)
+# first row is just NAs  
   lnLike.eval <- capture.evaluations[-1,]
-  ind<- lnLike.eval[ ,"lnProfileLike.FULL"] == look$value
-  if( sum(ind)!=1){
-       cat( "Weirdness in optimization. See lnLike.eval rows: ",
+ 
+  nameCriterion<- ifelse( !REML,
+                          "lnProfileLike.FULL",
+                          "lnProfileREML.FULL" )
+  ind<- which( lnLike.eval[ , nameCriterion]
+                       == optimResults$value )
+  if( length(ind)!=1){
+       cat( "Weirdness in optimization. See lnLike.eval rows: ", ind,
            fill=TRUE )
-       print( lnLike.eval[ind,])
+    ind<- max( ind)
   }
 # save results of the best covariance model evaluation in a neat table
-  summary <- unlist(c(look$value, 
-                      parOptimum,
-    lnLike.eval[ind,"sigma.MLE"],
+  summary <- c(          optimResults$value, 
+                         parOptimum,
+      lnLike.eval[ind,"sigma.MLE"],
       lnLike.eval[ind,"rho.MLE"],
-                    optim.counts)
-    )
-  names(summary) <- c("lnProfile", parNames, 
+                       optim.counts)
+  
+  names(summary) <- c(nameCriterion, parNames, 
                       "sigmaMLE", "rhoMLE", "funEval", "gradEval")
-  out = c( list(summary=summary, lnLike.eval =lnLike.eval, optimResults=look,
+  out = c( list(summary=summary, lnLike.eval = lnLike.eval, optimResults=optimResults,
                     pars.MLE=parOptimum, parTransform = parTransform))
   return(out)
 }
@@ -135,6 +154,7 @@ if(verbose){
 # if y is a matrix of replicated data sets use the log likelihood for the complete data sets
  mKrigJointTemp.fn <- function(parameters,
                               mKrig.args, cov.args, parTransform, parNames,
+                              REML=FALSE,
                               capture.env) {
   # optimization is over a transformed scale ( so need to back transform for mKrig)
   tPars<- parTransform( parameters, inv=TRUE)
@@ -146,7 +166,11 @@ if(verbose){
   hold <- do.call("mKrig", c(mKrig.args,
                              cov.args.temp))
   
-  hold = hold[c("rho.MLE.FULL", "sigma.MLE.FULL", "lnProfileLike.FULL")]
+  hold = hold[c("rho.MLE.FULL",
+                "sigma.MLE.FULL",
+                "lnProfileLike.FULL",
+                "lnProfileREML.FULL"
+                )]
   
   # add this evalution to an object (i.e. here a matrix) in the calling frame
   temp.eval <- get("capture.evaluations", envir=capture.env)
@@ -154,6 +178,11 @@ if(verbose){
                                       c(parTransform(parameters, inv=TRUE),
                                         unlist(hold))), 
          envir = capture.env)
+  if( !REML){
   return(hold$lnProfileLike.FULL)
+  }
+  else{
+  return(hold$lnProfileREML.FULL)
+  }  
 }
 

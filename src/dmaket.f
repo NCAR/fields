@@ -7,7 +7,7 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
       subroutine dmaket(m,n,dim,des,lddes,npoly,t,ldt,
      * wptr,info,ptab,ldptab)
       integer m,n,dim,lddes,npoly,ldt,wptr(dim),info,ptab(ldptab,dim)
-      double precision des(lddes,dim),t(ldt,*)
+      double precision des(lddes,dim),t(ldt,npoly)
 c
 c Purpose: create t matrix and append s1 to it.
 c
@@ -31,12 +31,10 @@ c Work Arrays:
 c   wptr(dim)		integer work vector
 c
 c Subprograms Called Directly:
-c	Blas  - dcopy
 c	Other - mkpoly
 c
-c $Header: /fs/image/home/thoar/CVS.REPOS/fields/src/dmaket.f,v 1.1.1.1 2002/12/04 22:46:16 thoar Exp $
 c
-      integer i,j,k,tt,nt,bptr,eptr
+      integer i,j,k,kk,tt,nt,bptr,eptr
 c
       info = 0
 c      npoly = mkpoly(m,dim)
@@ -49,7 +47,10 @@ c      npoly = mkpoly(m,dim)
              nt = j + 1
              wptr(j) = nt
              ptab(nt,j)= ptab(nt,j) +1
-             call dcopy(n,des(1,j),1,t(1,nt),1)
+             do 15 kk = 1, n
+                t(kk,nt)= des(kk,j)
+   15        continue     
+c             call dcopy(n,des(1,j),1,t(1,nt),1)
    10     continue
 c
 c     get cross products of x's in null space for m>2

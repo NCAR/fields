@@ -117,10 +117,6 @@
 \alias{MLESpatialProcess.fastOLD}
 \alias{MLESpatialProcessOLD}
 
-\alias{mKrig.MLE}
-\alias{mKrig.MLE.joint}
-\alias{fastTps.MLE}
-
 \title{
   Fields internal and secondary functions 
 }
@@ -273,20 +269,7 @@ MLESpatialProcessOLD(x, y, theta.grid=NULL, par.grid=NULL, lambda.grid=NULL,
   Distance = "rdist", nstep.cv = 50, verbose = FALSE, 
   doMKrig=FALSE, ...)
 
-mKrig.MLE(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", cov.args = NULL, 
-  Z = NULL, par.grid = NULL, lambda = NULL, lambda.profile = TRUE, 
-  verbose = FALSE, relative.tolerance = 1e-04, ...)
 
-mKrig.MLE.joint(x, y, weights = rep(1, nrow(x)), 
-                lambda.guess = 1, cov.params.guess=NULL, 
-                cov.fun="stationary.cov", cov.args=NULL, 
-                Z = NULL, optim.args=NULL, find.trA.MLE = FALSE, 
-                ..., verbose = FALSE)
-                
-fastTps.MLE(x, y, weights = rep(1, nrow(x)), 
-  Z = NULL, ..., par.grid=NULL, theta, lambda = NULL,
-  lambda.profile = TRUE, 
-  verbose = FALSE, relative.tolerance = 1e-04)
 }
 \keyword{internal}
 % docclass is function

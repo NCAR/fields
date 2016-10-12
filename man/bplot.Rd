@@ -72,15 +72,18 @@ Other arguments to be passed to the boxplot function some handy favorites are:
 }
 
 \details{
- This function was created as a complement to the usual S function for
+ This function was created as a complement to the usual S/R function for
 boxplots. The current function makes it possible to put the boxplots
-at unequal x or y positions in a rational using the \code{at} or
+at unequal x or y positions in a rational way using the \code{at} or
 \code{pos} arguments. This is useful for visually grouping a large set
 of boxplots into several groups. Also placement of the boxplots with
 respect to the axis can add information to the plot.  Another aspect
 is the emphasis on data structures for groups of data. One useful
 feature is the by option to break up the x vector into distinct
 groups.
+
+Use \code{axis(3)} (\code{axis(4)}) to add an axis along the top (right side) or omit the category names and draw on the 
+bottom \code{axis(1)}  (left side  \code{axis(2)}).
 
 
 The older \code{bplot} function drew the boxplots from scratch and if
@@ -95,15 +98,17 @@ make bplots of each group see \code{bplot.xy}.
 #
 set.seed(123)
 temp<- matrix( rnorm(12*8), ncol=12)
-pos<- c(1:6,9:14)
+pos<- c(1:6,9, 12:16)*100
 bplot(temp)
 #
-par(las=1)
-bplot( temp, pos=pos, names=paste( "Data",1:12, sep=""), horizontal=TRUE)
+par(las=2)
+bplot( temp, pos=pos, names=paste( "Data",1:12, sep=""))
+# add an axis along top for reference
+axis(3)
 
 #
-# Xmas boxplots in red and green 
-bplot( temp, pos=pos,  col=c("red", "green"))
+# Xmas boxplots in pleasing red and green 
+bplot( temp, pos=pos,  col=c("red4", "green4"))
 # add an axis on top
 axis( 3)
 }

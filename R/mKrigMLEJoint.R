@@ -84,7 +84,7 @@ if(verbose){
                    mKrig.args,
                   list(cov.fun=cov.fun) 
                   )
-# reset so trace switch is not found for each evaluation of the likelihood.   
+# reset switch so trace is not found for each evaluation of the likelihood.   
   mKrig.args$find.trA = FALSE
 # output matrix to summarize results
   ncolSummary = 7 + length(parNames)

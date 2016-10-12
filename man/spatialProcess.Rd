@@ -20,6 +20,8 @@
 %# or see http://www.r-project.org/Licenses/GPL-2    
 \name{spatialProcess}
 \alias{spatialProcess}
+\alias{plot.spatialProcess}
+\alias{print.spatialProcess}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 	Estimates a spatial process model. 
@@ -37,6 +39,9 @@
 spatialProcess(x, y, cov.function = "stationary.cov",
          cov.args = list(Covariance = "Matern", smoothness = 1),
          ngrid = 10, theta.grid = NULL, ...)
+\method{print}{spatialProcess}(x, digits = 4, ...)
+\method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -142,6 +147,14 @@ values to assess the robustness of your conclusions. Also examine the
 residuals to check the adequacy of the fit. See the examples below for
 some help in how to do this easily in fields. Also see quilt.plot to
 get an quick plot to discern spatial paterns.
+
+\strong{plot} method  provides a panel of 4 diagnositic plots of the fit. 
+Use \code{set.panel(2,2)} to see all 4 at once. The third plot gives the likelihood and
+GCV functions as a function of lambda evaluated at the global MLE for theta. The fourth
+plot is a profiel likelihood trace for theta  having maximized over lambda. 
+(see \code{\link{plot.Krig}} for more details. 
+
+\strong{print} method gives a summary of the fit. 
 
 %%  ~~ If necessary, more details than the description above ~~
 }

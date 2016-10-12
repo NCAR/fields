@@ -25,19 +25,24 @@
 \alias{mKrig.trace}
 \alias{print.mKrig}
 \alias{summary.mKrig}
+\alias{mKrigCheckXY}
 
 \title{"micro Krig"  Spatial process estimate of a curve or surface, 
 "kriging" with a known covariance function. }
 \description{
 This is a simple version of the Krig function that is 
-optimized for large data sets and a clear exposition of the
+optimized for large data sets, sparse linear algebra, and a clear exposition of the
 computations. Lambda, the smoothing parameter must be fixed. 
+This function is called higher level functions for maximum likelihood estimates of 
+covariance paramters. 
 }
 \usage{
-mKrig(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov", 
-                  cov.args = NULL, Z = NULL, lambda = 0, m = 2, 
-                  chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, ...)
+mKrig
+(x, y, weights = rep(1, nrow(x)), Z = NULL,
+                 cov.function = "stationary.cov", cov.args = NULL,
+                 lambda = 0, m = 2, chol.args = NULL, find.trA = TRUE,
+                 NtrA = 20, iseed = 123, llambda = NULL, na.rm = FALSE,
+                 ...)
   
 \method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL, derivative=0, Z=NULL,
                            drop.Z=FALSE,just.fixed=FALSE, ...)
@@ -46,6 +51,7 @@ mKrig(x, y, weights=rep(1, nrow(x)), cov.function="stationary.cov",
 mKrig.coef(object, y)
 
 mKrig.trace( object, iseed, NtrA)
+mKrigCheckXY(x, y, weights, Z, na.rm, verbose = FALSE) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

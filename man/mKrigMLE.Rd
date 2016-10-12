@@ -22,6 +22,7 @@
 \alias{mKrigMLEJoint}
 \alias{mKrigMLEGrid}
 \alias{fastTpsMLE}
+\alias{mKrigJointTemp.fn}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Maximizes likelihood for the process marginal variance (rho) and
@@ -50,6 +51,10 @@ mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL,
 fastTpsMLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
                  par.grid=NULL, theta, lambda = NULL, lambda.profile = TRUE,
                  verbose = FALSE, relative.tolerance = 1e-04)
+
+mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
+           parNames, REML = FALSE, capture.env)
+           
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

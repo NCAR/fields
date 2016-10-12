@@ -21,7 +21,6 @@
 
 \name{plot.Krig}
 \alias{plot.Krig}
-\alias{plot.spatialProcess}
 \alias{plot.sreg}
 
 \title{
@@ -33,7 +32,6 @@ Plots a series of four diagnostic plots that summarize the fit.
 \usage{
 \method{plot}{Krig}(x, digits=4, which= 1:4,...)
 \method{plot}{sreg}(x, digits = 4, which = 1:4, ...)
-\method{plot}{spatialProcess}(x, digits=4, which= 1:4,...)
 
 
 }

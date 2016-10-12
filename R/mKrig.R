@@ -214,7 +214,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
               lnProfileLike.FULL = lnProfileLike.FULL,
               lnProfileREML.FULL =  lnProfileREML.FULL,
               lnProfileREML =  lnProfileREML,
-              lnDetCov = lnDetCov, 
+              lnDetCov = lnDetCov, lnDetOmega = lnDetOmega,
               quad.form = quad.form, Omega = Omega,lnDetOmega=lnDetOmega,
               qr.VT = qr.VT, 
               Mc = Mc, Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ)

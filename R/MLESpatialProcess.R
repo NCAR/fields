@@ -55,7 +55,6 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
       theta.start<-  exp(mean( log(theta.range)))
     }
   }
-  print( theta.range)
   #  evaluate likelihood for a grid of theta on log scale maximizing over lambda.
   # set all arguments for the optim function
   thetaGrid<- seq( theta.range[1], theta.range[2], length.out=gridN )
@@ -75,7 +74,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                       control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                      ndeps = c(0.05,0.05)))
   }
-  MLEJoint = mKrigMLEJoint(x, y, weights = weights,  Z = Z,
+  MLEJoint <- mKrigMLEJoint(x, y, weights = weights,  Z = Z,
                            mKrig.args = mKrig.args,
                            cov.fun = cov.function,
                            cov.args = cov.args, 

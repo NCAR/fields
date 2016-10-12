@@ -31,10 +31,12 @@ Maximizes the likelihood to determine the nugget variance (sigma^2), the sill
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-MLESpatialProcess(x, y, lambda.start=.5, theta.start = NULL, 
-                  cov.function = "stationary.cov", 
-                  cov.args = list(Covariance = "Matern", smoothness = 1), 
-                  Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
+MLESpatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, cov.function = "stationary.cov", cov.args =
+                 list(Covariance = "Matern", smoothness = 1),
+                 lambda.guess = 0.5, theta.start = NULL, theta.range =
+                 NULL, gridN = 20, optim.args = NULL, na.rm = TRUE,
+                 verbose = FALSE, ...)
                            
 }
 %- maybe also 'usage' for other objects documented here.
@@ -182,10 +184,10 @@ obj3$summary
 
   }
  \dontrun{
-# fits for ozone data
+# fits for first 10 days from ozone data
 data( ozone2) 	 
-NDays<- nrow( ozone2$y)
-O3MLE<- matrix( NA, nrow= NDays, ncol=9)
+NDays<- 10
+O3MLE<- matrix( NA, nrow= NDays, ncol=7)
 for( day in 1: NDays){
 	cat( day, " ")
 	ind<- !is.na(ozone2$y[day,] )
@@ -193,9 +195,14 @@ for( day in 1: NDays){
 	y<- ozone2$y[day,ind]
 	print( length( y))
 	O3MLE[day,]<- MLESpatialProcess( x,y,
-	            Distance="rdist.earth")$summary
+	            Distance="rdist.earth")$MLEJoint$summary
 }
-plot( log(O3MLE[,1]), log(O3MLE[,3]))
+# NOTE: names of summary:
+#[1] "lnProfileLike.FULL" "lambda"            
+#[3] "theta"              "sigmaMLE"          
+#[5] "rhoMLE"             "funEval"           
+#[7] "gradEval" 
+plot( log(O3MLE[,2]), log(O3MLE[,3]))
 }  
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -172,9 +172,12 @@ mKrig.MLE.joint <- function(x, y, weights = rep(1, nrow(x)),
   }
   
   # save results of the best covariance model evaluation in a neat table
+ 
   summary[1, 1:ncolSummary] <- unlist(c(out$eff.df, out$lnProfileLike.FULL, 
-                                 out$GCV, out$sigma.MLE.FULL, out$rho.MLE.FULL, llambda.opt, 
+                                 out$GCV, out$sigma.MLE.FULL, out$rho.MLE.FULL,
+                                 llambda.opt, 
                                  params.opt, optim.counts))
+  
   if (verbose) {
     cat("Summary: ", 1, summary[1, 1:ncolSummary], fill = TRUE)
   }

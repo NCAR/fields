@@ -22,8 +22,8 @@ optim.args = list(method = "BFGS",
                   control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                  ndeps = c(0.05,0.05)))
 
-MLEfit0 <- mKrigMLEJoint(x, y, lambda.guess=.5, 
-                         cov.params.guess= list(theta=1.2), 
+MLEfit0 <- mKrigMLEJoint(x, y, lambda.start=.5, 
+                         cov.params.start= list(theta=1.2), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern", smoothness=1.0),
@@ -109,8 +109,8 @@ optim.args = list(method = "BFGS",
                   control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                  ndeps = c(0.05,0.05)))
 
-MLEfitA <- mKrigMLEJoint(x, y, lambda.guess=.5, 
-                         cov.params.guess= list(theta=.12), 
+MLEfitA <- mKrigMLEJoint(x, y, lambda.start=.5, 
+                         cov.params.start= list(theta=.12), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
@@ -122,8 +122,8 @@ test.for.zero( MLEfitA$summary["lambda"],.1, tol=.02)
 test.for.zero( MLEfitA$summary["theta"],.1, tol=.02)
 test.for.zero( MLEfitA$summary["rhoMLE"], 1.0, tol=.002)
 
-MLEfitB <- mKrigMLEJoint(x, y, lambda.guess=.5, 
-                         cov.params.guess= list(theta=.12), 
+MLEfitB <- mKrigMLEJoint(x, y, lambda.start=.5, 
+                         cov.params.start= list(theta=.12), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
@@ -137,8 +137,8 @@ test.for.zero( MLEfitB$summary["lambda"],.1, tol=.02)
 test.for.zero( MLEfitB$summary["theta"],.1, tol=.02)
 test.for.zero( MLEfitB$summary["rhoMLE"], 1.0, tol=.002)
 
-MLEfitC <- mKrigMLEJoint(x, y, lambda.guess=.5, 
-                         cov.params.guess= list(theta=.12), 
+MLEfitC <- mKrigMLEJoint(x, y, lambda.start=.5, 
+                         cov.params.start= list(theta=.12), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
@@ -152,8 +152,8 @@ test.for.zero( MLEfitC$summary["lambda"],.1, tol=.02)
 test.for.zero( MLEfitC$summary["theta"], .1, tol=.02)
 test.for.zero( MLEfitC$summary["rhoMLE"], 1.0, tol=.002)
 
-MLEfitD <- mKrigMLEJoint(x, y, lambda.guess=.5, 
-                         cov.params.guess= list(theta=.12), 
+MLEfitD <- mKrigMLEJoint(x, y, lambda.start=.5, 
+                         cov.params.start= list(theta=.12), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",

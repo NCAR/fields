@@ -37,20 +37,23 @@ This function is called higher level functions for maximum likelihood estimates 
 covariance paramters. 
 }
 \usage{
-mKrig
-(x, y, weights = rep(1, nrow(x)), Z = NULL,
+mKrig(x, y, weights = rep(1, nrow(x)), Z = NULL,
                  cov.function = "stationary.cov", cov.args = NULL,
                  lambda = 0, m = 2, chol.args = NULL, find.trA = TRUE,
                  NtrA = 20, iseed = 123, llambda = NULL, na.rm = FALSE,
                  ...)
   
-\method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL, derivative=0, Z=NULL,
-                           drop.Z=FALSE,just.fixed=FALSE, ...)
+\method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL, derivative=0,
+Z=NULL,drop.Z=FALSE,just.fixed=FALSE, ...)
+
 \method{summary}{mKrig}(object, ...)
+
 \method{print}{mKrig}( x, digits=4,... )
+
 mKrig.coef(object, y)
 
 mKrig.trace( object, iseed, NtrA)
+
 mKrigCheckXY(x, y, weights, Z, na.rm, verbose = FALSE) 
 }
 %- maybe also 'usage' for other objects documented here.

@@ -34,9 +34,9 @@ Maximizes the likelihood to determine the nugget variance (sigma^2), the sill
 MLESpatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
                  = NULL, cov.function = "stationary.cov", cov.args =
                  list(Covariance = "Matern", smoothness = 1),
-                 lambda.guess = 0.5, theta.start = NULL, theta.range =
+                 lambda.start = 0.5, theta.start = NULL, theta.range =
                  NULL, gridN = 20, optim.args = NULL, na.rm = TRUE,
-                 verbose = FALSE, ...)
+                 verbose = FALSE, abstol = 1e-04, ...)
                            
 }
 %- maybe also 'usage' for other objects documented here.
@@ -62,6 +62,7 @@ A list with arguments for the covariance functions. These are
   usually parameters and other options such as the type of 
   distance function. 
 }
+
 \item{optim.args}{
 Additional arguments passed to the optim function for likelihood 
   maximization.  The default value is:
@@ -69,31 +70,33 @@ Additional arguments passed to the optim function for likelihood
                     control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                    ndeps = c(0.05,0.05)))}
 }
-\item{Distance}{
-Distance function to use in covariance. Used for setting initial guess 
-  and range for theta.
-}
+
 \item{verbose}{
 If TRUE print out intermediate information for debugging. 
 }
+
+\item{abstol}{Absolute tolerance used to judeg convergence in optim.}
+
 \item{\dots}{
 Additional arguments to pass to the mKrig function.
 }
 }
 \details{
-	MLESpatialProcess is designed to be a simple and easy to use function to 
-	maximize the likelihood for a Gaussian spatial process. For certain fixed,
+	MLESpatialProcess is designed to be a simple and easy to use function for
+	maximizing the likelihood for a Gaussian spatial process. For other  fixed,
 	covariance parameters, the likelihood is maximized over the nugget and sill
 	parameters using the \code{mKrig} function.  \code{lambda} and \code{theta} 
-	are optimized using the \code{mKrigMLEJoint} function on a log scale.
+	are optimized using the \code{mKrigMLEJoint} function on a log scale. 
 	
-	MLESpatialProcess.fast uses the \code{optim}
-	function to maximize the likelihood computed from the \code{mKrig} function. It is more
-	efficient in the computation as it does not find a full eigen decomposition with each new value
-	of theta and maximizes the likelihood over theta and lambda simultaneously. 
+	MLESpatialProcess.fast is an older fields function also using the \code{optim}
+	function to maximize the likelihood computed from the \code{mKrig} function. It will
+	eventually be removed from later versions of fields but is still useful as a cross
+	check on newer functions  
 	
-	Note the likelihood can be maximized analytically over the  parameters of the fixed part and with the nugget (sigma) and sill (rho)  reduced to the single parameter lambda= sigma^2/rho. So fixing any other covariance parameters the likelihood is maximzed numerically over lambda and theta. The differences between these two functions is due to the differences between the definition of the
-	restricted likelihood used in Krig and the conventional likelihood used in mKrig.
+	Note the likelihood can be maximized analytically over the  parameters of the fixed
+	part of the spatial model and with the nugget (sigma) and sill (rho)  reduced to the
+	single parameter lambda= sigma^2/rho. So fixing any other covariance parameters the
+	likelihood is maximzed numerically over lambda and theta. 
 	 
   
 }
@@ -137,27 +140,23 @@ Doug Nychka, John Paige
 \examples{
 #
 #
-
 #generate observation locations
-n=200
+n=500
+set.seed(124)
 x = matrix(runif(2*n), nrow=n)
-
 #generate observations at the locations
-
 trueTheta = .2
-trueLambda = .1
+trueSigma = .05
 Sigma = exp( -rdist(x,x) /trueTheta ) 
-# y = t(chol(Sigma))%*% (rnorm(n))  +  trueLambda* rnorm( n)
-y = t(chol(Sigma))\%*\% (rnorm(n))  +  trueLambda* rnorm( n)
-
-#Use exponential covariance, assume the true range parameter is known
+# y = t(chol(Sigma))%*% (rnorm(n))  +  trueSigma * rnorm( n)
+y = t(chol(Sigma))\%*\% (rnorm(n))  +  trueSigma * rnorm( n)
+# Use exponential covariance estimate constant function for mean
 out = MLESpatialProcess(x, y, 
-                        cov.args=list(Covariance="Exponential", range=trueTheta)
+                          smoothness=.5,
+                        mKrig.args = list( m = 1)
                         )
-
-#Use exponential covariance, use a range to determine MLE of range parameter
+# Use exponential covariance, use a range to determine MLE of range parameter
 \dontrun{
-
 #Use Matern covariance, compute joint MLE of range, smoothness, and lambda.  
 #This may take a few seconds
 testSmoothness = c(.5, 1, 2)

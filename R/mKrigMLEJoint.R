@@ -21,13 +21,15 @@
 
 mKrigMLEJoint <- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
                             mKrig.args = NULL,
-                            na.rm= TRUE,
-                            cov.fun="stationary.cov", cov.args=NULL, 
-                            lambda.guess = 1, cov.params.guess=NULL,
-                            optim.args=NULL, 
-                            parTransform = NULL, 
-                            REML = FALSE, 
-                          verbose = FALSE) {
+                                 na.rm = TRUE,
+                               cov.fun = "stationary.cov", cov.args=NULL, 
+                          lambda.start = .5,
+                      cov.params.start = NULL,
+                            optim.args = NULL,
+                                abstol = 1e-4,
+                          parTransform = NULL, 
+                                  REML = FALSE, 
+                               verbose = FALSE) {
   # overwrite basic data to remove NAs this has be done in case distance 
   # matrices are precomputed (see below)
   if( na.rm){
@@ -38,13 +40,18 @@ mKrigMLEJoint <- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
     Z<- obj$Z
   }
   #set default optim.args if necessary
+  # abstol is anticipating this is a likelihood so differencs of 1e-4 are not appreciable
+  # 
   if(is.null(optim.args)){
     optim.args = list(method = "BFGS", 
-                      control=list(fnscale = -1, ndeps = rep(log(1.1), length(cov.params.guess)+1), 
-                                   reltol=1e-04, maxit=10))
+                      control=list(fnscale = -1,
+                                     ndeps = rep(log(1.1),length(cov.params.start)+1), 
+                                    abstol = abstol,
+                                     maxit = 20)
+                      )
  }
 # main way to keep track of parameters to optimize -- lambda always included  
-parNames<- c( "lambda", names(cov.params.guess))
+parNames<- c( "lambda", names(cov.params.start))
 if( is.null(parTransform)){
   # parTransform: log/exp
   parTransform<- function( ptemp, inv=FALSE){
@@ -107,9 +114,10 @@ if(verbose){
                          )
                           ) 
   capture.env <- environment()
-# call to optim with initial guess (default is log scaling )
-  init.guess <- parTransform( unlist(c(lambda.guess, cov.params.guess)), inv=FALSE)
-  optimResults <- do.call(optim, c(    list(par=init.guess),
+# call to optim with initial start (default is log scaling )
+  init.start <- parTransform( unlist(c(lambda.start, cov.params.start)), inv=FALSE)
+  cat("init.start",  init.start, fill=TRUE)
+  optimResults <- do.call(optim, c(    list(par=init.start),
                             list(mKrigJointTemp.fn),
                                          optim.args,
                            list(  parNames = parNames,
@@ -131,18 +139,19 @@ if(verbose){
                           "lnProfileREML.FULL" )
   ind<- which( lnLike.eval[ , nameCriterion]
                        == optimResults$value )
-  if( length(ind)!=1){
-       cat( "Weirdness in optimization. See lnLike.eval rows: ", ind,
-           fill=TRUE )
-    ind<- max( ind)
-  }
+  ind<- max( ind)
+  # below is an aspect from optim I dont understand and thought to flag
+  #if( length(ind)!=1 ){
+  #     cat( "Weirdness in optimization. See lnLike.eval rows: ", ind,
+  #         fill=TRUE )
+  # ind<- max( ind)
+  #}
 # save results of the best covariance model evaluation in a neat table
   summary <- c(          optimResults$value, 
-                         parOptimum,
-      lnLike.eval[ind,"sigma.MLE"],
-      lnLike.eval[ind,"rho.MLE"],
-                       optim.counts)
-  
+                                 parOptimum,
+               lnLike.eval[ind,"sigma.MLE"],
+                 lnLike.eval[ind,"rho.MLE"],
+               optim.counts)
   names(summary) <- c(nameCriterion, parNames, 
                       "sigmaMLE", "rhoMLE", "funEval", "gradEval")
   out = c( list(summary=summary, lnLike.eval = lnLike.eval, optimResults=optimResults,

@@ -97,8 +97,8 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
     if (lambda.profile) {
       # set up matrix to store evaluations from within optim
     MLEfit0 <- mKrigMLEJoint(x, y, weights=weights, Z=Z, 
-                             lambda.guess = lambda.start, 
-                         cov.params.guess = NULL, 
+                             lambda.start = lambda.start, 
+                         cov.params.start = NULL, 
                                   cov.fun = cov.fun,
                                optim.args = optim.args,
                                  cov.args = cov.args,

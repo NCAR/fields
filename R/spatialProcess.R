@@ -24,6 +24,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                    	cov.args = list(Covariance = "Matern", smoothness = 1),
               	 theta.start = NULL,
                 lambda.start = .5, 
+                      abstol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
                            ...) {
@@ -44,7 +45,8 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                               theta.start = theta.start, 
 	                               theta.range = NULL, 
 	                                   	gridN = 30,
-                            	 lambda.guess = lambda.start,
+                            	 lambda.start = lambda.start,
+	                                   abstol = abstol,
                                 		verbose = verbose
 	                                       	 )
 
@@ -70,7 +72,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	)
 	obj <- c(obj, list(  MLEInfo = MLEInfo, 
 	                   theta.MLE =  MLEInfo$MLEJoint$pars.MLE[2],
-	                  lambda.MLE = MLEInfo$MLEJoint$pars.MLE[1])
+	                   lambda.MLE = MLEInfo$MLEJoint$pars.MLE[1])
 	        )
 # replace call to mKrig with this top level one
   obj$call<- match.call()	

@@ -36,46 +36,66 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-spatialProcess(x, y, cov.function = "stationary.cov",
-         cov.args = list(Covariance = "Matern", smoothness = 1),
-         ngrid = 10, theta.grid = NULL, ...)
+spatialProcess
+(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, cov.function = "stationary.cov", cov.args =
+                 list(Covariance = "Matern", smoothness = 1),
+                 lambda.start = 0.5, theta.start = NULL, theta.range =
+                 NULL, gridN = 20, optim.args = NULL, na.rm = TRUE,
+                 verbose = FALSE, abstol = 1e-04, ...)
+                 
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-  	Observation locations
-%%     ~~Describe \code{x} here~~
-}
-  \item{y}{
-  	Observation values
-%%     ~~Describe \code{y} here~~
-}
-  \item{cov.function}{
-  	A character string giving the name of the  covariance function
-  	 for the spatial component.
-%%     ~~Describe \code{cov.function} here~~
-}
-  \item{cov.args}{
-  	A list specifying parameters and other components of the covariance function.
-  	
-%%     ~~Describe \code{cov.args} here~~
-}
-\item{ngrid}{Number of grid points to search over the scale parameter, theta.}
-\item{theta.grid}{Theta grid to use in search. If omitted default
-	is ngrid equally spaced values on a log scale related to the
-	range of the domain and closeness of the locations. }
+\item{x}{Observation locations}
+
+\item{y}{Observation values}
+
+\item{weights}{Weights for the error term (nugget) in units of reciprocal variance.}
+
+\item{Z}{A matrix of extra covariates for the fixed part of spatial model.
+E.g. elevation for fitting climate data over space. }
+
+\item{mKrig.args}{Arguments passed to the mKrig function.}
+
+\item{cov.function}{A character string giving the name of the  covariance function
+  	 for the spatial component.}
+  	 
+ \item{cov.args}{ A list specifying parameters and other components of the covariance function.}
+ 
+ \item{theta.start}{Starting value for MLE fitting of the scale (aka range) parameter. If omitted the starting value is taken from a grid search ove theta.}
+ 
+ \item{lambda.start}{Starting value for MLE fitting of the lambda parameter. Note lambda
+  is the ratio of the nugget variance to the process variance. In code variables this is
+  \code{sigma^2} divided by \code{rho}. }
+
+ \item{na.rm}{If TRUE NAs are removed from the data. }
+
+ \item{NGrid}{Number of grid points for evaluating profile likelihood over theta and
+ also over lambda (using MLE for theta).}
+ 
+ \item{optim.args}{Arguements to be used  in optim for finding joint MLEs for theta
+ and lambda. 
+                                     }
+ \item{verbose}{If TRUE print out intermediate information for debugging.}
+
   \item{\dots}{
-  	Any other arguments that will be passed to the \code{Krig} function. 
-  	Some typical ones are \code{Z} a vector or matrix of covariates for the
-  	lines fixed part the model (see exampl below). \code{m} the degree of the
-  	spatial polynomial in the fixed part of the model. \code{ Dist= "rdist.earth"}
-  	will change the distance used in the covariance to great circle distance on the 
-  	earth and also interpret the locations as longitude latitude. 
-%%     ~~Describe \code{\dots} here~~
-}
+  	Any other arguments that will be passed to the \code{mKrig} function and interpreted
+  	as additional arguments to the covariance function. E.g. \code{smoothness} for the
+  	Matern covariance. 
+  	}
+  	
+  \item{abstol}{The absolute tolerance bound used to judge convergence. This is applied
+  to the difference in log likelihood values. }	
+  
+  \item{digits}{Number of significant digits in printed summary}
+  
+  \item{which}{The vector 1:4 or any subset of 1:4, giving the plots to draw.
+                 See the description ofthese plots below.}
+
 }
 \details{
 	This function makes many choices for the user in terms of defaults and it is 
@@ -139,8 +159,19 @@ Perhaps the most important aspect of this  function is that
  	transfromed to remove the fixed linear part of the model.  If
  	the user just wants to fix the range parameter theta then
  	\code{Krig} can be used.
+ 	
+ 	NOTE: The defaults for the \code{optim} function used in MLESpatialProcess are:
+ 	
+  \preformatted{
+  list(method = "BFGS", 
+       control=list(fnscale = -1,
+                      ndeps = rep(log(1.1),length(cov.params.start)+1), 
+                     abstol = abstol,
+                      maxit = 20))
+}
+                                     
 
-There is always a danger in providing a simple to use method that
+There is always a hazard in providing a simple to use method that
 makes many default choices for the spatial model. As in any analysis
 be aware of these choices and try alternative models and parameter
 values to assess the robustness of your conclusions. Also examine the
@@ -150,18 +181,20 @@ get an quick plot to discern spatial paterns.
 
 \strong{plot} method  provides a panel of 4 diagnositic plots of the fit. 
 Use \code{set.panel(2,2)} to see all 4 at once. The third plot gives the likelihood and
-GCV functions as a function of lambda evaluated at the global MLE for theta. The fourth
-plot is a profiel likelihood trace for theta  having maximized over lambda. 
-(see \code{\link{plot.Krig}} for more details. 
+GCV functions as a function of lambda evaluated at the global MLE for theta.
+This is based on the gird evaluations in the component MLEInfo$MLEProfileLambda.
+The fourth
+plot is a profile likelihood trace for theta  having maximized over lambda and is based on the component MLEInfo$MLEGrid. 
 
 \strong{print} method gives a summary of the fit. 
 
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-	An object with classes \code{Krig} and \code{spatialProcess}.
-See help on these two functions for details.
-
+	An object of classes \code{mKrig} and  \code{SpatialProcess}. The main difference
+	from mKrig is 	an extra component, \code{MLEInfo} that has the results of the grid
+	evaluation over theta (maximizing lamdba), joint maximization over theta and lambda,
+	and a grid evaluation over lambda with theta fixed at its MLE. 
 }
 
 \author{
@@ -169,8 +202,7 @@ Doug Nychka%%  ~~who you are~~
 }
 
 \seealso{
-Tps, MLESpatialProcess, mKrigMLEGrid, plot.Krig, predict.Krig, predictSE.Krig,
-sim.Krig
+Tps, MLESpatialProcess, mKrigMLEGrid, mKrigMLEJoint, plot.Krig, predict.mKrig, predictSE.mKrig 
 }
 \examples{
 data( ozone2)
@@ -197,8 +229,10 @@ data( ozone2)
 # plot 4 the log profile likelihood used to 
 #        determine theta. 
 #
-# predictions on a grid
+# predictions on a grid 
   surface( obj)
+#(see also predictSurface for more control on evaluation grid
+# and plotting)
 #  
 \dontrun{
 # a comparison to using an exponential and Wendland covariance function
@@ -278,6 +312,22 @@ data(COmonthlyMet)
 # multivariate prediction.
 }
 
-
+\dontrun{
+### comparison with GeoR
+  data(ozone2)
+  x<- ozone2$lon.lat
+  y<- ozone2$y[16,]
+  good<-!is.na(y)
+  x1<- x[good,]
+  y1<- y[good]
+  
+  obj<- spatialProcess( x, y, mKrig.args= list(m=1), smoothness = .5 )
+  
+  ml.n <- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
+  # compare to 
+  stuffFields<- obj$MLEInfo$MLEJoint$summary[c(1,3,4,5)]
+  stuffGeoR<- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),ml.n$sigmasq) 
+  test.for.zero( stuffFields, stuffGeoR)         
+}
 }
 \keyword{ spatial}% __ONLY ONE__ keyword per line

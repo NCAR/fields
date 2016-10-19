@@ -35,17 +35,17 @@ different covariance parameters with the option of maximizing over
 sigma and rho. They used the \code{mKrig} base are designed for computational efficiency.
 }
 \usage{
-mKrigMLEGrid
-(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
+mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
     cov.fun = "stationary.cov", cov.args = NULL, na.rm = TRUE, 
     par.grid = NULL, lambda = NULL, lambda.profile = TRUE,
     relative.tolerance = 1e-04, 
     REML = FALSE, verbose = FALSE)
 
-mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
-    na.rm = TRUE, cov.fun = "stationary.cov", cov.args = NULL, 
-    lambda.guess = 1, cov.params.guess = NULL, optim.args = NULL, 
-    parTransform = NULL, REML = FALSE, verbose = FALSE) 
+mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, na.rm = TRUE, cov.fun = "stationary.cov",
+                 cov.args = NULL, lambda.start = 0.5, cov.params.start
+                 = NULL, optim.args = NULL, abstol = 1e-04,
+                 parTransform = NULL, REML = FALSE, verbose = FALSE)
 
 
 fastTpsMLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
@@ -101,8 +101,8 @@ A list or data frame with components being parameters for
   is "NULL" then the covariance model is fixed at values that
   are given in \dots.
 }
-\item{cov.params.guess}{
-A list of initial guesses for covariance parameters over which 
+\item{cov.params.start}{
+A list of initial starts for covariance parameters over which 
   the user wishes to perform likelihood maximization.  The list 
   contains the names of the parameters as well as the values.
 }
@@ -114,7 +114,7 @@ If \code{lambda.profile=FALSE} the values of lambda to evaluate
   NA and it is the first value the starting value defaults to
   1.0.
 }
-  \item{lambda.guess}{
+  \item{lambda.start}{
 The initial guess for lambda in the joint log-likelihood 
   maximization process
 }
@@ -129,24 +129,20 @@ Additional arguments that would also be included in calls
   details.  The default value is: 
   \code{optim.args = list(method = "BFGS", 
              control=list(fnscale = -1, 
-                          ndeps = rep(log(1.1), length(cov.params.guess)+1), 
-                          reltol=1e-04, maxit=10))}
+                          ndeps = rep(log(1.1), length(cov.params.start)+1), 
+                          abstol=1e-04, maxit=20))}
   Note that the first parameter is lambda and the others are 
   the covariance parameters in the order they are given in 
-  \code{cov.params.guess}.  Also note that the optimization 
-  is performed on a log-scale, and this should be taken into 
+  \code{cov.params.start}.  Also note that the optimization 
+  is performed on a transformed scale (based on the function \code{parTransform} ), and this should be taken into 
   consideration when passing arguments to \code{optim}.
 }
-  \item{find.trA.MLE}{
-If TRUE will estimate the effective degrees of freedom using 
-  a simple Monte Carlo method throughout joint likelihood maximization.  
-  Either way, the trace of the mKrig object with the best 
-  log-likelihood is calculated depending on \code{find.trA}. Computing 
-  the trace will add to the computational burden by approximately NtrA 
-  solutions of the linear system but the cholesky decomposition is 
-  reused.
+\item{parTransform}{A function that maps the parameters to a scale for optimization or
+effects the inverse map from the transformed scale into the original values. See below for more details. 
 }
 
+  \item{REML}{Currently using  REML is not implemented.}
+  
   \item{verbose}{
 %%     ~~Describe \code{verbose} here~~
 If \code{TRUE} print out interesting intermediate results.
@@ -155,6 +151,8 @@ If \code{TRUE} print out interesting intermediate results.
 Tolerance used to declare convergence when
   maximizing likelihood over lambda.
 }
+  \item{abstol}{Absolute convergence tolerance used in optim.}
+  
   \item{theta}{Range parameter for compact Wendland covariance. (see
   fastTps)}
 }
@@ -177,9 +175,23 @@ similar to \code{mKrigMLEGrid}, except it uses the \code{optim} function
 to optimize over the specified covariance parameters and lambda jointly 
 rather than optimizing on a grid.  Unlike \code{mKrigMLEJoint}, it returns 
 an mKrig object.
+
+For \code{mKrigMLEJoint} the 
+ default transformation of the parameters is set up for a log/exp transformation:
+\preformatted{
+ parTransform <- function(ptemp, inv = FALSE) {
+            if (!inv) {
+                log(ptemp)
+            }
+            else {
+                exp(ptemp)
+            }
+        }
 }
+}
+
 \value{
-\code{mKrigMLEGrid} returns a list with the components:
+\strong{\code{mKrigMLEGrid}} returns a list with the components:
 
 \item{summary}{A matrix giving the results for evaluating the
  likelihood for each covariance model.}
@@ -188,23 +200,27 @@ an mKrig object.
 
 \item{cov.args.MLE}{The list of covariance arguments (except for
 lambda) that have the largest likelihood over the list covariance
-models. To fit the surface at the largest likelihood among those tried
-
+models. NOTE: To fit the surface at the largest likelihood among those tried
 \code{ do.call( "mKrig", c(obj$mKrig.args,
 obj$cov.args.MLE,list(lambda=obj$lambda.opt)) )} where \code{obj} is
 the list returned by this function.}
 
 \item{call}{The calling arguments to this function.}
 
-\code{mKrigMLEJoint} returns an mKrig object with the best 
-computed log-likelihood computed in the maximization process
-with the addition of the summary table for the mKrig object 
-log-likelihood and:
+\strong{\code{mKrigMLEJoint}} returns a list with components:
+
+\item{summary}{A vector giving the MLEs and the log likelihood at the maximum}
 
 \item{lnLike.eval}{
 A table containing information on all likelihood evaluations 
 performed in the maximization process.
 }
+\item{optimResults}{The list returned from the optim function.}
+
+\item{par.MLE}{The maximum likelihood estimates.}
+
+\item{parTransform}{The transformation of the parameters used in the optimziation.}
+
 }
 \references{
 %% ~put references to the literature/web site here ~
@@ -226,13 +242,13 @@ Douglas W. Nychka, John Paige
 
 \examples{
 #perform joint likelihood maximization over lambda and theta. 
-#optim can get a bad answer with poor initial guesses.
+#optim can get a bad answer with poor initial starts.
 data(ozone2)
 x<- ozone2$lon.lat
 y<- ozone2$y[16,]
 obj<- mKrigMLEJoint(x,y, 
                       cov.args=list(Covariance="Matern", smoothness=1.0), 
-                      cov.params.guess=list(theta=.2), lambda.guess=.1)
+                      cov.params.start=list(theta=.2), lambda.start=.1)
 
 # check  lnLikeihood evaluations that were culled from optim
 # these are in obj$lnLike.eval
@@ -270,16 +286,16 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
 #optim can get a bad answer with poor initial guesses.
 obj2<- mKrigMLEJoint(x,Y, 
                       cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.guess=list(theta=.2),
-                       lambda.guess=.1)
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1)
 
 #look at lnLikelihood  evaluations
 obj2$summary
 #compare to REML
 obj3<- mKrigMLEJoint(x,Y, 
                       cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.guess=list(theta=.2),
-                       lambda.guess=.1, REML=TRUE)
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1, REML=TRUE)
 }
 \dontrun{
 #look at lnLikelihood  evaluations
@@ -289,8 +305,8 @@ obj3$summary
 obj4<- mKrigMLEJoint(x,Y, 
                       mKrig.args= list( m=0),
                       cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.guess=list(theta=.2),
-                       lambda.guess=.1, REML=TRUE)
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1, REML=TRUE)
 #look at lnLikelihood  evaluations
 obj4$summary
 # nails it!

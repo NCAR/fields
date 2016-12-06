@@ -6,9 +6,9 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
        subroutine rdist( nd,x1,n1,x2,n2, k)
        integer nd,n1,n2,ic   
        double precision  x1(n1,nd), x2(n2,nd), k(n1,n2)
-       double precision xtemp, radfun
+       double precision xtemp
       
-         do  j =1,n2
+         do  j =1,n2 
               xtemp= x2(j,1)
               do   i= 1, n1
 c** accumulate squared differences

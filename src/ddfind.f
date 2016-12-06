@@ -9,7 +9,7 @@ c
        integer nd,n1,n2, ind(nmax,2)
        integer kk, i,j, ic
        
-       real*8 x1(n1,nd), x2(n2,nd), D0, rd(Nmax), D02, dtemp
+       double precision x1(n1,nd), x2(n2,nd), D0, rd(Nmax), D02, dtemp
 
 c****   counter  for accumulating close points
         kk=0 

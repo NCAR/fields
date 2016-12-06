@@ -20,8 +20,8 @@ c                  (1-a)*u**2/C    for -C<u<0
 c                  2*(1-a)*u - (1-a)*C  for u< -C
 c
 c        Note a= par(1), C= par(2)
-      implicit real*8 (a-h, o-z)
-      real*8 r, par(2),c,a
+      implicit double precision (a-h, o-z)
+      double precision r, par(2),c,a
       c= par(1)     
       if( r.gt.0 ) then 
          a=par(2)

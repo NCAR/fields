@@ -7,9 +7,9 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
       subroutine csstr(h,nobs,x,y,wght,c,offset,trace,vlam,work,ierr)
       parameter(mxM=20000)
       implicit double precision (a-h,o-z)
-      REAL*8 h,trace, vlam,c,offset
-      REAL*8 x(nobs),y(nobs),wght(nobs)
-      REAL*8 work(nobs),diag(mxM),dumm1(1),dumm2(1)
+      double precision h,trace, vlam,c,offset
+      double precision x(nobs),y(nobs),wght(nobs)
+      double precision work(nobs),diag(mxM),dumm1(1),dumm2(1)
       integer job(3),ideriv,ierr, ndum
       data ideriv/0/
        job(1)=3

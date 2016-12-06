@@ -13,16 +13,23 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 !     combinations of xg and yg
 !----------------------------------------------------------------------
 
-      integer np      		! # of points in polygon
-      integer nx,ny		! # points to check 
-      real xg(nx) 		! x grid values to check
-      real yg(ny)               ! y grid values to check 
-      real    xp(np)		! 2d-locations of polygon
-      real    yp(np)		
-      real  x1, x2, y1,y2       ! min and max of x and y
+      integer np
+!    # of points in polygon
+      integer nx,ny
+!     # points to check 
+      real xg(nx)
+!     x grid values to check
+      real yg(ny)
+!     y grid values to check 
+      real    xp(np)
+!     2d-locations of polygon
+      real  yp(np)
+      real  x1, x2, y1,y2
+!     min and max of x and y
       real  temp, xt, yt
-      integer ind(nx,ny)      ! THE ANSWER : ind(i)=1 if point xd(i),yd(i) is 
-                                !  in polygon 0 otherwise 
+      integer ind(nx,ny)
+! THE ANSWER : ind(i)=1 if point xd(i),yd(i) is 
+!     in polygon 0 otherwise 
       integer in
       x1= xp(1)
       x2= xp(2)

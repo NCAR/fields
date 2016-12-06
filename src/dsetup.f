@@ -16,9 +16,9 @@ C     ARE THE SQUARE ROOTS OF THE WEIGHTS USED IN THE
 C     PENALIZED LEAST-SQUARES CRITERION
 c
       implicit double precision (a-h,o-z)
-      REAL*8 WGHT(NMAX),X(NMAX),y(NMAX)
-      REAL*8 QTY(NMAX),V(NMAX,7)
-      REAL*8 DIFF,PREV
+      double precision WGHT(NMAX),X(NMAX),y(NMAX)
+      double precision QTY(NMAX),V(NMAX,7)
+      double precision DIFF,PREV
       INTEGER NPOINT,I,NPM1
 c
       NPM1=NPOINT -1
@@ -47,14 +47,17 @@ c
 c
       V(NPOINT,1)=0.d0
       DO 12 I=2,NPM1
-   12    V(I,5)=V(I,1)**2 + V(I,2)**2 + V(I,3)**2
+        V(I,5)=V(I,1)**2 + V(I,2)**2 + V(I,3)**2
+ 12   continue
       IF(NPM1 .LT. 3)GO TO 14
       DO 13 I=3,NPM1
-   13    V(I-1,6)=V(I-1,2)*V(I,1) + V(I-1,3)*V(I,2)
+         V(I-1,6)=V(I-1,2)*V(I,1) + V(I-1,3)*V(I,2)
+ 13      continue
    14 V(NPM1,6)=0.d0
       IF(NPM1 .LT. 4)GO TO 16
       DO 15 I=4,NPM1
-   15    V(I-2,7)=V(I-2,3)*V(I,1)
+       V(I-2,7)=V(I-2,3)*V(I,1)
+ 15   continue   
    16 V(NPM1-1,7)=0.d0
       V(NPM1,7)=0.d0
 c
@@ -63,7 +66,8 @@ C  CONSTRUCT Q-TRANSP. * Y IN QTY
       DO 21 I=2,NPM1
          DIFF=(Y(I+1)-Y(I))/V(I,4)
          QTY(I)=DIFF - PREV
-   21    PREV=DIFF
+         PREV=DIFF
+ 21   continue
 c
       RETURN
       END

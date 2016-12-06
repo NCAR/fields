@@ -11,16 +11,22 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 !     are assumed to form polygon.
 !----------------------------------------------------------------------
 
-      integer np      		! # of points in polygon
-      integer nd		! # points to check 
-      real xd(nd) 		! 2d-locations to check
+      integer np
+!     # of points in polygon
+      integer nd
+!     # points to check 
+      real xd(nd)
+!     2d-locations to check
       real yd(nd)
-      real    xp(np)		! 2d-locations of polygon
-      real    yp(np)		
-      real  x1, x2, y1,y2       ! min and max of x and y
+      real    xp(np)
+!     2d-locations of polygon
+      real  yp(np)
+      real  x1, x2, y1,y2
+!     min and max of x and y
       real  temp, xt, yt
-      integer ind(nd)		! THE ANSWER : ind(i)=1 if point xd(i),yd(i) is 
-                                !  in polygon 0 otherwise 
+      integer ind(nd)
+!     THE ANSWER : ind(i)=1 if point xd(i),yd(i) is 
+!  in polygon 0 otherwise 
       integer in
       x1= xp(1)
       x2= xp(2)
@@ -94,7 +100,8 @@ C
         npts = np
       end if
 
-      in = 0		! ASSUME POINT IS OUTSIDE
+      in = 0
+!     ASSUME POINT IS OUTSIDE
 
 C --- ------------------------------------------------------------------
 C --- CHECK TO SEE IF THE POINT IS ON THE POLYGON.
@@ -103,7 +110,8 @@ C --- ------------------------------------------------------------------
       do ipnt = 1,npts
          if (xpnt .eq. xp(ipnt) .and. ypnt .eq. yp(ipnt) ) then
 	    in = 1
-	    goto 999		! EARLY EXIT
+      goto 999
+! EARLY EXIT
          endif
       enddo
 

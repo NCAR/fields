@@ -10,10 +10,10 @@ c** finds value of h minimizing the  generalized cross-validation
       subroutine cvrf
      * (h,nobs,x,y,wt,sy,trace,diag,din,dout,cv,ierr)  
       implicit double precision (a-h,o-z)    
-      REAL*8 h,trace,cv
-      REAL*8 x(nobs),y(nobs),wt(nobs)
-      REAL*8 sy(nobs),diag(nobs),dumm1(1),dumm2(1)
-      real*8 din(10), dout(10)
+      double precision h,trace,cv
+      double precision x(nobs),y(nobs),wt(nobs)
+      double precision sy(nobs),diag(nobs),dumm1(1),dumm2(1)
+      double precision din(10), dout(10)
       integer ngrid, ierr, job(3),ideriv
       data job/3,0,0/
       data ideriv,ngrid/0,1/

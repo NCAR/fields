@@ -11,8 +11,8 @@ c
        implicit double precision (a-h,o-z)
        integer nd,n1,n2,ic
        
-       real*8 par(nd),x1(n1,nd), x2(n2,nd), c(n2), h(n1),sum
-       real*8 work( n2), ddot
+       double precision par(nd),x1(n1,nd), x2(n2,nd), c(n2), h(n1),sum
+       double precision work( n2), ddot
 
 c****** work aray must be dimensioned to size n2
 c **** loop through columns of output matrix K

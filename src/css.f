@@ -89,13 +89,14 @@ c
 c  ierr : on return ierr>0 indicates all is not well :-(
 c
       parameter (NMAX=20000)  
-      implicit real*8 (a-h,o-z)  
-      REAL*8 h,trace,vlam  
-      REAL*8 wght(npoint),X(npoint),Y(npoint),sy(npoint),diag(npoint)  
-      REAL*8 xg(ngrid),yg(ngrid)  
-      REAL*8 A(NMAX,4),V(NMAX,7)  
-      REAL*8 P,SIXP,SIX1MP,cost  
-      REAL*8 ux(NMAX),uy(NMAX), uw(NMAX),ud(NMAX),utr 
+      implicit double precision (a-h,o-z)  
+      double precision h,trace,vlam  
+      double precision wght(npoint),X(npoint),Y(npoint)
+      double precision sy(npoint),diag(npoint)  
+      double precision xg(ngrid),yg(ngrid)  
+      double precision A(NMAX,4),V(NMAX,7)  
+      double precision P,SIXP,SIX1MP,cost  
+      double precision ux(NMAX),uy(NMAX), uw(NMAX),ud(NMAX),utr 
       integer imx(NMAX) 
       integer idx(NMAX)  
       integer npoint,igcv,igrid, isort,  job(3)  
@@ -235,7 +236,8 @@ C piecewise cubic COEFFICIENTS ARE STORED IN A(.,2-4).
 
          SIXP=6.d0*P  
          DO 62 I=1,nunq  
-   62       A(I,3)=A(I,3)*SIXP  
+          A(I,3)=A(I,3)*SIXP
+  62     continue
          NPM1=nunq - 1  
          DO 63 I=1,NPM1  
             A(I,4)=(A(I+1,3)-A(I,3))/V(I,4)  

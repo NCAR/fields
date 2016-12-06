@@ -112,10 +112,11 @@ c
    
       parameter(NMAX=20000)  
       implicit double precision (a-h,o-z)  
-      REAL*8 h,trace,cv  
-      REAL*8 wt(npoint),X(npoint),Y(npoint),sy(npoint),diag(npoint)  
-      REAL*8 xg(ngrid),yg(ngrid)  
-      REAL*8 din(10), dout(10),cost,  offset, dum1, dum2
+      double precision h,trace,cv  
+      double precision wt(npoint),X(npoint),Y(npoint)
+      double precision sy(npoint),diag(npoint)  
+      double precision xg(ngrid),yg(ngrid)  
+      double precision din(10), dout(10),cost,  offset, dum1, dum2
       
       integer npoint,ngrid ,itj(3), job(3)
 
@@ -178,7 +179,6 @@ c
 c    make up new set of weights
 c
           call rcsswt( npoint, y,sy,wt, din(5))
- 480       format( 5e15.6)
 c    reinitialize test criterion for convergence
 c
       test=0.0

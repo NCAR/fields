@@ -20,8 +20,8 @@ C   THE QUADRATIC COEFFICIENTS OF THE SPLINE IN ITS
 C   PIECEWISE POLYNOMIAL REPRESENTATION IS SOLVED . THE 
 C   SOLUTION IS RETURNED IN U.
 c
-      REAL*8 P,QTY(NMAX),QU(NMAX),U(NMAX),V(NMAX,7)
-      REAL*8 SIX1MP,TWOP,RATIO,PREV
+      double precision P,QTY(NMAX),QU(NMAX),U(NMAX),V(NMAX,7)
+      double precision SIX1MP,TWOP,RATIO,PREV
       INTEGER NPOINT,I,NPM1,NPM2
 c
       NPM1=NPOINT - 1
@@ -49,24 +49,28 @@ C     IS UPPER TRIANGULAR.
          V(I,2)=RATIO
          RATIO=V(I,3)/V(I,1)
          V(I+2,1)=V(I+2,1) - RATIO*V(I,3)
-   20    V(I,3)=RATIO
+         V(I,3)=RATIO
+ 20   continue
 C  FORWARD SUBSTITUTION
       U(1)=0.d0
       V(1,3)=0.d0
       U(2)=QTY(2)
       DO 30 I=2,NPM2
-   30    U(I+1)=QTY(I+1) - V(I,2)*U(I) -V(I-1,3)*U(I-1)
+         U(I+1)=QTY(I+1) - V(I,2)*U(I) -V(I-1,3)*U(I-1)
+ 30   continue
 C  BACK SUBSTITUTION
       U(NPOINT)=0.d0
       U(NPM1)=U(NPM1)/V(NPM1,1)
       DO 40 I=NPM2,2,-1
-   40    U(I)=U(I)/V(I,1) - U(I+1)*V(I,2) - U(I+2)*V(I,3)
+         U(I)=U(I)/V(I,1) - U(I+1)*V(I,2) - U(I+2)*V(I,3)
+ 40   continue
 C  CONSTRUCT Q*U
    41 PREV=0.d0
       DO 50 I=2,NPOINT
          QU(I)=(U(I)-U(I-1))/V(I-1,4)
          QU(I-1)=QU(I) - PREV
-   50    PREV=QU(I)
+         PREV=QU(I)
+ 50   continue
       QU(NPOINT)=-QU(NPOINT)
 c
       RETURN

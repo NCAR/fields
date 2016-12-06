@@ -6,8 +6,8 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 c**********
       subroutine rcsswt(n,y, sy, wt, par)
       implicit double precision (a-h, o-z)
-      real*8 y(n), sy(n), wt(n),psi,a,am1,c
-      real*8 par(2)
+      double precision y(n), sy(n), wt(n),psi,a,am1,c
+      double precision par(2)
 c
 c   psi(u) is the derivative of rho(u) defined in rcssr above
 c

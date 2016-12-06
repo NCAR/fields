@@ -81,8 +81,8 @@ c
    40        continue
    50     continue
           if (nt .ne. npoly) then
-	      info = 1
-	      return
+             info = 1
+          return
           endif
       endif
 c

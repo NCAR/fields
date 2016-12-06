@@ -17,9 +17,9 @@ C   Q-TRANSP AND Q TO OBTAIN THE DIAGONAL ELEMENTS OF
 C   THE HAT MATRIX WHICH ARE STORED IN THE VECTOR LEV.
 C     THE TRACE OF THE HAT MATRIX IS RETURNED IN TR.
 c
-      REAL*8 V(NMAX,7),TR,W1,W2,W3,SIX1MP
-      REAL*8 wght(NMAX)
-      REAL*8 LEV(npoint)
+      double precision V(NMAX,7),TR,W1,W2,W3,SIX1MP
+      double precision wght(NMAX)
+      double precision LEV(npoint)
       INTEGER NPM1,NPM2,NPM3,NPOINT
 c
       NPM1=NPOINT - 1

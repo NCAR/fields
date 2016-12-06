@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "splint" <- function(x, y, xgrid, wt = NULL, derivative = 0, 
-    lam = 0, df = NA, lambda = NULL) {
+    lam = 0, df = NA, lambda = NULL, nx=NULL) {
     #
     # reform calling args if passed as a matrix or list
     
@@ -61,8 +61,11 @@
     }
     igcv <- ifelse(lam == 0, 2, 0)
     # call to FORTRAN -- only return the evaluated poiints (ygrid).
-    return(
-           .Fortran("css",PACKAGE="fields",
+    if( !is.null(nx)){
+      xgrid<- seq( min( x), max(x),,nx)
+    }
+  
+           ygrid<- .Fortran("css",PACKAGE="fields",
                      h = as.double(ifelse(igcv == 2, 1, log(lam))),
                      as.integer(n),
                      as.double(x),
@@ -79,5 +82,10 @@
                      as.integer(derivative), 
                      as.integer(0)
                      )$ygrid
- )
+ if(!is.null(nx) ){ 
+   return(list( x=xgrid, y=ygrid))
+}
+else{ 
+  return( ygrid)
+  }
 }

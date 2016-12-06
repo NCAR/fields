@@ -83,7 +83,7 @@ c <= go to here
       GO TO 4
       endif
 c > goes to here       
-      X(I)=XX      
+  8   X(I)=XX      
       ki(I)=kki   
       GO TO 2    
   9   X(1)=XX   

@@ -249,15 +249,15 @@ y<- ozone2$y[16,]
 obj<- mKrigMLEJoint(x,y, 
                       cov.args=list(Covariance="Matern", smoothness=1.0), 
                       cov.params.start=list(theta=.2), lambda.start=.1)
-
+#                      
 # check  lnLikeihood evaluations that were culled from optim
 # these are in obj$lnLike.eval
-# funny ranges are set to avoid outlining and very low likelihood value
+# funny ranges are set to avoid  very low likelihood value
 
 quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
              xlim=c(-1.2,-.40), ylim=c( -1,1), zlim=c( -625, -610))
 
-# some synthetic data
+# some syntheticdata with replicates
   N<- 100
   set.seed(123)
   x<- matrix(runif(2*N), N,2)
@@ -265,21 +265,34 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
   Sigma<-  Matern( rdist(x,x)/theta , smoothness=1.0)
   Sigma.5<- chol( Sigma)
   sigma<- .1
-  M<-50 #  fifty independent spatial data sets -- little overhead in MLE across
-  # indedpendent realizations.
+  #  250 independent spatial data sets but a common covariance function 
+  #    -- there is little overhead in
+  #        MLE across independent realizations and a good test of code validity.
+  M<-250
   #F.true<- t( Sigma.5)%*% matrix( rnorm(N*M), N,M)  
   F.true<- t( Sigma.5)\%*\% matrix( rnorm(N*M), N,M)
   Y<-  F.true +  sigma* matrix( rnorm(N*M), N,M)
+\dontrun{
+# m=0 is a simple switch to indicate _no_ fixed spatial drift
+# (the default and highly recommended  is linear drift, m=2). 
+# this results in MLEs that are less biased -- in fact it nails it !
+  obj1a<- mKrigMLEJoint(x,Y, 
+                    cov.args=list(Covariance="Matern", smoothness=1.0), 
+                    cov.params.start=list(theta=.5), lambda.start=.5,
+                     mKrig.args= list( m=0))
+ 
+ test.for.zero( obj1a$summary["sigmaMLE"], sigma, tol=.005)
+ test.for.zero( obj1a$summary["theta"], theta, tol=.01)
+} 
 # find MLE for lambda with grid of ranges 
-# and smoothness fixed in Matern
-
+# and smoothness fixed in Matern                     
  par.grid<- list( theta= seq( .05,.3,,20))
-  obj<- mKrigMLEGrid( x,Y, cov.args= list(Covariance="Matern", smoothness=1.0), 
+  obj1b<- mKrigMLEGrid( x,Y, cov.args= list(Covariance="Matern", smoothness=1.0), 
         par.grid = par.grid
                     )
   obj$summary # take a look
 # profile over theta
-  plot( par.grid$theta, obj$summary[,"lnProfileLike.FULL"], type="b")
+  plot( par.grid$theta, obj1b$summary[,"lnProfileLike.FULL"], type="b", log="x")
 
 \dontrun{
 #perform joint likelihood maximization over lambda, theta, and smoothness.  

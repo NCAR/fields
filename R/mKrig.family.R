@@ -213,19 +213,22 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     }
     # fixed part of the model this a polynomial of degree m-1
     # Tmatrix <- fields.mkpoly(xnew, m=object$m)
-    # only do this if nt>0
+    # only do this if nt>0, i.e. there is a fixed part.
     #
     if( object$nt>0){
     if (derivative == 0) {
         if (drop.Z | object$nZ == 0) {
             # just evaluate polynomial and not the Z covariate
-           
-            temp1 <- fields.mkpoly(xnew, m = object$m) %*% d.coef[object$ind.drift, 
-                ]
+            temp1 <- fields.mkpoly(xnew, m = object$m) %*% 
+              d.coef[object$ind.drift, ]
         }
         else {
-            temp1 <- cbind(fields.mkpoly(xnew, m = object$m), 
-                Z) %*% d.coef
+          if( nrow( xnew) != nrow(as.matrix(Z)) ){
+            stop("number of rows of covariate Z is not 
+                 the same as the number of locations")
+          }
+            temp0 <-  cbind(fields.mkpoly(xnew, m = object$m),as.matrix(Z)) 
+            temp1 <- temp0 %*% d.coef
         }
     }
     else {

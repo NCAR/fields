@@ -2,9 +2,8 @@ c fields, Tools for spatial data
 c Copyright 2015, Institute for Mathematics Applied Geosciences
 c University Corporation for Atmospheric Research
 c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
- 
 
-       subroutine drdfun(n,d2, par)
+       subroutine drdfun(n, d2, par)
        double precision d2(n), par(2), dtemp
        integer n
        if( int(par(2)).eq.0) then

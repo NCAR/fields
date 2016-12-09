@@ -35,7 +35,8 @@ sigma and rho. They are depreciated and my be omitted in later versions of
 fields with their roles   being replaced by other functions. See details below.
 }
 \usage{
-mKrig.MLE(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov", cov.args = NULL, 
+mKrig.MLE(x, y, weights = rep(1, nrow(x)), cov.fun="stationary.cov",
+cov.args = NULL, 
           Z = NULL, par.grid = NULL, lambda = NULL, lambda.profile = TRUE, 
           verbose = FALSE, relative.tolerance = 1e-04, ...)
 
@@ -51,66 +52,37 @@ fastTps.MLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-Matrix of unique spatial locations (or in print or surface 
-  the returned mKrig object.)
-}
-  \item{y}{
-%%     ~~Describe \code{y} here~~
-Vector or matrix of observations at spatial locations, 
-  missing values are not allowed! Or in mKrig.coef a new 
-  vector of observations. If y is a matrix the columns are 
-  assumed to be independent observations vectors generated 
-  from the same covariance and measurment error model.
-}
-\item{cov.fun}{
-The name, a text string, of the covariance function.
-}
-\item{cov.args}{
-Additional arguments that would also be included in calls
+
+\item{cov.args}{ Additional arguments that would also be included in calls
   to the covariance function to specify the fixed part of 
-  the covariance model.
-}
-  \item{weights}{
-%%     ~~Describe \code{weights} here~~
-Precision ( 1/variance) of each observation
-}
-  \item{Z}{
-%%     ~~Describe \code{Z} here~~
-Linear covariates to be included in fixed part of the 
-  model that are distinct from the default low order 
-  polynomial in \code{x}
-}
-  \item{par.grid}{
-A list or data frame with components being parameters for
-  different covariance models. A typical component is "theta"
-  comprising a vector of scale parameters to try. If par.grid
-  is "NULL" then the covariance model is fixed at values that
-  are given in \dots.
-}
-\item{cov.params.guess}{
-A list of initial guesses for covariance parameters over which 
-  the user wishes to perform likelihood maximization.  The list 
-  contains the names of the parameters as well as the values.
-}
-  \item{lambda}{
-If \code{lambda.profile=FALSE} the values of lambda to evaluate
+  the covariance model.}
+
+\item{cov.fun}{The name, a text string, of the covariance function.}
+
+\item{cov.params.guess}{A list of initial guesses for covariance parameters
+over which the user wishes to perform likelihood maximization.  The list 
+  contains the names of the parameters as well as the values.}
+
+ \item{find.trA.MLE}{If TRUE will estimate the effective degrees of freedom using 
+  a simple Monte Carlo method throughout joint likelihood maximization.  
+  Either way, the trace of the mKrig object with the best 
+  log-likelihood is calculated depending on \code{find.trA}. Computing 
+  the trace will add to the computational burden by approximately NtrA 
+  solutions of the linear system but the cholesky decomposition is 
+  reused.}
+  
+\item{lambda}{If \code{lambda.profile=FALSE} the values of lambda to evaluate
   the likelihood if "TRUE" the starting values for the
   optimization. If lambda is NA then the optimum value from
   previous search is used as the starting value. If lambda is
-  NA and it is the first value the starting value defaults to
-  1.0.
-}
-  \item{lambda.guess}{
-The initial guess for lambda in the joint log-likelihood 
-  maximization process
-}
-  \item{lambda.profile}{
-  If \code{TRUE} maximize likelihood over lambda.
-}
-\item{optim.args}{
-Additional arguments that would also be included in calls
+  NA and it is the first value the starting value defaults to 1.0.}
+  
+\item{lambda.guess}{The initial guess for lambda in the joint log-likelihood 
+  maximization process.}
+  
+\item{lambda.profile}{ If \code{TRUE} maximize likelihood over lambda.}
+
+\item{optim.args}{Additional arguments that would also be included in calls
   to the optim function in joint likelihood maximization.  If 
   \code{NULL}, this will be set to use the "BFGS-" 
   optimization method.  See \code{\link{optim}} for more 
@@ -123,32 +95,44 @@ Additional arguments that would also be included in calls
   the covariance parameters in the order they are given in 
   \code{cov.params.guess}.  Also note that the optimization 
   is performed on a log-scale, and this should be taken into 
-  consideration when passing arguments to \code{optim}.
+  consideration when passing arguments to \code{optim}.}  
+  
+\item{par.grid}{A list or data frame with components being parameters for
+  different covariance models. A typical component is "theta"
+  comprising a vector of scale parameters to try. If par.grid
+  is "NULL" then the covariance model is fixed at values that
+  are given in \dots.}  
+ 
+ \item{relative.tolerance}{Relative tolerance used to declare convergence when
+  maximizing likelihood over lambda.}
+ 
+  
+\item{theta}{Range parameter for compact Wendland covariance. (seefastTps)}
+ 
+\item{verbose}{If \code{TRUE} print out interesting intermediate results.}
+
+\item{weights}{Precision ( 1/variance) of each observation}
+  
+\item{x}{
+Matrix of unique spatial locations (or in print or surface 
+  the returned mKrig object.)}
+
+\item{y}{
+Vector or matrix of observations at spatial locations, 
+  missing values are not allowed! Or in mKrig.coef a new 
+  vector of observations. If y is a matrix the columns are 
+  assumed to be independent observations vectors generated 
+  from the same covariance and measurment error model.
 }
-  \item{find.trA.MLE}{
-If TRUE will estimate the effective degrees of freedom using 
-  a simple Monte Carlo method throughout joint likelihood maximization.  
-  Either way, the trace of the mKrig object with the best 
-  log-likelihood is calculated depending on \code{find.trA}. Computing 
-  the trace will add to the computational burden by approximately NtrA 
-  solutions of the linear system but the cholesky decomposition is 
-  reused.
-}
-\item{\dots}{
-Additional arguments that would also be included in a call to 
+
+\item{Z}{Linear covariates to be included in fixed part of the 
+  model that are distinct from the default low order 
+  polynomial in \code{x}}
+
+\item{\dots}{Additional arguments that would also be included in a call to 
   \code{mKrig} to specify the covariance model and fixed model 
-  covariables.
-}
-  \item{verbose}{
-%%     ~~Describe \code{verbose} here~~
-If \code{TRUE} print out interesting intermediate results.
-}
-  \item{relative.tolerance}{
-Tolerance used to declare convergence when
-  maximizing likelihood over lambda.
-}
-  \item{theta}{Range parameter for compact Wendland covariance. (see
-  fastTps)}
+  covariables.}
+  
 }
 \details{
 The "mKrig" prefixed functions are depreciated and are replaced in functionality 

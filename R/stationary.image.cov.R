@@ -39,7 +39,7 @@ stationary.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
         if(!is.null(delta)){
            M<- ceiling(m + 2*delta/dx)
            N<- ceiling(n + 2*delta/dy)
-         }
+        }
         if (is.null(M)) 
             M <- (2 * m)
         if (is.null(N)) 
@@ -57,8 +57,7 @@ stationary.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
            out <- spam2full(out)
          }
         # coerce to a matrix (image)
-           out<- matrix( c(out), nrow = M, ncol = N)
-        print( dim( out))
+        out<- matrix( c(out), nrow = M, ncol = N)
         temp <- matrix(0, nrow = M, ncol = N)
         #
         # a simple way to normalize. This could be avoided by

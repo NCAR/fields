@@ -48,12 +48,26 @@ A matrix of spatial locations with rows indexing location
 \item{y}{
 Spatial observations
 }
+  \item{weights}{
+%%     ~~Describe \code{weights} here~~
+Precision ( 1/variance) of each observation
+}
+  \item{Z}{
+%%     ~~Describe \code{Z} here~~
+Linear covariates to be included in fixed part of the 
+  model that are distinct from the default low order 
+  polynomial in \code{x}
+}
+\item{mKrig.args}{A list containing other objects to pass to mKrig.}
 \item{lambda.start}{
 The initial guess for lambda, the nugget to sill ratio.
 }
 \item{theta.start}{
 The initial guess for theta, the correlation range parameter.
 }
+\item{theta.range}{Range of range parameters (aka theta) to search over. Default is the range from the 2 and 97 percent quantiles of the pairwise distances among locations.}
+
+\item{gridN}{Number of points to use in grid search over theta.}
 \item{cov.function}{
 The name of the covariance function (See help on Krig for details. )
 }
@@ -70,6 +84,7 @@ Additional arguments passed to the optim function for likelihood
                     control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                    ndeps = c(0.05,0.05)))}
 }
+\item{na.rm}{If TRUE remove missing values in y and corresponding locations in x.}
 
 \item{verbose}{
 If TRUE print out intermediate information for debugging. 
@@ -95,10 +110,15 @@ Additional arguments to pass to the mKrig function.
 	
 	Note the likelihood can be maximized analytically over the  parameters of the fixed
 	part of the spatial model and with the nugget (sigma) and sill (rho)  reduced to the
-	single parameter lambda= sigma^2/rho. So fixing any other covariance parameters the
-	likelihood is maximzed numerically over lambda and theta. 
+	single parameter lambda= sigma^2/rho.  The
+likelihood is maximized numerically over lambda and theta if there are additional
+covariance parameters ( such as smoothness for the Matern) these need to be fixed
+and so the MLE is found for the covariance conditional on these additional
+parameter values. From a practical point of view it is often difficult to estimate
+just these three from a moderate spatial data set and the user is encourage to try
+different combinations of fixing covariance parameters with ML for the remaining
+ones.  
 	 
-  
 }
 \value{
 	\code{MLESpatialProcess}:
@@ -115,18 +135,9 @@ first column being the theta grid and the second column being the
 	      evaluations being a 
 	      6 column matrix with the parameters theta, lambda, sigma,
 	       rho, profile likelihood and the effective degrees of
-	        freedom. This is just last row of 
-	      \code{lambda.est} returned by the core function \code{Krig}
+	        freedom.
 	      
-	     \code{MLESpatialProcess.fast} here the returned value is limited because this
-	     function isbuilt around calls to \code{mKrig}. Returned value is a list with components:
-	     \code{pars}, the MLEs for theta, rho, sigma and lambda,  
-		  \code{logLikelihood},values of the log likelihood at the maximum, 
-		     \code{eval.grid}, a table with the results from evaluating different combinations of 
-		     parameters,
-
-            \code{converge}, convergence flag from optim (0=Successfull) and number of evaluations used to find maximum.
-            and \code{call}, the calling arguments. 
+	     \code{MLESpatialProcess.fast} has been depreciated and is included for backward compatibility.  
             
             }
 
@@ -140,13 +151,13 @@ Doug Nychka, John Paige
 \examples{
 #
 #
-#generate observation locations
-n=500
+#generate observation locations (100 is small just to make this run quickly)
+n=100
 set.seed(124)
 x = matrix(runif(2*n), nrow=n)
 #generate observations at the locations
-trueTheta = .2
-trueSigma = .05
+trueTheta = .1
+trueSigma = .01
 Sigma = exp( -rdist(x,x) /trueTheta ) 
 # y = t(chol(Sigma))%*% (rnorm(n))  +  trueSigma * rnorm( n)
 y = t(chol(Sigma))\%*\% (rnorm(n))  +  trueSigma * rnorm( n)
@@ -162,7 +173,7 @@ out = MLESpatialProcess(x, y,
 testSmoothness = c(.5, 1, 2)
 for( nu in testSmoothness){
   out = MLESpatialProcess(x, y, cov.args=list(Covariance="Matern"), smoothness=nu) 
-  print( out$summary)
+  print( out$MLEJoint$summary)
 }
 
 }
@@ -178,8 +189,8 @@ obj2<-  MLESpatialProcess( x,y)
 obj3<-  MLESpatialProcess( x,y, Z=elev)
 
 # elevation makes a difference
-obj2$summary
-obj3$summary
+obj2$MLEJoint$summary
+obj3$MLEJoint$summary
 
   }
  \dontrun{

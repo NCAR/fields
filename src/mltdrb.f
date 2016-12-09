@@ -8,11 +8,11 @@ c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 C** evaluates partial derivatives of radial basis functions with
 c** nodes at x2 and at the points x1
 c
-       subroutine mltdrb( nd,x1,n1, x2,n2, par, c,h,work)
+       subroutine mltdrb( nd,x1,n1, x2, n2, par, c,h,work)
        implicit double precision (a-h,o-z)
        integer nd,n1,n2,ic, ivar
        
-       double precision par(1),x1(n1,nd)
+       double precision par(2), x1(n1,nd)
        double precision  x2(n2,nd), c(n2), h(n1, nd), sum
        double precision work( n2), ddot
        do 1000 ivar=1, nd
@@ -31,7 +31,7 @@ c** accumulate squared differences
           work(j)=sum
  10    continue
 C**** evaluate squared distances  with basis functions. 
-       call drdfun( n2,work(1),par)
+       call drdfun( n2,work(1) ,par(1) )
        do 11 j= 1, n2
           work( j)= 2.0*work(j)*(x1(ir,ivar)- x2(j,ivar))
  11    continue

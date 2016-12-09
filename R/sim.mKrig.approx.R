@@ -48,7 +48,8 @@
         print( t( stats( simulationGridList)))
     }
     # set up object for simulating on a grid using circulant embedding
-    covarianceObject <- stationary.image.cov(setup = TRUE, grid = simulationGridList, 
+    covarianceObject <- stationary.image.cov(setup = TRUE,
+        grid = simulationGridList, 
         cov.function = mKrigObject$cov.function, cov.args = mKrigObject$args, 
         delta = delta)
     if (verbose) {
@@ -101,6 +102,7 @@
     return(list(predictionPoints = predictionPoints, Ensemble = out, 
         call = match.call()))
 }
+
 makeSimulationGrid <- function(mKrigObject, predictionPoints, 
     nx, ny, nxSimulation, nySimulation, gridRefinement, gridExpansion) {
     # if prediction grid is passed use these to deterimine the simulation grid.

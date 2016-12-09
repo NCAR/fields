@@ -116,7 +116,7 @@ if(verbose){
   capture.env <- environment()
 # call to optim with initial start (default is log scaling )
   init.start <- parTransform( unlist(c(lambda.start, cov.params.start)), inv=FALSE)
-  cat("init.start",  init.start, fill=TRUE)
+#  cat("init.start",  init.start, fill=TRUE)
   optimResults <- do.call(optim, c(    list(par=init.start),
                             list(mKrigJointTemp.fn),
                                          optim.args,

@@ -36,19 +36,18 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-spatialProcess
-(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
-                 = NULL, cov.function = "stationary.cov", cov.args =
-                 list(Covariance = "Matern", smoothness = 1),
-                 lambda.start = 0.5, theta.start = NULL, theta.range =
-                 NULL, gridN = 20, optim.args = NULL, na.rm = TRUE,
-                 verbose = FALSE, abstol = 1e-04, ...)
+spatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, 
+mKrig.args = list(m = 2), 
+cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", 
+        smoothness = 1), theta.start = NULL, lambda.start = 0.5,
+         theta.range = NULL,
+    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, ...) 
                  
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
 
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
 \item{x}{Observation locations}
 
@@ -71,15 +70,18 @@ E.g. elevation for fitting climate data over space. }
  \item{lambda.start}{Starting value for MLE fitting of the lambda parameter. Note lambda
   is the ratio of the nugget variance to the process variance. In code variables this is
   \code{sigma^2} divided by \code{rho}. }
+  \item{ theta.range }{A range for the ML search to estimate theta. Default is based on quantiles of the location pairwise distances.}
 
  \item{na.rm}{If TRUE NAs are removed from the data. }
 
- \item{NGrid}{Number of grid points for evaluating profile likelihood over theta and
- also over lambda (using MLE for theta).}
+% \item{gridN}{Number of grid points for evaluating profile likelihood over
+% theta and
+% also over lambda (using MLE for theta).}
  
- \item{optim.args}{Arguements to be used  in optim for finding joint MLEs for theta
- and lambda. 
-                                     }
+ %\item{optim.args}{Arguements to be used  in optim for finding joint
+ %MLEs for theta
+ %and lambda. }
+ 
  \item{verbose}{If TRUE print out intermediate information for debugging.}
 
   \item{\dots}{
@@ -102,24 +104,31 @@ E.g. elevation for fitting climate data over space. }
 	important to be aware of these. 
 	The spatial model is 
 	
-	Y.k= f(x.k) = P(x.k) + Z(x.k) + e.k
+	Y.k= P(x.k) + Z(x.k)\%*\%d2 + g(x.k) + e.k
 
 where ".k" means subscripted by k, Y.k is the dependent variable
-observed at location x.k P is a low degree polynomial (default is a
-linear function in the spatial coordinates) and Z is a mean zero,
+observed at location x.k. P is a low degree polynomial (default is a
+linear function in the spatial coordinates) and Z is a matrix of covariates (optional) that enter as a linear model the fixed part. g is a mean zero,
 Gaussian stochastic process with a marginal variance of rho and a
 scale (or range) parameter, theta. The measurement errors, e.k, are
 assumed to be uncorrelated, normally distributed with mean zero and
-standard deviation sigma. 
+standard deviation sigma. If weights are supplied then the variance of e is assumed to be  \code{sigma^2/ weights}.
+
 
 Perhaps the most important aspect of this  function is that
  	the range (theta), nugget (sigma**2) and process variance (rho) parameters
  	for the covariance are estimated by restricted maximum
  	likelihood and this is the model that is then  used for spatial
  	prediction. Geostatistics usaually refers to sigma**2 + rho as the 
- 	"sill" and often these parameters are estimated by variogram fitting rather than maximum likelihood. To be consistent with spline models and to focus
+ 	"sill" and often these parameters are estimated by variogram fitting rather
+ 	than maximum likelihood. To be consistent with spline models and to focus
  	on the key part of model we reparametrize as lambda= sigma**2/
- 	rho and rho. Thinking about Z as the spatial signal and e as the noise lambda can be interpreted  as the noise to signal variance ratio in this spatial context. The likelihood and the cross valdiation function
+ 	rho and rho. Thinking about h as the spatial signal and e as the noise lambda
+ 	can be interpreted  as the noise to signal variance ratio in this spatial
+ 	context.(See the comparision with fitting the geoR model in the
+examples section.)
+ 	
+ 	The likelihood and the cross valdiation function
  	can be concentrated to only depend on lambda and theta and so
  	in reported the optimiztation of these two criterion we focus
  	on this form of the parameters.  Once lambda and theta are
@@ -234,7 +243,57 @@ data( ozone2)
 #(see also predictSurface for more control on evaluation grid
 # and plotting)
 #  
+
 \dontrun{
+# working with covariates and filling in missing station data
+# using an ensemble method
+# see the example under  help(sim.spatialProcess) to see how to 
+# handle a conditional simulation on a grid of predictions with 
+# covariates. 
+data(COmonthlyMet)
+  fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev, 
+                               theta.range= c(.25, 2.0) )
+  set.panel( 2,2)                             
+  plot( fit1E)
+  
+# conditional simulation at missing data
+  notThere<- is.na(CO.tmin.MAM.climate )
+  xp <- CO.loc[notThere,]
+  Zp <- CO.elev[notThere]
+  infill<- sim.spatialProcess( fit1E, xp=xp,
+                      Zp= Zp, M= 10)
+#  
+# interpretation is that these infilled values are all equally plausible 
+# given the observations and also given the estimated covariance model
+#  
+# for extra credit one could now standardized the infilled values to have
+# conditional mean and variance from the exact computations
+#  e.g. predict( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])
+#  and  predictSE(fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])  
+# with these standardization one would still preserve the correlations
+# among the infilled values that is also important for considering them as a
+# multivariate prediction.
+# conditional simulation on a grid but not using the covariate of elevation
+ fit2<- spatialProcess(CO.loc,CO.tmin.MAM.climate, 
+                               theta.range= c(.25, 2.0) )
+# note larger range parameter
+# create 2500 grids using handy function
+gridList <- fields.x.to.grid( fit2$x, nx=50,ny=50)
+xGrid<- make.surface.grid( gridList)
+ensemble<- sim.spatialProcess( fit2, xp=xGrid, M= 5)
+# this is an "n^3" computation so increasing the grid size 
+# can slow things down for computation 
+image.plot( as.surface( xGrid, ensemble[1,]))
+set.panel()
+}
+
+\dontrun{
+data( ozone2)
+# x is a two column matrix where each row is a location in lon/lat 
+# coordinates
+  x<- ozone2$lon.lat
+# y is a vector of ozone measurements at day 16 a the locations. 
+  y<- ozone2$y[16,]
 # a comparison to using an exponential and Wendland covariance function
 # and great circle distance -- just to make range easier to interpret.
     obj <- spatialProcess( x, y,
@@ -290,27 +349,6 @@ points( x, col="magenta")
 title("Matern sm= .5")
 }
 set.panel(1,1)
-\dontrun{
-# working with covariates and filling in missing station data
-# using an ensemble method
-#
-data(COmonthlyMet)
-  fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev   )
-# conditional simulation at missing data
-  good<- !is.na(CO.tmin.MAM.climate ) 
-  infill<- sim.Krig( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good], M= 100)
-#  
-# interpretation is that these infilled values are all equally plausible 
-# given the observations and also given the estimated covariance model
-#  
-# for extra credit one could now standardized the infilled values to have
-# conditional mean and variance from the exact computations
-#  e.g. predict( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])
-#  and  predictSE(fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])  
-# with these standardization one would still preserve the correlations
-# among the infilled values that is also important for considering them as a
-# multivariate prediction.
-}
 
 \dontrun{
 ### comparison with GeoR
@@ -323,11 +361,12 @@ data(COmonthlyMet)
   
   obj<- spatialProcess( x, y, mKrig.args= list(m=1), smoothness = .5 )
   
+  library( geoR)
   ml.n <- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
   # compare to 
   stuffFields<- obj$MLEInfo$MLEJoint$summary[c(1,3,4,5)]
   stuffGeoR<- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),ml.n$sigmasq) 
-  test.for.zero( stuffFields, stuffGeoR)         
+  test.for.zero( stuffFields, stuffGeoR, tol=.005)         
 }
 }
 \keyword{ spatial}% __ONLY ONE__ keyword per line

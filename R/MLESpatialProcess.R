@@ -87,6 +87,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   #NOTE lambda.profile = FALSE makes this work.
   lambdaGrid<-   10^(seq( -2,.5,,gridN))
   par.grid<- list( theta= rep(MLEJoint$pars.MLE[2], gridN) )
+  if( verbose){print( par.grid)}
   MLEProfileLambda <- mKrigMLEGrid(x, y,  weights = weights, Z= Z,
                                           cov.fun = cov.function, 
                                         cov.args  = cov.args,

@@ -58,24 +58,10 @@ mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
-%%     ~~Describe \code{x} here~~
-Matrix of unique spatial locations (or in print or surface 
-  the returned mKrig object.)
-}
-  \item{y}{
-%%     ~~Describe \code{y} here~~
-Vector or matrix of observations at spatial locations, 
-  missing values are not allowed! Or in mKrig.coef a new 
-  vector of observations. If y is a matrix the columns are 
-  assumed to be independent observations vectors generated 
-  from the same covariance and measurment error model.
-}
-\item{mKrig.args}{A list of additional parameters to supply to the base 
-\code{mKrig} function that are distinct from the covariance model. 
-For example \code{mKrig.args= list( m=1 )} will set the polynomial to be 
-just a constant term (degree = m -1 = 0).
-}
+ \item{abstol}{Absolute convergence tolerance used in optim.}
+ 
+ \item{capture.env}{For the ML obective function the frame to save the results of the evaluation. This should be the environment of the function calling optim.}
+ 
 \item{cov.fun}{
 The name, a text string, of the covariance function.
 }
@@ -84,23 +70,7 @@ Additional arguments that would also be included in calls
   to the covariance function to specify the fixed part of 
   the covariance model.
 }
-  \item{weights}{
-%%     ~~Describe \code{weights} here~~
-Precision ( 1/variance) of each observation
-}
-  \item{Z}{
-%%     ~~Describe \code{Z} here~~
-Linear covariates to be included in fixed part of the 
-  model that are distinct from the default low order 
-  polynomial in \code{x}
-}
-  \item{par.grid}{
-A list or data frame with components being parameters for
-  different covariance models. A typical component is "theta"
-  comprising a vector of scale parameters to try. If par.grid
-  is "NULL" then the covariance model is fixed at values that
-  are given in \dots.
-}
+
 \item{cov.params.start}{
 A list of initial starts for covariance parameters over which 
   the user wishes to perform likelihood maximization.  The list 
@@ -118,9 +88,19 @@ If \code{lambda.profile=FALSE} the values of lambda to evaluate
 The initial guess for lambda in the joint log-likelihood 
   maximization process
 }
+
   \item{lambda.profile}{
   If \code{TRUE} maximize likelihood over lambda.
 }
+
+\item{mKrig.args}{A list of additional parameters to supply to the base 
+\code{mKrig} function that are distinct from the covariance model. 
+For example \code{mKrig.args= list( m=1 )} will set the polynomial to be 
+just a constant term (degree = m -1 = 0).
+}
+
+\item{na.rm}{Remove NAs from data.}
+
 \item{optim.args}{
 Additional arguments that would also be included in calls
   to the optim function in joint likelihood maximization.  If 
@@ -134,27 +114,66 @@ Additional arguments that would also be included in calls
   Note that the first parameter is lambda and the others are 
   the covariance parameters in the order they are given in 
   \code{cov.params.start}.  Also note that the optimization 
-  is performed on a transformed scale (based on the function \code{parTransform} ), and this should be taken into 
+  is performed on a transformed scale (based on the function
+  \code{parTransform} ), and this should be taken into 
   consideration when passing arguments to \code{optim}.
 }
-\item{parTransform}{A function that maps the parameters to a scale for optimization or
+\item{parameters}{The parameter values for evaluate the likelihood.}
+
+ \item{par.grid}{
+A list or data frame with components being parameters for
+  different covariance models. A typical component is "theta"
+  comprising a vector of scale parameters to try. If par.grid
+  is "NULL" then the covariance model is fixed at values that
+  are given in \dots.
+}
+
+\item{parNames}{Names of the parameters to optimize over.}
+
+\item{parTransform}{A function that maps the parameters to a scale
+for optimization or
 effects the inverse map from the transformed scale into the original values. See below for more details. 
 }
 
-  \item{REML}{Currently using  REML is not implemented.}
-  
-  \item{verbose}{
-%%     ~~Describe \code{verbose} here~~
-If \code{TRUE} print out interesting intermediate results.
-}
-  \item{relative.tolerance}{
+
+\item{relative.tolerance}{
 Tolerance used to declare convergence when
   maximizing likelihood over lambda.
 }
-  \item{abstol}{Absolute convergence tolerance used in optim.}
-  
-  \item{theta}{Range parameter for compact Wendland covariance. (see
+
+\item{REML}{Currently using REML is not implemented.}
+ 
+\item{theta}{Range parameter for compact Wendland covariance. (see
   fastTps)}
+
+\item{verbose}{ If \code{TRUE} print out interesting intermediate results.
+}
+
+\item{weights}{
+Precision ( 1/variance) of each observation
+}
+
+  \item{x}{
+
+Matrix of unique spatial locations (or in print or surface 
+  the returned mKrig object.)
+}
+
+  \item{y}{
+Vector or matrix of observations at spatial locations, 
+  missing values are not allowed! Or in mKrig.coef a new 
+  vector of observations. If y is a matrix the columns are 
+  assumed to be independent observations vectors generated 
+  from the same covariance and measurment error model.
+}
+
+\item{Z}{
+Linear covariates to be included in fixed part of the 
+  model that are distinct from the default low order 
+  polynomial in \code{x}
+}
+
+\item{\dots}{Other arguments to pass to the mKrig function. }
 }
 \details{
 The observational model follows the same as that described in the

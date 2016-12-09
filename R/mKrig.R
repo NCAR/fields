@@ -23,7 +23,6 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                   cov.args = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
                   iseed = 123, llambda = NULL, na.rm=FALSE, ...) {
-  
   # pull extra covariance arguments from ...  and overwrite
   # any arguments already named in cov.args
   ind<- match( names( cov.args), names(list(...) ) )
@@ -68,7 +67,6 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
     nZ<- ncol(object$Z)
   }
   ind.drift <- c(rep(TRUE, (nt - nZ)), rep(FALSE, nZ)) 
-  
   # as a place holder for reduced rank Kriging, distinguish between
   # observations locations and  the locations to evaluate covariance.
   # (this is will also allow predict.mKrig to handle a Krig object)

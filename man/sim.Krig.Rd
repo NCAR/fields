@@ -19,8 +19,9 @@
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
-\name{sim.Krig}
+\name{sim.spatialProcess}
 \alias{sim.Krig}
+\alias{sim.spatialProcess}
 \alias{sim.Krig.approx}
 \alias{sim.mKrig.approx}
 \alias{sim.fastTps.approx}
@@ -36,6 +37,8 @@ generate a conditional sample for a large regular grid but is restricted
 to stationary correlation functions. 
  }
 \usage{
+sim.spatialProcess(object, xp,  M = 1, verbose = FALSE, ...)
+
 sim.Krig(object, xp, M = 1, verbose = FALSE, ...)
 
 sim.Krig.approx(object, grid.list = NULL, M = 1, nx = 40, ny = 40,
@@ -51,6 +54,8 @@ sim.fastTps.approx(fastTpsObject,
                  predictionPointsList, simulationGridList =
                  NULL, gridRefinement = 5, gridExpansion = 1 + 1e-07, M
                  = 1,  delta = NULL, verbose=FALSE,...)
+                 
+                 
 
 } 
 %- maybe also 'usage' for other objects documented here. 
@@ -101,6 +106,7 @@ or from the range and and \code{nxSimulation}, \code{nySimulation}.}
 
  
   \item{xp}{Same as predictionPoints above.}
+%  \item{Zp}{The covariate vector or matrix for predicting at the locations xp}
 
  \item{\dots}{Any other arguments to be passed to the predict function.
  	Usually this is the \code{Z} or \code{drop.Z} argument when there are 
@@ -154,9 +160,20 @@ prediction based on synthetic observations. Call this e(x).
 
 4) h.hat(x) + e(x) is a draw from [h(x) | Y ].
 
-\code{sim.Krig} follows this algorithm exactly. Note the inclusion of
+
+\code{sim.spatialProcess} Follows this algorithm exactly. For the case of an
+addtional covariate  this of course needs to be included. For a model
+with covariates use \code{drop.Z=TRUE} for the function to ignore prediction
+using the covariate and generate conditional samples for just the spatial
+process and any low order polynomial. Finally, it should be noted that this
+function will also work with an \code{mKrig} object because the essential
+prediction information in the mKrig and spatialProcess objects are the same.
+The naming is through convenience. 
+
+\code{sim.Krig}  Also follows this algorithm exactly but for the older \code{Krig} object.  Note the inclusion of
 drop.Z=TRUE or FALSE will determine whether the conditional simulation 
 includes the covariates Z or not. (See example below.) 
+
 
 \code{sim.Krig.approx} and \code{sim.mKrig.approx} evaluate the
 conditional surface on grid and simulates the values of h(x) off the
@@ -208,10 +225,40 @@ e.g. if \code{simOut} is the output object then to plot the 3rd draw:
 \author{Doug Nychka}
 \seealso{ sim.rf, Krig}
 \examples{
+
+\dontrun{
+# conditional simulation with covariates
+# colorado climate example
+  data(COmonthlyMet)
+  fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev   )
+# conditional simulation at missing data
+  good<- !is.na(CO.tmin.MAM.climate ) 
+  infill<- sim.spatialProcess( fit1E, xp=CO.loc[!good,], 
+                Z= CO.elev[!good], M= 10)
+# get an elevation grid  ... NGRID<- 50 gives a nicer image but takes longer 
+ NGRID <- 25  
+ # get elevations on a grid  
+   COGrid<- list( x=seq( -109.5, -101, ,NGRID), y= seq(39, 41.5,,NGRID) )
+   COGridPoints<- make.surface.grid( COGrid)
+ # elevations are a bilinear interpolation from the 4km
+ # Rocky Mountain elevation fields data set.   
+   data( RMelevation)
+   COElevGrid<- interp.surface( RMelevation, COGridPoints )
+# NOTE call to sim.Krig treats the grid points as just a matrix
+# of locations the plot has to "reshape" these into a grid 
+# to use with image.plot 
+   SEout<- sim.spatialProcess( fit1E, xp=COGridPoints,  Z= COElevGrid, M= 30)
+# for just the smooth surface in lon/lat
+#  SEout<- sim.spatialProcess( fit1E, xp=COGridPoints,  drop.Z=TRUE, M= 30)
+# in practice M should be larger to reduce Monte Carlo error.      
+   surSE<- apply( SEout, 2, sd )
+   image.plot( as.surface( COGridPoints, surSE)) 
+   points( fit1E$x, col="magenta", pch=16) 
+   
+}
+
 data( ozone2)
-
 set.seed( 399)
-
 # fit to day 16 from Midwest ozone data set.
   out<- Krig( ozone2$lon.lat, ozone2$y[16,], Covariance="Matern", 
             theta=1.0,smoothness=1.0, na.rm=TRUE)
@@ -228,7 +275,6 @@ set.seed( 399)
  sim.Krig( out,xp, M=5)-> sim.out
 
 # Compare: stats(sim.out)[3,] to  Exact: predictSE( out, xp)
-
 # simulations on a grid
 # NOTE this is approximate due to the bilinear interpolation
 # for simulating the unconditional random field. 
@@ -249,34 +295,8 @@ for ( k in 1:5){
 image( sim.out$x, sim.out$y, sim.out$z[,,k], col=tim.colors(), zlim =zr)
 }
 
-\dontrun{
-# conditional simulation with covariates
-# colorado climate example
-  data(COmonthlyMet)
-  fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev   )
-# conditional simulation at missing data
-  good<- !is.na(CO.tmin.MAM.climate ) 
-  infill<- sim.Krig( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good], M= 100)
-# get an elevation grid  ... NGRID<- 50 gives a nicer image but takes longer 
- NGRID <- 25  
- # get elevations on a grid  
-   COGrid<- list( x=seq( -109.5, -101, ,NGRID), y= seq(39, 41.5,,NGRID) )
-   COGridPoints<- make.surface.grid( COGrid)
- # elevations are a bilinear interpolation from the 4km
- # Rocky Mountain elevation fields data set.   
-   data( RMelevation)
-   COElevGrid<- interp.surface( RMelevation, COGridPoints )
-# NOTE call to sim.Krig treats the grid points as just a matrix
-# of locations the plot has to "reshape" these into a grid 
-# to use with image.plot 
-   SEout<- sim.Krig( fit1E, xp=COGridPoints,  Z= COElevGrid, M= 30)
-# for just the smooth surface in lon/lat
-#  SEout<- sim.Krig( fit1E, xp=COGridPoints,  drop.Z=TRUE, M= 30)
-# in practice M should be larger to reduce Monte Carlo error.      
-   surSE<- apply( SEout, 2, sd )
-   image.plot( as.surface( COGridPoints, surSE)) 
-   points( fit1E$x, col="magenta", pch=16) 
-}
+
+
 \dontrun{
 data( ozone2)
 y<- ozone2$y[16,]
@@ -293,13 +313,8 @@ image.plot( as.surface( O3.sim$predictionPoints, O3.sim$Ensemble[,k]) )
 }
 # conditional simulation at missing data
 xMissing<- ozone2$lon.lat[!good,]
-O3.sim2<- sim.mKrig.approx( O3.fit, xMissing, nx=80, ny=80, gridRefinement=3, M=4, verbose=TRUE )
-#check of Wendland
-O3.fit.Wendland<- mKrig( x,y, cov.function="wendland.cov", theta=.5, lambda= .01 )
-O3.sim3<- sim.mKrig.approx( O3.fit.Wendland, xMissing, nx=80, ny=80, gridRefinement=3, M=400,
-                               verbose=TRUE )
-O3.sim4<- sim.mKrig.approx( O3.fit.Wendland, xMissing, nx=80, ny=80, gridRefinement=3, M=400,
-                                 verbose=TRUE, delta=O3.fit.Wendland$args$theta )
+O3.sim2<- sim.mKrig.approx( O3.fit, xMissing, nx=80, ny=80,
+                            gridRefinement=3, M=4 )
 }
 \dontrun{
 #An example for fastTps:
@@ -320,7 +335,7 @@ O3.sim4<- sim.mKrig.approx( O3.fit.Wendland, xMissing, nx=80, ny=80, gridRefinem
 # very fine localized prediction grid
     O3GridList<- list( x= seq( -90.5,-88.5,,200), y= seq( 38,40,,200))
     O3Sim<- sim.fastTps.approx( O3Obj, M=5, predictionPointsList=O3GridList,
-                  simulationGridList = simulationGridList, verbose=TRUE)
+                  simulationGridList = simulationGridList)
 # check 
  plot( O3Obj$x)
  US( add=TRUE)

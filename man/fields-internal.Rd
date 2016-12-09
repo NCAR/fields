@@ -114,8 +114,6 @@
 \alias{compactTOMatOLD}
 
 \alias{MLESpatialProcess.fast}
-\alias{MLESpatialProcess.fastOLD}
-\alias{MLESpatialProcessOLD}
 
 \title{
   Fields internal and secondary functions 
@@ -257,18 +255,6 @@ MLESpatialProcess.fast(x, y, lambda.start=.5, theta.start = NULL,
   cov.function = "stationary.cov", 
   cov.args = list(Covariance = "Matern", smoothness = 1), 
   Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
-
-MLESpatialProcess.fastOLD(x, y, lambda.start = NULL, theta.start = NULL,
- cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", smoothness = 1),
- relative.tolerance = 0.001, Distance = "rdist", verbose = FALSE, ...)
- 
-MLESpatialProcessOLD(x, y, theta.grid=NULL, par.grid=NULL, lambda.grid=NULL, 
-  cov.function = "stationary.cov", 
-  cov.args = list(Covariance = "Matern", smoothness = 1), 
-  optim.args = NULL, ngrid = 10, niter = 15, tol = 0.01, 
-  Distance = "rdist", nstep.cv = 50, verbose = FALSE, 
-  doMKrig=FALSE, ...)
-
 
 }
 \keyword{internal}

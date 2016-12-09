@@ -28,7 +28,7 @@
 A fast, FORTRAN based function for cubic spline interpolation. 
 }
 \usage{
-splint(x, y, xgrid, wt=NULL, derivative=0,lam=0, df=NA, lambda=NULL)
+splint(x, y, xgrid, wt=NULL, derivative=0,lam=0, df=NA, lambda=NULL, nx=NULL)
 }
 \arguments{
 \item{x}{
@@ -52,6 +52,9 @@ interpolation.}
 \item{lambda}{Same as \code{lam} just to make this easier to remember.}
 \item{df}{ Effective degrees of freedom. Default is to use lambda =0 or a  
 df equal to the number of observations.}
+\item{nx}{If not NULL this should be the number of points
+to evaluate on an equally spaced grid in the
+range of \code{x}}
 
 }
 \value{

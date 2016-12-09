@@ -1,5 +1,5 @@
-mKrigCheckXY <- function(x, y,  weights, Z, na.rm, 
-                          verbose = FALSE) {
+mKrigCheckXY <- function(x, y,  weights, Z, na.rm) 
+    {
   #
   # check for missing values in y or X.
   #
@@ -34,12 +34,9 @@ mKrigCheckXY <- function(x, y,  weights, Z, na.rm,
   }
   #  if Z is not NULL coerce to be  a matrix
   # and check  # of rows
-  if (verbose) {
-    print(Z)
-  }
   if (!is.null(Z)) {
     if (!is.matrix(Z)) {
-      Z <- matrix(c(Z), ncol = 1)
+      Z <- as.matrix(Z)
     }
     if (length(y) != nrow(Z)) {
       stop(" length of y and number of rows of Z differ")
@@ -55,7 +52,7 @@ mKrigCheckXY <- function(x, y,  weights, Z, na.rm,
       y <- y[!ind]
       x <- as.matrix(x[!ind, ])
       if (!is.null(Z)) {
-        Z <- Z[!ind, ]
+        Z <- as.matrix(Z[!ind, ])
       }
       weights <- weights[!ind]
     }

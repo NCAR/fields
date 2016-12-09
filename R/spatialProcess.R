@@ -24,6 +24,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                    	cov.args = list(Covariance = "Matern", smoothness = 1),
               	 theta.start = NULL,
                 lambda.start = .5, 
+                 theta.range = NULL, 
                       abstol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
@@ -43,14 +44,12 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                              cov.function = cov.function, 
 	                                  cov.args = cov.args,
 	                               theta.start = theta.start, 
-	                               theta.range = NULL, 
-	                                   	gridN = 30,
+	                               theta.range = theta.range, 
+	                                   	gridN = 20,
                             	 lambda.start = lambda.start,
 	                                   abstol = abstol,
                                 		verbose = verbose
 	                                       	 )
-
-	
 	if( verbose){
 	  cat("Summary from joint optimization", fill=TRUE)
 	  print( MLEInfo$MLEJoint$summary )
@@ -59,9 +58,12 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 # now fit spatial model with MLE for theta (range parameter)
 # reestimate the other parameters for simplicity to get the complete mKrig object
 	obj <- do.call( "mKrig", 
-	                c( list(x, y, weights=weights,Z=Z) ,
-	                          mKrig.args,
-	                          list( na.rm=na.rm),
+	                c( list(x=x,
+	                        y=y,
+	                  weights=weights,
+	                        Z=Z),
+	                  mKrig.args,
+	          list( na.rm=na.rm),
 	             list(           
 	              cov.function = cov.function,
 	              cov.args = cov.args, 

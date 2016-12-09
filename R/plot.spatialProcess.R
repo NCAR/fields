@@ -27,7 +27,7 @@
     fitted.values <- predict(out)
     std.residuals <- (out$residuals * sqrt(out$weights))/out$sigma.MLE
     if (any(which == 1)) {
-        temp <- summary(out)
+        #temp <- summary(out)
         plot(fitted.values, out$y, ylab = "Y", xlab = " predicted values", 
             bty = "n", ...)
         abline(0, 1)
@@ -70,6 +70,6 @@
     	plot(thetaGrid,summary[,2], pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
     	title("Profile likelihood for theta \n (range parameter)")
     	xline( out$theta.MLE, lwd=2, col="grey")
-    	lines( sreg(thetaGrid,summary[,2])$predicted, lwd=2, col="red")
+    	lines( splint(thetaGrid,summary[,2], nx=200), lwd=2, col="red")
            }
 }

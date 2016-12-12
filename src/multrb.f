@@ -15,7 +15,9 @@ c***** c is n2xn3
        implicit double precision (a-h,o-z)
        integer nd,n1,n2,n3,ic, jc,j   
        double precision par(2),x1(n1,nd), x2(n2,nd), c(n2,n3), h(n1,n3) 
-       double precision work( n2), ddot, sum
+       double precision work( n2)
+c       double precision ddot
+       double precision sum, sum2 
        double precision radfun
 
 c****** work aray must be dimensioned to size n1
@@ -31,8 +33,13 @@ c** accumulate squared differences
  10       continue
 c***** dot product for matrix multiplication
           do 30 jc=1,n3
-             h(ir,jc)= ddot( n2, work, 1, c(1,jc),1)
-30        continue  
- 5    continue
+              sum2= 0.0
+       do 12 j = 1, n2
+          sum2 = sum2  + work(j)*c(j, jc)
+ 12    continue
+       h(ir,jc) = sum2 
+c      h(ir,jc)= ddot( n2, work, 1, c(1,jc),1)
+ 30        continue  
+  5    continue
       return
       end

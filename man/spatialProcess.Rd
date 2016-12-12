@@ -261,7 +261,7 @@ data(COmonthlyMet)
   xp <- CO.loc[notThere,]
   Zp <- CO.elev[notThere]
   infill<- sim.spatialProcess( fit1E, xp=xp,
-                      Zp= Zp, M= 10)
+                      Z= Zp, M= 10)
 #  
 # interpretation is that these infilled values are all equally plausible 
 # given the observations and also given the estimated covariance model

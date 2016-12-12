@@ -14,19 +14,28 @@ x<- ozone2$lon.lat
 good<- !is.na( y)
 x<- x[good,]
 y<- y[good]
-x1<- x[1:20,]
-x2<- x[1:10,]
+x1<- x[1:5,]
+x2<- x[6:11,]
 
 look<- exp(-1*rdist(x1,x2)/4)
 look2<- stationary.cov( x1,x2, theta=4)
+look3<- Exp.cov( x1, x2, theta=4.0)
 test.for.zero( look, look2)
+test.for.zero( look, look3)
 
+set.seed(122)
+C<-  rnorm( nrow(x2))
+look<- exp(-1*rdist(x1,x2)/4)%*%C
+look2<- stationary.cov( x1,x2, theta=4, C=C)
+look3<- Exp.cov( x1, x2, theta=4.0, C=C)
+test.for.zero( look, look2)
+test.for.zero( look, look3)
+
+#### check tranformation of coordinates
 V<- matrix( c(2,1,0,4), 2,2)
 Vi<- solve( V)
-
 u1<- t(Vi%*% t(x1))
 u2<- t(Vi%*% t(x2))
-
 
 look<- exp(-1*rdist(u1,u2))
 look2<- stationary.cov( x1,x2, V= V)
@@ -35,11 +44,9 @@ test.for.zero( look, look2)
 look<- Wendland(rdist(u1,u2), k=3, dimension=2)
 look2<- stationary.cov( x1,x2, V= V, Covariance = "Wendland",
                        k=3, dimension=2)
-
-
 test.for.zero( look, look2)
 
-
+### check tapering of covariances
 x1<- x[1:5,]
 x2<- x[2:6,]
 V<- matrix( c(2,1,0,4), 2,2)

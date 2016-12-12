@@ -39,10 +39,31 @@ test.for.zero( temp, temp2, tag="Tps radial basis function 3d")
 test.for.zero( temp, temp3, tag="Tps radial basis function 3d")
 test.for.zero( temp2,temp3, tag="Tps radial basis function 3d")
 
+#### testing multiplication of a vector
+#### mainly to make the FORTRAN has been written correctly
+#### after replacing the ddot call with an explicit  do loop
+set.seed( 123)
+C<- matrix( rnorm( 10*5),10,5 )
+x<- matrix( runif( 10*2), 10,2)
+temp3<- rdist( x,x)
+K<-  ifelse( abs(temp3) < 1e-14, 0,log( temp3)*(temp3^2) )
+K<- K * radbas.constant( 2,2)
+test.for.zero( Rad.cov( x,x,m=2, C=C) , K%*%C, tol=1e-10)
+
+set.seed( 123)
+C<- matrix( rnorm( 10*5),10,5 )
+x<- matrix( runif( 10*3), 10,3)
+temp3<- rdist( x,x)
+K<-  ifelse( abs(temp3) < 1e-14, 0,(temp3^(2*4-3)) )
+K<- K * radbas.constant( 4,3)
+test.for.zero( Rad.cov( x,x,m=4, C=C) , K%*%C,tol=1e-10)
 
 
 #####  testing derivative formula
-C<- cbind(rnorm( length( y)))
+
+set.seed( 123)
+C<- matrix( rnorm( 10*1),10,1 )
+x<- matrix( runif( 10*2), 10,2)
 temp0<-  Rad.cov( x,x, p=4, derivative=1, C=C)
 
 eps<- 1e-6
@@ -60,8 +81,9 @@ test.for.zero( temp0[,2], temp2, tag=" der of Rad.cov", tol=1e-6)
 
 # comparing  Rad.cov used by Tps with simpler function called 
 # by stationary.cov
-
-C<- rnorm( length( y))
+set.seed( 222)
+x<- matrix( runif( 10*2), 10,2)
+C<- matrix( rnorm( 10*3),10,3 ) 
 temp<- Rad.cov( x,x, p=2, C=C)
 temp2<- RadialBasis( rdist( x,x), M=2, dimension=2)%*%C
 test.for.zero( temp, temp2)
@@ -72,6 +94,7 @@ y<- ChicagoO3$y
 
 obj<-Tps( x,y, scale.type="unscaled", with.constant=FALSE)
 
+# now work out the matrix expressions explicitly
 lam.test<- obj$lambda
 N<-length(y)
 
@@ -86,8 +109,16 @@ A<- rbind(
  c.coef<- hold[1:N]
  d.coef<- hold[ (1:3)+N]
  zhat<-  R%*%c.coef + Tmatrix%*% d.coef
-test.for.zero( zhat, obj$fitted.values, tag="Tps 2-d m=2 sanity check")
-
+  test.for.zero( zhat, obj$fitted.values, tag="Tps 2-d m=2 sanity check")
+# out of sample prediction
+xnew<- rbind( c( 0,0),
+              c( 10,10)
+              )
+T1<- cbind( rep( 1,nrow(xnew)), xnew)
+D<- rdist( xnew,x)
+R1<- ifelse( D==0, 0, D**2 * log(D))
+z1<-  R1%*%c.coef + T1%*% d.coef
+  test.for.zero( z1, predict( obj, x=xnew), tag="Tps 2-d m=2 sanity predict")
 
 #### test Tps verses Krig note scaling must be the same
    out<- Tps( x,y)
@@ -115,7 +146,6 @@ test.for.zero( zhat, obj$fitted.values, tag="Tps 2-d m=2 sanity check")
    test.for.zero( look[,2], test[,2], tol=1e-3)
 
 # matplot( test, look, pch=1)
-
 
 options( echo=TRUE)
 cat("all done testing Tps", fill=TRUE)

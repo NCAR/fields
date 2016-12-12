@@ -22,7 +22,7 @@
     if (m < 0) 
         stop("'m' has to be zero or larger.")
     if( m==0){
-      warning("There is no polynomial fixed component")
+#      warning("There is no polynomial fixed component")
       return( NULL)
     }
     if (!is.matrix(x)) 

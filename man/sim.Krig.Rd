@@ -194,8 +194,8 @@ ensemble prediction locations must be on a grid.
 
 }
 \value{
-\code{sim.Krig}
- a matrix with rowss indexed by the locations in \code{xp} and columns being the 
+\code{sim.Krig and sim.spatialProcess}
+ a matrix with rows indexed by the locations in \code{xp} and columns being the 
  \code{M} independent draws.
 
 \code{sim.Krig.approx} a list with components \code{x}, \code{y} and \code{z}. 
@@ -223,7 +223,7 @@ e.g. if \code{simOut} is the output object then to plot the 3rd draw:
 }
 
 \author{Doug Nychka}
-\seealso{ sim.rf, Krig}
+\seealso{ sim.rf, Krig, spatialProcess}
 \examples{
 
 \dontrun{

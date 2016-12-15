@@ -1,6 +1,6 @@
 Package: fields
-Version: 8.7
-Date: 2016-12-10
+Version: 8.8
+Date: 2016-12-15
 Title: Tools for Spatial Data
 Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "nychka@ucar.edu"),
@@ -20,8 +20,8 @@ Description: For curve, surface and function fitting with an emphasis
  (nugget and sill variance) and other covariance parameters by cross
  validation and also by restricted maximum likelihood. For Kriging
  there is an easy to use function that also estimates the correlation
- scale (range).  A major feature is that any covariance function
- implemented in R and following a simple fields format can be used for
+ scale (range parameter).  A major feature is that any covariance function
+ implemented in R and following a simple format can be used for
  spatial prediction. There are also many useful functions for plotting
  and working with spatial data as images. This package also contains
  an implementation of sparse matrix methods for large spatial data
@@ -29,13 +29,14 @@ Description: For curve, surface and function fitting with an emphasis
  help(fields) to get started and for an overview.  The fields source
  code is deliberately commented and provides useful explanations of
  numerical details in addition to the manual pages. The commented
- source code can be viewed by expanding the source code file (ending in tar.gz)
+ source code can be viewed by expanding the package source code "tarball"
+ (ending in tar.gz)
  and looking in the R subdirectory. Please cite fields along with its
  DOI in your publications!
 License: GPL (>= 2)
 URL: http://www.image.ucar.edu/fields
 Depends: R (>= 3.0), methods, spam, maps
 NeedsCompilation: yes
-Packaged: 2016-07-11 19:06:39 UTC; paigejo
+Packaged: 2016-12-15; nychka
 Repository: CRAN
-Date/Publication: 2016-07-08 01:18:09
+Date/Publication: 2016-12-15

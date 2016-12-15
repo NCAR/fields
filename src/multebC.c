@@ -30,7 +30,7 @@ SEXP multebC(SEXP nd, SEXP x1, SEXP n1, SEXP x2, SEXP n2, SEXP par, SEXP c, SEXP
   Px2 = REAL(x2);
   Pc = REAL(c);
   Pwork = REAL(work);
-  const int tmp = 1;
+  // const int tmp = 1;
   const int cn2 = In2;
   
   // allocate answer vector (corresponds to h in fields' multeb)
@@ -57,8 +57,12 @@ SEXP multebC(SEXP nd, SEXP x1, SEXP n1, SEXP x2, SEXP n2, SEXP par, SEXP c, SEXP
     expfnC(n2, work, par);
     
     // now the dot product you have all been waiting for!
-    cans[r1] = ddot_(&cn2, Pwork, &tmp, Pc, &tmp);
-    
+     sum=0.0;
+      for(d = 0; d < cn2; d++) {
+        sum +=  Pwork[d]*Pc[d] ;
+      }
+      //  cans[r1] = ddot_(&cn2, Pwork, &tmp, Pc, &tmp);
+      cans[r1] = sum;   
   }
   
   UNPROTECT(1);

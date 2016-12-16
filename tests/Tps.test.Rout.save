@@ -25,7 +25,7 @@ Type 'q()' to quit R.
 > library( fields)
 Loading required package: spam
 Loading required package: grid
-Spam version 1.3-0 (2015-10-24) is loaded.
+Spam version 1.4-0 (2016-08-29) is loaded.
 Type 'help( Spam)' or 'demo( spam)' for a short introduction 
 and overview of this package.
 Help for individual functions is also obtained by adding the
@@ -38,11 +38,6 @@ The following objects are masked from 'package:base':
     backsolve, forwardsolve
 
 Loading required package: maps
-
- # maps v3.1: updated 'world': all lakes moved to separate new #
- # 'lakes' database. Type '?world' or 'news(package="maps")'.  #
-
-
 > options(echo=FALSE)
 Testing:  Tps radial basis function 2d
 PASSED test at tolerance  1e-08
@@ -85,4 +80,4 @@ all done testing Tps
 > 
 > proc.time()
    user  system elapsed 
-  1.116   0.045   1.154 
+  1.182   0.072   1.252 

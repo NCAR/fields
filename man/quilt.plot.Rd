@@ -33,7 +33,7 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            add.legend=TRUE,add=FALSE, nlevel=64, 
            col = tim.colors(nlevel),
            nrow=NULL, ncol=NULL,FUN =
-                 NULL, plot=TRUE, ...)
+                 NULL, plot=TRUE, na.rm=FALSE, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -54,13 +54,18 @@ in x the z vector  }
     a pleasing spectrum.}
     \item{plot}{If FALSE just returns the image object instead of plotting it.}
     \item{FUN}{The function to apply to values that are common to a grid box. The default is to find the mean. (see \code{as.image}).}
+    \item{na.rm}{If FALSE NAs are not removed from zand so a grid box
+    even one of these values may be an NA. (See details below.)}
   \item{\dots}{ arguments to be passed to the image.plot function }
 }
 \details{
 This function combines the discretization to an image by the function 
 \code{as.image} and is then graphed by \code{image.plot}.
-Locations that fall into the same grid box will have their z values 
-averaged. 
+By default, locations that fall into the same grid box will have their
+z values averaged. This also means that observations that are NA will
+result in the grid box average also being NA and can produce unexpected
+results because the NA patterns can dominate the figure. If you are
+unsure of the effect  try \code{na.rm = TRUE} for a comparison.
 
 A similar function exists in the lattice package and produces good
 looking plots. The advantage of this fields version is that it uses the
@@ -108,6 +113,5 @@ US( add=TRUE)
 par( oma=c(0,0,0,1))
 image.plot(zlim=zr,legend.only=TRUE, col=coltab)
 # may have to adjust number of spaces in oma to make this work.
-
   }
 \keyword{hplot}% at least one, from doc/KEYWORDS

@@ -78,12 +78,12 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   lnLike.eval <- list()
   # Define the objective function as a tricksy call to mKrig
   # if Y is a matrix of replicated data sets use the log likelihood for the complete data sets
- 
   #
   # begin loop over covariance arguments
   lnLike.eval<- list()
   for (k in 1:NG) {
     lambda.start <- ifelse(is.na(lambda[k]), lambda.opt, (lambda[k]))
+    lambda.start<- .5
     # list of covariance arguments from par.grid with right names (some R arcania!)
     # note that this only works because 1) temp.fn will search in this frame for this object
     # par.grid has been coerced to a data frame so one has a concept of a row subscript.
@@ -108,6 +108,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                   verbose = verbose)
     lnLike.eval<- c( lnLike.eval, list(MLEfit0$lnLike.eval))
     lambda.opt<- MLEfit0$pars.MLE[1]
+    print( lambda.opt)
     }
     else {
       # no refinement for lambda so just save the the 'start' value as final one.

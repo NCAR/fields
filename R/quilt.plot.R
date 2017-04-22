@@ -21,7 +21,7 @@
 "quilt.plot" <- function(x, y, z, nx = 64, ny = 64, 
      grid = NULL, add.legend = TRUE, add = FALSE, nlevel=64, 
     col = tim.colors(nlevel), nrow = NULL, ncol = NULL, FUN=NULL,
-    plot=TRUE, ...) {
+    plot=TRUE, na.rm=FALSE, ...) {
     #
     # note that nrow and ncol refer to the resulting 'image format' for plotting.
     # here the x values are the rows and the y values are the columns
@@ -44,8 +44,8 @@
     # at this point x should be a 2 column matrix of x-y locations
     #  z is a vector or one column matrix of the z values.
     #discretize data
-    out.p <- as.image(z, x = x, nx = nx, ny = ny, na.rm = TRUE, 
-        grid = grid, FUN=FUN)
+    out.p <- as.image(z, x = x, nx = nx, ny = ny, 
+        grid = grid, FUN=FUN, na.rm=na.rm)
     # besides the image information this list has the indices that 
     # map each z value to a grid box
     #    

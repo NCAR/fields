@@ -97,7 +97,7 @@ and distances found are great circle distances (in miles see
 Maximum distance to compute variogram.
 }
 \item{N}{
-Number of bins to use.
+Number of bins to use. The break points are found by the \code{pretty} function and so ther may not be exactly N bins. Specify the breaks explicity if you want excalty N bins. 
 }
 \item{breaks}{
 Bin boundaries for binning variogram values. Need not be equally spaced
@@ -167,7 +167,7 @@ look<-vgram( x,y, N=15, lon.lat=TRUE) # locations are in lon/lat so use right
 plot(look, pch=19)
 #lines(look$centers, look$stats["mean",], col=4)
 
-brk<- seq( 0, 250,,25)
+brk<- seq( 0, 250,, (25 + 1) ) # will give 25 bins.
  
 ## or some boxplot bin summaries
 

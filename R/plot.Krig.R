@@ -34,18 +34,18 @@
         plot(fitted.values, out$y, ylab = "Y", xlab = " predicted values", 
             bty = "n", ...)
         abline(0, 1)
-        hold <- par("usr")
-        text(hold[1], hold[4], paste(" R**2 = ", format(round(100 * 
-            temp$covariance, 2)), "%", sep = ""), cex = 0.8, 
-            adj = 0)
+       # hold <- par("usr")
+       # text(hold[1], hold[4], paste(" R**2 = ", format(round(100 * 
+        #    temp$covariance, 2)), "%", sep = ""), cex = 0.8, 
+        #    adj = 0)
     }
     if (any(which == 2)) {
         plot(fitted.values, std.residuals, ylab = "(STD) residuals", 
             xlab = " predicted values", bty = "n", ...)
         yline(0)
         hold <- par("usr")
-        text(hold[1], hold[4], paste(" RMSE =", format(signif(sqrt(sum(out$residuals^2)/(temp$num.observation - 
-            temp$enp)), digits))), cex = 0.8, adj = 0)
+       # text(hold[1], hold[4], paste(" RMSE =", format(signif(sqrt(sum(out$residuals^2)/(temp$num.observation - 
+       #     temp$enp)), digits))), cex = 0.8, adj = 0)
     }
     if (any(which == 3)) {
         if (nrow(out$gcv.grid) > 1) {
@@ -65,13 +65,13 @@
             lines( out$gcv.grid[, 2], -out$gcv.grid[,7] ,
             lty=2, lwd=2, col="blue")
             axis( side=4)
-            mtext( side=4, line=3, "log profile likelihood ")
+            mtext( side=4, line=2, "log profile likelihood ")
             title("GCV-points, solid-model, dots- single  \n REML dashed", 
-                cex = 0.6)
+                cex = 0.5)
             box()
         }
     }
     if (any(which == 4)) {
-        hist(std.residuals)
+        hist(std.residuals, ylab="")
     }
 }

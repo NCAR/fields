@@ -44,8 +44,6 @@
     Z<- unrollZGrid( grid.list, ZGrid) 
 # here is the heavy lifting
     xg <- make.surface.grid(grid.list)
-    print( dim ( xg))
-   
 # NOTE: the predict function called will need to do some internal  the checks
 # whether the evaluation of a large number of grid points (xg)  makes sense.
 if( verbose){

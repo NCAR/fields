@@ -25,13 +25,13 @@
     # NOTE that throughout ind is a two column integer matrix of
     # discretized locations in the image matrix.
     # Thanks to J. Rougier for fixing bugs in this function.
-    # set some default values for arguments
     #
     # coerce Z to a vector
     Z <- c(Z)
     if( !is.null(ind)){
       x<- ind
-     }
+    }
+    # set nx and ny if nrow ncol are passed  
     if( !is.null(nrow)&!is.null(ncol)){
       nx<- nrow
       ny<- ncol
@@ -55,25 +55,28 @@
     # empty image matrices to hold weights and  weighted means
      w<- z <- matrix( NA, nrow=temp$m, ncol=temp$n)
      # find stats
-     tempw<- tapply( weights, temp$index, sum, na.rm=FALSE)
+     tempw<- tapply( weights, temp$index, sum,  na.rm=na.rm)
      if( is.null(FUN)){
 # usual weighted means case:     
-     tempz<- tapply( Z*weights, temp$index,sum, na.rm=FALSE )
+     tempz<- tapply( Z*weights, temp$index,sum, na.rm=na.rm )
      tempz<- tempz/ tempw
      }
      else{
 # just apply FUN to values in the grid box -- no weighting!     	
-     	tempz<- tapply( Z, temp$index,FUN, na.rm=FALSE )
+     	tempz<- tapply( Z, temp$index, FUN )
      	}
      # these are the indices that are represented by the locations
      # they may not include the entire set ( 1:nx and 1:ny)
      # so define what they do have.
   
      # insert the tabled values into the right rows and columns.
+     # ix and iy are just the range of indexes for the grid, e.g. ix= 1:20 and iy= 1:30 for a
+     # 20X30 grid.
       z[ temp$ix, temp$iy] <- tempz
       w[ temp$ix, temp$iy] <- tempw
      # save call
      # xd created because it is a  pain to do otherwise and handy to have
+     # these are the discretize locations with actual values 
     call <- match.call()
     list(x = grid$x, y = grid$y, z = z, call = call, ind = cbind(temp$index[[1]], temp$index[[2]]) , 
         weights = w, xd = cbind(grid$x[temp$index[[1]]], grid$y[temp$index[[2]]] ), 

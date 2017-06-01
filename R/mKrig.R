@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2016
+# Copyright (C) 2017
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -22,7 +22,8 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                   cov.function="stationary.cov", 
                   cov.args = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, na.rm=FALSE, collapseFixedEffect = TRUE, ...) {
+                  iseed = 123, llambda = NULL, na.rm=FALSE, 
+                  collapseFixedEffect = TRUE, ...) {
   # pull extra covariance arguments from ...  and overwrite
   # any arguments already named in cov.args
   ind<- match( names( cov.args), names(list(...) ) )
@@ -128,8 +129,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # now do generalized least squares for d
     d.coef <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
                                                   object$y, upper.tri = TRUE)))
-  # use common estimate of fixed effects across replicates  
+    
     if (collapseFixedEffect) {
+      # use a common estimate of fixed effects across all replicates      
       d.coefMeans <- rowMeans(d.coef)
       d.coef <- matrix(d.coefMeans, ncol = ncol(d.coef), 
                        nrow = nrow(d.coef))

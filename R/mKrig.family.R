@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2016
+# Copyright (C) 2017
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -191,12 +191,12 @@ summary.mKrig <- function(object, ...) {
 
 predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     derivative = 0, Z = NULL, drop.Z = FALSE, just.fixed = FALSE,
-    collapseFixedEffect=TRUE, 
+    collapseFixedEffect = object$collapseFixedEffect, 
     ...) {
     # the main reason to pass new args to the covariance is to increase
     # the temp space size for sparse multiplications
-    # other optional arguments from mKrig are passed along in the
-    # list object$args
+    # other optional arguments that typically describe the covariance function 
+    # from mKrig are passed along in the list object$args
     cov.args <- list(...)
     # predict at observation locations by default
     if( !is.null(grid.list)){

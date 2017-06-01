@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2016
+# Copyright (C) 2017
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -220,6 +220,7 @@
         marginal = TRUE)))
     # Add marginal variance to part from estimate
     temp <- temp0 + temp1
+    # return square root as the standard error in units of observations.
     return(sqrt(temp))
 }
 

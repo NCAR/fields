@@ -21,13 +21,13 @@
 
 mKrig.trace <- function(object, iseed, NtrA) {
     set.seed(iseed)
-    # if more tests that number of data points just
-    # find A exactly by np predicts.
+    # if more MonteCarlo samples > number of data points just
+    # find A exactly using  np  calls to predict.
     np<- object$np
     if (NtrA >= object$np) {
         Ey <- diag(1, np)
         NtrA <- np
-        hold <- diag(predict.mKrig(object, ynew = Ey))
+        hold <- diag(predict.mKrig(object, ynew = Ey, collapseFixedEffect=FALSE))
         trA.info<- NA
         trA.est <- sum(hold)
     }
@@ -40,7 +40,8 @@ mKrig.trace <- function(object, iseed, NtrA) {
         # create random normal 'data'
         Ey <- matrix(rnorm(np * NtrA), nrow = np, 
             ncol = NtrA)
-        trA.info <- colSums(Ey * (predict.mKrig(object, ynew = Ey)))
+        trA.info <- colSums(Ey * (predict.mKrig(object, ynew = Ey,
+                                    collapseFixedEffect=FALSE)))
         trA.est <- mean(trA.info)
     }
     if (NtrA < np) {
@@ -58,7 +59,7 @@ mKrig.trace <- function(object, iseed, NtrA) {
     )
 }
 
-mKrig.coef <- function(object, y) {
+mKrig.coef <- function(object, y, collapseFixedEffect=TRUE) {
     # given new data y and the matrix decompositions in the
     # mKrig object find coefficients d and c.
     # d are the coefficients for the fixed part
@@ -79,6 +80,10 @@ mKrig.coef <- function(object, y) {
    if( object$nt>0){
     d.coef <- as.matrix(qr.coef(object$qr.VT, forwardsolve(object$Mc, 
         transpose = TRUE, y, upper.tri = TRUE)))
+    d.coefMeans<- rowMeans( d.coef)
+    if( collapseFixedEffect){ 
+      d.coef<- matrix( d.coefMeans, ncol=ncol(d.coef), nrow= nrow( d.coef))
+    }
     #  residuals from subtracting off fixed part
     #  of model as m-1 order polynomial
     resid <- y - object$Tmatrix %*% d.coef
@@ -185,7 +190,8 @@ summary.mKrig <- function(object, ...) {
 }
 
 predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
-    derivative = 0, Z = NULL, drop.Z = FALSE, just.fixed = FALSE, 
+    derivative = 0, Z = NULL, drop.Z = FALSE, just.fixed = FALSE,
+    collapseFixedEffect=TRUE, 
     ...) {
     # the main reason to pass new args to the covariance is to increase
     # the temp space size for sparse multiplications
@@ -203,7 +209,8 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
         Z <- object$Tmatrix[, !object$ind.drift]
     }
     if (!is.null(ynew)) {
-        coef.hold <- mKrig.coef(object, ynew)
+        coef.hold <- mKrig.coef(object, ynew,
+                                collapseFixedEffect=collapseFixedEffect)
         c.coef <- coef.hold$c
         d.coef <- coef.hold$d
     }

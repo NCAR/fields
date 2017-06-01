@@ -33,6 +33,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                  na.rm = TRUE,
                                verbose = FALSE,
                                abstol  = 1e-4,
+                                  REML = FALSE,
                                ...) {
   if( verbose){
     cat(" MLESpatialProcess extra arguments:" , full=TRUE)
@@ -69,8 +70,8 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                           lambda = lambda.start, 
                   lambda.profile = TRUE, 
                            na.rm = na.rm,
-                         verbose = verbose) 
-  
+                         verbose = verbose,
+                            REML = REML)
   ##################################################################################
   #refine MLE for lambda and theta use the best value of theta from grid search if
   # starting value not passed. 
@@ -88,13 +89,13 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                             optim.args = optim.args,
                                                 abstol = abstol,
                                                  na.rm = na.rm,
-                                               verbose = verbose)
+                                               verbose = verbose,
+                                                  REML = REML)
   
   #####################################################################################
   # evaluate likelihood on grid of log lambda with MLE for theta
   #NOTE lambda.profile = FALSE makes this work.
   lambdaGrid<-   (10^(seq( -4,4,,gridN)  ))*MLEJoint$pars.MLE[1]
-  print( lambdaGrid)
   par.grid<- list( theta= rep(MLEJoint$pars.MLE[2], gridN) )
   if( verbose){ print( par.grid)}
   MLEProfileLambda <- mKrigMLEGrid(x, y,  weights = weights, Z= Z,
@@ -105,7 +106,8 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                            lambda = lambdaGrid, 
                                    lambda.profile = FALSE, 
                                             na.rm = na.rm,
-                                          verbose = verbose) 
+                                          verbose = verbose,
+                                             REML = REML) 
   return(
      list( summary= MLEJoint$summary, MLEGrid= MLEGrid, MLEJoint=MLEJoint, 
           MLEProfileLambda=MLEProfileLambda, call=match.call() )

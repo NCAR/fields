@@ -29,6 +29,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                       abstol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
+                      REML = FALSE, 
                            ...) {
  
 # NOTE all ... information is assumed to be for the cov.args list
@@ -51,11 +52,14 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                  lambda = lambda.start, 
                  lambda.profile = TRUE, 
                  na.rm = na.rm,
-                 verbose = verbose) 
-    print( par.grid)
+                 verbose = FALSE,
+                    REML = REML) 
     lambda.MLE <- MLEInfo$lambda.MLE
     theta.MLE <- NA
     thetaModel <- theta
+    if( verbose){
+      print( MLEInfo$summary)
+    }
   }
   else{
 #  
@@ -69,7 +73,8 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                                   	 gridN = 20,
                             	  lambda.start = lambda.start,
 	                                    abstol = abstol,
-                                  		verbose = FALSE
+                                  		verbose = FALSE,
+	                                       REML = REML
 	                                       	 )
 	lambda.MLE <- MLEInfo$MLEJoint$pars.MLE[1] 
 	theta.MLE<- MLEInfo$MLEJoint$pars.MLE[2]

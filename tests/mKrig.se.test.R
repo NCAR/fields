@@ -126,8 +126,8 @@ test.for.zero( SE3, SE0,  tag="New se _function_ and old Krig _function_")
 
 
 # receate object
-Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)-> out0
-mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)-> out
+out0<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)
+out<- mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)
 
 
 x0<-rep( c( -20, -10,10,20),4)
@@ -144,7 +144,7 @@ MSE5<- (rep( S0,nrow(x0)) +
                   -out0$rhohat* colSums((k0)*hold$c) - 
                    2*out0$rhohat*colSums(t0*hold$d))
 
-hold<- mKrig.coef(out, y=k0)
+hold<- mKrig.coef(out, y=k0, collapse=FALSE)
 MSE6<- (rep( S0,nrow(x0)) +
                   out$rhohat * colSums( t0 *(out$Omega%*%t0))
                   -out$rhohat* colSums((k0)*hold$c) -

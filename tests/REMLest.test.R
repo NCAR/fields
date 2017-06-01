@@ -1,6 +1,6 @@
 ############################################################################
 #      Begin tests of Matern covaraince parameter estimate
-# Note that in all tests the smoohtness (nu) is fixed
+# Note that in all tests the smoothness (nu) is fixed
 # and only theta (range), sill ( rho) and nugget (sigma2) are considered. 
 ##########################################################################
 library(fields)
@@ -34,21 +34,46 @@ y<- y[1:75]
         ltheta = pars[2]
         lsig2 = pars[3]
         d <- rdist(x, x)
-        A <- (exp(lrho)*Matern(d, range = exp(ltheta), 
-            smoothness = nu) + exp(lsig2) * diag(N))
+        A <- exp(lrho)*(Matern(d, range = exp(ltheta), 
+            smoothness = nu) + exp(lsig2)/exp(lrho) * diag(N))
         A <- t(Q2) %*% A %*% Q2
         A <- chol(A)
         w = backsolve(A, ys, transpose = TRUE)
         ycept <- (N2/2) * log(2 * pi) + sum(log(diag(A))) + (1/2) * 
-            t(w) %*% w   
+            t(w) %*% w  
+        
             return( ycept)
-    }
-    
+ }
+ 
+ logProfilemvn <- function(lambda, theta, nu, x, y) {
+   N <- length(y)
+   Tmatrix <- fields.mkpoly(x, 2)
+   qr.T <- qr(Tmatrix)
+   Q2 <- qr.yq2(qr.T, diag(1, N))
+   ys <- t(Q2) %*% y
+   N2 <- length(ys)
+      d <- rdist(x, x)
+      print( dim ( d))
+      print( dim (diag( 1, N) ))
+   A <- (Matern(d, range = theta, 
+              smoothness = nu) +  diag( 1, N)*lambda )
+   A <- t(Q2) %*% A %*% Q2
+   A <- chol(A)
+   lnDetCov<-  sum( log(diag(A)))*2
+   w = backsolve(A, ys, transpose = TRUE)
+   rho.MLE<- sum( w^2)/N2
+   REMLLike<- -1 * (-N2/2 - log(2 * pi) * (N2/2) - (N2/2) * log(rho.MLE) - 
+                   (1/2) * lnDetCov)
+   return( REMLLike)
+ }   
+ 
 out<- Krig( x,y, Covariance="Matern", smoothness= nu, theta= 2.0, method="REML"  )
 pars<- c(log( out$rho.MLE), log( 2.0), log( out$shat.MLE^2) )
  REML0<- out$lambda.est[6,5]
  REML1<- loglmvn( pars,nu, x,y)
-test.for.zero( REML0, REML1, tol=2e-4, tag="sanity check for REML from Krig")
+ REML2<- logProfilemvn( out$lambda, 2.0, nu, x,y)
+test.for.zero( REML0, REML1, tol=2e-4, tag="sanity check 1 for REML from Krig")
+test.for.zero( REML0, REML2,  tag= "sanity check 2 for REML from Krig")
 
 ##D hold1<- MaternGLS.test( x,y, nu)
 ##D hold2<- MaternGLSProfile.test( x,y,nu)
@@ -71,7 +96,8 @@ lam<- hold3$pars[3]/hold3$pars[1]
 l1<-Krig.flplike( lam, out1)
 
 # evaluate Profile at full REML MLE 
-out2<-  Krig( x,y, Covariance="Matern", theta= hold4$pars[2],smoothness=nu, method="REML")
+out2<-  Krig( x,y, Covariance="Matern", theta= hold4$pars[2],
+                  smoothness=nu, method="REML")
 lam<- hold4$pars[3]/hold4$pars[1]
 l2<-Krig.flplike( lam, out2)
 
@@ -79,6 +105,8 @@ test.for.zero( l1,l2, tag="Profile likelihoods from Krig and optim")
 
 hold5<- MLE.Matern( x,y,nu)
 test.for.zero( hold5$llike,l2, tag="Profile likelihoods from Krig and golden search")
+
+#hold6<- spatialProcess( x,y, smoothness=nu, theta= hold5$theta.MLE, REML=TRUE)
 
 cat("done with Matern REML estimator tests where smoothness is fixed", fill=TRUE)
 options( echo=TRUE)

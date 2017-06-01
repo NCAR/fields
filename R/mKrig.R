@@ -22,7 +22,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                   cov.function="stationary.cov", 
                   cov.args = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, na.rm=FALSE, ...) {
+                  iseed = 123, llambda = NULL, na.rm=FALSE, collapseFixedEffect = TRUE, ...) {
   # pull extra covariance arguments from ...  and overwrite
   # any arguments already named in cov.args
   ind<- match( names( cov.args), names(list(...) ) )
@@ -96,7 +96,8 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # NOTE: diag must be a overloaded function to handle sparse format.
   if (lambda != 0) {
     if(! sparse.flag)
-      invisible(.Call("addToDiagC", Mc, as.double(lambda/object$weights), nrow(Mc)))
+        invisible(.Call("addToDiagC", Mc, as.double(lambda/object$weights), nrow(Mc), PACKAGE="fields")
+                  )
     else
       diag(Mc) = diag(Mc) + lambda/object$weights
   }
@@ -127,6 +128,13 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # now do generalized least squares for d
     d.coef <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
                                                   object$y, upper.tri = TRUE)))
+  # use common estimate of fixed effects across replicates  
+    if (collapseFixedEffect) {
+      d.coefMeans <- rowMeans(d.coef)
+      d.coef <- matrix(d.coefMeans, ncol = ncol(d.coef), 
+                       nrow = nrow(d.coef))
+    }
+    
     resid<-  object$y - Tmatrix %*% d.coef
   # GLS covariance matrix for fixed part.
     Rinv <- solve(qr.R(qr.VT))
@@ -215,7 +223,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
               lnDetCov = lnDetCov, lnDetOmega = lnDetOmega,
               quad.form = quad.form, Omega = Omega,lnDetOmega=lnDetOmega,
               qr.VT = qr.VT, 
-              Mc = Mc, Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ)
+              Mc = Mc,
+          Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ,
+          collapseFixedEffect= collapseFixedEffect)
   )
   #
   # find the residuals directly from solution

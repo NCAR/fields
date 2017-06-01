@@ -41,16 +41,18 @@ mKrig(x, y, weights = rep(1, nrow(x)), Z = NULL,
                  cov.function = "stationary.cov", cov.args = NULL,
                  lambda = 0, m = 2, chol.args = NULL, find.trA = TRUE,
                  NtrA = 20, iseed = 123, llambda = NULL, na.rm = FALSE,
+                  collapseFixedEffect = TRUE,
                  ...)
   
-\method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL, derivative=0,
-Z=NULL,drop.Z=FALSE,just.fixed=FALSE, ...)
+\method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL,
+derivative=0,
+Z=NULL,drop.Z=FALSE,just.fixed=FALSE,collapseFixedEffect = TRUE, ...)
 
 \method{summary}{mKrig}(object, ...)
 
 \method{print}{mKrig}( x, digits=4,... )
 
-mKrig.coef(object, y)
+mKrig.coef(object, y, collapseFixedEffect=TRUE)
 
 mKrig.trace( object, iseed, NtrA)
 
@@ -58,16 +60,21 @@ mKrigCheckXY(x, y, weights, Z, na.rm)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+\item{collapseFixedEffect}{ If replicated fields are given to mKrig (
+\code{y} has multiple columns) there is the choice of estimating the
+fixed effect coefficients (\code{d} in thereturned object) separately
+for each replicate or pooling across replicates and deriving a single
+estimate. If collapseFixedEffect is TRUE (default) the estimates are
+pooled. }
   
-\item{chol.args}{A list of optional arguments (pivot, nnzR) that will be used 
-with the call to the cholesky decomposition. Pivoting is done 
-by default to make use of sparse matrices when they are 
-generated. This argument is useful in some cases for sparse 
-covariance functions to reset the memory parameter nnzR. 
-(See example below.)}
+\item{chol.args}{A list of optional arguments (pivot, nnzR) that will
+be used with the call to the cholesky decomposition. Pivoting is done
+by default to make use of sparse matrices when they are
+generated. This argument is useful in some cases for sparse covariance
+functions to reset the memory parameter nnzR.  (See example below.)}
 
-\item{cov.args}{A list of optional arguments that will be used in calls to the 
-  covariance function.}
+\item{cov.args}{A list of optional arguments that will be used in
+  calls to the covariance function.}
 
 \item{cov.function}{The name, a text string of the covariance function.}
 

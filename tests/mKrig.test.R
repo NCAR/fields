@@ -60,11 +60,13 @@ test.for.zero( temp, temp2, tag="test of predict at new locations")
 N<- length( y)
 Y<- cbind( runif(N), y,runif(N), y)
 
-mKrig( x,Y, cov.function="stationary.cov", 
-       theta=10, lambda=.3)-> lookY
-temp3<-  predict( lookY, xnew)[,4]
+# collapse == FALSE means each fixed effect found separately for columns of Y
+lookY<- mKrig( x,Y, cov.function="stationary.cov", 
+       theta=10, lambda=.3,collapse=FALSE)
+temp3<-  predict( lookY, xnew, collapse=FALSE)[,4]
 
 test.for.zero( temp, temp3, tag="test of matrix Y predicts" )
+
 predictSurface( look)-> temp
 predictSurface( look2)-> temp2
 
@@ -110,13 +112,13 @@ test.for.zero( temp2, temp3, tag="Wendland/spam")
 
 
 ### testing coefficients for new data 
-mKrig.coef( look2, cbind(y+1,y+2))-> newc
+mKrig.coef( look2, cbind(y+1,y+2), collapse=FALSE)-> newc
 test.for.zero( look2$c, newc$c[,2], tag="new coef c no spam")
 
 test.for.zero( look2$d,
                c(newc$d[1,2] -2, newc$d[2:3,2]), tag="new d coef no spam")
 
-mKrig.coef( look3, cbind(y+1,y+2))-> newc
+mKrig.coef( look3, cbind(y+1,y+2), collapse=FALSE)-> newc
 test.for.zero( look3$c, newc$c[,2], tag="new coef c spam")
 
 test.for.zero( look3$d,

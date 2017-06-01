@@ -271,13 +271,15 @@ obj<- mKrigMLEJoint(x,y,
 #                      
 # check  lnLikeihood evaluations that were culled from optim
 # these are in obj$lnLike.eval
-# funny ranges are set to avoid  very low likelihood value
+# funny ranges are set to avoid  very low likelihood values
 
 quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
              xlim=c(-1.2,-.40), ylim=c( -1,1), zlim=c( -625, -610))
+             points( log10(obj$pars.MLE[1]), log10(obj$pars.MLE[2]),
+	     pch=16, col="grey" )
 
-# some syntheticdata with replicates
-  N<- 100
+# some synthetic data with replicates
+  N<- 50
   set.seed(123)
   x<- matrix(runif(2*N), N,2)
   theta<- .2
@@ -291,7 +293,20 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
   #F.true<- t( Sigma.5)%*% matrix( rnorm(N*M), N,M)  
   F.true<- t( Sigma.5)\%*\% matrix( rnorm(N*M), N,M)
   Y<-  F.true +  sigma* matrix( rnorm(N*M), N,M)
-\dontrun{
+
+# find MLE for lambda with grid of ranges 
+# and smoothness fixed in Matern                     
+ par.grid<- list( theta= seq( .1,.35,,8))
+  obj1b<- mKrigMLEGrid( x,Y,
+     cov.args = list(Covariance="Matern", smoothness=1.0), 
+        par.grid = par.grid
+                    )
+  obj$summary # take a look
+# profile over theta
+  plot( par.grid$theta, obj1b$summary[,"lnProfileLike.FULL"],
+    type="b", log="x")
+  
+  \dontrun{
 # m=0 is a simple switch to indicate _no_ fixed spatial drift
 # (the default and highly recommended  is linear drift, m=2). 
 # this results in MLEs that are less biased -- in fact it nails it !
@@ -300,18 +315,9 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
                     cov.params.start=list(theta=.5), lambda.start=.5,
                      mKrig.args= list( m=0))
  
- test.for.zero( obj1a$summary["sigmaMLE"], sigma, tol=.005)
- test.for.zero( obj1a$summary["theta"], theta, tol=.01)
+ test.for.zero( obj1a$summary["sigmaMLE"], sigma, tol=.0075)
+ test.for.zero( obj1a$summary["theta"], theta, tol=.05)
 } 
-# find MLE for lambda with grid of ranges 
-# and smoothness fixed in Matern                     
- par.grid<- list( theta= seq( .05,.3,,20))
-  obj1b<- mKrigMLEGrid( x,Y, cov.args= list(Covariance="Matern", smoothness=1.0), 
-        par.grid = par.grid
-                    )
-  obj$summary # take a look
-# profile over theta
-  plot( par.grid$theta, obj1b$summary[,"lnProfileLike.FULL"], type="b", log="x")
 
 \dontrun{
 #perform joint likelihood maximization over lambda, theta, and smoothness.  

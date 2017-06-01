@@ -74,7 +74,7 @@ mKrig.MLE.joint <- function(x, y, weights = rep(1, nrow(x)),
   # if Y is a matrix of replicated data sets use the log likelihood for the complete data sets
   lnProfileLike.max <- -Inf
   temp.fn <- function(parameters) {
-    # Seperate lambda from covariance parameters.
+    # Separate lambda from covariance parameters.
     # Optimization is over log-scale so exponentiate log-parameters.
     lambda = exp(parameters[1])
     if(length(parameters) > 1) {

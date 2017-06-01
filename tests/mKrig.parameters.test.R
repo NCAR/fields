@@ -4,7 +4,7 @@
 # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 
 library( fields)
-options( echo=FALSE)
+#options( echo=FALSE)
 test.for.zero.flag<- 1
 data(ozone2)
 y<- ozone2$y[16,]
@@ -17,76 +17,104 @@ y<- y[good]
 #source("~/Home/Src/fields/R/mKrig.family.R")
 
 # now look at mKrig w/o sparse matrix 
-mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
-                      chol.args=list( pivot=FALSE))-> look
+look<- mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
+                      chol.args=list( pivot=FALSE))
 
 
-Krig( x,y, cov.function="stationary.cov",
-               theta=10) -> look2
+lookKrig<- Krig( x,y, cov.function="stationary.cov",
+               theta=10) 
 
-test.df<-Krig.ftrace(look$lambda,look2$matrices$D)
+test.df<-Krig.ftrace(look$lambda,lookKrig$matrices$D)
 
-test<- Krig.coef( look2, lambda=look$lambda)
+test<- Krig.coef( lookKrig, lambda=look$lambda)
 
 test.for.zero( look$d, test$d, tag="Krig mKrig d coef")
 test.for.zero( look$c, test$c, tag="Krig mKrig c coef")
 
 # test of trace calculation
 
-mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
+look<- mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
          
-          find.trA=TRUE, NtrA= 1000, iseed=243)-> look
+          find.trA=TRUE, NtrA= 1000, iseed=243)
 
 test.for.zero( look$eff.df, test.df,tol=.01, tag="Monte Carlo eff.df")
 
 
 # 
-Krig( x,y, cov.function="stationary.cov",
+lookKrig<-Krig( x,y, cov.function="stationary.cov",
                theta=350, Distance="rdist.earth",Covariance="Wendland", 
-               cov.args=list( k=2, dimension=2) ) -> look2
+               cov.args=list( k=2, dimension=2) ) 
 
-mKrig( x,y, cov.function="stationary.cov", 
+look<- mKrig( x,y, cov.function="stationary.cov", 
         theta=350, 
         Distance="rdist.earth",Covariance="Wendland",  
         cov.args=list( k=2, dimension=2),
-        lambda=look2$lambda,
-        find.trA=TRUE, NtrA= 1000, iseed=243)-> look
+        lambda=lookKrig$lambda,
+        find.trA=TRUE, NtrA= 1000, iseed=243)
 
-test.for.zero( look$c, look2$c, tag="Test of wendland and great circle")
+test.for.zero( look$c, lookKrig$c, tag="Test of wendland and great circle")
 
-test.for.zero(look$eff.df, Krig.ftrace( look2$lambda, look2$matrices$D)
+test.for.zero(look$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D)
               ,tol=.01, tag="eff.df")
 
 # same calculation using sparse matrices.
 
-mKrig( x,y, cov.function="wendland.cov", 
+look4<- mKrig( x,y, cov.function="wendland.cov", 
         theta=350, 
         Dist.args=list( method="greatcircle"),  
         cov.args=list( k=2),
-        lambda=look2$lambda,
-        find.trA=TRUE, NtrA=100, iseed=243)-> look
+        lambda=lookKrig$lambda,
+        find.trA=TRUE, NtrA=500, iseed=243)
 
-test.for.zero( look$c, look2$c,tol=8e-7, 
+test.for.zero( look$c, look4$c,tol=8e-7, 
            tag="Test of sparse wendland and great circle")
-test.for.zero(look$eff.df, Krig.ftrace( look2$lambda, look2$matrices$D),
+test.for.zero(look4$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
                         tol=.01, tag="sparse eff.df")
 
 # great circle distance switch has been a  big bug -- test some options
 
-mKrig( x,y, cov.function="wendland.cov", 
+look<- mKrig( x,y, cov.function="wendland.cov", 
  theta=350, Dist.args=list( method="greatcircle"),  
- cov.args=list( k=2),lambda=look2$lambda,
- find.trA=TRUE, NtrA=200, iseed=243)-> look
+ cov.args=list( k=2),lambda=lookKrig$lambda,
+ find.trA=TRUE, NtrA=1000, iseed=243)
 
-test.for.zero(look$eff.df, Krig.ftrace( look2$lambda, look2$matrices$D),
-                   tol=1e-6, tag="exact sparse eff.df")
+test.for.zero(look$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
+                   tol=1e-2, tag="exact sparse eff.df")
 
 # compare to fast Tps 
- fastTps( x,y,theta=350,lambda=look2$lambda, NtrA=200, iseed=243, 
-                lon.lat=TRUE)-> look3
+look3<-  fastTps( x,y,theta=350,lambda=lookKrig$lambda, NtrA=200, iseed=243, 
+                lon.lat=TRUE)
+#look3$c<- lookKrig$c
+#look3$d<-  lookKrig$d
+object<- look3
+np<- object$np
+Ey <- diag(1, np)
+NtrA <- np
+hold <- predict.mKrig(object, ynew = Ey, collapseFixedEffect=FALSE)
+hold2<- matrix( NA, np,np)
+for(  k in 1:np){
+hold2[,k] <- predict.Krig(lookKrig, y = Ey[,k])
+}
+#plot( diag(hold), diag(hold2))
 
-test.for.zero(look3$eff.df, Krig.ftrace( look2$lambda, look2$matrices$D),
-                   tol=1e-6, tag="exact sparse eff.df -- fastTps")
+
+test.for.zero( look3$c, lookKrig$c, tol=5e-7)
+test.for.zero( look3$d, lookKrig$d, tol=2e-8)
+test.for.zero( look3$fitted.values, lookKrig$fitted.values, tol=1e-7)
+
+test.for.zero( predict( look3, xnew= look3$x), predict( lookKrig, xnew= lookKrig$x),
+               tol=5e-7)
+
+test.for.zero( hold[,1], hold2[,1], tol=1e-7, relative=FALSE)
+
+test.for.zero(diag(hold),diag(hold2), tol=2E-7,
+              relative=FALSE, tag="exact sparse eff.df by predict -- fastTps")
+#plot( diag(hold), ( 1- diag(hold2)/ diag(hold))  )
+
+test.for.zero(look3$eff.df,sum( diag(hold)) , tag="fastTps ef.df exact" )
+
+test.for.zero(look3$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
+                   tol=2e-7, tag="exact sparse eff.df through mKrig-- fastTps")
 
 # calculations of likelihood, rho and sigma
 

@@ -45,7 +45,6 @@ Testing:  new x's dropping Z
 PASSED test at tolerance  1e-08
 Testing:  new x's new Z's
 PASSED test at tolerance  1e-08
-[1] 400   2
 Testing:  predicting on surface with drop.Z
 PASSED test at tolerance  1e-08
 all done with mKrig Z tests
@@ -53,4 +52,4 @@ all done with mKrig Z tests
 > 
 > proc.time()
    user  system elapsed 
-  1.229   0.075   1.300 
+  1.034   0.063   1.086 

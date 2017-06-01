@@ -58,4 +58,4 @@ done with GCV and REML tests
 > 
 > proc.time()
    user  system elapsed 
-  0.833   0.056   0.885 
+  0.761   0.047   0.795 

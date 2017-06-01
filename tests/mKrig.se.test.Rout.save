@@ -66,4 +66,4 @@ Testing:  test function with several locations Krig mKrig functions
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  0.656   0.044   0.691 
+  0.643   0.037   0.668 

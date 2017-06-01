@@ -143,4 +143,4 @@ Testing:   check trace
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  1.069   0.057   1.122 
+  1.040   0.041   1.072 

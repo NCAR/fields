@@ -24,7 +24,7 @@ ExponentialUpper = function(distMat, range = 1, alpha = 1/range) {
   if(nrow(distMat) != ncol(distMat))
     stop('distance matrix is non-symmetric.  Should not be calling ExponentialUpper.')
   
-  return(.Call("ExponentialUpperC", as.double(distMat), as.integer(nrow(distMat)), as.double(alpha)))
+  return(.Call("ExponentialUpperC", as.double(distMat), as.integer(nrow(distMat)), as.double(alpha), PACKAGE = "fields"))
   
   #convert ans to standard matrix
   #ans = ans[[1]]

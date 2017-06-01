@@ -45,4 +45,4 @@ all done with mKrig.MLE tests
 > 
 > proc.time()
    user  system elapsed 
- 13.864   0.684  15.316 
+  5.093   0.655   5.053 

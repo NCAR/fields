@@ -37,5 +37,6 @@ compactToMat = function(compactMat, diagVal=0, lower.tri=FALSE, upper.tri=TRUE) 
   return(.Call("compactToMatC", as.double(compactMat),
                as.integer(length(compactMat)), 
                as.integer(n), as.double(diagVal), 
-               as.integer(lower.tri), as.integer(upper.tri)))
+               as.integer(lower.tri), as.integer(upper.tri),
+               PACKAGE="fields"))
 }

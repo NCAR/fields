@@ -58,6 +58,6 @@ S3method(predictSurface,Krig)
 S3method(predictSurface,mKrig)
 S3method(predictSurfaceSE,default)
 
-useDynLib(fields)
+useDynLib(fields,.registration=TRUE)
 import("spam", "methods","maps")
 

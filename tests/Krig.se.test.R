@@ -9,7 +9,7 @@ library( fields)
 # tests of predictSE
 # against direct linear algebra 
 
-options( echo=FALSE)
+#options( echo=FALSE)
 
 test.for.zero.flag<- 1
 

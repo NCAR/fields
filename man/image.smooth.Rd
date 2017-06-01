@@ -135,7 +135,8 @@ look<- image.smooth(out$z, dx=dx, dy=dy, theta= .25, xwidth=32*dx,ywidth=32*dy)
 #
 set.seed(123)
 test.image<- matrix( rnorm(128**2),128,128)
-
+dx<- .1
+dy<- .8
 
 wght<- setup.image.smooth( nrow=128, ncol=128,  dx=dx, dy=dy,
              theta=.25, xwidth=2.5, ywidth=2.5)
@@ -160,9 +161,9 @@ look2<- image.smooth( test.image , xwidth=0,
                         ywidth=2.5, dx=dx,dy=dy, theta=1.5)
 # compare these two
 set.panel( 1,2)
-image.plot( look)
+image.plot( look, legend.mar=7.1)
 title("free boundaries")
-image.plot( look2) # look for periodic continuity at edges!
+image.plot( look2, legend.mar=7.1) # look for periodic continuity at edges!
 title("periodic boundary in horizontal")
 set.panel(1,1)
 

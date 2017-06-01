@@ -89,7 +89,8 @@
                  n2 = as.integer(n2), 
                  par = as.double(p),
                  c = as.double(C),
-                 work = as.double(rep(0, n2))))
+                 work = as.double(rep(0, n2)) , PACKAGE="fields")
+           )
   }
   #
   # return marginal variance ( 1.0 in this case)

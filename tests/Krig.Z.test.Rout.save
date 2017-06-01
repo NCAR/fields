@@ -94,4 +94,4 @@ All done with Z tests and Krig/Tps including predict and predictSE !
 > 
 > proc.time()
    user  system elapsed 
-  0.965   0.056   1.013 
+  0.967   0.045   1.001 

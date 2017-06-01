@@ -50,9 +50,7 @@ Testing:  test of predict at new locations
 PASSED test at tolerance  1e-08
 Testing:  test of matrix Y predicts
 PASSED test at tolerance  1e-08
-[1] 6400    2
 PASSED test at tolerance  1e-08
-[1] 2250    2
 Testing:  predictSurface with mKrig
 PASSED test at tolerance  1e-08
 Testing:  Wendland/no spam
@@ -100,4 +98,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  1.255   0.113   1.370 
+  1.129   0.107   1.212 

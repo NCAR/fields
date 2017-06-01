@@ -17,7 +17,7 @@ Type 'q()' to quit R.
 
 > ############################################################################
 > #      Begin tests of Matern covaraince parameter estimate
-> # Note that in all tests the smoohtness (nu) is fixed
+> # Note that in all tests the smoothness (nu) is fixed
 > # and only theta (range), sill ( rho) and nugget (sigma2) are considered. 
 > ##########################################################################
 > library(fields)
@@ -38,8 +38,12 @@ The following objects are masked from 'package:base':
 Loading required package: maps
 > 
 > options( echo=FALSE)
-Testing:  sanity check for REML from Krig
+[1] 75 75
+[1] 75 75
+Testing:  sanity check 1 for REML from Krig
 PASSED test at tolerance  2e-04
+Testing:  sanity check 2 for REML from Krig
+PASSED test at tolerance  1e-08
 Testing:  check REML rho
 PASSED test at tolerance  0.001
 Testing:  check REML theta
@@ -54,4 +58,4 @@ done with Matern REML estimator tests where smoothness is fixed
 > 
 > proc.time()
    user  system elapsed 
-  4.003   0.153   4.173 
+  3.718   0.120   3.839 

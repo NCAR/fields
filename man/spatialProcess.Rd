@@ -39,9 +39,9 @@
 spatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, 
 mKrig.args = list(m = 2), 
 cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", 
-        smoothness = 1), theta.start = NULL, lambda.start = 0.5,
+        smoothness = 1), theta = NULL, theta.start = NULL, lambda.start = 0.5,
          theta.range = NULL,
-    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, ...) 
+    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, REML = FALSE, ...) 
                  
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
@@ -65,6 +65,8 @@ E.g. elevation for fitting climate data over space. }
   	 
  \item{cov.args}{ A list specifying parameters and other components of the covariance function.}
  
+ \item{theta}{If not NULL the range parameter for the covariance is fixed at this value. }
+ 
  \item{theta.start}{Starting value for MLE fitting of the scale (aka range) parameter. If omitted the starting value is taken from a grid search ove theta.}
  
  \item{lambda.start}{Starting value for MLE fitting of the lambda parameter. Note lambda
@@ -81,6 +83,8 @@ E.g. elevation for fitting climate data over space. }
  %\item{optim.args}{Arguements to be used  in optim for finding joint
  %MLEs for theta
  %and lambda. }
+ 
+ \item{REML}{ If TRUE the parameters are found by restricted maximum likelihood.}
  
  \item{verbose}{If TRUE print out intermediate information for debugging.}
 

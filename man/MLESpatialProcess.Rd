@@ -36,7 +36,7 @@ MLESpatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
                  list(Covariance = "Matern", smoothness = 1),
                  lambda.start = 0.5, theta.start = NULL, theta.range =
                  NULL, gridN = 20, optim.args = NULL, na.rm = TRUE,
-                 verbose = FALSE, abstol = 1e-04, ...)
+                 verbose = FALSE, abstol = 1e-04, REML = FALSE, ...)
                            
 }
 %- maybe also 'usage' for other objects documented here.
@@ -91,6 +91,8 @@ If TRUE print out intermediate information for debugging.
 }
 
 \item{abstol}{Absolute tolerance used to judeg convergence in optim.}
+
+\item{REML}{If TRUE use maximize the restricted Likelihood instead of the concentrated likelihood.(Preliminary experience suggests this does not make much difference.) }
 
 \item{\dots}{
 Additional arguments to pass to the mKrig function.

@@ -46,4 +46,4 @@ all done testing both versions of simultaneous diagonalization
 > 
 > proc.time()
    user  system elapsed 
-  0.557   0.042   0.589 
+  0.652   0.045   0.689 

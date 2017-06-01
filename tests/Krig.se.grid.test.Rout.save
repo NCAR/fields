@@ -44,4 +44,4 @@ all done with grid based se tests
 > 
 > proc.time()
    user  system elapsed 
-  0.636   0.050   0.679 
+  0.663   0.042   0.699 

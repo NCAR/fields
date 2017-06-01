@@ -10,7 +10,7 @@ test.for.zero.flag<-1
 set.seed(133)
 x0<- matrix( runif( 10*2), 10,2)*2  
 x<- rbind( x0,x0, x0[3:7,])
-y<- rnorm( nrow( x))*.05 + + x[,1]**2 +  x[,2]**2
+y<- rnorm( nrow( x))*.05 +  x[,1]**2 +  x[,2]**2
 weights<- 8 + runif( nrow( x))
 
 # x0 are the unique values.

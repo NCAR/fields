@@ -75,4 +75,4 @@ all done  testing off diag W case
 > 
 > proc.time()
    user  system elapsed 
-  0.684   0.048   0.724 
+  0.654   0.034   0.678 

@@ -26,17 +26,22 @@
 \alias{half.image}
 \alias{get.rectangle}
 \alias{average.image}
+\alias{which.max.matrix}
+\alias{which.max.image}
  \title{Some simple functions for subsetting images} 
 \description{These function help in subsetting images or reducing its
 size by averaging adjecent cells.}
 \usage{
 
 crop.image(obj, loc=NULL,...)
+which.max.matrix(z)
+which.max.image(obj)
 get.rectangle()
 average.image(obj, Q=2)
 half.image(obj)
 in.poly( xd, xp, convex.hull=FALSE, inflation=1e-07)
 in.poly.grid( grid.list,xp, convex.hull=FALSE, inflation=1e-07)
+
 }
 
 \arguments{
@@ -57,7 +62,9 @@ instead of the polygon.}
 (See help( grid.list) for more details.)}
  \item{inflation}{A small expansion factor to insure that points 
 precisely on the boundaries and vertices of the convex hull are included 
-as members.} 
+as members.}
+\item{z}{ A matrix of numerical values}
+
  \item{\dots}{ Graphics arguments passed to image.plot. This 
 is only relevant when loc is NULL and the locator function is called via 
 \code{get.rectangle}. }
@@ -78,6 +85,11 @@ an image with appropriate \code{x,y} and \code{z} components.}
 
 \item{get.rectangle}{Given an image plots and waits for two mouse 
 clicks that are returned.}
+
+\item{which.max.image}{Returns a list with components \code{x, y, z}
+, and \code{ind} giving the
+location of the maximun and value of the maximum in the image based
+on the grid values and also on the indicies of the image matrix.}
 
 \item{average.image, half.image}{Takes passed image and averages the 
 pixel values and adjusts the grid to create an image that has a smaller 
@@ -119,6 +131,8 @@ data(RMelevation)
 # extract elevations for just CO frontrange.
    FR<- crop.image(RMelevation, loc)
    image.plot( FR, col=terrain.colors(256))
+   
+   which.max.image( FR)
 
 # average cells  4 to 1 by doing this twice!
    temp<-  half.image( RMelevation)

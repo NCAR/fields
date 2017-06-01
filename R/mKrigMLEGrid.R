@@ -83,14 +83,13 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   lnLike.eval<- list()
   for (k in 1:NG) {
     lambda.start <- ifelse(is.na(lambda[k]), lambda.opt, (lambda[k]))
-    lambda.start<- .5
     # list of covariance arguments from par.grid with right names (some R arcania!)
     # note that this only works because 1) temp.fn will search in this frame for this object
     # par.grid has been coerced to a data frame so one has a concept of a row subscript.
     cov.args.temp <- as.list(par.grid[k, ])
     names(cov.args.temp) <- names(par.grid)
-    
-    #optimize over lambda if lambda.profile is TRUE
+    currentCov.args<- c(cov.args.temp, cov.args) 
+    # optimize over lambda if lambda.profile is TRUE
     optim.args = list(method = "BFGS", 
                       control = list(fnscale = -1, parscale = c(0.5), 
                                      ndeps = c(0.05)))
@@ -101,26 +100,27 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                          cov.params.start = NULL, 
                                   cov.fun = cov.fun,
                                optim.args = optim.args,
-                                 cov.args = cov.args,
+                                 cov.args = currentCov.args,
                                     na.rm = na.rm,
                                mKrig.args = mKrig.args,
                                      REML = REML,
                                   verbose = verbose)
     lnLike.eval<- c( lnLike.eval, list(MLEfit0$lnLike.eval))
     lambda.opt<- MLEfit0$pars.MLE[1]
-    print( lambda.opt)
     }
     else {
       # no refinement for lambda so just save the the 'start' value as final one.
       lambda.opt <- lambda.start
     }
     
-# final fit at optimal value (or starting value if not refinement/maximization for lambda)
+# final fit at optimal value 
+#    (or starting value if not refinement/maximization for lambda)
     obj <- do.call("mKrig", c(
       list(x = x, y = y, weights = weights, Z = Z, na.rm = na.rm),
                                     mKrig.args,
-      list(lambda=lambda.opt),
-      list( cov.fun= cov.fun, cov.args=c(cov.args.temp, cov.args)))
+       list(lambda=lambda.opt),
+       list( cov.fun= cov.fun, cov.args = currentCov.args)
+      )
       )
     nameCriterion<- ifelse( !REML,
                             "lnProfileLike.FULL",

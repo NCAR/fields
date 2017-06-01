@@ -61,4 +61,4 @@ All done with SPAM tests
 > 
 > proc.time()
    user  system elapsed 
-  0.780   0.051   0.836 
+  0.728   0.048   0.767 

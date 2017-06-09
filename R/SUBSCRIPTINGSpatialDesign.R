@@ -18,6 +18,6 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"[.spatial.design" <- function(x, ...) {
+"[.spatialDesign" <- function(x, ...) {
     x$design[...]
 }

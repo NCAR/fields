@@ -1,7 +1,7 @@
 
-R version 3.3.2 (2016-10-31) -- "Sincere Pumpkin Patch"
-Copyright (C) 2016 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin13.4.0 (64-bit)
+R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -15,10 +15,23 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-> # fields, Tools for spatial data
-> # Copyright 2004-2011, Institute for Mathematics Applied Geosciences
-> # University Corporation for Atmospheric Research
-> # Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+>  # fields is a package for analysis of spatial data written for
+>   # the R software environment .
+>   # Copyright (C) 2017
+>   # University Corporation for Atmospheric Research (UCAR)
+>   # Contact: Douglas Nychka, nychka@ucar.edu,
+>   # National Center for Atmospheric Research,
+>   # PO Box 3000, Boulder, CO 80307-3000
+>   #
+>   # This program is free software; you can redistribute it and/or modify
+>   # it under the terms of the GNU General Public License as published by
+>   # the Free Software Foundation; either version 2 of the License, or
+>   # (at your option) any later version.
+>   # This program is distributed in the hope that it will be useful,
+>   # but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   # GNU General Public License for more details.
+> 
 > 
 > library( fields)
 Loading required package: spam
@@ -298,4 +311,4 @@ PASSED test at tolerance  1e-08
 > 
 > proc.time()
    user  system elapsed 
-  2.193   0.148   2.320 
+  2.995   0.119   3.108 

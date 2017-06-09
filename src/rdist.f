@@ -1,5 +1,5 @@
 c fields, Tools for spatial data
-c Copyright 2015, Institute for Mathematics Applied Geosciences
+c Copyright (C) 2017, Institute for Mathematics Applied Geosciences
 c University Corporation for Atmospheric Research
 c Licensed under the GPL -- www.gpl.org/licenses/gpl.html
 

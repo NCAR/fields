@@ -1,6 +1,6 @@
 %# fields  is a package for analysis of spatial data written for
 %# the R software environment .
-%# Copyright (C) 2016
+%# Copyright (C) 2017
 %# University Corporation for Atmospheric Research (UCAR)
 %# Contact: Douglas Nychka, nychka@ucar.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -46,7 +46,8 @@ mKrig(x, y, weights = rep(1, nrow(x)), Z = NULL,
   
 \method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL,
 derivative=0,
-Z=NULL,drop.Z=FALSE,just.fixed=FALSE,collapseFixedEffect = TRUE, ...)
+Z=NULL,drop.Z=FALSE,just.fixed=FALSE,
+collapseFixedEffect = object$collapseFixedEffect, ...)
 
 \method{summary}{mKrig}(object, ...)
 
@@ -60,11 +61,11 @@ mKrigCheckXY(x, y, weights, Z, na.rm)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-\item{collapseFixedEffect}{ If replicated fields are given to mKrig (
-\code{y} has multiple columns) there is the choice of estimating the
-fixed effect coefficients (\code{d} in thereturned object) separately
+\item{collapseFixedEffect}{ If replicated fields are given to mKrig (i.e.
+\code{y} has more than one column) there is the choice of estimating the
+fixed effect coefficients (\code{d} in the returned object) separately
 for each replicate or pooling across replicates and deriving a single
-estimate. If collapseFixedEffect is TRUE (default) the estimates are
+estimate. If \code{collapseFixedEffect} is TRUE (default) the estimates are
 pooled. }
   
 \item{chol.args}{A list of optional arguments (pivot, nnzR) that will

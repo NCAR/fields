@@ -1,6 +1,6 @@
 %# fields  is a package for analysis of spatial data written for
 %# the R software environment .
-%# Copyright (C) 2016
+%# Copyright (C) 2017
 %# University Corporation for Atmospheric Research (UCAR)
 %# Contact: Douglas Nychka, nychka@ucar.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -147,7 +147,7 @@ If TRUE prints out debugging information.
 
 }
 \value{
-Returns a design object of class "spatial.design".
+Returns a design object of class \code{spatialDesign}.
 Subscripting this object has the same effect as subscripting the first
 component (the design).  The returned list has the following
 components:

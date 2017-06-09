@@ -1,3 +1,19 @@
+ # fields is a package for analysis of spatial data written for
+  # the R software environment .
+  # Copyright (C) 2017
+  # University Corporation for Atmospheric Research (UCAR)
+  # Contact: Douglas Nychka, nychka@ucar.edu,
+  # National Center for Atmospheric Research,
+  # PO Box 3000, Boulder, CO 80307-3000
+  #
+  # This program is free software; you can redistribute it and/or modify
+  # it under the terms of the GNU General Public License as published by
+  # the Free Software Foundation; either version 2 of the License, or
+  # (at your option) any later version.
+  # This program is distributed in the hope that it will be useful,
+  # but WITHOUT ANY WARRANTY; without even the implied warranty of
+  # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  # GNU General Public License for more details.
 # Test adapted from fields package, under GPL license
 
 library( fields )
@@ -183,23 +199,25 @@ MLEfitB$summary
 MLEfitC$summary
 
 
-#generate observation locations
-set.seed( 223)
-NS<- 25
-hold<- matrix(NA, nrow=NS, ncol=7 )
 
-n=500
+# simple Monte Carlo test
+NS<- 10
+n<-75  
+M<- 400
 
+
+set.seed(123)
 x = matrix(runif(2*n), nrow=n)
 trueTheta = .1
 trueLambda = .04
 Sigma = genCovMat(x, trueTheta, trueLambda)
 U = chol(Sigma)
 set.seed( 332)
+hold<- matrix(NA, nrow=NS, ncol=7 )
 for( k in 1:NS){
 cat(k, " ")
 #generate observations at the locations
-M<- 1
+
 y = t(U)%*%matrix( rnorm(n*M), n,M)
 
 MLEfitC <- mKrigMLEJoint(x, y, lambda.start=.5, 
@@ -220,4 +238,6 @@ hold[k,]<- MLEfitC$summary
 cat("all done with mKrigMLEGrid tests", fill=TRUE)
 options( echo=TRUE)
 
+test.for.zero( trueTheta, mean(hold[,3]), tol=2e-3,tag="Monte Carlo theta")
+test.for.zero( trueLambda, mean(hold[,2]), tol=2e-2,tag="Monte Carlo theta")
 

@@ -1,6 +1,6 @@
 %# fields  is a package for analysis of spatial data written for
 %# the R software environment .
-%# Copyright (C) 2016
+%# Copyright (C) 2017
 %# University Corporation for Atmospheric Research (UCAR)
 %# Contact: Douglas Nychka, nychka@ucar.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -20,7 +20,7 @@
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
 \name{fields internal }
-\alias{[.spatial.design}
+\alias{[.spatialDesign}
 \alias{COR}
 \alias{D4transform.image}
 \alias{Krig.df.to.lambda}
@@ -62,19 +62,19 @@
 \alias{minimax.crit}
 \alias{plot.krig.image}
 \alias{plot.sim.krig.image}
-\alias{plot.spatial.design}
+\alias{plot.spatialDesign}
 \alias{predict.interp.surface}
 \alias{predict.krig.image}
 
 \alias{predict.surface.default}
 
 \alias{print.krig.image}
-\alias{print.spatial.design}
+\alias{print.spatialDesign}
 \alias{print.sreg}
 \alias{print.summary.Krig}
 \alias{print.summary.spatialProcess}
 \alias{print.summary.krig.image}
-\alias{print.summary.spatial.design}
+\alias{print.summarySpatialDesign}
 \alias{print.summary.sreg}
 \alias{printGCVWarnings}
 \alias{qr.q2ty}
@@ -104,7 +104,7 @@
 \alias{summaryGCV.Krig}
 \alias{summaryGCV.sreg}
 \alias{summary.krig.image}
-\alias{summary.spatial.design}
+\alias{summary.spatialDesign}
 \alias{summary.sreg}
 \alias{surface}
 \alias{surface.default}
@@ -122,6 +122,7 @@
 Listed below are supporting functions for the major methods in fields. 
 }
 \usage{
+\method{[}{spatialDesign}(x, ...)
 
 Krig.df.to.lambda(df, D, guess = 1, tol = 1e-05) 
 Krig.fdf (llam, info) 
@@ -184,7 +185,7 @@ makeSimulationGrid2 (fastTpsObject, predictionPointsList,
 minimax.crit (obj, des = TRUE, R) 
  
 
-\method{plot}{spatial.design}(x,...) 
+\method{plot}{spatialDesign}(x,...) 
  
 \method{predict}{interp.surface}(object, loc,...)  
 
@@ -192,11 +193,11 @@ minimax.crit (obj, des = TRUE, R)
 \method{predict}{surface.default}(object, ...) 
  
 
-\method{print}{spatial.design} (x,...) 
+\method{print}{spatialDesign} (x,...) 
 \method{print}{sreg}(x, ...) 
 \method{print}{summary.Krig} (x, ...) 
 \method{print}{summary.spatialProcess} (x, ...)
-\method{print}{summary.spatial.design} (x, digits = 4,...) 
+\method{print}{summarySpatialDesign} (x, digits = 4,...) 
 \method{print}{summary.sreg} (x, ...) 
  
 printGCVWarnings( Table,  method = "all")
@@ -224,7 +225,7 @@ qsreg.psi.OLD(r, alpha = 0.5, C = 1)
 
 quickPrint(obj, max.values = 10)
 
-\method{summary}{qsreg} (object, ...) 
+
 
 radbas.constant (m, d) 
  
@@ -242,7 +243,8 @@ summaryGCV.Krig(object, lambda, cost = 1, verbose = FALSE,
 summaryGCV.sreg (object, lambda, cost = 1, nstep.cv = 20, 
         offset = 0, verbose = TRUE,...) 
 
-\method{summary}{spatial.design} (object, digits = 4, ...) 
+\method{summary}{qsreg} (object, ...)     
+\method{summary}{spatialDesign} (object, digits = 4, ...) 
 \method{summary}{sreg} (object, digits = 4, ...) 
 
 surface(object , ...) 

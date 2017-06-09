@@ -170,6 +170,6 @@
         out$grid <- R.orig
     if (return.transform) 
         out$transform <- transform
-    class(out) <- "spatial.design"
+    class(out) <- "spatialDesign"
     out
 }

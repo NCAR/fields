@@ -474,24 +474,26 @@ spam.options(nearestdistnnz=c(416052,400))
 # Suppose the target is a spatial prediction using roughly 50 nearest neighbors
 # (tapering covariances is effective for roughly 20 or more in the situation of 
 #  interpolation) see Furrer, Genton and Nychka (2006).
-
 # take a look at a random set of 100 points to get idea of scale
-
+# and saving  computation time by not  looking at the complete set
+# of points
+# NOTE: This could also be done directly using the  FNN package for finding nearest 
+# neighbors
   set.seed(223)
   ind<- sample( 1:N,100)
   hold<- rdist( x[ind,], x)
-  dd<- (apply( hold, 1, sort))[65,]
+  dd<- apply( hold, 1, quantile, p= 50/N )
   dguess<- max(dd)
 # dguess is now a reasonable guess at finding cutoff distance for
 # 50 or so neighbors
-
 # full distance matrix excluding distances greater than dguess
-# but omit the diagonal elements -- we know these are zero!
-  hold<- nearest.dist( x, delta= dguess,upper=TRUE)
-# exploit spam format to get quick of number of nonzero elements in each row
-  hold2<-  diff( hold@rowpointers)
-#  min( hold2) = 55   which we declare close enough 
-# now the following will use no less than 55 nearest neighbors 
+  hold2<- nearest.dist( x, x, delta= dguess )
+# here is trick to find the number of nonsero rows for a matrix in spam format. 
+  hold3<-  diff( hold2@rowpointers)
+#  min( hold3) = 43   which we declare close enough. This also counts the diagonal
+# So there are a minimum of 42 nearest neighbors  ( median is 136)
+# see  table( hold3) for the distribution 
+# now the following will use no less than 43 - 1  nearest neighbors 
 # due to the tapering. 
 \dontrun{
   mKrig( x,y, cov.function="wendland.cov",k=2, theta=dguess, 

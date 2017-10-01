@@ -142,6 +142,11 @@ M<- 1e4
 set.seed( 332)
 y = t(U)%*%matrix( rnorm(n*M), n,M)
 
+out<- mKrig( x,y, lambda=trueLambda, theta=trueTheta*.1, 
+       cov.function ="stationary.cov",cov.args = list(Covariance = "Matern",
+                                                      smoothness=1.0)
+)
+       
 optim.args = list(method = "BFGS", 
                   control = list(fnscale = -1, parscale = c(0.5, 0.5), 
                                  ndeps = c(0.05,0.05)))

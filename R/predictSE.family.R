@@ -216,8 +216,8 @@
     temp1 <- rho * (colSums(t0 * (object$Omega %*% t0)) - colSums((k0) * 
         hold$c) - 2 * colSums(t0 * hold$d))
     # find marginal variances -- trival in the stationary case!
-    temp0 <- rho * do.call(call.name, c(object$args, list(x1 = xnew, 
-        marginal = TRUE)))
+    temp0 <- rho * do.call(call.name,
+          c(object$args, list(x1 = xnew, marginal = TRUE)))
     # Add marginal variance to part from estimate
     temp <- temp0 + temp1
     # return square root as the standard error in units of observations.

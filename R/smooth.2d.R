@@ -25,13 +25,15 @@
     temp <- as.image(Y, ind, grid = grid, nx = nrow, ny = ncol, 
         x = x)
     Y <- temp$z
+    m<- nrow( temp$z)
+    n<- ncol( temp$z)
     NN <- temp$weights
     grid <- list(x = temp$x, y = temp$y)
     if (is.null(weight.obj)) {
         dx <- grid$x[2] - grid$x[1]
         dy <- grid$y[2] - grid$y[1]
-        m <- length(grid$x)
-        n <- length(grid$y)
+#        m <- length(grid$x)
+#        n <- length(grid$y)
         if (is.null(Mwidth)) 
             M <- 2 * m
         else {

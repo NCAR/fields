@@ -130,7 +130,7 @@ N<- ncol( volcano)
 x<- seq( 0,1,,M)
 y<- seq( 0,1,,N)
 
-drape.plot( x,y,volcano, col=terrain.colors(128))-> pm 
+pm<- drape.plot( x,y,volcano, col=terrain.colors(128)) 
 
 # use different range for color scale and persp plot
 # setting of border omits the mesh lines
@@ -158,13 +158,13 @@ dz<- (
 
 # convert dz to a color scale:
   zlim<- range( c( dz), na.rm=TRUE)
-  zcol<-drape.color( dz, zlim =zlim)$color.index
+  zcol<-drape.color( dz, zlim =zlim, col = tim.colors(64) )$color.index
 
 # wireframe with these colors 
   persp( volcano, col=zcol, theta=30, phi=20)
 
 # add legend using image.plot function 
-  image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE, col=zcol)
+  image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE, col= tim.colors(64))
  
 
 }

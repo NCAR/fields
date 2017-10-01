@@ -246,8 +246,11 @@ predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
         }
         else {
           if( nrow( xnew) != nrow(as.matrix(Z)) ){
-            stop("number of rows of covariate Z is not 
-                 the same as the number of locations")
+            stop(paste("number of rows of covariate Z",
+                         nrow(as.matrix(Z)), 
+             " is not the same as the number of locations",
+                         nrow( xnew) )
+                )
           }
             temp0 <-  cbind(fields.mkpoly(xnew, m = object$m),as.matrix(Z)) 
             temp1 <- temp0 %*% d.coef

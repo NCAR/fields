@@ -7,7 +7,7 @@ exportPattern("^[^\\.]")
              "points", "polygon", "rect", "segments", "text", "title")
   importFrom("stats", "D", "approx", "coef", "cor", "dist", "fft", "mad",
              "median", "optim", "optimize", "predict", "quantile",
-             "rnorm", "sd", "var")
+             "rnorm", "sd", "var","qchisq")
 importFrom("utils", "object.size")
 S3method("[",spatialDesign)
 S3method(coef, Krig)

@@ -1,5 +1,5 @@
 
-R version 3.4.0 (2017-04-21) -- "You Stupid Darkness"
+R version 3.4.1 (2017-06-30) -- "Single Candle"
 Copyright (C) 2017 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
@@ -37,8 +37,9 @@ Type 'q()' to quit R.
 > 
 > library( fields)
 Loading required package: spam
+Loading required package: dotCall64
 Loading required package: grid
-Spam version 1.4-0 (2016-08-29) is loaded.
+Spam version 2.1-1 (2017-07-02) is loaded.
 Type 'help( Spam)' or 'demo( spam)' for a short introduction 
 and overview of this package.
 Help for individual functions is also obtained by adding the
@@ -51,6 +52,8 @@ The following objects are masked from 'package:base':
     backsolve, forwardsolve
 
 Loading required package: maps
+See www.image.ucar.edu/~nychka/Fields for
+ a vignette and other supplements. 
 > options( echo=FALSE)
 PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
@@ -66,4 +69,4 @@ Done with testing Wendland family
 > 
 > proc.time()
    user  system elapsed 
-  0.692   0.039   0.723 
+  0.724   0.034   0.751 

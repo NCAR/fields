@@ -17,7 +17,7 @@ print.spatialProcess <- function(x, digits = 4, ...) {
     c2 <- c(c2, NData)
   }
   
-  c1 <- c(c1, "Degree of polynomial null space ( base model):")
+  c1 <- c(c1, "Degree of polynomial in fixed part: ")
   
   
   if(x$m !=0 ){
@@ -26,40 +26,44 @@ print.spatialProcess <- function(x, digits = 4, ...) {
   else{
     c2 <- c(c2, NA)
   }
-  c1 <- c(c1, "Total number of parameters in base model")
+  c1 <- c(c1, "Total number of parameters in fixed part: ")
   c2 <- c(c2, x$nt)
   if (x$nZ > 0) {
     c1 <- c(c1, "Number of additional covariates (Z)")
     c2 <- c(c2, x$nZ)
   }
+  
+  c1 <- c(c1, "MLE nugget variance ( sigma^2)")
+  c2 <- c(c2, signif(x$sigma.MLE.FULL^2, digits))
+    
+  c1 <- c(c1, "MLE process variance (rho)")
+  c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
+  
+  
+  c1 <- c(c1, "MLE range parameter (theta, units of distance): ")
+  c2 <- c(c2, signif(x$theta.MLE, digits))
+  
+  c1 <- c(c1, "Approx 95% lower bound:  ")
+  c2<-  c( c2, signif( x$theta.95CI[1], digits) )
+  
+  c1 <- c(c1, "           upper bound:  ")
+  c2<- c( c2, signif( x$theta.95CI[2], digits) )
+  
+ 
   if (!is.na(x$eff.df)) {
-    c1 <- c(c1, " Eff. degrees of freedom")
+    c1 <- c(c1, " Approx.  degrees of freedom for curve")
     c2 <- c(c2, signif(x$eff.df, digits))
     if (length(x$trA.info) < x$np) {
-      c1 <- c(c1, "   Standard Error of estimate: ")
+      c1 <- c(c1, "   Standard Error of df estimate: ")
       c2 <- c(c2, signif(sd(x$trA.info)/sqrt(length(x$trA.info)), 
                          digits))
     }
   }
-  c1 <- c(c1, "Smoothing parameter")
-  c2 <- c(c2, signif(x$lambda.fixed, digits))
-  
-  c1 <- c(c1, "MLE sigma")
-  c2 <- c(c2, signif(x$sigma.MLE.FULL, digits))
-    
-  c1 <- c(c1, "MLE rho")
-  c2 <- c(c2, signif(x$rho.MLE.FULL, digits))
-  
-  c1 <- c(c1, "MLE lambda = MLE sigma^2 / MLE rho")
-  c2 <- c(c2, signif(x$lambda.MLE, digits))
-  
-  c1 <- c(c1, "MLE theta")
-  c2 <- c(c2, signif(x$theta.MLE, digits))
-  
   c1 <- c(c1, "Nonzero entries in covariance")
   c2 <- c(c2, x$nonzero.entries)
   sum <- cbind(c1, c2)
   dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+  
   cat("Call:\n")
   dput(x$call)
   print(sum, quote = FALSE)
@@ -86,5 +90,15 @@ print.spatialProcess <- function(x, digits = 4, ...) {
       }
     }
   }
+  if (!is.na(x$eff.df)) {
+    c1 <- c(c1, " Eff. degrees of freedom")
+    c2 <- c(c2, signif(x$eff.df, digits))
+    if (length(x$trA.info) < x$np) {
+      c1 <- c(c1, "   Standard Error of estimate: ")
+      c2 <- c(c2, signif(sd(x$trA.info)/sqrt(length(x$trA.info)), 
+                         digits))
+    }
+  }
+  
   invisible(x)
 }

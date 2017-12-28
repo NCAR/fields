@@ -56,6 +56,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                     REML = REML) 
     lambda.MLE <- MLEInfo$lambda.MLE
     theta.MLE <- NA
+    theta.95CI<- NA
     thetaModel <- theta
     if( verbose){
       print( MLEInfo$summary)
@@ -79,12 +80,22 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	lambda.MLE <- MLEInfo$MLEJoint$pars.MLE[1] 
 	theta.MLE<- MLEInfo$MLEJoint$pars.MLE[2]
 	thetaModel<- theta.MLE
+# approximate confidence interval for theta 
+	thetaGrid<- MLEInfo$MLEGrid$par.grid$theta
+  lgProfileLike<- MLEInfo$MLEGrid$summary[,2]
+	splineFit<- splint(thetaGrid, lgProfileLike, nx=500)
+	cutLevel<- max(splineFit$y ) - qchisq(.95, 1) / 2
+	ind<- splineFit$y> cutLevel
+	lower<- min( splineFit$x[ ind] )
+	upper<- max(splineFit$x[ ind])
+	theta.95CI = c( lower, upper)
   }
 #  
 	if( verbose){
 	  cat("Summary from joint optimization", fill=TRUE)
 	  print( MLEInfo$MLEJoint$summary )
 	  print( MLEInfo$MLEJoint$pars.MLE)
+	  print(theta.95CI )
 	}
 # now fit spatial model with MLE for theta (range parameter)
 #  or the value supplied in the call
@@ -104,10 +115,12 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	             )
 	            	)
 	)
-	obj <- c(obj, list(  MLEInfo = MLEInfo,
-	                   thetaModel= thetaModel,
-	                   theta.MLE = theta.MLE,
-	                   lambda.MLE = lambda.MLE, summary=MLEInfo$summary)
+	obj <- c(obj, list(   MLEInfo = MLEInfo,
+	                   thetaModel = thetaModel,
+	                    theta.MLE = theta.MLE,
+	                   theta.95CI = theta.95CI,
+	                   lambda.MLE = lambda.MLE,
+	                      summary = MLEInfo$summary)
 	        )
 # replace call to mKrig with this top level one
   obj$call<- match.call()	

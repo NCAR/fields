@@ -73,11 +73,11 @@ Average  elevation for grid cell in meters
 
 These elevations and the companion grid formed the basis for the
 103-Year High-Resolution Precipitation Climate Data Set for the
-Conterminous United States
-\url{ftp://ftp.ncdc.noaa.gov/pub/data/prism100} archived at the National
-Climate Data Center. This work was primarily authored by Chris Daly
+Conterminous United States ( see \url{http://www.prism.oregonstate.edu/documents/PRISM_downloads_FTP.pdf}
+and also archived at the National
+Climate Data Center. This work isy authored by Chris Daly
 \url{www.prism.oregonstate.edu} and his PRISM group but had some
-contribution from the Geophysical Statistics Project at NCAR. 
+contribution from the Geophysical Statistics Project at NCAR  
 and is an interpolation of the observational data to a 4km grid that
 takes into account topography such as elevation and aspect.
 

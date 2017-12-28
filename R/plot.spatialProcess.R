@@ -45,21 +45,23 @@
     	summary<- out$MLEInfo$MLEProfileLambda$summary
     	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
-            plot(summary[,"EffDf" ], summary[,"GCV" ],  xlab = "Eff. number of parameters", 
-                ylab = "GCV function", type="l",
+            plot(summary[,"lambda.MLE" ], summary[,2 ],  xlab = "lambda", 
+                ylab ="log Profile Likelihood(lamdba)", type="l", log="x",
                  ...)
-            xline( summary[which.min(summary[,"GCV" ] ),"EffDf"])
+             ind<- which.max(summary[,2] )
+            xline( summary[ind,"lambda.MLE"] )
             usr.save <- par()$usr
-            usr.save[3:4]<- range( summary[,2 ] )
+            usr.save[3:4]<- range( summary[,"GCV" ] )
             par( usr= usr.save, ylog=FALSE)
-            lines(summary[,"EffDf" ], summary[,2 ],
+            lines(summary[,"lambda.MLE" ], summary[,"GCV" ],
             lty=2, lwd=2, col="blue")
-            xline( summary[which.max(summary[,2 ] ),"EffDf"],
+            ind<- which.min(summary[,"GCV"] )
+            xline( summary[ind, "lambda.MLE"],
+                   col="blue", lwd=2)
+            axis( side=4, col="blue")
+            mtext( side=4, line=2,  "GCV function",cex=.75,
                    col="blue")
-            axis( side=4)
-            mtext( side=4, line=2, "log Profile Likelihood(lamdba)",cex=.75,
-                   col="blue")
-            title("Profile over lambda", 
+            title("Profile likelihood over lambda \n (with theta at MLE)", 
                 cex = 0.6)
             box()
             par( mar=mar.old)
@@ -69,7 +71,15 @@
       thetaGrid<- (out$MLEInfo$MLEGrid$par.grid)$theta
     	plot(thetaGrid,summary[,2], pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
     	title("Profile likelihood for theta \n (range parameter)")
-    	xline( out$theta.MLE, lwd=2, col="grey")
-    	lines( splint(thetaGrid,summary[,2], nx=200), lwd=2, col="red")
+    	xline( out$theta.MLE, lwd=2, col="grey20")
+    	splineFit<- splint(thetaGrid, summary[,2], nx=500)
+    	lines( splineFit, lwd=2, col="red")
+    	cutLevel<- max(splineFit$y ) - qchisq(.95, 1) / 2
+    	ind<- splineFit$y> cutLevel
+    	lower<- max( splineFit$x[ ind] )
+    	upper<- min(splineFit$x[ ind])
+    	segments( lower, cutLevel, upper, cutLevel, col="grey", lwd=3)
+    	xline( c( lower, upper), lwd=.5, col="grey")
+    	
            }
 }

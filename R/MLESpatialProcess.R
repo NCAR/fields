@@ -59,9 +59,10 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
     }
     theta.range<- quantile( pairwiseD, c(.02,.97))
   }
-  thetaGrid<- seq( theta.range[1], theta.range[2], length.out=gridN )
+  thetaGrid<- 10**seq( log10(theta.range[1]), log10(theta.range[2]), length.out=gridN )
   # 
   par.grid<- list( theta= thetaGrid)
+  timeGrid<- system.time(
   MLEGrid<- mKrigMLEGrid(x, y,  weights = weights, Z= Z, 
                          mKrig.args = mKrig.args,
                          cov.fun = cov.function, 
@@ -72,6 +73,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                            na.rm = na.rm,
                          verbose = verbose,
                             REML = REML)
+  )
   ##################################################################################
   #refine MLE for lambda and theta use the best value of theta from grid search if
   # starting value not passed. 
@@ -80,6 +82,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
     theta.start <-  par.grid$theta[ind]
     lambda.start<- MLEGrid$lambda.best
   }
+  timeOptim<- system.time(
   MLEJoint <- mKrigMLEJoint(x, y, weights = weights, Z = Z,
                                             mKrig.args = mKrig.args,
                                                cov.fun = cov.function,
@@ -91,13 +94,14 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                                  na.rm = na.rm,
                                                verbose = verbose,
                                                   REML = REML)
-  
+  )
   #####################################################################################
   # evaluate likelihood on grid of log lambda with MLE for theta
   #NOTE lambda.profile = FALSE makes this work.
   lambdaGrid<-   (10^(seq( -4,4,,gridN)  ))*MLEJoint$pars.MLE[1]
   par.grid<- list( theta= rep(MLEJoint$pars.MLE[2], gridN) )
-  if( verbose){ print( par.grid)}
+  if( verbose){ print( par.grid) }
+  timeProfile<- system.time(
   MLEProfileLambda <- mKrigMLEGrid(x, y,  weights = weights, Z= Z,
                                           cov.fun = cov.function, 
                                         cov.args  = cov.args,
@@ -108,8 +112,11 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                             na.rm = na.rm,
                                           verbose = verbose,
                                              REML = REML) 
+  )
+  timingTable<- cbind( timeGrid, timeOptim, timeProfile)
   return(
      list( summary= MLEJoint$summary, MLEGrid= MLEGrid, MLEJoint=MLEJoint, 
-          MLEProfileLambda=MLEProfileLambda, call=match.call() )
+          MLEProfileLambda=MLEProfileLambda, call=match.call(), 
+          timingTable= timingTable)
      )
 }

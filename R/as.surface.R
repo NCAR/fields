@@ -18,7 +18,7 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"as.surface" <- function(obj, z, order.variables = "xy") {
+"as.surface" <- function(obj, z, location=NULL, order.variables = "xy") {
     #
     if (is.list(obj)) {
         grid.list <- obj
@@ -31,10 +31,21 @@
     #  nx and ny the x and y sequences and extract names
     #
     hold <- parse.grid.list(grid.list, order.variables = "xy")
+    
+    if( !is.null(location)){
+       # location is a logical or two column matrix of indices
+       # with the position of the z values   
+      temp<- rep( NA,  hold$ny*hold$nx)
+      temp[location]<- z
+      temp<- matrix( temp, ncol = hold$ny, nrow = hold$nx)
+    }
+    else{
+      temp<- matrix( z,    ncol = hold$ny, nrow = hold$nx)
+    }
     #
     # note that coercing z to a matrix is just reformatting
     # using the standard ordering.
     #
     # output list is all the grid stuff and the matrix z.
-    c(hold, list(z = matrix(z, ncol = hold$ny, nrow = hold$nx)))
+    c(hold, list(z = temp) )
 }

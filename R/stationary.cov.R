@@ -73,7 +73,7 @@
     #
     if(is.na(distMat[1])) {
       # distMat not supplied so must compute it along with covariance matrix
-      # note overall scalling by theta (which is just theta under isotropic case)
+      # note overall scaling by theta (which is just theta under isotropic case)
       if(is.null(x2))
         distMat <- do.call(Distance, c(list(x1), Dist.args))
       else

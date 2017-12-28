@@ -12,8 +12,8 @@ bibentry(bibtype="Misc",
 	       note = NOTE,
     organization = "University Corporation for Atmospheric Research",
     address = "Boulder, CO, USA",
-    year = 2015,
-    url = "www.image.ucar.edu/fields",
+    year = 2017,
+    url = "www.image.ucar.edu/~nychka/Fields",
     doi ="10.5065/D6W957CT"
     )
 

@@ -118,8 +118,8 @@ is determined from the \code{zlim} argument.
 }
 
 \item{legend.args}{Arguments for a complete specification of the 
-legend label. This is in the form of list and is just passed to the 
-mtext function. Usually this will not be needed. 
+legend label, e.g. if you need to the rotate text or other details.  This is in the form of list and is just passed to the 
+mtext function and you will need to give both the side and line arguments for positioning.  This usually will not be needed. 
 (See example below.)}
 
 \item{legend.cex}{Character expansion to change size of the legend label.}
@@ -182,7 +182,7 @@ Just use the \code{box} function to redraw them.
 }
 \details{
 	
-
+This is a function using the basic R graphics. The coding was done to make it easier for users to see how this function works and to modify. 
 
 \strong{How this function works:}
 The strategy for \code{image.plot} is simple, divide the plotting region
@@ -198,16 +198,19 @@ have to change the default character sizes or margins to make things fit.
 Sometimes this function will not reset the type of margins correctly and the
 "null" call \code{par(mar = par("mar"))} may help to fix this issue.
 
-\strong{Why image.plot and not image?} The R Base function \code{image} is very 
+\strong{The text is too small!} 
+This always seems to happen as one is rushing to finish a talk and the figures have tiny default axis labels. Try just calling the function \code{fields.style} before plotting. List out this function to see what is changed, however, all text is increased by 20\% in size. 
+
+\strong{Why ``image.plot" and not ``image"?} The R Base function \code{image} is very 
 useful but it is awkward to place a legend quickly. However, that said if you are
-drawing several image plots and want ao common legend use the \code{image} function 
+drawing several image plots and want a common legend use the \code{image} function 
 and just just use \code{image.plot} to add the legend. See the example in the 
-help file.
+help file. Note that you can use \code{image} to draw a bunch of images and then follow with \code{image.plot} and \code{legend.only=TRUE} to add a common legend. (See examples below.)
 
 \strong{Almost cloropleths too:}  It  should be noted that this image function is slightly
 different than a cloropleth map because
 the legend is assuming that a continous scale has been discretized into a series of colors.
-To make image.plot function as a  cloropleth graphic one would of course use the
+To make the image.plot function as a  cloropleth graphic one would of course use the
  \code{breaks} option
 and for clarity perhaps code the different regions as different integer values. 
 In addition, for publication quality one would want to use the \code{legend.args} to
@@ -224,7 +227,7 @@ functions \code{quilt.plot.Rd} and \code{as.image} to discretise
 irregular observations to a grid. If the values makes sense as points on 
 a smooth surface see \code{Tps} and \code{fastTps} for surface interpolation.
 
-\strong{Grids with unequally spacing:}
+\strong{Grids with unequally spacing -- quadrialteral pixels:}
 If x and y are matrices that are a smooth transformation of a regular grid  then
 z[i,j] is rendered at a quadrilateral that is centered at x[i,j] and
 y[i,j] (\code{midpoint} TRUE). The details of how this cell is found
@@ -261,8 +264,25 @@ help on \code{designer.colors}), positioning the colors at specific
 points on the [0,1] scale, or mapping distinct colors to intervals of
 z. The examples below show how to do each of these. In addition, by
 supplying \code{lab.break} strings or axis parameters one can
-annotate the legend axis in an informative matter. 
+annotate the legend axis in an informative matter.
 
+\strong{Adding just the legend strip:}
+Note that to add just the legend strip all the numerical information one
+needs is the \code{zlim} argument and the color table!
+
+\strong{About color tables:}
+We like \code{tim.colors}
+as a default color scale and so if this what you use this can be omitted. Unfortunately this is not the default for the \code{image} function.   The
+topographic color scale (\code{topo.colors}) is
+also a close second showing our geophysical bias.
+Users may find \code{larry.colors} useful for coding distinct regions
+in the style of a cloropleith map.   See also
+\code{terrain.colors} for a subset of the topo ones and \code{designer.colors} to "roll
+your own" color table. One nice option in this last function is to fix color transitions at
+particular quantiles of the data rather than at equally spaced
+intervals. For color choices see how the \code{nlevels} argument figures
+into the legend and main plot number of colors. Also see the \code{colors} function
+for a listing of all the colors that come with the R base environment. 
 
 \strong{The details of placing the legend and 
 dividing up the plotting real estate:}
@@ -282,7 +302,7 @@ settings (5.1,5.1,5.1,2.1) leaves 2.1 spaces for vertical legends and
 There are always problems with
 default solutions to placing information on graphs but the choices made
 here may be useful for most cases. The most annoying thing is that after
-using plot.image and adding information the next plot that is made may
+using image.plot and adding information the next plot that is made may
 have the slightly smaller plotting region set by the image plotting.
 The user should set \code{reset.graphics=TRUE} to avoid the plotting size 
 from changing. The disadvantage, however, of resetting the graphics 
@@ -305,23 +325,6 @@ adjustments. See the examples below for more complicated arrangements
  of multiple image plots and a summary 
 legends.  
 
-\strong{Adding just the legend strip:}
-Note that to add just the legend strip all the numerical information one
-needs is the \code{zlim} argument and the color table!
-
-\strong{About color tables:}
-We like \code{tim.colors}
-as a default color scale and so if this what you use this can be omitted.   The
-topographic color scale (\code{topo.colors}) is
-also a close second showing our geophysical bias.
-Users may find \code{larry.colors} useful for coding distinct regions
-in the style of a cloropleith map.   See also
-\code{terrain.colors} for a subset of the topo ones and \code{designer.colors} to "roll
-your own" color table. One nice option in this last function is to fix color transitions at
-particular quantiles of the data rather than at equally spaced
-intervals. For color choices see how the \code{nlevels} argument figures
-into the legend and main plot number of colors. Also see the \code{colors} function
-for a listing of all the colors that come with the R base environment. 
 
 }
 

@@ -409,7 +409,9 @@ surface( out.p)
 # this works because the number of nonzero elements within distance theta
 # are less than the default maximum allocated size of the 
 # sparse covariance matrix. 
-#  see  spam.options() for the default values 
+#  see  options() for the default values. The names follow the convention
+# spam.arg where arg is the name of the spam component 
+#   e.g. spam.nearestdistnnz
 
 # The following will give a warning for theta=.9 because 
 # allocation for the  covariance matirx storage is too small. 
@@ -421,13 +423,13 @@ surface( out.p)
 }
 
 # The warning resets the memory allocation  for the covariance matrix
-# according the to values   'spam.options(nearestdistnnz=c(416052,400))'
+# according the to values   options(spam.nearestdistnnz=c(416052,400))'
 # this is inefficient becuase the preliminary pass failed. 
 
 # the following call completes the computation in "one pass"
 # without a warning and without having to reallocate more memory. 
 
-spam.options(nearestdistnnz=c(416052,400))
+options( spam.nearestdistnnz=c(416052,400))
   look2<- mKrig( x,y, cov.function="wendland.cov",k=2,
                     theta=.9, lambda=1e-2)
 # as a check notice that 

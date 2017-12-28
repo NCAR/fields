@@ -52,7 +52,8 @@ irregular 2-d points to a grid.
 parse.grid.list( grid.list, order.variables="xy")
 fields.x.to.grid(x,nx=80, ny=80, xy=c(1,2))
 fields.convert.grid( midpoint.grid )
-discretize.image(x, m = 64, n = 64, grid = NULL, expand = c(1, 1),
+discretize.image(x, m = 64, n = 64, grid = NULL, 
+                 expand = c(1 + 1e-08, 1 + 1e-08),
                  boundary.grid = FALSE, na.rm = TRUE)
 make.surface.grid( grid.list)
 unrollZGrid( grid.list, ZGrid)
@@ -211,6 +212,21 @@ surface( out, grid.list=grid.l)
 #                       over the square [0,2] and [0,2]   
 #                       holding X2 equal to 1.0. 
 #
+
+
+# test of discretize to make sure points on boundaries are counted right
+set.seed(123)
+x<- matrix( runif(200), 100,2)
+look<- discretize.image( x, m=2,n=2)
+xc<- seq(min(x[,1]), max(x[,1]),,5)
+xc<- xc[2:4]
+yc<- seq(min(x[,2]), max(x[,2]),,5)
+yc<- yc[2:4]
+grid <-  list( x= xc, y= yc)
+look2<- discretize.image( x, m=2,n=2)
+
+table( look$index )
+table( look2$index )
 
 # indicator image of discretized locations
 look<- discretize.image( RMprecip$x, m=15, n=15)

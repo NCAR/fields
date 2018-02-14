@@ -1,6 +1,6 @@
  # fields is a package for analysis of spatial data written for
   # the R software environment .
-  # Copyright (C) 2017
+  # Copyright (C) 2018
   # University Corporation for Atmospheric Research (UCAR)
   # Contact: Douglas Nychka, nychka@ucar.edu,
   # National Center for Atmospheric Research,
@@ -22,7 +22,7 @@
 # Note that in all tests the smoothness (nu) is fixed
 # and only theta (range), sill ( rho) and nugget (sigma2) are considered. 
 ##########################################################################
-library(fields)
+suppressMessages(library(fields))
 
 options( echo=FALSE)
 test.for.zero.flag<-1

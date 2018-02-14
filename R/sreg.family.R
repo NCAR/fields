@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -161,10 +161,7 @@
     class(out) <- "sreg"
     return(out)
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.df.to.lambda" <- function(df, x, wt, guess = 1, 
     tol = 1e-05) {
     if (is.na(df)) 
@@ -194,38 +191,23 @@
     out <- bisection.search(h1, h2, sreg.fdf, tol = tol, f.extra = info)$x
     exp(out)
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fdf" <- function(h, info) {
     sreg.trace(h, info) - info$df
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fgcv" <- function(lam, obj) {
     sreg.fit(lam, obj)$gcv
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fgcv.model" <- function(lam, obj) {
     sreg.fit(lam, obj)$gcv.model
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fgcv.one" <- function(lam, obj) {
     sreg.fit(lam, obj)$gcv.one
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fit" <- function(lam, obj, verbose = FALSE) {
     np <- obj$np
     N <- obj$N
@@ -283,17 +265,11 @@
     list(trace = trA, gcv = GCV, rss = rss, shat = shat, gcv.model = gcv.model, 
         gcv.one = gcv.one)
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.fs2hat" <- function(lam, obj) {
     sreg.fit(lam, obj)$shat^2
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "sreg.trace" <- function(h, info) {
     N <- length(info$x)
     #\th <- log(lam)

@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -118,10 +118,7 @@
     list(xlim = xlim, ylim = ylim, zlim = zlim, poly.grid = poly.grid,
        breaks=breaks)
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 # NOTE:
 # image.plot.plt<- function(...){
 # this function has been renamed as imageplot.setup to avoid confusion with
@@ -183,10 +180,7 @@
     }
     return(list(smallplot = smallplot, bigplot = bigplot))
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "crop.image" <- function(obj, loc = NULL, ...) {
     if (is.null(loc)) {
         image.plot(obj, ...)

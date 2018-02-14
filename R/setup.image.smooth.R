@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -30,7 +30,7 @@
     
     yi <- seq(-(N2 - 1), (N2), 1) * dy
     yi <- yi/theta
-    dd <- sqrt((matrix(xi, M, N)^2 + matrix(yi, M, N, byrow = TRUE)^2))
+    dd <- ((matrix(xi, M, N)^2 + matrix(yi, M, N, byrow = TRUE)^2))
     out <- matrix(kernel.function(dd, ...), nrow = M, ncol = N)
     out2 <- matrix(0, M, N)
     out2[M2, N2] <- 1

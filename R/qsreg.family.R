@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -218,10 +218,7 @@ qsreg.rho <- function(r, alpha = 0.5, C = 1) {
     temp[ind] <- ((1 - alpha) * r[ind]^2)/C
     temp
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "qsreg.trace" <- function(x, y, lam, maxit = 50, maxit.cv = 10, 
     tol = 1e-04, offset = 0, sc = sqrt(var(y)) * 1e-07, alpha = 0.5, 
     wt = rep(1, length(x)), cost = 1) {
@@ -239,10 +236,7 @@ qsreg.rho <- function(r, alpha = 0.5, C = 1) {
         dout = as.double(rep(0, 4)), ierr = as.integer(0))$dout
     return(temp[3])
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "summary.qsreg" <- function(object, ...) {
     x <- object
     digits <- 4

@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -39,7 +39,7 @@
     #
     # check for x or weights having missing values
     # we do not like these ...
-    if (any(is.na(weights)) | any(is.na(c(x)))) {
+    if( any(is.na(weights)) | any(is.na(c(x))) ) {
         stop("missing values in weights or x")
     }
     # discretize locations to grid boxes
@@ -47,9 +47,9 @@
     # locations if grid is NULL
     #
     temp <- discretize.image(x, m = nx, n = ny, grid = grid, 
-        boundary.grid = boundary.grid)
+                                boundary.grid = boundary.grid)
     grid <- temp$grid
-    # index is a two component list that indexes  the x and y grid points.
+    # index is a two column data frame that indexes  the x and y grid points.
     # points outside of grid are assigned as NA
     #
     # empty image matrices to hold weights and  weighted means
@@ -58,25 +58,21 @@
      tempw<- tapply( weights, temp$index, sum,  na.rm=na.rm)
      if( is.null(FUN)){
 # usual weighted means case:     
-     tempz<- tapply( Z*weights, temp$index,sum, na.rm=na.rm )
-     tempz<- tempz/ tempw
+       tempz<- tapply( Z*weights, temp$index,sum, na.rm=na.rm )
+       tempz<- tempz/ tempw
      }
      else{
 # just apply FUN to values in the grid box -- no weighting!     	
-     	tempz<- tapply( Z, temp$index, FUN )
+      tempz<- tapply( Z, temp$index, FUN )
      	}
      # these are the indices that are represented by the locations
      # they may not include the entire set ( 1:nx and 1:ny)
      # so define what they do have.
-  
      # insert the tabled values into the right rows and columns.
-     # ix and iy are just the range of indexes for the grid, e.g. ix= 1:20 and iy= 1:30 for a
-     # 20X30 grid.
+     # ix and iy are the range of indexes for the grid, but account for missing cells.
       z[ temp$ix, temp$iy] <- tempz
       w[ temp$ix, temp$iy] <- tempw
-     # save call
-     # xd created because it is a  pain to do otherwise and handy to have
-     # these are the discretize locations with actual values 
+     # xd is created in the return list because it is a pain to do otherwise and handy to have
     call <- match.call()
     list(x = grid$x, y = grid$y, z = z, call = call, ind = cbind(temp$index[[1]], temp$index[[2]]) , 
         weights = w, xd = cbind(grid$x[temp$index[[1]]], grid$y[temp$index[[2]]] ), 

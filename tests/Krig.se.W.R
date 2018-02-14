@@ -1,6 +1,6 @@
  # fields is a package for analysis of spatial data written for
   # the R software environment .
-  # Copyright (C) 2017
+  # Copyright (C) 2018
   # University Corporation for Atmospheric Research (UCAR)
   # Contact: Douglas Nychka, nychka@ucar.edu,
   # National Center for Atmospheric Research,
@@ -16,7 +16,7 @@
   # GNU General Public License for more details.
 
 
-library( fields)
+suppressMessages(library(fields))
 # tests of predictSE using 
 # off diag weight matrix for obs (W)
 

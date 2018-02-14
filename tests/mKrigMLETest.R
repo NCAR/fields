@@ -1,6 +1,6 @@
  # fields is a package for analysis of spatial data written for
   # the R software environment .
-  # Copyright (C) 2017
+  # Copyright (C) 2018
   # University Corporation for Atmospheric Research (UCAR)
   # Contact: Douglas Nychka, nychka@ucar.edu,
   # National Center for Atmospheric Research,
@@ -14,9 +14,8 @@
   # but WITHOUT ANY WARRANTY; without even the implied warranty of
   # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   # GNU General Public License for more details.
-# Test adapted from fields package, under GPL license
 
-library( fields )
+suppressMessages(library( fields ))
 options( echo=FALSE)
 
 #

@@ -1,6 +1,6 @@
  # fields is a package for analysis of spatial data written for
   # the R software environment .
-  # Copyright (C) 2017
+  # Copyright (C) 2018
   # University Corporation for Atmospheric Research (UCAR)
   # Contact: Douglas Nychka, nychka@ucar.edu,
   # National Center for Atmospheric Research,
@@ -19,7 +19,7 @@
 # test of rdist.near
 
 
-library( fields)
+suppressMessages(library(fields))
 options(echo=FALSE)
 test.for.zero.flag<- 1
 

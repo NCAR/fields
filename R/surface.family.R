@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2017
+# Copyright (C) 2018
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -40,24 +40,15 @@
         levels = levels, zlim = zlim, ...)
     invisible()
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "surface" <- function(object, ...) {
     UseMethod("surface")
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "surface.default" <- function(object, ...) {
     plot.surface(object, ...)
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 "surface.mKrig" <- function(object, grid.list = NULL, 
     extrap = FALSE, graphics.reset = NULL, xlab = NULL, ylab = NULL, 
     main = NULL, zlab = NULL, zlim = NULL, levels = NULL, type = "C", 
@@ -80,10 +71,7 @@
         levels = levels, zlim = zlim, ...)
     invisible()
 }
-# fields, Tools for spatial data
-# Copyright 2015, Institute for Mathematics Applied Geosciences
-# University Corporation for Atmospheric Research
-# Licensed under the GPL -- www.gpl.org/licenses/gpl.html
+
 #"surface.surface" <- function(object, ...) {
 #    #
 #    plot.surface(object, ...)

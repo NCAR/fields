@@ -2,7 +2,7 @@
 /*
 c****  # fields is a package for analysis of spatial data written for
 c****  # the R software environment .
-c****  # Copyright (C) 2017
+c****  # Copyright (C) 2018
 c****  # University Corporation for Atmospheric Research (UCAR)
 c****  # Contact: Douglas Nychka, nychka@ucar.edu,
 c****  # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000

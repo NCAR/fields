@@ -1,6 +1,6 @@
 %# fields  is a package for analysis of spatial data written for
 %# the R software environment .
-%# Copyright (C) 2017
+%# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
 %# Contact: Douglas Nychka, nychka@ucar.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -109,7 +109,12 @@ dy<-  out$y[2] - out$y[1]
 #  
 # grid scale in degrees and choose kernel bandwidth to be .25 degrees. 
 
-look<- image.smooth( out, theta= .25) 
+look<- image.smooth( out, theta= .25)
+
+# pass in a tophat kernel
+topHat<- function( dd, h ){ ifelse( dd <= h^2, 1, 0)} 
+## dd is the distance squared
+look2<- image.smooth( out, kernel.function=topHat, h=.8)
 
 image.plot(look) 
 points( RMprecip$x)
@@ -148,7 +153,7 @@ look<- image.smooth( test.image, dx=dx, dy=dy, wght)
 #     image.smooth( test.image , 128,128), xwidth=2.5,
 #                        ywidth=2.5, dx=dx,dy=dy, theta=.25)
 #
-#   but the call to image.smooth is faster because fft of kernel
+#   but the call to image.smooth is faster because the fft of kernel
 #   has been precomputed.
 
 

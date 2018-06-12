@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Maximizes likelihood for the process marginal variance (rho)...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for mKrigMLE {fields}"><tr><td>mKrigMLE {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Maximizes likelihood for the process marginal variance (rho) and
+nugget standard deviation (sigma) parameters (e.g. lambda) over a
+many covariance models or covariance parameter values.
+</h2>
+
+<h3>Description</h3>
+
+<p>These function are designed to explore the likelihood surface for
+different covariance parameters with the option of maximizing over
+sigma and rho. They used the <code>mKrig</code> base are designed for computational efficiency.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
+    cov.fun = "stationary.cov", cov.args = NULL, na.rm = TRUE, 
+    par.grid = NULL, lambda = NULL, lambda.profile = TRUE,
+    relative.tolerance = 1e-04, 
+    REML = FALSE, verbose = FALSE)
+
+mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, na.rm = TRUE, cov.fun = "stationary.cov",
+                 cov.args = NULL, lambda.start = 0.5, cov.params.start
+                 = NULL, optim.args = NULL, abstol = 1e-04,
+                 parTransform = NULL, REML = FALSE, verbose = FALSE)
+
+
+fastTpsMLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
+                 par.grid=NULL, theta, lambda = NULL, lambda.profile = TRUE,
+                 verbose = FALSE, relative.tolerance = 1e-04)
+
+mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
+           parNames, REML = FALSE, capture.env)
+           
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>abstol</code></td>
+<td>
+<p>Absolute convergence tolerance used in optim.</p>
+</td></tr>
+<tr valign="top"><td><code>capture.env</code></td>
+<td>
+<p>For the ML obective function the frame to save the results of the evaluation. This should be the environment of the function calling optim.</p>
+</td></tr>
+<tr valign="top"><td><code>cov.fun</code></td>
+<td>
+
+<p>The name, a text string, of the covariance function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cov.args</code></td>
+<td>
+
+<p>Additional arguments that would also be included in calls
+to the covariance function to specify the fixed part of 
+the covariance model.
+</p>
+</td></tr>
+<tr valign="top"><td><code>cov.params.start</code></td>
+<td>
+
+<p>A list of initial starts for covariance parameters over which 
+the user wishes to perform likelihood maximization.  The list 
+contains the names of the parameters as well as the values.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+
+<p>If <code>lambda.profile=FALSE</code> the values of lambda to evaluate
+the likelihood if &quot;TRUE&quot; the starting values for the
+optimization. If lambda is NA then the optimum value from
+previous search is used as the starting value. If lambda is
+NA and it is the first value the starting value defaults to
+1.0.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lambda.start</code></td>
+<td>
+
+<p>The initial guess for lambda in the joint log-likelihood 
+maximization process
+</p>
+</td></tr>
+<tr valign="top"><td><code>lambda.profile</code></td>
+<td>
+
+<p>If <code>TRUE</code> maximize likelihood over lambda.
+</p>
+</td></tr>
+<tr valign="top"><td><code>mKrig.args</code></td>
+<td>
+<p>A list of additional parameters to supply to the base 
+<code>mKrig</code> function that are distinct from the covariance model. 
+For example <code>mKrig.args= list( m=1 )</code> will set the polynomial to be 
+just a constant term (degree = m -1 = 0).
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>Remove NAs from data.</p>
+</td></tr>
+<tr valign="top"><td><code>optim.args</code></td>
+<td>
+
+<p>Additional arguments that would also be included in calls
+to the optim function in joint likelihood maximization.  If 
+<code>NULL</code>, this will be set to use the &quot;BFGS-&quot; 
+optimization method.  See <code><a href="../../stats/html/optim.html">optim</a></code> for more 
+details.  The default value is: 
+<code>optim.args = list(method = "BFGS", 
+             control=list(fnscale = -1, 
+                          ndeps = rep(log(1.1), length(cov.params.start)+1), 
+                          abstol=1e-04, maxit=20))</code>
+Note that the first parameter is lambda and the others are 
+the covariance parameters in the order they are given in 
+<code>cov.params.start</code>.  Also note that the optimization 
+is performed on a transformed scale (based on the function
+<code>parTransform</code> ), and this should be taken into 
+consideration when passing arguments to <code>optim</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>parameters</code></td>
+<td>
+<p>The parameter values for evaluate the likelihood.</p>
+</td></tr>
+<tr valign="top"><td><code>par.grid</code></td>
+<td>
+
+<p>A list or data frame with components being parameters for
+different covariance models. A typical component is &quot;theta&quot;
+comprising a vector of scale parameters to try. If par.grid
+is &quot;NULL&quot; then the covariance model is fixed at values that
+are given in ....
+</p>
+</td></tr>
+<tr valign="top"><td><code>parNames</code></td>
+<td>
+<p>Names of the parameters to optimize over.</p>
+</td></tr>
+<tr valign="top"><td><code>parTransform</code></td>
+<td>
+<p>A function that maps the parameters to a scale
+for optimization or
+effects the inverse map from the transformed scale into the original values. See below for more details. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>relative.tolerance</code></td>
+<td>
+
+<p>Tolerance used to declare convergence when
+maximizing likelihood over lambda.
+</p>
+</td></tr>
+<tr valign="top"><td><code>REML</code></td>
+<td>
+<p>Currently using REML is not implemented.</p>
+</td></tr>
+<tr valign="top"><td><code>theta</code></td>
+<td>
+<p>Range parameter for compact Wendland covariance. (see
+fastTps)</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p> If <code>TRUE</code> print out interesting intermediate results.
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>Precision ( 1/variance) of each observation
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Matrix of unique spatial locations (or in print or surface 
+the returned mKrig object.)
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>Vector or matrix of observations at spatial locations, 
+missing values are not allowed! Or in mKrig.coef a new 
+vector of observations. If y is a matrix the columns are 
+assumed to be independent observations vectors generated 
+from the same covariance and measurment error model.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+
+<p>Linear covariates to be included in fixed part of the 
+model that are distinct from the default low order 
+polynomial in <code>x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Other arguments to pass to the mKrig function. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The observational model follows the same as that described in the
+<code>Krig</code> function and thus the two primary covariance parameters
+for a stationary model are the nugget standard deviation (sigma) and
+the marginal variance of the process (rho). It is useful to
+reparametrize as rho and\ lambda= sigma^2/rho. The likelihood can be
+maximized analytically over rho and the parameters in the fixed part
+of the model the estimate of rho can be substituted back into the
+likelihood to give a expression that is just a function of lambda and
+the remaining covariance parameters. It is this expression that is
+then maximized numerically over lambda when <code> lambda.profile =
+TRUE</code>.
+</p>
+<p>Note that <code>fastTpsMLE</code> is a convenient variant of this more general
+version to use directly with fastTps, and <code>mKrigMLEJoint</code> is 
+similar to <code>mKrigMLEGrid</code>, except it uses the <code>optim</code> function 
+to optimize over the specified covariance parameters and lambda jointly 
+rather than optimizing on a grid.  Unlike <code>mKrigMLEJoint</code>, it returns 
+an mKrig object.
+</p>
+<p>For <code>mKrigMLEJoint</code> the 
+default transformation of the parameters is set up for a log/exp transformation:
+</p>
+<pre>
+ parTransform &lt;- function(ptemp, inv = FALSE) {
+            if (!inv) {
+                log(ptemp)
+            }
+            else {
+                exp(ptemp)
+            }
+        }
+</pre>
+
+
+<h3>Value</h3>
+
+<p><strong><code>mKrigMLEGrid</code></strong> returns a list with the components:
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>summary</code></td>
+<td>
+<p>A matrix giving the results for evaluating the
+likelihood for each covariance model.</p>
+</td></tr>
+<tr valign="top"><td><code>par.grid</code></td>
+<td>
+<p>The par.grid argument used.</p>
+</td></tr>
+<tr valign="top"><td><code>cov.args.MLE</code></td>
+<td>
+<p>The list of covariance arguments (except for
+lambda) that have the largest likelihood over the list covariance
+models. NOTE: To fit the surface at the largest likelihood among those tried
+<code> do.call( "mKrig", c(obj$mKrig.args,
+obj$cov.args.MLE,list(lambda=obj$lambda.opt)) )</code> where <code>obj</code> is
+the list returned by this function.</p>
+</td></tr>
+<tr valign="top"><td><code>call</code></td>
+<td>
+<p>The calling arguments to this function.</p>
+</td></tr>
+</table>
+<p><strong><code>mKrigMLEJoint</code></strong> returns a list with components:
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>summary</code></td>
+<td>
+<p>A vector giving the MLEs and the log likelihood at the maximum</p>
+</td></tr>
+<tr valign="top"><td><code>lnLike.eval</code></td>
+<td>
+
+<p>A table containing information on all likelihood evaluations 
+performed in the maximization process.
+</p>
+</td></tr>
+<tr valign="top"><td><code>optimResults</code></td>
+<td>
+<p>The list returned from the optim function.</p>
+</td></tr>
+<tr valign="top"><td><code>par.MLE</code></td>
+<td>
+<p>The maximum likelihood estimates.</p>
+</td></tr>
+<tr valign="top"><td><code>parTransform</code></td>
+<td>
+<p>The transformation of the parameters used in the optimziation.</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+
+<p>Douglas W. Nychka, John Paige
+</p>
+
+
+<h3>References</h3>
+
+
+<p>http://cran.r-project.org/web/packages/fields/fields.pdf
+http://www.image.ucar.edu/~nychka/Fields/
+</p>
+
+
+<h3>See Also</h3>
+
+
+<p><code><a href="mKrig.html">mKrig</a></code>
+<code><a href="Krig.html">Krig</a></code>
+<code><a href="exp.cov.html">stationary.cov</a></code>
+<code><a href="../../stats/html/optim.html">optim</a></code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+#perform joint likelihood maximization over lambda and theta. 
+#optim can get a bad answer with poor initial starts.
+data(ozone2)
+x&lt;- ozone2$lon.lat
+y&lt;- ozone2$y[16,]
+obj&lt;- mKrigMLEJoint(x,y, 
+                      cov.args=list(Covariance="Matern", smoothness=1.0), 
+                      cov.params.start=list(theta=.2), lambda.start=.1)
+#                      
+# check  lnLikeihood evaluations that were culled from optim
+# these are in obj$lnLike.eval
+# funny ranges are set to avoid  very low likelihood values
+
+quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
+             xlim=c(-1.2,-.40), ylim=c( -1,1), zlim=c( -625, -610))
+             points( log10(obj$pars.MLE[1]), log10(obj$pars.MLE[2]),
+	     pch=16, col="grey" )
+
+# some synthetic data with replicates
+  N&lt;- 50
+  set.seed(123)
+  x&lt;- matrix(runif(2*N), N,2)
+  theta&lt;- .2
+  Sigma&lt;-  Matern( rdist(x,x)/theta , smoothness=1.0)
+  Sigma.5&lt;- chol( Sigma)
+  sigma&lt;- .1
+  #  250 independent spatial data sets but a common covariance function 
+  #    -- there is little overhead in
+  #        MLE across independent realizations and a good test of code validity.
+  M&lt;-250
+  #F.true&lt;- t( Sigma.5)%*% matrix( rnorm(N*M), N,M)  
+  F.true&lt;- t( Sigma.5)%*% matrix( rnorm(N*M), N,M)
+  Y&lt;-  F.true +  sigma* matrix( rnorm(N*M), N,M)
+
+# find MLE for lambda with grid of ranges 
+# and smoothness fixed in Matern                     
+ par.grid&lt;- list( theta= seq( .1,.35,,8))
+  obj1b&lt;- mKrigMLEGrid( x,Y,
+     cov.args = list(Covariance="Matern", smoothness=1.0), 
+        par.grid = par.grid
+                    )
+  obj$summary # take a look
+# profile over theta
+  plot( par.grid$theta, obj1b$summary[,"lnProfileLike.FULL"],
+    type="b", log="x")
+  
+  ## Not run: 
+# m=0 is a simple switch to indicate _no_ fixed spatial drift
+# (the default and highly recommended  is linear drift, m=2). 
+# this results in MLEs that are less biased -- in fact it nails it !
+  obj1a&lt;- mKrigMLEJoint(x,Y, 
+                    cov.args=list(Covariance="Matern", smoothness=1.0), 
+                    cov.params.start=list(theta=.5), lambda.start=.5,
+                     mKrig.args= list( m=0))
+ 
+ test.for.zero( obj1a$summary["sigmaMLE"], sigma, tol=.0075)
+ test.for.zero( obj1a$summary["theta"], theta, tol=.05)
+
+## End(Not run) 
+
+## Not run: 
+#perform joint likelihood maximization over lambda, theta, and smoothness.  
+#optim can get a bad answer with poor initial guesses.
+obj2&lt;- mKrigMLEJoint(x,Y, 
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1)
+
+#look at lnLikelihood  evaluations
+obj2$summary
+#compare to REML
+obj3&lt;- mKrigMLEJoint(x,Y, 
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1, REML=TRUE)
+
+## End(Not run)
+## Not run: 
+#look at lnLikelihood  evaluations
+obj3$summary
+# check convergence of MLE to true fit with no fixed part
+# 
+obj4&lt;- mKrigMLEJoint(x,Y, 
+                      mKrig.args= list( m=0),
+                      cov.args=list(Covariance="Matern", smoothness=1), 
+                      cov.params.start=list(theta=.2),
+                       lambda.start=.1, REML=TRUE)
+#look at lnLikelihood  evaluations
+obj4$summary
+# nails it!
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

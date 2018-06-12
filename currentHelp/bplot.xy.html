@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Boxplots for conditional distribution</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for bplot.xy {fields}"><tr><td>bplot.xy {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Boxplots for conditional distribution 
+</h2>
+
+<h3>Description</h3>
+
+<p>Draws boxplots for y by binning on x. This gives a coarse, but quick,  
+representation
+of the conditional distrubtion of [Y|X] in terms of boxplots.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+bplot.xy(x, y, N = 10, breaks = pretty(x, N, eps.correct = 1), plot=TRUE,
+         ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Vector to use for bin membership
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>Vector to use for constructing boxplot statistics. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>N</code></td>
+<td>
+
+<p>Number of bins on x. Default is 10.
+</p>
+</td></tr>
+<tr valign="top"><td><code>breaks</code></td>
+<td>
+
+<p>Break points defining bin boundaries. These can be unequally spaced. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>plot</code></td>
+<td>
+
+<p>If FALSE just returns a list with the statistics used for plotting the
+box plots, bin centers, etc. &ndash;  More stuff than you can imagine!
+</p>
+</td></tr>
+<tr valign="top"><td><code>... </code></td>
+<td>
+
+<p>Any other optional arguments passed to the standard <code>boxplot</code> function. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p>bplot, draw.bplot
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# condition on swim times to see how run times vary
+bplot.xy( minitri$swim, minitri$run, N=5)
+
+# bivariate normal corr= .8
+set.seed( 123)
+x&lt;-rnorm( 2000)
+y&lt;- .8*x +  sqrt( 1- .8**2)*rnorm( 200)
+#
+bplot.xy(x,y)
+#
+bplot.xy( x,y, breaks=seq( -3, 3,,25) ,
+                xlim =c(-4,4), ylim =c(-4,4), col="grey80", lwd=2)
+points( x,y,col=3, cex=.5)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

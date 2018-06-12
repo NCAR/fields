@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Fields internal and secondary functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for fields internal  {fields}"><tr><td>fields internal  {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Fields internal and secondary functions 
+</h2>
+
+<h3>Description</h3>
+
+<p>Listed below are supporting functions for the major methods in fields. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'spatialDesign'
+x[...]
+
+Krig.df.to.lambda(df, D, guess = 1, tol = 1e-05) 
+Krig.fdf (llam, info) 
+Krig.fgcv (lam, obj) 
+Krig.fgcv.model (lam, obj) 
+Krig.fgcv.one (lam, obj) 
+Krig.flplike (lambda, obj)
+Krig.fs2hat (lam, obj) 
+Krig.ftrace (lam, D) 
+Krig.parameters (obj, mle.calc=obj$mle.calc)
+Krig.updateY (out, Y, verbose = FALSE, yM=NA) 
+Krig.which.lambda(out)
+Krig.ynew (out, y=NULL, yM=NULL ) 
+ 
+
+
+
+bisection.search (x1, x2, f, tol = 1e-07, niter = 25, f.extra = 
+        NA, upcross.level = 0) 
+ 
+cat.matrix (mat, digits = 8) 
+ 
+cat.to.list (x, a) 
+ 
+ceiling2 (m) 
+ 
+describe (x) 
+
+double.exp(x)
+
+dyadic.2check( m,n,cut.p=2)
+dyadic.check( n,cut.p=2) 
+
+Exp.earth.cov (x1, x2, theta = 1) 
+ 
+fast.1way  (lev, y, w = rep(1, length(y))) 
+ 
+find.upcross (fun, fun.info, upcross.level = 0, guess = 1, tol = 
+1e-05) 
+ 
+gauss.cov (...) 
+
+
+golden.section.search (ax, bx, cx, f, niter = 25, f.extra = NA, 
+     tol = 1e-05, gridx=NA) 
+ 
+imagePlotInfo (...,breaks, nlevel) 
+imageplot.info(...)
+imageplot.setup(x, add=FALSE,  legend.shrink = 0.9, legend.width = 1, 
+horizontal = FALSE, legend.mar=NULL, bigplot = NULL, smallplot = NULL,...)
+
+
+makeSimulationGrid(mKrigObject, predictionPoints, nx, ny, nxSimulation,
+                 nySimulation, gridRefinement, gridExpansion)
+makeSimulationGrid2 (fastTpsObject, predictionPointsList,
+                               gridRefinement, gridExpansion)
+
+
+  
+minimax.crit (obj, des = TRUE, R) 
+ 
+
+## S3 method for class 'spatialDesign'
+plot(x,...) 
+ 
+## S3 method for class 'interp.surface'
+predict(object, loc,...)  
+
+## S3 method for class 'surface'
+predict(object, ...) 
+## S3 method for class 'surface.default'
+predict(object, ...) 
+ 
+
+## S3 method for class 'spatialDesign'
+ print(x,...) 
+## S3 method for class 'sreg'
+print(x, ...) 
+## S3 method for class 'summary.Krig'
+ print(x, ...) 
+## S3 method for class 'summary.spatialProcess'
+ print(x, ...)
+## S3 method for class 'summarySpatialDesign'
+ print(x, digits = 4,...) 
+## S3 method for class 'summary.sreg'
+ print(x, ...) 
+ 
+printGCVWarnings( Table,  method = "all")
+ 
+makePredictionPoints(mKrigObject, nx, ny, predictionPointsList)
+
+multWendlandGrid( grid.list,center, delta, coef, xy = c(1, 2))
+
+qr.q2ty (qr, y) 
+ 
+qr.yq2 (qr, y) 
+## S3 method for class 'qsreg'
+plot(x, pch = "*", main = NA,...) 
+## S3 method for class 'qsreg'
+predict(object, x, derivative = 0, model = object$ind.cv.ps,...)
+## S3 method for class 'qsreg'
+ print(x, ...) 
+qsreg.fit (x, y, lam, maxit = 50, maxit.cv = 10, 
+           tol = 1e-04, offset = 0, sc = sqrt(var(y)) * 1e-07, alpha = 0.5, 
+           wt = rep(1, length(x)), cost = 1)
+qsreg.psi( r,alpha=.5,C=1) 
+qsreg.rho( r,alpha=.5,C=1)
+qsreg.trace(x, y, lam, maxit = 50, maxit.cv = 10, tol = 1e-04, 
+             offset = 0, sc = sqrt(var(y)) * 1e-07, alpha = 0.5, 
+             wt = rep(1, length(x)), cost = 1)
+qsreg.rho.OLD(r, alpha = 0.5, C = 1)
+qsreg.psi.OLD(r, alpha = 0.5, C = 1)
+
+quickPrint(obj, max.values = 10)
+
+
+
+radbas.constant (m, d) 
+ 
+sreg.df.to.lambda (df, x, wt, guess = 1, tol = 1e-05) 
+sreg.fdf (h, info) 
+sreg.fgcv (lam, obj) 
+sreg.fgcv.model (lam, obj) 
+sreg.fgcv.one (lam, obj) 
+sreg.fit (lam, obj, verbose=FALSE) 
+sreg.fs2hat (lam, obj) 
+sreg.trace (h, info) 
+
+summaryGCV.Krig(object, lambda, cost = 1, verbose = FALSE, 
+                offset = 0, y = NULL, ...)
+summaryGCV.sreg (object, lambda, cost = 1, nstep.cv = 20, 
+        offset = 0, verbose = TRUE,...) 
+
+## S3 method for class 'qsreg'
+ summary(object, ...)     
+## S3 method for class 'spatialDesign'
+ summary(object, digits = 4, ...) 
+## S3 method for class 'sreg'
+ summary(object, digits = 4, ...) 
+
+surface(object , ...) 
+## Default S3 method:
+ surface(object, ...) 
+
+
+unscale (x, x.center, x.scale) 
+
+MLESpatialProcess.fast(x, y, lambda.start=.5, theta.start = NULL, 
+  cov.function = "stationary.cov", 
+  cov.args = list(Covariance = "Matern", smoothness = 1), 
+  Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

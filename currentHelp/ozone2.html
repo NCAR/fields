@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Daily 8-hour ozone averages for sites in the Midwest</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for ozone2 {fields}"><tr><td>ozone2 {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Daily 8-hour ozone averages for sites in the Midwest
+</h2>
+
+<h3>Description</h3>
+
+<p>The response is 8-hour average (surface) ozone ( from 9AM-4PM) measured in
+parts per billion (PPB) for 153 sites in the midwestern US over the period
+June 3,1987 through August 31, 1987, 89 days. This season of high 
+ozone corresponds with a large modeling experiment using the EPA Regional
+Oxidant Model.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+data(ozone2)
+</pre>
+
+
+<h3>Format</h3>
+
+<p>The data list has components:
+&lt;s-args&gt;
+&lt;s-arg name=&quot;y&quot;&gt;
+a 89X153 matrix of ozone values. Rows are days and columns are the 
+sites. 
+&lt;/s-arg&gt;
+&lt;/s-arg name=&quot;lon.lat&quot;&gt; 
+Site locations in longitude and latitude as a 153X2 table
+&lt;/s-arg&gt;
+&lt;s-arg name=&quot;chicago.subset&quot;&gt;
+Logical vector indicating stations that form teh smaller 
+Chicagoland subset. (see FIELDS ozone data set)
+&lt;/s-arg&gt;
+&lt;/s-args&gt;
+&lt;s-section name=&quot;Reference&quot;&gt;
+Nychka, D., Cox, L., Piegorsch, W. (1998) Case Studies in Environmental 
+Statistics Lecture Notes in Statistics, Springer
+Verlag, New York 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data( ozone2)
+
+# pairwise correlation among all stations
+# ( See cover.design to continue this example)
+cor.mat&lt;- cor( ozone2$y, use="pairwise")
+
+#raw data image for day number 16 
+good&lt;- !is.na( ozone2$y[16,])
+out&lt;- as.image( ozone2$y[16,good], x=ozone2$lon.lat[good,])
+image.plot( out)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

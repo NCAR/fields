@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Collapse repeated spatial locations into unique locations</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Krig.replicates {fields}"><tr><td>Krig.replicates {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Collapse repeated spatial locations into unique locations
+</h2>
+
+<h3>Description</h3>
+
+<p>In case that several observations are available for a single spatial location find the 
+group means and replicate variability
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Krig.replicates(out, x, y, Z, weights=rep( 1, length(y)), verbose = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>out</code></td>
+<td>
+<p> A list with components  <code>x</code>, <code>y</code>, <code>weights</code>,  and  possibily 
+<code>Z</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>Spatial locations.</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>Spatial observations</p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+<p>Spatial covariates.</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+<p>Weights proportional to reciprocal varainces of observations.</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p> If TRUE print out details for debugging. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function figures out which locations are the same and within the function fast.1way 
+use <code>tapply</code> to find replicate group means and standard deviations. 
+NOTE: it is assumed the Z covariates are unique at the locations. Currently these functions
+can not handle a model with common spatial locations but different values for the Z covariates.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A list with components:
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>yM </code></td>
+<td>
+<p>Data at unique locations and where more than one observation is
+available this is the mean of the replicates.</p>
+</td></tr>
+<tr valign="top"><td><code>xM </code></td>
+<td>
+<p>Unique spatial locations.</p>
+</td></tr>
+<tr valign="top"><td><code>weightsM</code></td>
+<td>
+<p>Weights matching the unique lcoations proportional to reciprocal variances 
+This is found as a combination of the original weights at each location.</p>
+</td></tr>
+<tr valign="top"><td><code>ZM</code></td>
+<td>
+<p>Values of the covariates at the unique lcoations.</p>
+</td></tr>
+<tr valign="top"><td><code>uniquerows</code></td>
+<td>
+<p>Index for unique rows of <code>x</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>shat.rep, shat.pure.error</code></td>
+<td>
+<p>Standard deviation of pure error estimate based on replicate groups
+(and adjusting for possibly different weights.)</p>
+</td></tr>
+<tr valign="top"><td><code>rep.info</code></td>
+<td>
+<p>Integer tags indicating replicate groups.</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Douglas Nychka
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+#create  some spatial replicates
+ set.seed( 123)
+ x0&lt;- matrix( runif(10*2), 10,2)
+ x&lt;-  x0[ c(rep(1,3), 2:8, rep( 9,5),10) , ]
+ y&lt;-  rnorm( 16)
+ 
+ out&lt;- Krig.replicates( x=x, y=y)
+# compare 
+# out$yM[1] ;  mean( y[1:3])
+# out$yM[9] ; mean( y[11:15])
+# mean( y[ out$rep.info==9])
+ 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

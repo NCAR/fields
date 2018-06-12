@@ -32,6 +32,10 @@ This is an R package
  
  Please see the extensive vignette by Ashton Wiens and Mitch Krock on this package. [fieldsVignette](fieldsVignette.html)
  
+#Browsing source code and help files
+See the directory  [currentHelp](currentHelp) to browse the current versions of **fields** help files in html format. 
+
+See the  directory [fields/R](fields/R) to browse the source code in this package. Note that orignal source code has numerous comments. Unfortunately these are stripped out in the CRAN distribution and standard installation.  
 
 #About the DOI version 
 The doi:10.5065/D6W957CT for the fields package is linked to the specific package version 8.4-1 

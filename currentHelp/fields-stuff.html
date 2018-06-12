@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Fields supporting functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for fields-stuff {fields}"><tr><td>fields-stuff {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Fields supporting functions</h2>
+
+<h3>Description</h3>
+
+<p>Some supporting functions that are internal to fields top level
+methods. Variants of these might be found in the R base but these
+have been written for cleaner code or efficiency.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+fields.diagonalize2(A,B, verbose=FALSE)
+fields.diagonalize(A,B)
+fields.duplicated.matrix(mat, digits = 8) 
+
+fields.mkpoly(x, m = 2)
+
+fields.derivative.poly(x, m,dcoef)
+
+fields.evlpoly( x, coef)
+
+fields.evlpoly2( x, coef, ptab)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>A</code></td>
+<td>
+
+<p>A positive definite matrix</p>
+</td></tr>
+<tr valign="top"><td><code>B</code></td>
+<td>
+
+<p>A positive definite matrix</p>
+</td></tr>
+<tr valign="top"><td><code>mat</code></td>
+<td>
+
+<p>Arbitrary matrix for examining rows</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>Number of significant digits to use for comparing
+elements to determine duplciate values. </p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Arbitrary matrix where rows are components of a multidimensional
+vector</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p> The null space degree  &ndash; results in a polynomial of degree
+(m-1) </p>
+</td></tr>
+<tr valign="top"><td><code>dcoef</code></td>
+<td>
+<p> Coefficients of a multidimensional polynomial</p>
+</td></tr>
+<tr valign="top"><td><code>coef</code></td>
+<td>
+<p>Polynomial coefficients.</p>
+</td></tr>
+<tr valign="top"><td><code>ptab</code></td>
+<td>
+<p>Table of powers of different polnomial terms.</p>
+</td></tr>   
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE prints condition number of A+B</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Given two matrices A (positive definite) and B (nonnegative definite)
+<code>fields.diagonalize</code> and <code>fields.diagonalize2</code> finds the 
+matrix transformation G that will convert A to a identity matrix and B 
+to a diagonal matrix:
+</p>
+<p>G\^T A G= I       G\^T B G= D. 
+</p>
+<p><code>fields.diagonalize2</code> is not as easy to follow as <code>fields.diagonalize</code> but may be more stable
+and is the version used in 
+the Krig engine. 
+</p>
+<p><code>fields.duplicated</code> finds duplicate rows in a matrix.  The digits
+arguments is the number of digits that are considered in the
+comparison. 
+The returned value is an array of integers from 1:M where M is the
+number of unique rows and duplicate rows are referenced in the same
+order that they appear as the rows of <code>mat</code>. 
+</p>
+<p><code>fields.mkpoly</code>  computes the complete matrix of all monomial
+terms up to degree (m-1). Each row of <code>x</code> is are the componets of
+a vector.  (The fields function mkpoly returns the number of these
+terms.) In 2 dimensions with m=3 there   6 polynomial terms  up to
+quadratic ( 3-1 =2) order and will be returned as the matrix:
+</p>
+<p>cbind(  1 , x[,1], x[,2], x[,1]**2, x[,1]*x[,2], x[,2]**2  )
+</p>
+<p>This function is used for the fixed effects polynomial  or spatial
+drift used in spatial estimating functions Krig, Tps and mKrig. 
+The matrix ptab is a table of the powers in each term for each
+variable and is included as an attribute to the matrix returned by
+this function. 
+See the <code>attr</code> function for extracting an attribute from an
+object. 
+</p>
+<p><code>ptab</code> for the example above is 
+</p>
+<pre>
+    [,1] [,2]
+[1,]    0    0
+[2,]    1    0
+[3,]    0    1
+[4,]    2    0
+[5,]    1    1
+[6,]    0    2
+</pre>
+<p>This information is used in finding derivatives of the polynomial. 
+</p>
+<p><code>fields.deriviative.poly</code> finds the partial derivative matrix of
+a multidimensional polynomial of degree (m-1) at different vector
+values and with coefficients <code>dcoef</code>. 
+This function has been orgainzed to be a clean utility for the
+predicting the derivative of the estimated function from Krig or
+mKrig. 
+Within the fields context
+the polynomial itself would be evaluated as 
+fields.mkpoly( x,m)%*%dcoef.
+If x has  d columns ( also the dimension of the polynomial) and n rows
+the partial derivatives of this polynomial at the locations x can be
+organized in a nXd matrix.  This is the object returned by ths
+function.   
+</p>
+<p><code>evlpoly</code> and <code>evlpoly2</code> are FORTRAN based functions for 
+evaluating univariate polynomials and multivariate polynomials.  The
+table of powers (ptab) needed for evlpoly2 is the same format as that
+returned my the fields.mkpoly function. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka</p>
+
+
+<h3>See Also</h3>
+
+<p>Krig, Tps, as.image, predict.Krig, predict.mKrig, 
+Krig.engine.default, Wendland</p>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

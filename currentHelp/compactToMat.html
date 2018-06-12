@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Convert Matrix from Compact Vector to Standard Form</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for compactToMat {fields}"><tr><td>compactToMat {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+
+Convert Matrix from Compact Vector to Standard Form
+</h2>
+
+<h3>Description</h3>
+
+
+<p><code>compactToMat</code> transforms a matrix from compact, vector form to
+a standard matrix.  Only symmetric matrices can be stored in this
+form, since a compact matrix is stored as a vector  with elements 
+representing the upper triangle of the matrix.  This function assumes
+the vector does not contain diagonal elements of the matrix.
+</p>
+<p>An example of a matrix stored in compact form is any matrix 
+generated from the <code>rdist</code> function with <code>compact=TRUE</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+compactToMat(compactMat, diagVal=0, lower.tri=FALSE, upper.tri=TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>compactMat</code></td>
+<td>
+
+
+<p>A symmetric matrix stored as a vector containing elements for the lower-triangular
+portion of the true matrix (and none of the diagonal elements), as returned by 
+<code>rdist</code> with <code>compact=TRUE</code>.
+</p>
+</td></tr>
+<tr valign="top"><td><code>diagVal</code></td>
+<td>
+
+
+<p>A number to put in the diagonal entries of the output matrix.
+</p>
+</td></tr>
+<tr valign="top"><td><code>lower.tri</code></td>
+<td>
+
+
+<p>Whether or not to fill in the upper triangle of the output matrix
+</p>
+</td></tr>
+<tr valign="top"><td><code>upper.tri</code></td>
+<td>
+
+
+<p>Whether or not to fill in the lower triangle of the output matrix
+</p>
+</td></tr>
+</table>
+
+
+<h3>Value</h3>
+
+
+
+
+
+
+<p>The standard form matrix represented by the input compact matrix
+</p>
+
+
+<h3>Author(s)</h3>
+
+
+<p>John Paige
+</p>
+
+
+<h3>See Also</h3>
+
+
+<p><code><a href="rdist.html">rdist</a></code>, <code>link{dist}</code>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+################
+#Calculate distance matrix from compact form:
+################
+
+#make a distance matrix
+distOut = rdist(1:5, compact=TRUE)
+print(distOut)
+
+#note that distOut is in compact form:
+print(c(distOut))
+
+#convert to standard matrix form:
+distMat = compactToMat(distOut)
+
+################
+#fast computation of covariance matrix:
+################
+
+#generate 5 random points on [0,1]x[0,1] square
+x = matrix(runif(10), nrow=5)
+
+#get compact distance matrix
+distOut = rdist(x, compact=TRUE)
+
+#evaluate Exponential covariance with range=1.  Note that
+#Covariance function is only evaluated over upper triangle
+#so time is saved.
+diagVal = Exponential(0, range=1)
+compactCovMat = Exponential(distOut, range=1)
+upperCovMat = compactToMat(compactCovMat, diagVal)
+lowerCovMat = compactToMat(compactCovMat, diagVal, lower.tri=TRUE, upper.tri=FALSE)
+fullCovMat = compactToMat(compactCovMat, diagVal, lower.tri=TRUE, upper.tri=TRUE)
+compactCovMat
+lowerCovMat
+upperCovMat
+fullCovMat
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

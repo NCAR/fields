@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Testing fields functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for fields testing scripts {fields}"><tr><td>fields testing scripts {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Testing fields functions
+</h2>
+
+<h3>Description</h3>
+
+<p>Some of the basic methods in fields can be tested by directly
+implementing the linear algebra using matrix expressions and
+other functions can be cross checked within fields. These
+comparisons are done in the the R source code test files in the tests
+subdirectory of fields.  The function <code>test.for.zero</code> is useful for
+comparing the tests in a meaninful and documented way. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+test.for.zero( xtest, xtrue,  tol= 1.0e-8, relative=TRUE, tag=NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>xtest</code></td>
+<td>
+<p>Vector of target values</p>
+</td></tr>
+<tr valign="top"><td><code>xtrue</code></td>
+<td>
+<p>Vector of reference values</p>
+</td></tr>
+<tr valign="top"><td><code>tol</code></td>
+<td>
+<p>Tolerance to judge whether the test passes.</p>
+</td></tr>
+<tr valign="top"><td><code>relative</code></td>
+<td>
+<p>If true a relative error comparison is used. (See
+details below.)</p>
+</td></tr>
+<tr valign="top"><td><code>tag</code></td>
+<td>
+<p> A text string to be printed out with the test results as a
+reference</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>IMPORTANT: If the R object <code>test.for.zero.flag</code> exists with any
+value ( e.g. <code>test.for.zero.flag &lt;- 1</code> ) then when the test fails
+this function will also generate an error in addition to printing a
+message. This option is added to insure
+that any test scripts will generate an error when any individual test
+fails.  
+</p>
+<p>An example:
+</p>
+<pre>
+&gt; test.for.zero( 1:10, 1:10 + 1e-10, tag="First test")
+Testing:  First test
+PASSED test at tolerance  1e-08
+</pre>
+<pre>
+&gt; test.for.zero( 1:10, 1:10 + 1e-10, tag="First test", tol=1e-12)
+Testing:  First test
+FAILED test value =  1.818182e-10  at tolerance  1e-12
+</pre>
+<pre>
+&gt; test.for.zero.flag &lt;- 1
+Testing:  First test
+FAILED test value =  1.818182e-10  at tolerance  1e-12
+Error in test.for.zero(1:10, 1:10 + 1e-10, tag = "First test", tol = 1e-12) :
+</pre>
+<p>The scripts in the <code>tests</code> subdirectory are 
+</p>
+
+<dl>
+<dt>Krig.test.R:</dt><dd><p>Tests basic parts of the Krig and Tps functions including replicated
+and weighted observations. </p>
+</dd>
+<dt>Krig.se.test.R:</dt><dd><p>Tests computations of standard errors for the
+Kriging estimate.</p>
+</dd>
+<dt>Krig.se.grid.test.R</dt><dd><p>Tests approximate standard errors for the
+Krig function found by Monte Carlo conditional simulation.</p>
+</dd> 
+<dt>Krig.test.W.R</dt><dd><p>Tests predictions and A matrix  when an off diagonal 
+observation weight matrix is used.</p>
+</dd>
+<dt>Krig.se.W.R</dt><dd><p>Tests standard errors when an off diagonal 
+observation weight matrix is used.</p>
+</dd>
+<dt>spam.test.R</dt><dd><p>Tests sparse matrix formats and linear algebra.</p>
+</dd>
+<dt>Wend.test.R</dt><dd><p>Tests form for Wendland covariance family and its
+use of sparse matrix formats.</p>
+</dd>
+<dt>diag.multiply.test.R</dt><dd><p>Tests special (efficient) version of matrix 
+multiply for diagonal matrices.</p>
+</dd>
+<dt> evlpoly.test.R</dt><dd><p>Tests evaluation of univariate and multivariate
+polynomial evaluation.</p>
+</dd>
+<dt>mKrig.test.R</dt><dd><p>Tests the micro Krig function with and without sparse 
+matrix methods. </p>
+</dd>
+</dl>
+
+<p>To run the tests just attach the fields library and source the testing
+file.  In the  fields source code these are in a subdirectory
+&quot;tests&quot;. Compare the output to the &quot;XXX.Rout.save&quot; text file. 
+</p>
+<p><code>test.for.zero</code> is used to print out the result for each
+individual comparison.
+Failed tests are potentially  bad and are reported with a
+string beginning 
+</p>
+<p>&quot;FAILED test value = ... &quot;
+</p>
+<p>If the object test.for.zero.flag exists then an error is also generated
+when the test fails.
+</p>
+<p>FORM OF COMPARISON:
+The actual test done is the sum of absolute differnces:
+</p>
+<p>test value = <code> 
+sum( abs(c(xtest) - c( xtrue) ) ) /denom</code>
+</p>
+<p>Where <code>denom</code> is either  <code> mean( abs(c(xtrue)))</code> for relative error
+or 1.0 otherwise. 
+</p>
+<p>Note the use of &quot;c&quot; here to stack any structure in xtest and xtrue into
+a vector. 
+</p>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

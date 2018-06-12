@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Robust and Quantile smoothing using a thin-plate spline</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for QTps {fields}"><tr><td>QTps {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+
+Robust and Quantile smoothing using a thin-plate spline
+</h2>
+
+<h3>Description</h3>
+
+
+<p>This function uses the standard thin plate spline function <code>Tps</code> and a algorithm based on 
+psuedo data to compute robust smoothers based on the Huber weight function. By modifying the 
+symmetry of the Huber function and changing the scale one can also approximate a quantile 
+smoother. This function is experimental in that is not clear how efficient the psuedo-data
+algorithm is acheiving convergence to a solution. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alpha = 0.5, Niterations = 100,
+               tolerance = 0.001, verbose = FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Locations of observations.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Y</code></td>
+<td>
+
+<p>Observations
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Any other arguments to pass to the Tps function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>C</code></td>
+<td>
+<p>Scaling for huber robust weighting function. (See below.) Usually it is better to leave this at 1 and 
+just modify the scale  <code>psi.scale</code> according to the size of the residuals. </p>
+</td></tr>
+<tr valign="top"><td><code>f.start</code></td>
+<td>
+
+<p>The initial value for the estimated function. If NULL then the constant function at the 
+median of <code>Y</code> will be used. NOTE: This may not be a very good starting vector and a more robust
+method would be to use a local robust smoother. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>psi.scale</code></td>
+<td>
+
+<p>The scale value for the Huber function.  When C=1, this is the point where the Huber weight function will 
+change from quadratic to linear. Default is to use the scale <code>.05*mad(Y)</code>  and <code>C=1</code> . Very small scales relative to the 
+size of the residuals will cause the estimate to approximate a quantile spline. Very large scales will yield the
+ordinary least squares spline. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+
+<p>The quantile that is estimated by the spline. Default is .5 giving a median. Equivalently this parameter controls the slope of the linear wings in the Huber function  <code>2*alpha</code> for the positive wing and  <code>2*(1-alpha)</code>
+for the negative wing.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Niterations</code></td>
+<td>
+
+<p>Maximum number of interations of the psuedo data algorithm 
+</p>
+</td></tr>
+<tr valign="top"><td><code>tolerance</code></td>
+<td>
+
+<p>Convergence criterion based on the relative change in the predicted values of the function estimate. Specifically if the criterion <code>mean(abs(f.hat.new - f.hat))/mean(abs(f.hat))</code> is less than  <code>tolerance</code> the iterations re stopped. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+
+<p>If TRUE intermediate results are printed out.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This is an experimentla function that uses the psuedo-value algorithm to compute a class of robust and quantile problems. 
+</p>
+<p>The Thin Plate Spline/ Kriging model through fields is: Y.k= f(x.k) = P(x.k) + Z(x.k) + e.k
+</p>
+<p>with the goal of estimating the smooth function: f(x)= P(x) + Z(x)
+</p>
+<p>The extension in this function is that e.k can be heavy tailed or have outliers and one would still like a 
+robust estimate of f(x). In the quantile approximation (very small scale parameter) f(x) is an estimate of the 
+alpha quantile of the conditional distribution of Y given x. 
+</p>
+<p>The algorithm is iterative and involves at each step tapering the residuals in a nonlinear way. 
+Let psi.wght  be this tapering function then given an initial estimate of f, f.hat the new data for smoothing is 
+</p>
+<p><code> Y.psuedo&lt;- f.hat + psi.scale* psi.wght( Y - f.hat, psi.scale=psi.scale, alpha=alpha)</code> 
+A thin plate spline is now estimated for these data and a new prediction for f is found. This new vector is
+used to define new psuedo values. Convergence is achieved when the the subsequent estimates of f.hat do not
+change between interations. The advantage of this algorithm is at every step a standard &quot;least squares&quot; thin
+plate spline is fit to the psuedo data. Because only the observation vector is changing at each iteration 
+Some matrix decompositions need only be found once and the computations at each subsequent iteration are efficient.
+At convergence there is some asymptotic theory to suggest that the psuedo data can be fit using the least
+squares spline and the standard smoothing techinques are valid. For example one can consider looking at the
+cross-validation function for the psuedo-data as a robust version to select a smoothing parameter. This approach
+is different from the weighted least squared algorithm used in the <code>qsreg</code> function. Also <code>qsreg</code> is only
+designed to work with 1-d cubic smoothing splines.   
+</p>
+<p>The  &quot;rho&quot; function indicating the departure from a pure quadratic loss function  has the definition
+</p>
+<pre>
+qsreg.rho&lt;-function(r, alpha = 0.5, C = 1) 
+     temp&lt;- ifelse( r&lt; 0, ((1 - alpha) * r^2)/C ,  (alpha * r^2)/C)
+     temp&lt;- ifelse( r &gt;C,   2 * alpha * r - alpha * C, temp)
+     temp&lt;- ifelse( r &lt; -C, -2 * (1 - alpha) * r - (1 - alpha) * C, temp)
+     temp
+</pre> 
+<p>The derivative of this function &quot;psi&quot; is 
+</p>
+<pre>
+ qsreg.psi&lt;- function(r, alpha = 0.5, C = 1)
+     temp &lt;- ifelse( r &lt; 0, 2*(1-alpha)* r/C, 2*alpha * r/C )               
+     temp &lt;- ifelse( temp &gt; 2*alpha, 2*alpha, temp)
+     temp &lt;- ifelse( temp &lt; -2*(1-alpha), -2*(1-alpha), temp)
+     temp
+</pre>
+<p>Note that if C is very small and if alpha = .5 then psi will essentially be 1 for r &gt; 0 and -1 for  r &lt; 0. 
+The key feature here is that outside a ceratin range the residual is truncated to a constant value. This is similar
+to the Windsorizing operation in classical robust statistics. 
+</p>
+<p>Another advantage of the psuedo data algotrithm is that at convergence one can just apply all the usual 
+generic functions from Tps to the psuedo data fit. For example, predict, surface, print, etc. Some additional
+components are added to the Krig/Tps  object, however, for information about the iterations and original data. 
+Note that currently these are not reported in the summaries and printing of the output object. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>A <code>Krig</code> object with additional components:
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>yraw</code></td>
+<td>
+<p> Original Y values</p>
+</td></tr>
+<tr valign="top"><td><code>conv.info</code></td>
+<td>
+<p>A vector giving the convergence criterion at each iteration.</p>
+</td></tr>
+<tr valign="top"><td><code>conv.flag</code></td>
+<td>
+<p>If TRUE then convergence criterion was less than the tolerance value.</p>
+</td></tr>
+<tr valign="top"><td><code>psi.scale</code></td>
+<td>
+<p>Scaling factor used for the psi.wght function.</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>Value of alpha.</p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka
+</p>
+
+
+<h3>References</h3>
+
+<p>Oh, Hee-Seok, Thomas CM Lee, and Douglas W. Nychka. &quot;Fast nonparametric quantile regression with arbitrary smoothing methods.&quot; Journal of Computational and Graphical Statistics 20.2 (2011): 510-526.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>qsreg
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+data(ozone2)
+x&lt;- ozone2$lon.lat
+y&lt;- ozone2$y[16,]
+
+
+
+# Smoothing fixed at 50 df 
+    look1&lt;- QTps( x,y, psi.scale= 15, df= 50)
+
+## Not run: 
+# Least squares spline (because scale is so large)
+    look2&lt;- QTps( x,y, psi.scale= 100, df= 50)
+#
+    y.outlier&lt;- y
+# add in a huge outlier.
+    y.outlier[58]&lt;- 1e5
+    look.outlier1&lt;- QTps( x,y.outlier, psi.scale= 15, df= 50)
+# least squares spline.
+    look.outlier2&lt;- QTps( x,y.outlier, psi.scale=100 , df= 50)
+#
+    set.panel(2,2)
+    surface( look1)
+    title("robust spline")
+    surface( look2)
+    title("least squares spline")
+    surface( look.outlier1,  zlim=c(0,250))
+    title("robust spline w/outlier") 
+    points( rbind(x[58,]), pch="+")
+    surface( look.outlier2, zlim=c(0,250))
+    title("least squares spline w/outlier")
+    points( rbind(x[58,]), pch="+")
+    set.panel()
+
+## End(Not run)
+# some quantiles
+look50 &lt;- QTps( x,y, psi.scale=.5)
+look75 &lt;- QTps( x,y,f.start= look50$fitted.values, alpha=.75)
+
+
+# a simulated example that finds some different quantiles. 
+## Not run: 
+set.seed(123)
+N&lt;- 400
+x&lt;- matrix(runif( N), ncol=1)
+true.g&lt;- x *(1-x)*2
+true.g&lt;- true.g/ mean( abs( true.g))
+y&lt;-  true.g + .2*rnorm( N )
+
+look0 &lt;- QTps( x,y, psi.scale=10, df= 15)
+look50 &lt;- QTps( x,y, df=15)
+look75 &lt;- QTps( x,y,f.start= look50$fitted.values, df=15, alpha=.75)
+
+## End(Not run)
+
+## Not run: 
+# this example tests the quantile estimate by Monte Carlo
+# by creating many replicate point to increase the sample size. 
+# Replicate points are used because the computations for the 
+# spline are dominated by the number of unique locations not the 
+# total number of points. 
+set.seed(123)
+N&lt;- 80
+M&lt;- 200
+x&lt;- matrix( sort(runif( N)), ncol=1)
+x&lt;- matrix( rep( x[,1],M), ncol=1)
+
+true.g&lt;- x *(1-x)*2
+true.g&lt;- true.g/ mean( abs( true.g))
+errors&lt;- .2*(rexp( N*M) -1)
+y&lt;- c(matrix(true.g, ncol=M, nrow=N) + .2 *  matrix( errors, ncol=M, nrow=N))
+
+look0 &lt;- QTps( x,y, psi.scale=10, df= 15)
+look50 &lt;- QTps( x,y, df=15)
+look75 &lt;- QTps( x,y, df=15, alpha=.75)
+
+
+bplot.xy(x,y, N=25)
+xg&lt;- seq(0,1,,200)
+lines( xg, predict( look0, x=xg), col="red")
+lines( xg, predict( look50, x=xg), col="blue")
+lines( xg, predict( look75, x=xg), col="green")
+
+## End(Not run)
+## Not run: 
+# A comparison with qsreg
+  qsreg.fit50&lt;- qsreg(rat.diet$t,rat.diet$con, sc=.5)
+  lam&lt;- qsreg.fit50$cv.grid[,1]
+  df&lt;- qsreg.fit50$cv.grid[,2]
+  M&lt;- length(lam)
+  CV&lt;-rep( NA, M)
+  M&lt;- length( df)
+  fhat.old&lt;- NULL
+  for ( k in M:1){
+     temp.obj&lt;- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old,  psi.scale=.5, tolerance=1e-6,
+     verbose=FALSE, df= df[k])
+     cat(k, " ")
+     CV[k] &lt;- temp.obj$Qinfo$CV.psuedo
+     fhat.old&lt;- temp.obj$fitted.values
+  }
+  plot( df, CV, type="l", lwd=2)
+# psuedo data estimate
+  points( qsreg.fit50$cv.grid[,c(5,6)], col="blue")
+# alternative CV estimate via reweighted LS
+  points( qsreg.fit50$cv.grid[,c(2,3)], col="red")
+
+## End(Not run)
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Smoother (or &quot;hat&quot;) matrix relating predicted values to the...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Krig.Amatrix {fields}"><tr><td>Krig.Amatrix {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Smoother (or &quot;hat&quot;) matrix relating predicted values to the dependent 
+(Y) values. 
+</h2>
+
+<h3>Description</h3>
+
+<p>For a fixed value of the smoothing parameter or the covariance 
+function some nonparametric curve estimates are linear functions of 
+the observed data. This is a intermediate  level function that 
+computes the linear weights to be applied to the observations to 
+estimate the curve at a particular point. For example the predicted 
+values can be represented as Ay where A is an N X N matrix of 
+coefficients and Y is the vector of observed dependent variables. For 
+linear smoothers the matrix A may depend on the smoothing parameter ( 
+or covariance function and the independent variables (X) but NOT on Y.    
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Krig.Amatrix(object, x0 = object$x, lambda=NULL,
+      eval.correlation.model = FALSE,...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<p>Output object from fitting a data set using a FIELD regression
+method. 
+Currently this is supported only for Krig ( and Tps) functions. 
+</p>
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>A Krig object produced by the Krig ( or Tps) function. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>x0</code></td>
+<td>
+
+<p>Locations for prediction default is the observation locations. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+
+<p>Value of the smoothing parameter.
+</p>
+</td></tr>
+<tr valign="top"><td><code>eval.correlation.model</code></td>
+<td>
+<p>This applies to a correlation model 
+where the observations have been standardized &ndash; e.g. 
+y standardized  = (yraw - mean) / (standard deviation). If TRUE the 
+prediction in the correlation scale is transformed by the standard
+deviation and mean to give a  prediction in the raw scale. 
+If FALSE predictions are left in the correlation  scale.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p> Other arguments that can used by predict.Krig.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The main use of this function is in finding prediction standard errors. 
+</p>
+<p>For the Krig ( and Tps) functions the A matrix is constructed based on the
+representation of the estimate as a generalized ridge regression.  The
+matrix expressions are explained in the references from the FIELDS manual.
+For linear regression the matrix that gives predicted values is often
+referred to as the &quot;hat&quot; matrix and is useful for regression diagnostics.  
+For smoothing problems the effective number of parameters in the fit is
+usually taken to be the trace of the A matrix. Note that while the A
+matrix is usually constructed to predict the estimated curve at the data
+points Amatrix.Krig does not have such restrictions. This 
+is possible
+because any value of the estimated curve will be a linear function of Y.  
+</p>
+<p>The actual calculation in this function is simple. It invovles 
+loop through the unit vectors at each observation and computation of the
+prediction for each of these delta functions. This approach makes it easy to 
+handle different options such as including covariates. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>A matrix where the number of rows is equal to the number of predicted points 
+and the number of columns is equal to the length of the Y vector.  
+</p>
+
+
+<h3>References</h3>
+
+<p>Nychka (2000) &quot;Spatial process estimates as smoothers.&quot; 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Krig, Tps, predict.Krig 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Compute the A matrix or "hat" matrix for a thin plate spline 
+# check that this gives the same predicted values  
+tps.out&lt;-Tps( ChicagoO3$x, ChicagoO3$y)
+A&lt;-Krig.Amatrix( tps.out, ChicagoO3$x)
+test&lt;- A%*%ChicagoO3$y 
+# now compare this to predict( tps.out) or tps.out$fitted.values 
+#                    they should be the same 
+stats( test- tps.out$fitted.values)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

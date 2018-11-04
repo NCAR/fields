@@ -187,8 +187,9 @@ arguments.
 Both of these functions are special cases of using the 
 \code{Krig} and \code{mKrig} functions. See the help on each of these
 for more information on the calling arguments and what is returned. 
+\code{Tps} makes use of the stable computations via eigen decompositions in \code{Krig}. \code{fastTps} follows the more standard computations for spatial statistics centered around the Cholesky decomposition in \code{mKrig}.
 
-A thin plate spline is result of minimizing the residual sum of 
+A thin plate spline is the result of minimizing the residual sum of 
 squares subject to a constraint that the function have a certain 
 level of smoothness (or roughness penalty). Roughness is 
 quantified by the integral of squared m-th order derivatives. For one 
@@ -260,7 +261,7 @@ This function does have the potential to approximate estimates of Tps
 for very large spatial data sets. See \code{wendland.cov} and help on 
 the SPAM package for more background.
 Also, the function \code{predictSurface.fastTps} has been made more efficient for the 
-case of k=2 and m=2. 
+case of k=2 and m=2. Also see the handy function \code{\link{fastTpsMLE}} to estimate lambda by maximum likelihood. 
 
 See also the mKrig function for handling larger data sets and also for an example
 of combining Tps and mKrig for evaluation on a huge grid. 
@@ -273,9 +274,18 @@ by Green and Silverman.
 See "Additive Models" by Hastie and Tibshirani. 
 }
 \seealso{
-Krig, summary.Krig, predict.Krig, predictSE.Krig, predictSurface, predictSurface.fastTps, plot.Krig, mKrig  
+\code{\link{Krig}},
+\code{\link{mKrig}},
+\code{\link{spatialProcess}},
+\code{\link{summary.Krig}},
+\code{\link{predict.Krig}},
+\code{\link{predictSE.Krig}},
+\code{\link{predictSurface}},
+\code{\link{predictSurface.fastTps}},
+\code{\link{plot.Krig}},
 \code{\link{surface.Krig}}, 
-\code{\link{sreg}} 
+\code{\link{sreg}},
+\code{\link{fastTpsMLE}}
 }
 \examples{
 #2-d example 

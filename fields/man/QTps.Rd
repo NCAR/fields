@@ -19,6 +19,7 @@
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
 \name{QTps}
+\alias{QSreg}
 \alias{QTps}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -36,6 +37,9 @@ algorithm is acheiving convergence to a solution.
 \usage{
 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alpha = 0.5, Niterations = 100,
                tolerance = 0.001, verbose = FALSE)
+QSreg(x, Y, lambda = NA, f.start = NULL, psi.scale = NULL, 
+    C = 1, alpha = 0.5, Niterations = 100, tolerance = 0.001, 
+    verbose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -45,6 +49,8 @@ Locations of observations.
   \item{Y}{
 Observations
 }
+\item{lambda}{Value of the smoothing parameter. If NA found by an approximate corss-validation criterion.}
+
   \item{\dots}{
 Any other arguments to pass to the Tps function.
 }
@@ -77,7 +83,7 @@ If TRUE intermediate results are printed out.
 }
 }
 \details{
-This is an experimentla function that uses the psuedo-value algorithm to compute a class of robust and quantile problems. 
+These are experimental functions that use the psuedo-value algorithm to compute a class of robust and quantile problems.  \code{QTps} use the \code{Tps} function as its least squares base smoother while \code{QSreg} uses the efficient \code{sreg} for 1-D cubic smoothing spline models. Currently for the 1-d spline problem we recommend using the (or at least comparing to ) the old \code{qsreg} function. \code{QSreg} was created to produce a more readable version of the 1-d method that follows the thin plate spline format. 
 
 The Thin Plate Spline/ Kriging model through fields is: Y.k= f(x.k) = P(x.k) + Z(x.k) + e.k
 
@@ -122,13 +128,18 @@ The derivative of this function "psi" is
 }
 
 Note that if C is very small and if alpha = .5 then psi will essentially be 1 for r > 0 and -1 for  r < 0. 
-The key feature here is that outside a ceratin range the residual is truncated to a constant value. This is similar
+The key feature here is that outside a ceratin range the residual is
+truncated to a constant value. This is similar
  to the Windsorizing operation in classical robust statistics. 
 
-Another advantage of the psuedo data algotrithm is that at convergence one can just apply all the usual 
-generic functions from Tps to the psuedo data fit. For example, predict, surface, print, etc. Some additional
-components are added to the Krig/Tps  object, however, for information about the iterations and original data. 
-Note that currently these are not reported in the summaries and printing of the output object. 
+Another advantage of the psuedo data algotrithm is that at convergence
+one can just apply all the usual 
+generic functions from Tps to the psuedo data fit. For example,
+predict, surface, print, etc. Some additional
+components are added to the Krig/Tps  object, however, for information
+about the iterations and original data. 
+Note that currently these are not reported in the summaries and
+printing of the output object. 
 
 
 }
@@ -136,13 +147,16 @@ Note that currently these are not reported in the summaries and printing of the 
 A \code{Krig} object with additional components:
 
   \item{yraw}{ Original Y values}
-  \item{conv.info}{A vector giving the convergence criterion at each iteration.}
- \item{conv.flag}{If TRUE then convergence criterion was less than the tolerance value.}
+  \item{conv.info}{A vector giving the convergence criterion at each
+  iteration.}
+ \item{conv.flag}{If TRUE then convergence criterion was less than
+ the tolerance value.}
  \item{psi.scale}{Scaling factor used for the psi.wght function.}
   \item{value}{Value of alpha.}
 }
 \references{
-Oh, Hee-Seok, Thomas CM Lee, and Douglas W. Nychka. "Fast nonparametric quantile regression with arbitrary smoothing methods." Journal of Computational and Graphical Statistics 20.2 (2011): 510-526.
+Oh, Hee-Seok, Thomas CM Lee, and Douglas W. Nychka. 
+"Fast nonparametric quantile regression with arbitrary smoothing methods." Journal of Computational and Graphical Statistics 20.2 (2011): 510-526.
 }
 \author{
 Doug Nychka

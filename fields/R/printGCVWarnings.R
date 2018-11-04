@@ -20,6 +20,10 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 printGCVWarnings<- function( Table, method="all"){
  ind<- Table$Warning
+ if( method=="user"){
+   #print nothing, expect that the user knows what he/she is doing!
+  return()
+ }
  if( method == "all"){
  	kIndex<- 1:6
  }
@@ -30,6 +34,7 @@ printGCVWarnings<- function( Table, method="all"){
                           "RMSE",
                           "pure error",
                          "REML")
+                         
                    )
       }
  methodList<- c(
@@ -38,7 +43,8 @@ printGCVWarnings<- function( Table, method="all"){
  "(GCV.one) Generalized Cross-Validation on individual observations ",
  "(RMSE) Matching estimate of sigma to supplied rmse ",
  "Matching estimate of sigma to that from replicated observations",
- "(REML) Restricted maximum likelihood "
+ "(REML) Restricted maximum likelihood ",
+ "user supplied lambda"
   )
  if( any( ind[kIndex])){
  	cat("Warning: ", fill=TRUE)

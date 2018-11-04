@@ -270,7 +270,7 @@
     #########################
     #################################################
     # Do GCV and REML search over lambda if not fixed or if GCV variable is TRUE
-    # gcv.Krig, not named well,  also does a search over likelihood for lambda.
+    # gcv.Krig is not named well,  also does a search over likelihood for lambda.
     #################################################
     if (!out$fixed.model | out$GCV) {
         if (verbose) {
@@ -692,7 +692,7 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
     #   Solving
     #   beta2 = {Q.2^T K Q.2 + lambda I )^ {-1} Q.2^T yM
     #
-    # and so one sloves this linear system for beta2 and then uses
+    # and so one solves this linear system for beta2 and then uses
     #     c= Q.2 beta2
     #   to determine c.
     #

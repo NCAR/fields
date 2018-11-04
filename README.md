@@ -2,7 +2,7 @@
 
 #fields: Tools for Spatial Data 
 This repository contains some supplemental material in this top level and see the subdirectory **fields** for the head of the standard R package. 
-The most current package on CRAN  is listed here as *fields_VERSION.tar.gz* . At the time of writing the version is *9.6*.
+The most current package on CRAN  is listed here as *fields_VERSION.tar.gz* . At the time of writing the version is *9.7*.
 To create a possibly new version from this repository download the fields subdirectory and in UNIX
 ```
  R CMD build --force fields
@@ -29,6 +29,10 @@ This is an R package
  source code can be viewed by expanding  source code version
  and looking in the R subdirectory. The reference for fields can be generated
  by the citation function in R and has DOI <doi:10.5065/D6W957CT>. 
+  Development
+ of this package was supported in part by the National Science Foundation  Grant
+ 1417857 and the National Center for Atmospheric Research. 
+ 
  
  Please see the extensive vignette by Ashton Wiens and Mitch Krock on this package. [fieldsVignette](fieldsVignette.html)
  

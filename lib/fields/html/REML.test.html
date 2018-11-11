@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Maximum Likelihood estimates for some Matern covariance...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for REML.test {fields}"><tr><td>REML.test {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Maximum Likelihood estimates for some Matern covariance parameters. 
+</h2>
+
+<h3>Description</h3>
+
+<p>For a fixed smoothness (shape) parameter these functions provide
+different ways of estimating and testing restricted and profile
+likehiloods for the Martern covariance parameters. <code>MLE.Matern</code>
+is a simple function that finds the restricted maximum likelihood
+(REML) estimates of the sill, nugget and range parameters (<code>rho,
+sigma2 and theta</code>) of the Matern covariance functions.  The remaining
+functions are primarily for testing.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+
+
+MLE.Matern(x, y, smoothness, theta.grid = NULL, ngrid = 20,
+                 verbose = FALSE, niter = 25, tol = 1e-05,
+                 Distance = "rdist", m = 2, Dmax = NULL, ...)
+
+MLE.Matern.fast(x, y, smoothness, theta.grid = NULL, ngrid=20, verbose=FALSE,
+                                         m=2, ...)
+MLE.objective.fn( ltheta,info, value=TRUE)
+
+MaternGLSProfile.test(x, y, smoothness = 1.5, init = log(c(0.05,1)))
+MaternGLS.test(x, y, smoothness = 1.5, init = log(c(1, 0.2, 0.1)))
+MaternQR.test (x, y, smoothness = 1.5, init = log(c(1, 0.2, 0.1))) 
+MaternQRProfile.test (x, y, smoothness = 1.5, init = log(c(1))) 
+
+REML.test(x, y, rho, sigma2, theta, nu = 1.5)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>Dmax</code></td>
+<td>
+<p> Maximum distance for grid used to evaluate the fitted
+covariance function.</p>
+</td></tr>
+<tr valign="top"><td><code>Distance</code></td>
+<td>
+<p>Distance function used in finding covariance.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> A matrix of spatial locations with rows indexing location
+and columns the dimension (e.g. longitude/latitude)</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p> Spatial observations</p>
+</td></tr>
+<tr valign="top"><td><code>smoothness</code></td>
+<td>
+<p>Value of the Matern shape parameter.</p>
+</td></tr>
+<tr valign="top"><td><code>theta.grid</code></td>
+<td>
+<p> Grid of theta parameter values to use for grid
+search in maximizing the Likelilood. The defualt is do an initial
+grid search on ngrid points with the range at the 3 an d 97
+quantiles of the pairwise distances.If only two points are passed
+then this is used as the range for a sequence of ngrid points.</p>
+</td></tr>
+<tr valign="top"><td><code>ngrid</code></td>
+<td>
+<p>Number of points in grid search.</p>
+</td></tr>
+<tr valign="top"><td><code>init</code></td>
+<td>
+<p>Initial values of the parameters for optimization. For the
+first three functions these are in the order rho, theta sigma2 and in
+a log scale. For MaternQRProfile.test initial value is just
+log(theta). </p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE prints more information.</p>
+</td></tr>
+<tr valign="top"><td><code>rho</code></td>
+<td>
+<p> Marginal variance of Matern process (the &quot;sill&quot;) </p>
+</td></tr>
+<tr valign="top"><td><code>sigma2</code></td>
+<td>
+<p>Variance of measurement error (the &quot;nugget&quot;)</p>
+</td></tr>
+<tr valign="top"><td><code>theta</code></td>
+<td>
+<p>Scale parameter (the &quot;range&quot;)</p>
+</td></tr>
+<tr valign="top"><td><code>nu</code></td>
+<td>
+<p>Smoothness parameter</p>
+</td></tr>
+<tr valign="top"><td><code>ltheta</code></td>
+<td>
+<p> log of range parameter</p>
+</td></tr>
+<tr valign="top"><td><code>info</code></td>
+<td>
+<p>A list with components <code>x,y, smoothness, ngrid</code> that
+pass the information to the optimizer. See details below.</p>
+</td></tr>
+<tr valign="top"><td><code>value</code></td>
+<td>
+<p>If TRUE only reports minus log Profile likelihood with
+profile on the range parameter. If FALSE returns a list of
+information.</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p>Polynomial of degree (m-1) will be included in model as a
+fixed part.</p>
+</td></tr>
+<tr valign="top"><td><code>niter</code></td>
+<td>
+<p>Maximum number of interations in golden section search.</p>
+</td></tr>
+<tr valign="top"><td><code>tol</code></td>
+<td>
+<p>Tolerance for convergence in golden section search.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Additional arguments that are passed to the Krig function
+in evaluating the profile likelihood.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+ 
+<p><code>MLE.Matern</code> is a simple function to find the maximum likelihood
+estimates of using the restricted and profiled likeilihood that is
+intrinsic to the ccomputations in <code>Krig</code>. The idea is that the
+likelihood is concentrated to the parameters lambda and theta. (where
+lambda = sigma2/rho). For fixed theta then this is maximized over
+lambda using <code>Krig</code> and thus concetrates the likelihood on
+theta. The final maximization over theta is implemented as a golden
+section search and assumes a convex function. All that is needed is
+for three theta grid points where the middle point has a larger
+likelihood than the endpoints. In practice the theta grid defualts to
+a 20 points equally spaced between the .03 and .97 quantiles of the
+distribution of the pairwise distances. The likelihood is evaluated at
+these points and a possible triple is identified.  If no exists from
+the grid search the function returns with NAs for the parameter
+estimates.  Note that due to the setup of the golden section search
+the computation actually minimizes minus the log likelihood.
+<code>MLE.Matern.fast</code> is a similar function but replaces the
+optimaiztion step computed by Krig to a tighter set of code in the
+function <code>MLE.objective.fn</code>.  See also <code>mKrigMLEGrid</code> for an
+alternative and streamlined function using <code>mKrig</code> rather than
+<code>Krig</code>.
+</p>
+
+
+<h3>Value</h3>
+
+<p>For MLE.Matern (and MLE.Matern.fast)
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>smoothness</code></td>
+<td>
+<p>Value of the smoothness function</p>
+</td></tr>
+<tr valign="top"><td><code>pars</code></td>
+<td>
+<p>MLE for rho, theta and sigma</p>
+</td></tr>
+<tr valign="top"><td><code>REML</code></td>
+<td>
+<p>Value of minus the log restricted Profile likelihood at
+the maxmimum</p>
+</td></tr>
+<tr valign="top"><td><code>trA</code></td>
+<td>
+<p>Effective degrees of freedom in the predicted surface based
+on the MLE parameters.</p>
+</td></tr>
+<tr valign="top"><td><code>REML.grid</code></td>
+<td>
+<p>Matrix with values of theta and the log likelihood
+from the initial grid search.</p>
+</td></tr>
+</table>
+
+
+<h3>Note</h3>
+
+<p>See the script REMLest.test.R and Likelihood.test.R in the tests directory to 
+see how these functions are used to check the likelihood expressions. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# Just look at one day from the ozone2 
+data(ozone2)
+
+out&lt;- MLE.Matern( ozone2$lon.lat,ozone2$y[16,],1.5, ngrid=8)
+plot( out$REML.grid)
+points( out$pars[2], out$REML, cex=2)
+xline( out$pars[2], col="blue", lwd=2)
+## Not run: 
+# to get a finer grid on initial search:
+out&lt;- MLE.Matern( ozone2$lon.lat,ozone2$y[16,],1.5,
+                      theta.grid=c(.3,2), ngrid=40) 
+
+# simulated data  200 points uniformly distributed
+set.seed( 123)
+x&lt;- matrix( runif( 2*200), ncol=2)
+n&lt;- nrow(x)
+rho= 2.0
+sigma= .05
+theta=.5
+
+Cov.mat&lt;-  rho* Matern( rdist(x,x), smoothness=1.0, range=theta)
+A&lt;- chol( Cov.mat)
+gtrue&lt;- t(A) %*% rnorm(n)
+gtrue&lt;- c( gtrue)
+err&lt;-  rnorm(n)*sigma
+y&lt;- gtrue + err
+out0&lt;- MLE.Matern( x,y,smoothness=1.0) # the bullet proof version
+# the MLEs and -log likelihood at maximum
+print( out0$pars)
+print( out0$REML)
+
+out&lt;- MLE.Matern.fast( x,y, smoothness=1.0) # for the impatient
+# the MLEs:
+print( out$pars) 
+print( out$REML)
+
+
+# MLE for fixed theta (actually the MLE from out0) 
+# that uses MLE.objective.fn directly
+info&lt;- list( x=x,y=y,smoothness=1.0, ngrid=80)
+# the MLEs:
+out2&lt;- MLE.objective.fn(log(out0$pars[2]), info, value=FALSE)
+print( out2$pars)
+
+## End(Not run)
+
+## Not run: 
+# Now back to Midwest ozone pollution ...
+# Find the MLEs for ozone data and evaluate the Kriging surface.
+  data(ozone2)
+  out&lt;- MLE.Matern.fast( ozone2$lon.lat,ozone2$y[16,],1.5)
+#use these parameters to fit surface ....
+  lambda.MLE&lt;- out$pars[3]/out$pars[1]
+  out2&lt;- Krig( ozone2$lon.lat,ozone2$y[16,] , Covariance="Matern",
+              theta=out$pars[2], smoothness=1.5, lambda= lambda.MLE)
+  surface( out2) # uses default lambda -- which is the right one.
+
+# here is another way to do this where the new lambda is given in 
+# the predict step
+  out2&lt;- Krig( ozone2$lon.lat,ozone2$y[16,] , Covariance="Matern",
+               theta=out$pars[2], smoothness=1.5)
+# The default lambda is that found by GCV
+# predict on a grid but use the MLE value for lambda:
+  out.p&lt;- predictSurface(out2, lambda= lambda.MLE)
+  surface(out.p) # same surface!
+
+## End(Not run)
+
+# One could also use mKrig with a fixed lambda to compute the surface. 
+
+## Not run: 
+# looping  through all the days of the ozone data set.
+  data( ozone2)
+  x&lt;- ozone2$lon.lat
+  y&lt;- ozone2$y
+  out.pars&lt;- matrix( NA, ncol=3, nrow=89)
+
+  for ( k in 1:89){
+    hold&lt;- MLE.Matern.fast( x,c(y[k,]), 1.5)$pars
+    cat( "day", k," :", hold, fill=TRUE)
+    out.pars[k,]&lt;- hold }
+
+## End(Not run)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

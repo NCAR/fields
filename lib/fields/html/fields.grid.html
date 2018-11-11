@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Using MKrig for predicting on a grid.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for fields.grid {fields}"><tr><td>fields.grid {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Using MKrig for predicting on a grid.
+</h2>
+
+<h3>Description</h3>
+
+<p>This is an extended example for using the sparse/fast interpolation
+methods in mKrig to evaluate a Kriging estimate on a large grid. 
+</p>
+
+
+<h3>Details</h3>
+
+<p><code>mKrig</code> is a flexible function for surface fitting  using 
+a spatial process model. It can also exploit sparse matrix methods forlarge data sets by using a compactly supported covariance. 
+The example below shows how ot evaluate a solution on a big grid. (Thanks to Jan Klennin for  this example.)
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x&lt;- RMprecip$x
+y&lt;- RMprecip$y
+
+Tps( x,y)-&gt; obj
+
+# make up an 80X80 grid that has ranges of observations
+# use same coordinate names as the x matrix
+
+glist&lt;- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way to get a default grid that covers x
+
+# convert grid list to actual x and y values ( try plot( Bigx, pch="."))
+    make.surface.grid(glist)-&gt; Bigx 
+
+# include actual x locations along with grid. 
+    Bigx&lt;- rbind( x, Bigx)
+
+# evaluate the surface on this set of points (exactly)
+
+    predict(obj, x= Bigx)-&gt; Bigy
+
+# set the range for the compact covariance function 
+# this will involve  less than 20 nearest neighbors that have
+# nonzero covariance
+# 
+
+     V&lt;- diag(c( 2.5*(glist$lon[2]-glist$lon[1]), 
+                 2.5*(glist$lat[2]-glist$lat[1])))
+## Not run: 
+# this is an interplotation of the values using a compact 
+# but thin plate spline like covariance. 
+    mKrig( Bigx,Bigy, cov.function="wendland.cov",k=4, V=V, 
+                 lambda=0)-&gt;out2 
+# the big evaluation this takes about 45 seconds on a Mac G4 latop
+    predictSurface( out2, nx=400, ny=400)-&gt; look
+
+## End(Not run)
+
+# the nice surface
+## Not run:     
+    surface( look)
+    US( add=TRUE, col="white")
+
+## End(Not run)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

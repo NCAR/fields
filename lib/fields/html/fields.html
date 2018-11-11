@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: fields - tools for spatial data</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for fields {fields}"><tr><td>fields {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+fields - tools for spatial data 
+</h2>
+
+<h3>Description</h3>
+
+<p>Fields is a collection of programs for curve and function
+fitting with an emphasis on spatial data and spatial statistics. The
+major methods implemented include cubic and thin plate splines, 
+universal
+Kriging and Kriging for large data sets. One main feature is any
+covariance function implemented in R code can be used for spatial prediction. Another important feature is that fields will take advantage of compactly supported covariance functions in a seamless way through 
+the spam package. See <code>library( help=fields)</code> for a listing of all the
+fields contents. 
+</p>
+<p>fields stives to have readable and tutorial code. Take a look at the 
+source code for <code>Krig</code> and <code>mKrig</code> to see how things work 
+&quot;under the hood&quot;. 
+To load fields with the comments retained in the source
+use <code> keep.source = TRUE</code> in the <code>library</code> command. 
+We also keep the source on-line:
+browse the directory 
+<a href="http://www.image.ucar.edu/~nychka/Fields/Source">http://www.image.ucar.edu/~nychka/Fields/Source</a> for commented source. 
+<a href="http://www.image.ucar.edu/~nychka/Fields/Help/00Index.html">http://www.image.ucar.edu/~nychka/Fields/Help/00Index.html</a> is a
+page for html formatted help files. (If you obtain the source version of the
+package (file ends in .gz) the commented source code is the R subdirectory.) 
+</p>
+<p><strong>Major methods</strong> 
+</p>
+ 
+<ul>
+<li> <p><code><a href="Tps.html">Tps</a></code> Thin Plate spline
+regression including GCV and REML estimates for the smoothing parameter. 
+</p>
+</li>
+<li> <p><code><a href="spatialProcess.html">spatialProcess</a></code> An easy to use method that fits a spatial process model
+( e.g. Kriging) but also estimates the key spatial parameters:  nugget variance, sill variance and range by maximum likelihood. Default covariance model is a Matern covariance function.
+</p>
+</li>
+<li> <p><code><a href="Krig.html">Krig</a></code> Spatial process estimation that is the core function of fields.
+</p>
+<p>The Krig function allows you to supply a covariance function that is
+written in native R code.  See (<code><a href="exp.cov.html">stationary.cov</a></code>) that includes
+several families of covariances and distance metrics including the
+Matern and great circle distance. 
+</p>
+</li>
+<li> <p><code><a href="mKrig.html">mKrig</a></code> (micro Krig) are
+<code><a href="Tps.html">fastTps</a></code>
+fast efficient Universal Kriging and spline-like functions, that can take advantage of sparse covariance
+functions and thus handle very large numbers of spatial locations. 
+<code><a href="QTps.html">QTps</a></code> A easy to use extension of thin plate splines for quantile and robust surface fitting.
+</p>
+</li>
+<li> <p><code><a href="mKrigMLE.html">mKrigMLEGrid</a></code> for maximum likelihood estimates of covariance parameters. This function also 
+handles replicate fields assumed to be independent realizations at the same locations.  
+</p>
+</li></ul>
+
+<p><strong>Other noteworthy functions</strong>
+</p>
+
+<ul>
+<li> <p><code><a href="vgram.html">vgram</a></code> and <code><a href="vgram.matrix.html">vgram.matrix</a></code> find variograms for spatial data (and
+with temporal replications.
+</p>
+</li>
+<li> <p><code><a href="cover.design.html">cover.design</a></code> Generates space-filling designs where the distance 
+function is expresed in R code.
+</p>
+</li>
+<li> <p><code>as.image</code>, <code>image.plot</code>, <code>drape.plot</code>, <code>quilt.plot</code>
+<code>add.image</code>, <code>crop.image</code>, <code>half.image</code>, <code>average.image</code>, 
+<code><a href="tim.colors.html">designer.colors</a></code>, <code><a href="tim.colors.html">color.scale</a></code>, <code><a href="image2lz.html">in.poly</a></code> Many
+convenient functions for working with image data and rationally (well,
+maybe reasonably) creating and  placing a color scale on an image plot. 
+See also  <code><a href="grid.list.html">grid.list</a></code> for how fields works with grids and <code><a href="US.html">US</a></code>
+and <code><a href="world.html">world</a></code> for adding a map quickly. 
+</p>
+</li>
+<li> <p><code><a href="sreg.html">sreg</a></code> <code><a href="splint.html">splint</a></code>   Fast 1-D smoothing 
+splines and interpolating cubic splines.
+</p>
+</li></ul>
+
+<p><strong> Generic functions that support the methods</strong> 
+</p>
+<p><code>plot</code> - diagnostic plots of fit <br />
+<code>summary</code>- statistical summary of fit <br />
+<code>print</code>- shorter version of summary <br />
+<code><a href="fields-internal.html">surface</a></code>- graphical display of fitted surface <br />
+<code>predict</code>- evaluation fit at arbitrary points <br />
+<code><a href="predictSE.Krig.html">predictSE</a></code>- prediction standard errors at arbitrary points. <br />
+<code><a href="sim.rf.html">sim.rf</a></code>- Simulate a random fields on a 2-d grid.
+</p>
+<p><strong>Getting Started</strong>
+</p>
+<p>Try some of the examples from help files for <code>Tps</code> or 
+<code>spatialProcess</code>. 
+</p>
+<p><strong>Graphics tips</strong>
+</p>
+<p><code>help( fields.hints)</code>
+gives some R code tricks for setting up common legends and axes. 
+And has little to do with this package!
+</p>
+<p><strong>Testing</strong>
+See <code>help(fields.tests)</code> for testing fields. 
+</p>
+<p><strong>Some fields datasets</strong>
+</p>
+
+<ul>
+<li> <p><code><a href="CO2.html">CO2</a></code> Global satelite CO2 concentrations (simulated field)
+</p>
+</li>
+<li> <p><code><a href="RCMexample.html">RCMexample</a></code> Regional climate model output
+</p>
+</li>
+<li> <p><code><a href="lennon.html">lennon</a></code> Image of John Lennon
+</p>
+</li>
+<li> <p><code><a href="CO.html">COmonthlyMet</a></code> Monthly mean temperatures and precip for Colorado
+</p>
+</li>
+<li> <p><code><a href="RMprecip.html">RMelevation</a></code> Digital elevations for the Rocky Mountain Empire
+</p>
+</li>
+<li> <p><code><a href="ozone2.html">ozone2</a></code>  Daily max 8 hour ozone concentrations for the US midwest 
+for summer 1987.
+</p>
+</li>
+<li> <p><code><a href="RMprecip.html">PRISMelevation</a></code> Digital elevations for the 
+continental US at approximately 4km resolution
+</p>
+</li>
+<li> <p><code><a href="NorthAmericanRainfall.html">NorthAmericanRainfall</a></code> 50+ year average and trend for summer rainfall at 
+1700+ stations. 
+</p>
+</li>
+<li> <p><code><a href="rat.diet.html">rat.diet</a></code> Small paired study on rat food intake over time.
+</p>
+</li>
+<li> <p><code><a href="WorldBank.html">WorldBankCO2</a></code> Demographic and carbon emission data 
+for 75 countries and for 1999. 
+</p>
+</li></ul>
+
+<p><strong>DISCLAIMER:</strong>
+The
+authors can not guarantee the correctness of any function or program in
+this package. 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+# some air quality data, daily surface ozone measurements for the Midwest:
+data(ozone2)
+x&lt;-ozone2$lon.lat
+y&lt;- ozone2$y[16,] # June 18, 1987
+
+# pixel plot of spatial data
+quilt.plot( x,y)
+US( add=TRUE) # add US map
+
+fit&lt;- Tps(x,y)
+# fits a GCV thin plate smoothing spline surface to ozone measurements.
+# Hey, it does not get any easier than this!
+
+summary(fit) #diagnostic summary of the fit 
+set.panel(2,2)
+plot(fit) # four diagnostic plots of fit and residuals.
+
+# quick plot of predicted surface
+set.panel()
+surface(fit) # contour/image plot of the fitted surface
+US( add=TRUE, col="magenta", lwd=2) # US map overlaid
+title("Daily max 8 hour ozone in PPB,  June 18th, 1987")
+
+
+fit2&lt;- spatialProcess( x,y)
+# a "Kriging" model. The covariance defaults to a Matern with smoothness 1.0.
+# the nugget, sill and range parameters are found by maximum likelihood
+# summary, plot, and surface also work for  fit2 !
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

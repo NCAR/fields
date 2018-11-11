@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Computes a variogram from an image</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for vgram.matrix {fields}"><tr><td>vgram.matrix {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Computes a variogram from an image 
+</h2>
+
+<h3>Description</h3>
+
+<p>Computes a variogram for an image taking into account different directions 
+and returning summary information about the differences in each of these 
+directions.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+vgram.matrix(dat, R=5, dx = 1,dy = 1 )
+
+## S3 method for class 'vgram.matrix'
+plot(x,...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>dat</code></td>
+<td>
+
+<p>A matrix spacing of rows and columns are assumed to have the same 
+distance. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>R</code></td>
+<td>
+
+<p>Maximum radius for finding variogram differences assuming that the grid
+points are spaced one unit a part. Default is go out to a 
+radius of 5.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>dx</code></td>
+<td>
+
+<p>The spacing of grid points on the X axis. This is used to calculate the 
+correct distance between grid points. If dx is not equal to dy then the 
+collapse argument must be FALSE. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>dy</code></td>
+<td>
+<p> The spacing of grid points on the Y axis.
+See additional notes for dx.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> Returned list from vgram.matrix</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p> Arguments for image.plot</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>For the &quot;full&quot; case 
+the statistics can summarize  departures from 
+isotropy by separating the variogram differences according to 
+orientation. For small R this runs efficiently because the differences are 
+found by sub-setting the image matrix.  
+</p>
+<p>For example, suppose that a row of the ind matrix is 
+(2,3). The variogram value associated with this row is the mean of  
+the differences (1/2)*(X(i,j)- X( i+2,j+3))**2 for all i and j. 
+(Here X(.,.) are the values for the spatial field.)  In this example  
+d= sqrt(13) and there will be another entry with the same distance 
+but 
+corresponding to the direction (3,2). 
+plot.vgram.matrix attempts to organize all the different directions into a 
+coherent image plot.
+</p>
+
+
+<h3>Value</h3>
+
+<p>An object of class vgram.matrix with the following components:  d, a vector of distances for 
+the differences, 
+and vgram, the variogram values. This is the traditional variogram 
+ignoring direction.  
+</p>
+<p>d.full, a vector of distances for all possible shifts up distance R, 
+ind, a two column matrix giving the x and y increment used to compute
+the shifts,  and vgram.full, the variogram at each of these 
+separations. Also computed is vgram.robust, Cressie's version of a robust 
+variogram statistic.
+</p>
+<p>Also returned is the component N the number of differences found for each 
+separation csae. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="vgram.html">vgram</a></code> 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# variogram for Lennon image.
+data(lennon)
+out&lt;-vgram.matrix( lennon) 
+
+plot( out$d, out$vgram, xlab="separation distance", ylab="variogram") 
+# image plot of vgram values by direction.  
+
+# look at different directions 
+out&lt;-vgram.matrix( lennon, R=8)  
+
+plot( out$d, out$vgram) 
+# add in different orientations 
+points( out$d.full, out$vgram.full, col="red")
+
+#image plot of variogram values for different directions. 
+set.panel(1,1)
+plot.vgram.matrix( out)
+# John Lennon appears remarkably isotropic!
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

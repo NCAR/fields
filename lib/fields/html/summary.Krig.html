@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Summary for Krig or spatialProcess estimated models.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for summary.Krig {fields}"><tr><td>summary.Krig {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Summary for Krig or spatialProcess estimated models. 
+</h2>
+
+<h3>Description</h3>
+
+<p>Creates a list of summary results including estimates for  the nugget
+variance (sigma) and the smoothing
+parameter (lambda). This list is usually printed using  a &quot;print.summary&quot;
+function for nice formatting.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'Krig'
+summary(object, digits=4,...)
+## S3 method for class 'spatialProcess'
+summary(object, digits=4,...)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>A Krig or spatialProcess object. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>Number of significant digits in summary. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Other arguments to summary</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function is a method for the generic function summary for class
+Krig. The results are formatted and printed using print.summary.Krig.
+</p>
+
+
+<h3>Value</h3>
+
+<p>Gives a summary of the Krig object. The components 
+include the function call, number of observations, effective degrees  
+of freedom, residual degrees of freedom, root mean squared error,  
+R-squared and adjusted R-squared, log10(lambda), cost, GCV minimum and  
+a summary of the residuals.  
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Krig, summary, print.summary.Krig  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+fit&lt;- Krig(ChicagoO3$x, ChicagoO3$y, theta=100)  
+summary(fit)                            # summary of fit 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

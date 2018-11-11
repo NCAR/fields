@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Diagnostic and summary plots of a Kriging, spatialProcess or...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for plot.Krig {fields}"><tr><td>plot.Krig {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Diagnostic and summary plots of a Kriging, spatialProcess or spline object. 
+</h2>
+
+<h3>Description</h3>
+
+<p>Plots a series of four diagnostic plots that summarize the fit. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'Krig'
+plot(x, digits=4, which= 1:4,...)
+## S3 method for class 'sreg'
+plot(x, digits = 4, which = 1:4, ...)
+
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> A Krig or an sreg object</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+
+<p>Number of significant digits for the RMSE label. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+
+<p>A vector specifying by number which of the four plots to draw.  
+1:4 plots all four. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Optional graphics arguments to pass to each plot. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function creates four summary plots of the Krig or sreg object. The
+default is to put these on separate pages. However if the screen is
+already divided in some other fashion the plots will just be added
+according to that scheme. This option is useful to compare to compare
+several different model fits. 
+</p>
+<p>The first is a scatterplot of predicted value against observed.
+</p>
+<p>The second plot is &quot;standardized&quot; residuals against predicted value.  
+Here we mean that the residuals are divided by the GCV estimate for sigma
+and multiplied by the square root of any weights that have been specified.
+In the case of a &quot;correlation model&quot; the residuals are also divided by the
+marginal standard deviation from this model.
+</p>
+<p>The third plot are the values of the GCV function against the effective
+degrees of freedom. When there are replicate points several versions of
+the GCV function may be plotted.  GCV function is with respect to the
+standardized data if a correlation model is specified. A vertical line
+indicates the minimium found.
+</p>
+<p>For <code>Krig</code> and <code>sreg</code> objects the fourth plot is a histogram of the standardized residuals. 
+For sreg if multiple lambdas are given plotted are boxplots of the  
+residuals for each fit. 
+</p>
+<p>For <code>spatialProcess</code> object the fourth plot is the profile likelihood for the
+theta parameter. Points are the actual evaluated log likelihoods and the dashed line is
+just a spline interpolation to help with visualization. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Krig, spatialProcess, summary.Krig, Tps, set.panel
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+data( ozone2)
+x&lt;- ozone2$lon.lat
+y&lt;- ozone2$y[16,]
+fit1&lt;-Krig(x,y, theta=200)  
+# fitting a surface to ozone  
+# measurements 
+set.panel( 2,2)
+plot(fit1)
+
+fit2&lt;-spatialProcess(x,y)  
+# fitting a spatial process model to ozone  
+# measurements 
+# Although an example does not make too much sense for only 20 observations!
+set.panel( 2,2)
+plot(fit2)
+
+# fit rat data
+fit3&lt;-sreg(rat.diet$t,rat.diet$con)
+set.panel(2,2)
+plot(fit3)       
+
+set.panel(1,1) # reset graphics window. 
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Tests if function supports a given argument</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for supportsArg {fields}"><tr><td>supportsArg {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Tests if function supports a given argument
+</h2>
+
+<h3>Description</h3>
+
+
+<p>Tests if the given function supports the given argument.  Commonly 
+used in fields code for determining if a covariance function 
+supports precomputation of the distance matrix and evaluation of 
+the covariance matrix over only the upper triangle.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+supportsArg(fun=stationary.cov, arg)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>fun</code></td>
+<td>
+
+<p>The function tested for support for whether it supports the argument 
+<code>arg</code> as input
+</p>
+</td></tr>
+<tr valign="top"><td><code>arg</code></td>
+<td>
+
+<p>The argument to check if <code>fun</code> supports using as input
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Currently only <code>stationary.cov</code>  and <code>Exp.cov</code> support 
+evaluation of the covariance matrix over the upper triangle 
+(and diagonal) only via the onlyUpper argument and distance 
+matrix precomputation via the distMat argument.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A logical indicating whether the given function supports use of the 
+given argument
+</p>
+
+
+<h3>Author(s)</h3>
+
+
+<p>John Paige
+</p>
+
+
+<h3>See Also</h3>
+
+
+<p><code><a href="exp.cov.html">stationary.cov</a></code>, <code><a href="exp.cov.html">Exp.cov</a></code>
+These covariance functions have the <code>onlyUpper</code> option allowing 
+the user to evaluate the covariance matrix over the upper triangle and 
+diagonal only and to pass a precomputed distance matrix
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+################
+#Test covariance function to see if it supports evaluation of 
+#covariance matrix over upper triangle only
+################
+
+supportsArg(Rad.cov, "distMat")
+supportsArg(Rad.cov, "onlyUpper")
+supportsArg(stationary.cov, "distMat")
+supportsArg(stationary.cov, "onlyUpper")
+supportsArg(Exp.cov, "distMat")
+supportsArg(Exp.cov, "onlyUpper")
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

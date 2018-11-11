@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Specify a panel of plots</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for set.panel {fields}"><tr><td>set.panel {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Specify a panel of plots 
+</h2>
+
+<h3>Description</h3>
+
+<p>Divides up the graphics window into a matrix of plots. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+set.panel(m=1, n=1, relax=FALSE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>m</code></td>
+<td>
+
+<p>Number of rows in the panel of plots 
+</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+
+<p>Number of columns in the panel. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>relax</code></td>
+<td>
+
+<p>If true and the par command is already set for multiple plots,  
+then the set.panel command is ignored. The default is  
+relax set to false.  
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>After set.panel is called, the graphics screen is reset to 
+put  plots  according to a m x n table. Plotting starts in 
+the upper left hand corner and proceeds row by row.  After 
+m x n plots have been drawn, the next plot will erase the 
+window and start in the 1,1 position again.  This function 
+is just a repackaging for specifying the mfrow argument to 
+par. 
+Setting up a panel of plots is a quick way to  change  the 
+aspect  ratio  of  the graph (ratio of height to width) or 
+the size. For example, plotting 2 plots to a page produces 
+a  useful  size  graph  for including in a report. You can 
+print out the graphs at any stage without having  to  fill 
+up the entire window with plots. This function, except for the &quot;relax&quot;
+option is equivalent to the  S sequence: par( mfrow=c(m,n)).
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>The function will echo your choice of m and n to the terminal.  
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code>par</code>  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+set.panel(5,2) #divide screen to hold 10 plots where there are 5 rows  
+	       #and 2 columns 
+plot( 1:10) 
+plot( 2:8)
+
+set.panel() #reset screen to one plot per screen 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Default function to create fixed matrix part of spatial...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Krig.null.function {fields}"><tr><td>Krig.null.function {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Default function to create fixed matrix part of spatial process model.</h2>
+
+<h3>Description</h3>
+
+<p>Constructs a matrix of terms representing a low order polynomial 
+and binds additional columns due to covariates ( the Z matrix)
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Krig.null.function(x, Z = NULL, drop.Z = FALSE, m)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>Spatial locations </p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+<p> Other covariates to be associated with each location.</p>
+</td></tr>
+<tr valign="top"><td><code>drop.Z</code></td>
+<td>
+<p>If TRUE only the low order polynomial part is created.  </p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p> The polynomial order is (m-1). </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function can be modified to produce a different fixed part of the 
+spatial model. The arguments x, Z and drop.Z are required but other arguments
+can  be passed as part of a list in null.args  in the call to Krig. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>A matrix where the first columns are the polynomial terms and the
+following columns are from Z. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka </p>
+
+
+<h3>See Also</h3>
+
+<p>Krig</p>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Some simple functions for working with gridded data and the...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for grid list {fields}"><tr><td>grid list {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Some simple functions for working with gridded data and 
+the grid format (grid.list) used in fields.
+</h2>
+
+<h3>Description</h3>
+
+<p>The object grid.list refers to a list that contains
+information for evaluating a function on a 2-dimensional
+grid of points. If a function has more than two
+independent variables then one also needs to specify the
+constant levels for the variables that are not being
+varied.  This format is used in several places in fields
+for functions that evaluate function estimates and plot
+surfaces. These functions provide some default conversions
+among information and the gird.list. The function 
+<code>discretize.image</code> is a useful tool for &quot;registering&quot;
+irregular 2-d points to a grid. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+parse.grid.list( grid.list, order.variables="xy")
+fields.x.to.grid(x,nx=80, ny=80, xy=c(1,2))
+fields.convert.grid( midpoint.grid )
+discretize.image(x, m = 64, n = 64, grid = NULL, 
+                 expand = c(1 + 1e-08, 1 + 1e-08),
+                 boundary.grid = FALSE, na.rm = TRUE)
+make.surface.grid( grid.list)
+unrollZGrid( grid.list, ZGrid)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>grid.list</code></td>
+<td>
+<p> No surprises here &ndash; a grid list! These can be unequally 
+spaced.</p>
+</td></tr>
+<tr valign="top"><td><code>order.variables</code></td>
+<td>
+<p> If &quot;xy&quot; the x variable will be subsequently plotted
+as the horizontal variable. If &quot;yx&quot; the x variable will be on the vertical 
+axis.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p> A matrix of independent variables such as the locations of 
+observations given to Krig.</p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+<p>Number of grid points for x variable.</p>
+</td></tr>
+<tr valign="top"><td><code>ny</code></td>
+<td>
+<p>Number of grid points for y variable.</p>
+</td></tr>
+<tr valign="top"><td><code>m</code></td>
+<td>
+<p>Number of grid points for x variable.</p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p>Number of grid points for y variable.</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>Remove missing values if TRUE</p>
+</td></tr>
+<tr valign="top"><td><code>xy</code></td>
+<td>
+<p>The column positions that locate the x and y variables for the 
+grid.</p>
+</td></tr> 
+<tr valign="top"><td><code>grid</code></td>
+<td>
+<p> A grid list!</p>
+</td></tr>
+<tr valign="top"><td><code>expand</code></td>
+<td>
+ 
+<p>A scalar or two column vector that will expand the
+grid beyond the range of the observations.</p>
+</td></tr>
+<tr valign="top"><td><code>midpoint.grid</code></td>
+<td>
+<p> Grid midpoints to convert to grid boundaries.</p>
+</td></tr>
+<tr valign="top"><td><code>boundary.grid</code></td>
+<td>
+<p> If TRUE interpret grid points as boundaries  of 
+grid boxes. If FALSE interpret as the midpoints of the boxes. </p>
+</td></tr>
+<tr valign="top"><td><code>ZGrid</code></td>
+<td>
+<p>An array  or list form of covariates to use for
+prediction. This must match the
+<code>grid.list</code> argument. e.g. ZGrid and grid.list describe the same
+grid. 
+If ZGrid is an array then the first two indices are the x and y
+locations in the 
+grid. The third index, if present, indexes the covariates. e.g. For
+evaluation on 
+a 10X15 grid and with 2 covariates. <code> dim( ZGrid) == c(10,15, 2)</code>.
+If ZGrid is a list then the components x and y shold match those of
+grid.list and
+the z component follows the shape described above for the no list 
+case. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The form of a grid.list is  
+</p>
+<p><code>list( var.name1= what1  , var.name2=what2 , ... var.nameN=what3)</code>
+</p>
+<p>Here var.names are the names of the independent variables. 
+The what options describe what should be done with this variable when  
+generating the grid. These should either an increasing sequence of points
+or a single vaules. Obviously there should be only be two variables with 
+sequences to define a grid for a surface.
+</p>
+<p>Most of time the gridding  sequences  are equally  
+spaced and are easily generated using the <code>seq</code> function. Also throughout fields
+the grid points are typically the midpoints of the grid rather the grid box
+boundaries. However, these functions can handle unequally spaced grids and the
+logical boundary.grid can indicate a grid being the box boundaries. 
+</p>
+<p>The variables in the list components are assumed  
+to be in the same order as they appear in the data matrix. 
+</p>
+<p>A useful function that expands the grid from the grid.list description into 
+a full set of locations is <code>make.surface.grid</code> and  is 
+just a wrapper around the R base function <code>expand.grid</code>. A typical operation is to go from a grid.list to the set of grid locations. Evaluate a
+fucntion at these lcoations and then reformat this as an image for plotting. 
+Here is how to do this cleanly:
+</p>
+<pre>
+grid.list&lt;- list( x= 1:10, y=1:15)
+xg&lt;- make.surface.grid(grid.list)
+# look at a surface dependin on xg locations
+z&lt;- xg[,1] + 2*xg[,2]
+out&lt;- list( x=grid.list$x, y= grid.list$y, z=matrix( z, nrow=10, ncol=15))
+# now for example
+image.plot( out)
+</pre>
+<p>The key here is that <code>xg</code> and <code>matrix</code> both  organize the grid in the 
+same order. 
+</p>
+<p>Some fields internal functions that support interpreting grid list format are:
+</p>
+<p><code>fields.x.to.grid</code>: 
+Takes an &quot;x&quot; matrix of locations or independent variables and creates a
+reasonable grid list. This is used to evaluate predicted surfaces when a
+grid list is not explicited given to predictSurface. The variables
+(i.e. columns of x) that are not part of the grid are set to the median
+values.  The x grid values are <code>nx</code> equally spaced points in the
+range <code>x[, xy[1]]</code>. The y grid values are <code>ny</code> equally spaced
+points in the range <code>x[, xy[2]]</code>.
+</p>
+<p><code>parse.grid.list</code>:
+Takes a grid list and returns the information in a more expanded list
+form that is easy to use. This is used, for example, by predictSurface
+to figure out what to do!
+</p>
+<p><code>fields.convert.grid</code>:
+Takes a vector of n values assumed to be midpoints of a grid and 
+returns the n+1 boundaries. See how this is used in discretize.image 
+with the cut function. This function will handle unequally spaced
+grid values. 
+</p>
+<p><code>discretize.image</code>: Takes a vector of locations and a 2-d grid and
+figures out to which boxes they belong. The output matrix ind has the
+grid locations. If boundary.grid is FALSE then the grid list (grid) is
+assumed to be grid midpoints. The grid boundaries are taken to be the
+point half way between these midpoints. The first and last boundaries
+points are determined by extrapolating so that the first and last box
+has the midpoint in its center. (See the code in fields.convert.grid for
+details.) If grid is NULL then midpoints are found from m and n and the
+range of the x matrix. 
+</p>
+<p><code>unrollZGrid</code> Checks that the ZGrid object is compatible with th e grid.list and concatenates the grid arrays into vectors. This version of the covariates are used the usual predict function. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>as.surface, predictSurface, plot.surface, surface, 
+expand.grid, as.image 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+#Given below are some examples of grid.list objects and the results  
+#when they are used with make.surface.grid. Note that  
+#make.surface.grid returns a matrix that retains the grid.list  
+#information as an attribute. 
+
+grid.l&lt;- list( 1:3, 2:5) 
+make.surface.grid(grid.l)
+
+  
+grid.l &lt;- list( 1:3, 10, 1:3) 
+make.surface.grid(grid.l) 
+
+#The next  example shows how the grid.list can be used to  
+#control surface plotting and evaluation of an estimated function. 
+# first create a test function  
+
+set.seed( 124)
+
+X&lt;- 2*cbind( runif(30), runif(30), runif(30)) -1
+  
+dimnames( X)&lt;- list(NULL, c("X1","X2","X3")) 
+y&lt;- X[,1]**2 + X[,2]**2 + exp(X[,3])   
+
+# fit an  interpolating thin plate spline  
+out&lt;- Tps( X,y) 
+
+grid.l&lt;- list( X1= seq( 0,1,,20), X2=.5, X3=seq(0,1,,25)) 
+surface( out, grid.list=grid.l) 
+#  surface plot based on a 20X25 grid in X1 an X3  
+#                       over the square [0,2] and [0,2]   
+#                       holding X2 equal to 1.0. 
+#
+
+
+# test of discretize to make sure points on boundaries are counted right
+set.seed(123)
+x&lt;- matrix( runif(200), 100,2)
+look&lt;- discretize.image( x, m=2,n=2)
+xc&lt;- seq(min(x[,1]), max(x[,1]),,5)
+xc&lt;- xc[2:4]
+yc&lt;- seq(min(x[,2]), max(x[,2]),,5)
+yc&lt;- yc[2:4]
+grid &lt;-  list( x= xc, y= yc)
+look2&lt;- discretize.image( x, m=2,n=2)
+
+table( look$index )
+table( look2$index )
+
+# indicator image of discretized locations
+look&lt;- discretize.image( RMprecip$x, m=15, n=15)
+image.plot( look$grid$x, look$grid$y,look$hist )  
+# actual locations
+points( RMprecip$x,col="magenta", pch=".") 
+
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

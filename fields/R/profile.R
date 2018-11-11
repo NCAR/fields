@@ -19,6 +19,6 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2 
 ".onAttach" <- function (lib, pkg) {
-    packageStartupMessage("See www.image.ucar.edu/~nychka/Fields for
- a vignette and other supplements. ")
+    packageStartupMessage("See https://github.com/NCAR/Fields for
+ an extensive vignette, other supplements and source code ")
  }

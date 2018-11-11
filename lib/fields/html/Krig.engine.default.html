@@ -1,0 +1,351 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Basic linear algebra utilities and other computations...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for The Engines: {fields}"><tr><td>The Engines: {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Basic linear algebra utilities and other 
+computations supporting the Krig function. </h2>
+
+<h3>Description</h3>
+
+<p>These are internal functions to Krig that compute the basic matrix
+decompositions or solve the linear systems needed to evaluate the 
+Krig/Tps estimate. Others listed below do some simple housekeeping and 
+formatting. Typically they are called from within Krig but can also be
+used directly if passed a Krig object list. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Krig.engine.default(out, verbose = FALSE)
+Krig.engine.knots(out, verbose = FALSE)
+Krig.engine.fixed( out, verbose=FALSE, lambda=NA)
+
+Krig.coef(out, lambda = out$lambda, y = NULL, yM = NULL, verbose = FALSE) 
+Krig.make.u(out, y = NULL, yM = NULL, verbose = FALSE) 
+Krig.check.xY(x, Y,Z, weights, na.rm, verbose = FALSE) 
+Krig.cor.Y(obj, verbose = FALSE) 
+Krig.transform.xY(obj, knots, verbose = FALSE)
+
+Krig.make.W( out, verbose=FALSE)
+Krig.make.Wi ( out, verbose=FALSE)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>out</code></td>
+<td>
+<p> A complete or partial Krig object. If partial it must have
+all the information accumulated to this calling point within the Krig
+function.  </p>
+</td></tr>
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>Same as <code>out</code>. </p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE prints out intermediate results for
+debugging.</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+<p>Value of smoothing parameter &quot;hard wired&quot; into decompositions. 
+Default is NA, i.e.  use the value in <code>out\$lambda</code>. </p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>New y vector for recomputing coefficients. OR for %d*% a
+vector or matrix. </p>
+</td></tr>
+<tr valign="top"><td><code>yM</code></td>
+<td>
+<p>New y vector for recomputing coefficients but 
+the values have already been collapsed into replicate group means.</p>
+</td></tr>
+<tr valign="top"><td><code>Y</code></td>
+<td>
+<p>raw data Y vector</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>raw x matrix of spatial locations  
+OR 
+In the case of %d*%, y is either a matrix or a vector. As a vector, y, is
+interpreted to be the elements of a digaonal matrix. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+<p> Raw <code>weights</code> vector passed to Krig</p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+<p> Raw vector or matrix of additional covariates.</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p> NA action logical values passed to Krig</p>
+</td></tr>
+<tr valign="top"><td><code>knots</code></td>
+<td>
+<p>Raw <code>knots</code> matrix  passed to Krig</p>
+</td></tr> 
+</table>
+
+
+<h3>Details</h3>
+
+<p>ENGINES:
+</p>
+<p>The engines are the 
+code modules that handle the basic linear algebra needed to 
+computed the estimated curve or surface coefficients. 
+All the engine work on the data that has been reduced to unique 
+locations and possibly replicate group means with the weights 
+adjusted accordingly. All information needed for the decomposition are 
+components in the Krig object passed to these functions. 
+</p>
+<p><code>Krig.engine.default</code> finds the decompositions for a Universal
+Kriging estimator. by simultaneously diagonalizing the linear system
+system for the coefficients of the estimator. The main advantage of this
+form is that it is fairly stable numerically, even with ill-conditioned
+covariance matrices with lambda &gt; 0. (i.e.  provided there is a &quot;nugget&quot;
+or measure measurement error. Also the eigendecomposition allows for
+rapid evaluation of the likelihood, GCV and coefficients for new data
+vectors under different values of the smoothing parameter, lambda. 
+</p>
+<p><code>Krig.engine.knots</code> finds the decompositions in the case that the
+covariance is evaluated at arbitrary locations possibly different than
+the data locations (called knots). The intent of these decompositions is
+to facilitate the evaluation at different values for lambda.  There will
+be computational savings when the number of knots is less than the
+number of unique locations. (But the knots are as densely distributed as
+the structure in the underlying spatial process.) This function call
+fields.diagonalize, a function that computes the matrix and eigenvalues
+that simultaneous diagonalize a nonnegative definite and a positive
+definite matrix. These decompositions also facilitate multiple
+evaluations of the likelihood and GCV functions in estimating a
+smoothing parameter and also multiple solutions for different y vectors. 
+</p>
+<p><code>Krig.engine.fixed</code> are specific decomposition based on the Cholesky 
+factorization assuming that the smoothing parameter is fixed. This 
+is the only case that works in the sparse matrix.
+Both knots and the full set of locations can be handled by this case. 
+The difference between the &quot;knots&quot; engine above is that only a single value
+of lambda is considered in the fixed engine. 
+</p>
+<p>OTHER FUNCTIONS:
+</p>
+<p><code>Krig.coef</code> Computes the &quot;c&quot; and &quot;d&quot; coefficients to represent the 
+estimated curve. These coefficients are used by the predict functions for 
+evaluations. Krig.coef can be used outside of the call to Krig to 
+recompute the fit with different Y values and possibly with different
+lambda values. If new y values are not passed to this function then the yM
+vector in the Krig object is used. The internal function 
+<code>Krig.ynew</code> sorts out the logic of what to do and use based on the 
+passed arguments. 
+</p>
+<p><code>Krig.make.u</code> Computes the &quot;u&quot; vector, a transformation of the collapsed
+observations that allows for rapid evaluation of the GCV function and 
+prediction. This only makes sense when the decomposition is WBW or DR, i.e. 
+an eigen decomposition. If the decompostion is the Cholesky based then this
+function returns NA for the u component in the list.  
+</p>
+<p><code>Krig.check.xY</code> Checks for removes missing values (NAs).
+</p>
+<p><code>Krig.cor.Y</code> Standardizes the data vector Y based on a correlation model. 
+</p>
+<p><code>Krig.transform.xY</code> Finds all replicates and collapse to unique
+locations and mean response and pooled variances and weights. These are
+the xM, yM and weightsM used in the engines. Also scales the x locations
+and the knots according to the transformation. 
+</p>
+<p><code>Krig.make.W</code> and <code>Krig.make.Wi</code> These functions create an
+off-diagonal weight matrix and its symmetric square root or the inverse
+of the weight matrix based on the information passed to Krig.  If
+<code>out$nondiag</code> is TRUE W is constructed based on a call to the passed
+function wght.function along with additional arguments.  If this flag is
+FALSE then W is just <code>diag(out$weightsM)</code> and the square root and inverse
+are computed directly. 
+</p>
+<p><code>%d*%</code> Is a simple way to implement efficient diagonal
+multiplications.  x%d*%y is interpreted to mean diag(x)%*% y
+if x is a vector. If x is a matrix then this becomes the same as the usual 
+matrix multiplication. 
+</p>
+
+
+<h3>Returned Values</h3>
+
+<p>ENGINES:
+</p>
+<p>The returned value is a list with the matrix decompositions and 
+other information. These are incorporated into the complete Krig object. 
+</p>
+<p>Common to all engines:
+</p>
+
+<dl>
+<dt>decomp</dt><dd><p>Type of decomposition</p>
+</dd>
+<dt>nt</dt><dd><p>dimension of T matrix</p>
+</dd>
+<dt>np</dt><dd><p>number of knots</p>
+</dd>
+</dl>
+
+<p><code>Krig.engine.default</code>:
+</p>
+
+<dl>
+<dt>u</dt><dd><p>Transformed data using eigenvectors.</p>
+</dd>
+<dt>D</dt><dd><p>Eigenvalues</p>
+</dd>
+<dt>G</dt><dd><p>Reduced and weighted matrix of the eigenvectors</p>
+</dd>
+<dt>qr.T</dt><dd><p>QR decomposition of fixed regression matrix</p>
+</dd>
+<dt>V</dt><dd><p>The eigenvectors</p>
+</dd>
+</dl>
+
+<p><code>Krig.engine.knots</code>:
+</p>
+
+<dl>
+<dt>u</dt><dd><p>A transformed vector that is based on the data vector.</p>
+</dd>
+<dt>D</dt><dd><p>Eigenvalues of decomposition</p>
+</dd>
+<dt>G</dt><dd><p>Matrix from diagonalization</p>
+</dd>
+<dt>qr.T</dt><dd><p>QR decomposition of the matrix for the fixed component. 
+i.e. sqrt( Wm)%*%T</p>
+</dd>
+<dt>pure.ss</dt><dd><p>pure error sums of squares including both the
+variance from replicates and also the sums of squared residuals
+from fitting the full knot model with lambda=0 to the replicate means. </p>
+</dd>
+</dl>
+
+<p><code>Krig.engine.fixed</code>:
+</p>
+
+<dl>
+<dt>d</dt><dd><p>estimated coefficients for the fixed part of model</p>
+</dd>
+<dt>c</dt><dd><p>estimated coefficients for the basis functions derived from the 
+covariance function.</p>
+</dd>
+</dl>
+
+<p>Using all data locations
+</p>
+
+<dl>
+<dt>qr.VT</dt><dd><p>QR decomposition of the inverse Cholesky factor times the 
+T matrix. </p>
+</dd>
+<dt>MC</dt><dd><p>Cholesky factor</p>
+</dd>
+</dl>
+
+<p>Using knot locations
+</p>
+
+<dl>
+<dt>qr.Treg</dt><dd><p>QR decomposition of regression matrix modified by the 
+estimate of the nonparametric ( or spatial) component.</p>
+</dd> 
+<dt>lambda.fixed</dt><dd><p>Value of lambda used in the decompositions</p>
+</dd>
+</dl>
+
+<p>OTHER FUNCTIONS:
+</p>
+<p><code>Krig.coef</code>
+</p>
+
+<dl>
+<dt>yM</dt><dd><p>Y values as replicate group means</p>
+</dd>
+<dt>shat.rep</dt><dd><p>Sample standard deviation of replicates</p>
+</dd>
+<dt>shat.pure.error</dt><dd><p>Same as shat.rep</p>
+</dd>
+<dt>pure.ss</dt><dd><p>Pure error sums of squares based on replicates</p>
+</dd>
+<dt>c</dt><dd><p>The &quot;c&quot; basis coefficients associated with the covariance
+or radial basis functions.</p>
+</dd>
+<dt>d</dt><dd><p>The &quot;d&quot; regression type coefficients that are from the fixed part of the model
+or the linear null space.</p>
+</dd>
+<dt>u</dt><dd><p>When the default decomposition is used the data vector transformed by the orthogonal matrices. This facilitates evaluating the GCV function 
+at different values of the smoothing parameter.</p>
+</dd>
+</dl>
+              
+<p><code>Krig.make.W</code>
+</p>
+
+<dl>
+<dt>W</dt><dd><p>The weight matrix</p>
+</dd>
+<dt>W2</dt><dd><p> Symmetric square root of weight matrix</p>
+</dd>
+</dl>
+
+<p><code>Krig.make.Wi</code>
+</p>
+
+<dl>
+<dt> Wi</dt><dd><p>The inverse weight matrix</p>
+</dd>
+<dt>W2i</dt><dd><p> Symmetric square root of inverse weight matrix</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka </p>
+
+
+<h3>See Also</h3>
+
+  <p><code><a href="Krig.html">Krig</a></code>, <code><a href="Tps.html">Tps</a></code> </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+Krig( ChicagoO3$x, ChicagoO3$y, theta=100)-&gt; out
+
+Krig.engine.default( out)-&gt; stuff
+
+# compare "stuff" to components in out$matrices
+
+look1&lt;- Krig.coef( out)
+look1$c
+# compare to out$c
+
+look2&lt;- Krig.coef( out, yM = ChicagoO3$y)
+look2$c
+# better be the same even though we pass as new data!
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

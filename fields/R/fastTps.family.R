@@ -28,12 +28,14 @@
         }
         p <- (2 * m - d)
         if (p <= 0) {
-            stop(" m is too small  you must have 2*m -d >0")
+            warning(" m is too small to satisfy thin plate spline crierion \n
+                    you must have 2*m -dimension >0 \n
+                    smoothness of Wendland set at k =2")
         }
     }
     # special arguments to send to the wendland covariance/taper function.
     # see nearest.dist for some explanation of 'method'
-    cov.args <- list(k = p, Dist.args = list(method = ifelse(!lon.lat, 
+    cov.args <- list(k = max(c(p,2)), Dist.args = list(method = ifelse(!lon.lat, 
         "euclidean", "greatcircle")))
     if( lambda==0){
       warning("fastTps will interpolate observations")}

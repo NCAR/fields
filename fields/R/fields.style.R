@@ -20,6 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "fields.style" <- function() {
     par(cex.axis = 1.2, cex.lab = 1.2, cex = 1.2, cex.sub = 1.2, 
-        cex.main = 1.2, lwd = 1.5, bg = "transparent")
+        cex.main = 1.2, lwd = 1.5, bg = "transparent",
+        pch=16)
     palette(c("orange1", "green2", "blue2", "red1"))
 }

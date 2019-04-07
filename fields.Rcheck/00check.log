@@ -1,0 +1,125 @@
+* using log directory ‘/Users/nychka/Dropbox/Home/Repositories/fields/fields.Rcheck’
+* using R Under development (unstable) (2019-04-06 r76327)
+* using platform: x86_64-apple-darwin17.7.0 (64-bit)
+* using session charset: UTF-8
+* using option ‘--no-examples’
+* checking for file ‘fields/DESCRIPTION’ ... OK
+* this is package ‘fields’ version ‘9.7’
+* checking package namespace information ... OK
+* checking package dependencies ... OK
+* checking if this is a source package ... OK
+* checking if there is a namespace ... OK
+* checking for executable files ... OK
+* checking for hidden files and directories ... OK
+* checking for portable file names ... OK
+* checking for sufficient/correct file permissions ... OK
+* checking whether package ‘fields’ can be installed ... OK
+* checking installed package size ... OK
+* checking package directory ... OK
+* checking DESCRIPTION meta-information ... OK
+* checking top-level files ... OK
+* checking for left-over files ... OK
+* checking index information ... OK
+* checking package subdirectories ... OK
+* checking R files for non-ASCII characters ... OK
+* checking R files for syntax errors ... OK
+* checking whether the package can be loaded ... OK
+* checking whether the package can be loaded with stated dependencies ... OK
+* checking whether the package can be unloaded cleanly ... OK
+* checking whether the namespace can be loaded with stated dependencies ... OK
+* checking whether the namespace can be unloaded cleanly ... OK
+* checking loading without being on the library search path ... OK
+* checking dependencies in R code ... OK
+* checking S3 generic/method consistency ... OK
+* checking replacement functions ... OK
+* checking foreign function calls ... OK
+* checking R code for possible problems ... OK
+* checking Rd files ... OK
+* checking Rd metadata ... OK
+* checking Rd cross-references ... OK
+* checking for missing documentation entries ... OK
+* checking for code/documentation mismatches ... OK
+* checking Rd \usage sections ... OK
+* checking Rd contents ... OK
+* checking for unstated dependencies in examples ... OK
+* checking contents of ‘data’ directory ... OK
+* checking data for non-ASCII characters ... OK
+* checking data for ASCII and uncompressed saves ... OK
+* checking line endings in C/C++/Fortran sources/headers ... OK
+* checking compiled code ... OK
+* checking examples ... SKIPPED
+* checking for unstated dependencies in ‘tests’ ... OK
+* checking tests ... OK
+  Running ‘Krig.Z.test.R’
+  Comparing ‘Krig.Z.test.Rout’ to ‘Krig.Z.test.Rout.save’ ... OK
+  Running ‘Krig.se.W.R’
+  Comparing ‘Krig.se.W.Rout’ to ‘Krig.se.W.Rout.save’ ... OK
+  Running ‘Krig.se.grid.test.R’
+  Comparing ‘Krig.se.grid.test.Rout’ to ‘Krig.se.grid.test.Rout.save’ ... OK
+  Running ‘Krig.se.test.R’
+  Comparing ‘Krig.se.test.Rout’ to ‘Krig.se.test.Rout.save’ ... OK
+  Running ‘Krig.test.R’
+  Comparing ‘Krig.test.Rout’ to ‘Krig.test.Rout.save’ ... OK
+  Running ‘Krig.test.W.R’
+  Comparing ‘Krig.test.W.Rout’ to ‘Krig.test.W.Rout.save’ ... OK
+  Running ‘KrigGCVREML.test.R’
+  Comparing ‘KrigGCVREML.test.Rout’ to ‘KrigGCVREML.test.Rout.save’ ... OK
+  Running ‘Likelihood.test.R’
+  Comparing ‘Likelihood.test.Rout’ to ‘Likelihood.test.Rout.save’ ... OK
+  Running ‘REMLest.test.R’
+  Comparing ‘REMLest.test.Rout’ to ‘REMLest.test.Rout.save’ ... OK
+  Running ‘Tps.test.R’
+  Comparing ‘Tps.test.Rout’ to ‘Tps.test.Rout.save’ ... OK
+  Running ‘Wend.test.R’
+  Comparing ‘Wend.test.Rout’ to ‘Wend.test.Rout.save’ ... OK
+  Running ‘cov.test.R’
+  Comparing ‘cov.test.Rout’ to ‘cov.test.Rout.save’ ... OK
+  Running ‘cov.test2.R’
+  Comparing ‘cov.test2.Rout’ to ‘cov.test2.Rout.save’ ... OK
+  Running ‘derivative.test.R’
+  Comparing ‘derivative.test.Rout’ to ‘derivative.test.Rout.save’ ... OK
+  Running ‘diag.multiply.test.R’
+  Comparing ‘diag.multiply.test.Rout’ to ‘diag.multiply.test.Rout.save’ ... OK
+  Running ‘diagonal2.test.R’
+  Comparing ‘diagonal2.test.Rout’ to ‘diagonal2.test.Rout.save’ ... OK
+  Running ‘evlpoly.test.R’
+  Comparing ‘evlpoly.test.Rout’ to ‘evlpoly.test.Rout.save’ ... OK
+  Running ‘fastTpsPredict.test.R’
+  Comparing ‘fastTpsPredict.test.Rout’ to ‘fastTpsPredict.test.Rout.save’ ... OK
+  Running ‘mKrig.MLE.test.R’
+  Comparing ‘mKrig.MLE.test.Rout’ to ‘mKrig.MLE.test.Rout.save’ ...22c22
+< Spam version 2.2-2 (2019-03-07) is loaded.
+---
+> Spam version 2.1-2 (2017-12-21) is loaded.
+34,35c34,35
+< See https://github.com/NCAR/Fields for
+<  an extensive vignette, other supplements and source code 
+---
+> See www.image.ucar.edu/~nychka/Fields for
+>  a vignette and other supplements. 
+  Running ‘mKrig.Z.R’
+  Comparing ‘mKrig.Z.Rout’ to ‘mKrig.Z.Rout.save’ ... OK
+  Running ‘mKrig.parameters.test.R’
+  Comparing ‘mKrig.parameters.test.Rout’ to ‘mKrig.parameters.test.Rout.save’ ... OK
+  Running ‘mKrig.se.test.R’
+  Comparing ‘mKrig.se.test.Rout’ to ‘mKrig.se.test.Rout.save’ ... OK
+  Running ‘mKrig.test.R’
+  Comparing ‘mKrig.test.Rout’ to ‘mKrig.test.Rout.save’ ...62c62
+< PASSED test at tolerance  0.02
+---
+> PASSED test at tolerance  0.01
+  Running ‘mKrigMLETest.R’
+  Comparing ‘mKrigMLETest.Rout’ to ‘mKrigMLETest.Rout.save’ ... OK
+  Running ‘mKrigREMLTest.R’
+  Comparing ‘mKrigREMLTest.Rout’ to ‘mKrigREMLTest.Rout.save’ ... OK
+  Running ‘misc.test.R’
+  Comparing ‘misc.test.Rout’ to ‘misc.test.Rout.save’ ... OK
+  Running ‘spam.test.R’
+  Comparing ‘spam.test.Rout’ to ‘spam.test.Rout.save’ ... OK
+  Running ‘sreg.test.R’
+  Comparing ‘sreg.test.Rout’ to ‘sreg.test.Rout.save’ ... OK
+  Running ‘vgram.test.R’
+  Comparing ‘vgram.test.Rout’ to ‘vgram.test.Rout.save’ ... OK
+* checking PDF version of manual ... OK
+* DONE
+Status: OK

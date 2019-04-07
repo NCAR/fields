@@ -1,0 +1,44 @@
+Package: fields
+Version: 9.7
+Date: 2018-11-02
+Title: Tools for Spatial Data
+Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
+               email = "douglasnychka@gmail.com"),
+            person("Reinhard", "Furrer", role = c("aut"),
+               email = "reinhard.furrer@math.uzh.ch"),
+            person("John", "Paige", role = c("aut"),
+               email = "paigejo@uw.edu"),
+            person("Stephan", "Sain", role = "aut",
+               email = "sainsr2@gmail.com")) 
+Author: Douglas Nychka [aut, cre], Reinhard Furrer [aut], John Paige [aut], Stephan Sain [aut]
+Maintainer: Douglas Nychka <douglasnychka@gmail.com>
+Description: For curve, surface and function fitting with an emphasis
+ on splines, spatial data and spatial statistics. The major methods
+ include cubic, and thin plate splines, Kriging, and compactly supported
+ covariance functions for large data sets. The splines and Kriging methods are
+ supported by functions that can determine the smoothing parameter
+ (nugget and sill variance) and other covariance function parameters by cross
+ validation and also by restricted maximum likelihood. For Kriging
+ there is an easy to use function that also estimates the correlation
+ scale (range parameter).  A major feature is that any covariance function
+ implemented in R and following a simple format can be used for
+ spatial prediction. There are also many useful functions for plotting
+ and working with spatial data as images. This package also contains
+ an implementation of sparse matrix methods for large spatial data
+ sets and currently requires the sparse matrix (spam) package. Use
+ help(fields) to get started and for an overview.  The fields source
+ code is deliberately commented and provides useful explanations of
+ numerical details as a companion to the manual pages. The commented
+ source code can be viewed by expanding  source code version
+ and looking in the R subdirectory. The reference for fields can be generated
+ by the citation function in R and has DOI <doi:10.5065/D6W957CT>. Development
+ of this package was supported in part by the National Science Foundation  Grant
+ 1417857 and the National Center for Atmospheric Research. See the Fields URL
+ for a vignette on using this package and some background on spatial statistics.
+License: GPL (>= 2)
+URL: https://github.com/NCAR/Fields
+Depends: R (>= 3.0), methods, spam, maps
+NeedsCompilation: yes
+Packaged: 2019-04-07 18:13:00 UTC; nychka
+Repository: CRAN
+Built: R 3.7.0; x86_64-apple-darwin17.7.0; 2019-04-07 18:13:25 UTC; unix

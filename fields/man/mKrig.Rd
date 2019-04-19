@@ -2,7 +2,7 @@
 %# the R software environment .
 %# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
-%# Contact: Douglas Nychka, nychka@ucar.edu,
+%# Contact: Douglas Nychka, nychka@mines.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
 %#
 %# This program is free software; you can redistribute it and/or modify
@@ -520,9 +520,7 @@ options( spam.nearestdistnnz=c(416052,400))
 }
 }
 \references{
-%% ~put references to the literature/web site here ~
-http://cran.r-project.org/web/packages/fields/fields.pdf
-http://www.image.ucar.edu/~nychka/Fields/
+\url{https://github.com/NCAR/Fields}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

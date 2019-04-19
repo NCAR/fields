@@ -2,7 +2,7 @@
 %# the R software environment .
 %# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
-%# Contact: Douglas Nychka, nychka@ucar.edu,
+%# Contact: Douglas Nychka, nychka@mines.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
 %#
 %# This program is free software; you can redistribute it and/or modify
@@ -242,9 +242,7 @@ performed in the maximization process.
 
 }
 \references{
-%% ~put references to the literature/web site here ~
-http://cran.r-project.org/web/packages/fields/fields.pdf
-http://www.image.ucar.edu/~nychka/Fields/
+\url{https://github.com/NCAR/Fields}
 }
 \author{
 %%  ~~who you are~~

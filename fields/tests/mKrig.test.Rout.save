@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2018-01-05 r74057) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin16.7.0 (64-bit)
+R Under development (unstable) (2019-04-06 r76327) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.7.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -74,7 +74,7 @@ In fastTps(xdat, ydat, theta = 0.3) : fastTps will interpolate observations
 Testing:  fastTps interp1
 PASSED test at tolerance  1e-08
 Testing:  fastTps interp2
-PASSED test at tolerance  0.01
+PASSED test at tolerance  0.02
 [1] "testing using distance matrix"
 Testing:  predict: stationary.cov versus Exp.cov
 PASSED test at tolerance  1e-08
@@ -96,4 +96,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  1.934   0.145   2.057 
+  0.939   0.140   1.053 

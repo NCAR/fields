@@ -2,7 +2,7 @@
 %# the R software environment .
 %# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
-%# Contact: Douglas Nychka, nychka@ucar.edu,
+%# Contact: Douglas Nychka, nychka@mines.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
 %#
 %# This program is free software; you can redistribute it and/or modify
@@ -95,7 +95,7 @@ really about three different colors. For other colors try
 \code{fields.color.picker} to view possible choices.
 \code{start="darkgreen", end="azure4"} are the options used to get a
 nice color scale for rendering aerial photos of ski trails.  (See
-\url{http://www.image.ucar.edu/Data/MJProject}.)  \code{larry.colors}
+\url{https://github.com/dnychka/MJProject}.)  \code{larry.colors}
 is a 13 color palette used by Larry McDaniel and is particularly
 useful for visualizing fields of climate variables.
 

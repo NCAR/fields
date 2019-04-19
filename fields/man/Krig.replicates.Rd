@@ -2,7 +2,7 @@
 %# the R software environment .
 %# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
-%# Contact: Douglas Nychka, nychka@ucar.edu,
+%# Contact: Douglas Nychka, nychka@mines.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
 %#
 %# This program is free software; you can redistribute it and/or modify
@@ -86,5 +86,4 @@ Douglas Nychka
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{spatial}

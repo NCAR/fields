@@ -2,7 +2,7 @@
 %# the R software environment .
 %# Copyright (C) 2018
 %# University Corporation for Atmospheric Research (UCAR)
-%# Contact: Douglas Nychka, nychka@ucar.edu,
+%# Contact: Douglas Nychka, nychka@mines.edu,
 %# National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
 %#
 %# This program is free software; you can redistribute it and/or modify
@@ -30,32 +30,33 @@ fields - tools for spatial data
  fitting with an emphasis on spatial data and spatial statistics. The
  major methods implemented include cubic and thin plate splines, 
  universal
- Kriging and Kriging for large data sets. One main feature is any
+ Kriging and Kriging for large data sets.  One main feature is any
  covariance function implemented in R code can be used for spatial prediction. Another important feature is that fields will take advantage of compactly supported covariance functions in a seamless way through 
 the spam package. See \code{library( help=fields)} for a listing of all the
-fields contents. 
+fields contents and I recommend the excellent fields vignette created by Ashton and Mitch:
+\href{https://github.com/NCAR/fields/blob/master/fieldsVignette.pdf}{Fields Vignette}
 
 fields stives to have readable and tutorial code. Take a look at the 
-source code for \code{Krig} and \code{mKrig} to see how things work 
-"under the hood". 
+source code for  \code{mKrig} to see how things work 
+"under the hood" and how a statistical, linear algebra computation is
+overloaded to handle sparse matrices.
+
 To load fields with the comments retained in the source
 use \code{ keep.source = TRUE} in the \code{library} command. 
 We also keep the source on-line:
-browse the directory 
-\url{http://www.image.ucar.edu/~nychka/Fields/Source} for commented source. 
-\url{http://www.image.ucar.edu/~nychka/Fields/Help/00Index.html} is a
-page for html formatted help files. (If you obtain the source version of the
-package (file ends in .gz) the commented source code is the R subdirectory.) 
+refer to  the github directory 
+\url{https://github.com/NCAR/Fields} for commented source. 
 
 \strong{Major methods} 
 \itemize{ 
-	
-\item \code{\link{Tps}} Thin Plate spline
-regression including GCV and REML estimates for the smoothing parameter. 
 
 \item \code{\link{spatialProcess}} An easy to use method that fits a spatial process model
 ( e.g. Kriging) but also estimates the key spatial parameters:  nugget variance, sill variance and range by maximum likelihood. Default covariance model is a Matern covariance function.
  
+\item \code{\link{Tps}} Thin Plate spline
+regression including GCV and REML estimates for the smoothing parameter. 
+
+
 \item \code{\link{Krig}} Spatial process estimation that is the core function of fields.
  
 The Krig function allows you to supply a covariance function that is

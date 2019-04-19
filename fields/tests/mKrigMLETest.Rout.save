@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2018-01-05 r74057) -- "Unsuffered Consequences"
-Copyright (C) 2018 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin16.7.0 (64-bit)
+R Under development (unstable) (2019-04-06 r76327) -- "Unsuffered Consequences"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.7.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -75,4 +75,4 @@ PASSED test at tolerance  0.02
 > 
 > proc.time()
    user  system elapsed 
- 13.091   2.374  13.013 
+ 10.217   1.767  10.274 

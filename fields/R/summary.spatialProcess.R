@@ -14,10 +14,101 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-# You should have received a copy of the GNU General Public License
-# along with the R software environment if not, write to the Free Software
-# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-# or see http://www.r-project.org/Licenses/GPL-2    
-"summary.spatialProcess" <- function(object, digits = 4, ...) {
-   print.spatialProcess( object, digits=digits, ...)
+summary.spatialProcess <- function(object, ...) {
+# output list
+  outObject<- list()
+  digits<- 4
+  if (is.matrix(object$residuals)) {
+    n <- nrow(object$residuals)
+    nData <- ncol(object$residuals)
+  }
+  else {
+    n <- length(object$residuals)
+    nData <- 1
+  }
+  
+  c1 <- "Number of Observations:"
+  c2 <- n
+  
+  if (nData > 1) {
+    c1 <- c(c1, "Number of data sets fit:")
+    c2 <- c(c2, nData)
+  }
+  
+  c1 <- c(c1, "Degree of polynomial in fixed part: ")
+  
+  
+  if(object$m !=0 ){
+    c2 <- c(c2, object$m - 1)
+  }
+  else{
+    c2 <- c(c2, NA)
+  }
+  c1 <- c(c1, "Total number of parameters in fixed part: ")
+  c2 <- c(c2, object$nt)
+  if (object$nZ > 0) {
+    c1 <- c(c1, "Number of additional covariates (Z)")
+    c2 <- c(c2, object$nZ)
+  }
+  
+  c1 <- c(c1, "MLE nugget variance ( sigma^2)")
+  c2 <- c(c2, signif(object$sigma.MLE.FULL^2, digits))
+    
+  c1 <- c(c1, "MLE process variance (rho)")
+  c2 <- c(c2, signif(object$rho.MLE.FULL, digits))
+  
+  
+  c1 <- c(c1, "MLE range parameter (theta, units of distance): ")
+  c2 <- c(c2, signif(object$theta.MLE, digits))
+  
+  c1 <- c(c1, "Approx 95% CI for theta:  ")
+  c2<-  c( c2, paste( "[",signif( object$theta.95CI[1], digits), ",",
+                      signif( object$theta.95CI[2], digits), "]"  ) 
+           )
+  
+  if (!is.na(object$eff.df)) {
+    c1 <- c(c1, "Approx.  degrees of freedom for curve")
+    c2 <- c(c2, signif(object$eff.df, digits))
+    if (length(object$trA.info) < object$np) {
+      c1 <- c(c1, "   Standard Error of df estimate: ")
+      c2 <- c(c2, signif(sd(object$trA.info)/sqrt(length(object$trA.info)), 
+                         digits))
+    }
+   }
+  c1 <- c(c1, "Nonzero entries in covariance")
+  c2 <- c(c2, object$nonzero.entries)
+  sum <- cbind(c1, c2)
+  dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+  outObject$summaryTable <- sum
+###########  
+  outObject$collapseFixedEffect<- object$collapseFixedEffect
+########### information for SE for fixed effects
+  if( outObject$collapseFixedEffect | (nData==1) ){
+    outObject$fixedEffectsCov<- object$fixedEffectsCov
+    SE<- sqrt(diag(outObject$fixedEffectsCov))
+    d.coef<-  object$d[,1]
+    pValue<- pnorm(abs(d.coef/SE), lower.tail = FALSE)*2
+    outObject$fixedEffectsTable<- cbind( signif(d.coef, digits), 
+                                      signif(SE, digits),
+                                      signif(pValue, digits)
+                                    )
+    if( is.null( object$fixedEffectNames ) ){
+      outObject$fixedEffectNames<- paste0("d",1:(object$nt) )
+    }
+    else{
+      outObject$fixedEffectNames<- object$fixedEffectNames
+    }
+    dimnames( outObject$fixedEffectsTable) <- list( outObject$fixedEffectNames,
+                                           c("estimate", "SE", "pValue") )
+  }
+#####################
+  outObject$nData <- nData
+  outObject$call<- object$call
+  outObject$cov.function<- object$cov.function
+  outObject$args<- object$args
+ 
+    class( outObject)<-"spatialProcessSummary"
+    
+  return( outObject)
+
 }

@@ -99,110 +99,146 @@ mKrig.coef <- function(object, y, collapseFixedEffect=TRUE) {
     out <- list(d = (d.coef), c = (c.coef))
     return(out)
 }
-print.mKrig <- function(x, digits = 4, ...) {
+
+summary.mKrig <- function(object, ...) {
     
-    if (is.matrix(x$residuals)) {
-        n <- nrow(x$residuals)
-        NData <- ncol(x$residuals)
-    }
-    else {
-        n <- length(x$residuals)
-        NData <- 1
-    }
+    outObject<- list()  
+    digits<- 4
     
-    c1 <- "Number of Observations:"
-    c2 <- n
+  if (is.matrix(object$residuals)) {
+    n <- nrow(object$residuals)
+    nData <- ncol(object$residuals)
+  }
+  else {
+    n <- length(object$residuals)
+    nData <- 1
+  }
+  outObject$nData<-nData
+  
+  c1 <- "Number of Locations:"
+  c2 <- n
+  
+  if (nData > 1) {
+    c1 <- c(c1, "Number of data sets fit:")
+    c2 <- c(c2, nData)
     
-    if (NData > 1) {
-        c1 <- c(c1, "Number of data sets fit:")
-        c2 <- c(c2, NData)
-        
+  }
+  c1 <- c(c1, "Degree of polynomial null space ( base model):")
+  if(object$m !=0 ){
+    c2 <- c(c2, object$m - 1)
+  }
+  else{
+    c2 <- c(c2, NA)
+  }
+  c1 <- c(c1, "Total number of parameters in base model")
+  c2 <- c(c2, object$nt)
+  if (object$nZ > 0) {
+    c1 <- c(c1, "Number of additional covariates (Z)")
+    c2 <- c(c2, object$nZ)
+  }
+  if (!is.na(object$eff.df)) {
+    c1 <- c(c1, " Eff. degrees of freedom")
+    c2 <- c(c2, signif(object$eff.df, digits))
+    if (length(object$trA.info) < object$np) {
+      c1 <- c(c1, "   Standard Error of estimate: ")
+      c2 <- c(c2, signif(sd(object$trA.info)/sqrt(length(object$trA.info)), 
+                         digits))
     }
-    
-    c1 <- c(c1, "Degree of polynomial null space ( base model):")
-    
-    
-    if(x$m !=0 ){
-      c2 <- c(c2, x$m - 1)
-    }
-    else{
-      c2 <- c(c2, NA)
-    }
-    c1 <- c(c1, "Total number of parameters in base model")
-    c2 <- c(c2, x$nt)
-    if (x$nZ > 0) {
-        c1 <- c(c1, "Number of additional covariates (Z)")
-        c2 <- c(c2, x$nZ)
-    }
-    if (!is.na(x$eff.df)) {
-        c1 <- c(c1, " Eff. degrees of freedom")
-        c2 <- c(c2, signif(x$eff.df, digits))
-        if (length(x$trA.info) < x$np) {
-            c1 <- c(c1, "   Standard Error of estimate: ")
-            c2 <- c(c2, signif(sd(x$trA.info)/sqrt(length(x$trA.info)), 
-                digits))
-        }
-    }
-    c1 <- c(c1, "Smoothing parameter")
-    c2 <- c(c2, signif(x$lambda.fixed, digits))
-    
-    if (NData == 1) {
-        c1 <- c(c1, "MLE sigma ")
-        c2 <- c(c2, signif(x$shat.MLE, digits))
-        c1 <- c(c1, "MLE rho")
-        c2 <- c(c2, signif(x$rho.MLE, digits))
-    }
-   
-    
-    c1 <- c(c1, "Nonzero entries in covariance")
-    c2 <- c(c2, x$nonzero.entries)
-    sum <- cbind(c1, c2)
-    dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
-########### print out call and table of information    
+  }
+  c1 <- c(c1, "Smoothing parameter")
+  c2 <- c(c2, signif(object$lambda.fixed, digits))
+  
+  if (nData == 1) {
+    c1 <- c(c1, "MLE sigma ")
+    c2 <- c(c2, signif(object$shat.MLE, digits))
+    c1 <- c(c1, "MLE rho")
+    c2 <- c(c2, signif(object$rho.MLE, digits))
+  }
+  
+  c1 <- c(c1, "Nonzero entries in covariance")
+  c2 <- c(c2, object$nonzero.entries)
+  sum <- cbind(c1, c2)
+  dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+  ########### save table of information and the call
+  outObject$summaryTable<- sum
+  outObject$call<- object$call
+  outObject$collapseFixedEffect<- object$collapseFixedEffect
+
+  ########### information for SE for fixed effects
+  if( outObject$collapseFixedEffect | (nData==1)){
+    outObject$fixedEffectsCov<- object$fixedEffectsCov
+   SE<- sqrt(diag(outObject$fixedEffectsCov))
+   d.coef<-  object$d[,1]
+   print( d.coef)
+   pValue<- pnorm(abs(d.coef/SE), lower.tail = FALSE)*2
+   outObject$fixedEffectsTable<- cbind( signif(d.coef, digits), 
+                                     signif(SE, digits),
+                                     signif(pValue, digits)
+                                     )
+   if( is.null( object$fixedEffectNames )){
+   outObject$fixedEffectNames<- paste0("d",1:(object$nt) )
+   }
+   else{
+     outObject$fixedEffectNames<- object$fixedEffectNames
+   }
+   dimnames( outObject$fixedEffectsTable) <- list( outObject$fixedEffectNames,
+                                               c("estimate", "SE", "pValue") )
+  ########### save covariance information
+  } 
+  outObject$cov.function<- object$cov.function
+  outObject$args<- object$args
+  class( outObject)<-"mKrigSummary"
+  return( outObject)
+}
+
+print.mKrig<- function (x, digits = 4,...){
+  object<- summary.mKrig( x,...)
+  print.mKrigSummary(object, digits = digits)
+}
+
+print.mKrigSummary <- function (x, digits = 4, ...) 
+  {
     cat("Call:\n")
     dput(x$call)
-    print(sum, quote = FALSE)
-########### assorted remarks
-    if (NData > 1) {
-      cat(" ", fill = TRUE)
-      if( x$collapseFixedEffect){
-      cat("Estimated fixed effects pooled across replicates", fill=TRUE)
-      }
-      else{
-        cat("Estimated fixed effects found separately for each replicate", fill=TRUE) 
-      }
-      cat("collapseFixedEffect :", x$collapseFixedEffect, fill=TRUE)
-    }
+    print(x$summaryTable, quote = FALSE)
     
+# fixed effects are reported differently when fields are replicated.    
+    nData<- x$nData
+    cat(" ", fill = TRUE)
+    if( nData == 1 | x$collapseFixedEffect ){
+      cat(" ", fill = TRUE)
+      cat("Summary of fixed effects", fill = TRUE)
+      print( x$fixedEffectsTable)
+      }
+      else {
+        cat("Estimated fixed effects found separately for each replicate field", 
+            fill = TRUE)
+      }
     cat(" ", fill = TRUE)
     cat("Covariance Model:", x$cov.function, fill = TRUE)
     if (x$cov.function == "stationary.cov") {
-        cat("   Covariance function:  ", ifelse(is.null(x$args$Covariance), 
-            "Exponential", x$args$Covariance), fill = TRUE)
+      cat("   Covariance function:  ", ifelse(is.null(x$args$Covariance), 
+                                              "Exponential", x$args$Covariance), fill = TRUE)
     }
     if (!is.null(x$args)) {
-        cat("   Non-default covariance arguments and their values ", 
-            fill = TRUE)
-        nlist <- as.character(names(x$args))
-        NL <- length(nlist)
-        for (k in 1:NL) {
-            cat("   Argument:", nlist[k], " ")
-            if (object.size(x$args[[k]]) <= 1024) {
-                cat("has the value(s): ", fill = TRUE)
-                print(x$args[[k]])
-            }
-            else {
-                cat("too large to print value, size > 1K ...", 
-                  fill = TRUE)
-            }
+      cat("   Non-default covariance arguments and their values ", 
+          fill = TRUE)
+      nlist <- as.character(names(x$args))
+      NL <- length(nlist)
+      for (k in 1:NL) {
+        cat("   Argument:", nlist[k], " ")
+        if (object.size(x$args[[k]]) <= 1024) {
+          cat("has the value(s): ", fill = TRUE)
+          print(x$args[[k]])
         }
+        else {
+          cat("too large to print value, size > 1K ...", 
+              fill = TRUE)
+        }
+      }
     }
     invisible(x)
-}
-
-summary.mKrig <- function(object, ...) {
-    print.mKrig(object, ...)
-}
+  }
 
 predict.mKrig <- function(object, xnew = NULL, ynew = NULL, grid.list=NULL,
     derivative = 0, Z = NULL, drop.Z = FALSE, just.fixed = FALSE,

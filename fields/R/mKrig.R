@@ -149,7 +149,13 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
 #  the fixed linear part of the model. 
 #    
 #  SEdcoef = diag( Omega) * rho.MLE.FULL
-#     
+# 
+# if fixed effects are pooled across replicate fields then
+# adjust the Omega matrix to reflect a mean estimate.
+    if (collapseFixedEffect) {
+      Omega <- Omega/ ncol(d.coef)
+    }
+    
     R2diag<-  diag( qr.R(qr.VT) )^2
     lnDetOmega<- -1* sum( log(R2diag) ) 
   }
@@ -229,7 +235,8 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
               qr.VT = qr.VT, 
               Mc = Mc,
           Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ,
-          dcoefSE = sqrt(diag( Omega) * rho.MLE.FULL),  
+          fixedEffectsCov = Omega * rho.MLE.FULL, 
+         # dcoefSE = sqrt(diag( Omega) * rho.MLE.FULL),  
           collapseFixedEffect= collapseFixedEffect)
   )
   #

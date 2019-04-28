@@ -24,6 +24,7 @@
 \alias{mKrig.coef}
 \alias{mKrig.trace}
 \alias{print.mKrig}
+\alias{print.mKrigSummary}
 \alias{summary.mKrig}
 \alias{mKrigCheckXY}
 
@@ -52,6 +53,7 @@ collapseFixedEffect = object$collapseFixedEffect, ...)
 \method{summary}{mKrig}(object, ...)
 
 \method{print}{mKrig}( x, digits=4,... )
+\method{print}{mKrigSummary}( x, digits=4,... )
 
 mKrig.coef(object, y, collapseFixedEffect=TRUE)
 
@@ -174,7 +176,13 @@ simulation.
 function if derivatives are supported in the covariance function.  For
 example the wendland.cov function supports derivatives.
 
-\code{print.mKrig} is a simple summary function for the object.
+
+\code{summary.mKrig} creates a list of class \code{mKrigSummary} along with a table of standard errors for the fixed linear parameters.
+
+\code{print.mKrigSummary} prints the  \code{mKrigSummary} object and adds some more explanation about the model and results
+
+\code{print.mKrig} prints a summary for the \code{mKrig} object that the combines the summary and  print methods.
+
 
 \code{mKrig.coef} finds the "d" and "c" coefficients represent the
 solution using the previous cholesky decomposition for a new data

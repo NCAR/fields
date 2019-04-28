@@ -22,6 +22,8 @@
 \alias{spatialProcess}
 \alias{plot.spatialProcess}
 \alias{print.spatialProcess}
+\alias{print.spatialProcessSummary}
+\alias{summary.spatialProcess}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 	Estimates a spatial process model. 
@@ -41,9 +43,11 @@ mKrig.args = list(m = 2),
 cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", 
         smoothness = 1), theta = NULL, theta.start = NULL, lambda.start = 0.5,
          theta.range = NULL,
-    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, REML = FALSE, ...) 
-                 
+    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, REML = FALSE, ...)
+    
+\method{summary}{spatialProcess}(object,  ...)
 \method{print}{spatialProcess}(x, digits = 4, ...)
+\method{print}{spatialProcessSummary}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
 
 }
@@ -190,7 +194,12 @@ be aware of these choices and try alternative models and parameter
 values to assess the robustness of your conclusions. Also examine the
 residuals to check the adequacy of the fit. See the examples below for
 some help in how to do this easily in fields. Also see quilt.plot to
-get an quick plot to discern spatial paterns.
+get an quick plot of a spatial field  to discern obvious spatial paterns.
+
+
+\strong{summary} method forms a list with class \code{spatialProcessSummary} that hasa subset of information from the output object and also creates a table of the estimates of the linear parameters in the fixed part of the model.
+With replacated fields there is an option to estimate different linear parameters for each field
+( \code{ collapseFixedEffect = FALSE } ) and in this case a table is not created because there is more than one estimate. See (\code{Omega} and \code{fixedEffectsCov}) in the \code{mKrig} object to build the standard errors.
 
 \strong{plot} method  provides a panel of 4 diagnositic plots of the fit. 
 Use \code{set.panel(2,2)} to see all 4 at once. The third plot gives the likelihood and
@@ -199,14 +208,14 @@ This is based on the gird evaluations in the component MLEInfo$MLEProfileLambda.
 The fourth
 plot is a profile likelihood trace for theta  having maximized over lambda and is based on the component MLEInfo$MLEGrid. 
 
-\strong{print} method gives a summary of the fit. 
+\strong{print} method prints the  \code{spatialProcessSummary} object of the fit, adding some details and explanations.
 
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
 	An object of classes \code{mKrig} and  \code{SpatialProcess}. The main difference
-	from mKrig is 	an extra component, \code{MLEInfo} that has the results of the grid
-	evaluation over theta (maximizing lamdba), joint maximization over theta and lambda,
+	from mKrig is an extra component, \code{MLEInfo} that has the results of the profile likelihood grid
+	evaluation over theta ( having maximizing lamdba), joint maximization over theta and lambda,
 	and a grid evaluation over lambda with theta fixed at its MLE. 
 }
 

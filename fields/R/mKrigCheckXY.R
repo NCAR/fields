@@ -34,10 +34,9 @@ mKrigCheckXY <- function(x, y,  weights, Z, na.rm)
   # coerce x to be a matrix
   x <- as.matrix(x)
   #
-  # coerce y to be a vector
+  # coerce y to be a matrix
   #
   y <- as.matrix(y)
-  
   #
   #default weights ( reciprocal variance of errors).
   #
@@ -58,8 +57,8 @@ mKrigCheckXY <- function(x, y,  weights, Z, na.rm)
     if (!is.matrix(Z)) {
       Z <- as.matrix(Z)
     }
-    if (length(y) != nrow(Z)) {
-      stop(" length of y and number of rows of Z differ")
+    if (nrow(y) != nrow(Z)) {
+      stop(" number of rows of y and number of rows of Z differ")
     }
   }
   # if NAs can be removed then remove them and warn the user

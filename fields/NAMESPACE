@@ -1,14 +1,16 @@
 exportPattern("^[^\\.]")
- importFrom("grDevices", "chull", "col2rgb", "colors", "palette", "rgb",
+
+importFrom("grDevices", "chull", "col2rgb", "colors", "palette", "rgb",
              "trans3d")
-  importFrom("graphics", "abline", "arrows", "axis", "box", "boxplot",
+importFrom("graphics", "abline", "arrows", "axis", "box", "boxplot",
              "contour", "hist", "lines", "locator", "matlines",
              "matplot", "mtext", "pairs", "par", "persp", "plot",
              "points", "polygon", "rect", "segments", "text", "title")
-  importFrom("stats", "D", "approx", "coef", "cor", "dist", "fft", "mad",
+importFrom("stats", "D", "approx", "coef", "cor", "dist", "fft", "mad",
              "median", "optim", "optimize", "predict", "quantile",
-             "rnorm", "sd", "var","qchisq")
+             "rnorm", "sd", "var","qchisq","pnorm")
 importFrom("utils", "object.size")
+
 S3method("[",spatialDesign)
 S3method(coef, Krig)
 S3method(fitted, Krig)
@@ -22,7 +24,8 @@ S3method(print,sreg)
 S3method(print,qsreg)
 S3method(print,summary.Krig)
 S3method(print,summarySpatialDesign)
-S3method(print,summary.spatialProcess)
+S3method(print,mKrigSummary)
+S3method(print,spatialProcessSummary)
 S3method(print,summary.sreg)
 S3method(summary,Krig)
 S3method(summary,sreg)

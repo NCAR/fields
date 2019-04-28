@@ -1,3 +1,50 @@
 
 /Users/nychkaadmin/Desktop/R/R-devel/bin/R CMD   build --force fields
 /Users/nychkaadmin/Desktop/R/R-devel/bin/R CMD   check  --as-cran fields_9.7.tar.gz
+
+
+
+# Now check \dontrun exmaples
+cd fields.Rcheck
+sed -e "s/##D/ /" fields-ex.R > temp.r
+sed -e "s/library('fields')/library('fields', lib.loc='.')/" temp.r > all-ex.R 
+/Users/nychkaadmin/Desktop/R/R-devel/bin/R   --save < all-ex.R > all-ex.Rout
+#
+R --save < all-ex.R > all-ex.Rout
+# take a look 
+ grep FAILED all-ex.Rout
+ grep Warning all-ex.Rout
+
+rm  all-ex.Rout  temp.R fields-Ex.pdf
+
+# then
+cp  fields.Rcheck/tests/Krig.Z.test.Rout  fields/tests/Krig.Z.test.Rout.save
+cp  fields.Rcheck/tests/Krig.se.W.Rout  fields/tests/Krig.se.W.Rout.save
+cp  fields.Rcheck/tests/Krig.se.grid.test.Rout  fields/tests/Krig.se.grid.test.Rout.save
+cp  fields.Rcheck/tests/Krig.se.test.Rout  fields/tests/Krig.se.test.Rout.save
+cp  fields.Rcheck/tests/Krig.test.Rout  fields/tests/Krig.test.Rout.save
+cp  fields.Rcheck/tests/Krig.test.W.Rout  fields/tests/Krig.test.W.Rout.save
+cp  fields.Rcheck/tests/KrigGCVREML.test.Rout fields/tests/KrigGCVREML.test.Rout.save
+cp  fields.Rcheck/tests/Likelihood.test.Rout  fields/tests/Likelihood.test.Rout.save
+cp  fields.Rcheck/tests/REMLest.test.Rout  fields/tests/REMLest.test.Rout.save
+cp  fields.Rcheck/tests/Tps.test.Rout  fields/tests/Tps.test.Rout.save
+cp  fields.Rcheck/tests/fastTpsPredict.test.Rout  fields/tests/fastTpsPredict.test.Rout.save
+cp  fields.Rcheck/tests/mKrig.MLE.test.Rout  fields/tests/mKrig.MLE.test.Rout.save
+cp  fields.Rcheck/tests/Wend.test.Rout  fields/tests/Wend.test.Rout.save
+cp  fields.Rcheck/tests/cov.test.Rout  fields/tests/cov.test.Rout.save
+cp  fields.Rcheck/tests/derivative.test.Rout  fields/tests/derivative.test.Rout.save
+cp  fields.Rcheck/tests/diag.multiply.test.Rout fields/tests/diag.multiply.test.Rout.save
+cp  fields.Rcheck/tests/diagonal2.test.Rout  fields/tests/diagonal2.test.Rout.save
+cp  fields.Rcheck/tests/evlpoly.test.Rout  fields/tests/evlpoly.test.Rout.save
+cp  fields.Rcheck/tests/mKrig.Z.Rout  fields/tests/mKrig.Z.Rout.save
+cp  fields.Rcheck/tests/mKrig.parameters.test.Rout  fields/tests/mKrig.parameters.test.Rout.save
+cp  fields.Rcheck/tests/mKrig.se.test.Rout  fields/tests/mKrig.se.test.Rout.save
+cp  fields.Rcheck/tests/mKrig.test.Rout  fields/tests/mKrig.test.Rout.save
+cp  fields.Rcheck/tests/misc.test.Rout  fields/tests/misc.test.Rout.save
+cp  fields.Rcheck/tests/spam.test.Rout  fields/tests/spam.test.Rout.save
+cp  fields.Rcheck/tests/sreg.test.Rout  fields/tests/sreg.test.Rout.save
+cp  fields.Rcheck/tests/vgram.test.Rout  fields/tests/vgram.test.Rout.save
+cp  fields.Rcheck/tests/cov.test2.Rout  fields/tests/cov.test2.Rout.save
+cp  fields.Rcheck/tests/mKrigMLETest.Rout  fields/tests/mKrigMLETest.Rout.save
+cp  fields.Rcheck/tests/mKrigREMLTest.Rout  fields/tests/mKrigREMLTest.Rout.save
+cp  fields.Rcheck/tests/SEFixedParameters.Rout  fields/tests/SEFixedParameters.Rout.save

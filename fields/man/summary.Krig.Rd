@@ -21,7 +21,6 @@
 
 \name{summary.Krig}
 \alias{summary.Krig}
-\alias{summary.spatialProcess}
 \title{
   Summary for Krig or spatialProcess estimated models. 
 }
@@ -33,8 +32,6 @@ function for nice formatting.
 }
 \usage{
 \method{summary}{Krig}(object, digits=4,...)
-\method{summary}{spatialProcess}(object, digits=4,...)
-
 }
 \arguments{
 \item{object}{
@@ -57,7 +54,7 @@ This function is a method for the generic function summary for class
 Krig. The results are formatted and printed using print.summary.Krig.
 }
 \seealso{
-Krig, summary, print.summary.Krig  
+Krig, summary, print.summary.Krig, summary.spatialProcess 
 }
 \examples{
 fit<- Krig(ChicagoO3$x, ChicagoO3$y, theta=100)  

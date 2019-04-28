@@ -72,7 +72,6 @@
 \alias{print.spatialDesign}
 \alias{print.sreg}
 \alias{print.summary.Krig}
-\alias{print.summary.spatialProcess}
 \alias{print.summary.krig.image}
 \alias{print.summarySpatialDesign}
 \alias{print.summary.sreg}

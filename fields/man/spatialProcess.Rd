@@ -83,6 +83,8 @@ E.g. elevation for fitting climate data over space. }
 % \item{gridN}{Number of grid points for evaluating profile likelihood over
 % theta and
 % also over lambda (using MLE for theta).}
+
+\item{object}{A spatialProcess object returned from the spatialProcess function.}
  
  %\item{optim.args}{Arguements to be used  in optim for finding joint
  %MLEs for theta

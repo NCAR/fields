@@ -195,7 +195,6 @@ minimax.crit (obj, des = TRUE, R)
 \method{print}{spatialDesign} (x,...) 
 \method{print}{sreg}(x, ...) 
 \method{print}{summary.Krig} (x, ...) 
-\method{print}{summary.spatialProcess} (x, ...)
 \method{print}{summarySpatialDesign} (x, digits = 4,...) 
 \method{print}{summary.sreg} (x, ...) 
  

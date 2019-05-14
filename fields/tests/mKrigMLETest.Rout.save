@@ -34,45 +34,54 @@ Type 'q()' to quit R.
 > 
 > suppressMessages(library( fields ))
 > options( echo=FALSE)
+Testing:  Likelihood Values summary and optim
+PASSED test at tolerance  1e-08
+Testing:  Likelihood Values summary and profile
+PASSED test at tolerance  1e-08
+Testing:  rho MLE
+PASSED test at tolerance  1e-08
+Testing:  consistency of Likelihood values
 PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
+Testing:  Testing MLESpatialProcess 
 PASSED test at tolerance  0.002
+Testing:  spatialProcess finding MLE 
 PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
+Testing:  spatialProcess given MLE 
+PASSED test at tolerance  5e-08
+Testing mKrigMLEJoint against true values
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
+Testing mKrigMLEJoint  with REML against true values
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
+Testing mKrigMLEJoint  with REML FALSE  against true values
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
 lnProfileLike.FULL             lambda              theta           sigmaMLE 
-       -61.8145417          0.1015556          0.1002546          0.3185669 
+      -32.24048063         0.09913720         0.09942723         0.31460485 
             rhoMLE            funEval           gradEval 
-         0.9993032          8.0000000          6.0000000 
+        0.99837609        12.00000000        11.00000000 
 lnProfileREML.FULL             lambda              theta           sigmaMLE 
-       -61.8145417          0.1015556          0.1002546          0.3185669 
+      -32.24048063         0.09913720         0.09942723         0.31460485 
             rhoMLE            funEval           gradEval 
-         0.9993032          8.0000000          6.0000000 
+        0.99837609        12.00000000        11.00000000 
 lnProfileLike.FULL             lambda              theta           sigmaMLE 
-       -61.8143732          0.1015557          0.1002514          0.3185628 
+      -32.24016911         0.09913435         0.09941980         0.31459145 
             rhoMLE            funEval           gradEval 
-         0.9992768          8.0000000          6.0000000 
-1  2  3  4  5  6  7  8  9  10  all done with mKrigMLEGrid tests
+        0.99831983        12.00000000        11.00000000 
+1  2   
+Testing:  Monte Carlo theta
+PASSED test at tolerance  0.005
+Testing:  Monte Carlo lambda
+PASSED test at tolerance  0.05
+all done with mKrigMLEGrid tests
 > 
-> test.for.zero( trueTheta, mean(hold[,3]), tol=2e-3,tag="Monte Carlo theta")
-Testing:  Monte Carlo theta
-PASSED test at tolerance  0.002
-> test.for.zero( trueLambda, mean(hold[,2]), tol=2e-2,tag="Monte Carlo theta")
-Testing:  Monte Carlo theta
-PASSED test at tolerance  0.02
 > 
 > 
 > proc.time()
    user  system elapsed 
- 10.217   1.767  10.274 
+  4.262   1.080   4.413 

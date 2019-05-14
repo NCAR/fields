@@ -1,6 +1,6 @@
 
 /Users/nychkaadmin/Desktop/R/R-devel/bin/R CMD   build --force fields
-/Users/nychkaadmin/Desktop/R/R-devel/bin/R CMD   check  --as-cran fields_9.7.tar.gz
+/Users/nychkaadmin/Desktop/R/R-devel/bin/R CMD   check  --as-cran fields_9.8-1.tar.gz
 
 
 

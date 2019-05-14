@@ -117,7 +117,7 @@ stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args=
 temp2<- Exponential( rdist.earth(x[1:3,],x[1:10,]), range=200) * 
            Wendland(rdist.earth(x[1:3,],x[1:10,]), theta= 300, k=2, dimension=2)
 
-test.for.zero(  as.matrix(temp), temp2, tol=1e-6, tag="taper with great circle")
+test.for.zero(  as.matrix(temp), temp2, tol=2e-6, tag="taper with great circle")
 
 # example of calling the taper version directly 
 # Note that default covariance is exponential and default taper is 

@@ -1,7 +1,7 @@
 
-R Under development (unstable) (2019-04-06 r76327) -- "Unsuffered Consequences"
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
 Copyright (C) 2019 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin17.7.0 (64-bit)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -58,4 +58,4 @@ All done with SPAM tests
 > 
 > proc.time()
    user  system elapsed 
-  0.555   0.060   0.601 
+  0.594   0.061   0.645 

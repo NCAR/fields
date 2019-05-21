@@ -1,5 +1,5 @@
 
-R version 3.5.3 (2019-03-11) -- "Great Truth"
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
@@ -40,4 +40,4 @@ Type 'q()' to quit R.
 PASSED test at tolerance  0.05
 > proc.time()
    user  system elapsed 
-  0.797   0.085   0.869 
+  0.820   0.095   0.906 

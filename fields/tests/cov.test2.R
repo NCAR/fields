@@ -108,9 +108,11 @@ stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args=
 # the direct matrix product
 
 temp2<- Exponential( rdist.earth(x[1:3,],x[1:10,]), range=200) * 
-  Wendland(rdist.earth(x[1:3,],x[1:10,]), theta= 300, k=2, dimension=2)
+  Wendland(rdist.earth(x[1:3,],x[1:10,]),
+            theta= 300, k=2, dimension=2)
 
-test.for.zero(  as.matrix(temp), temp2, tol=1e-6, tag="taper with great circle")
+test.for.zero(  as.matrix(temp), temp2, tol=2e-6,
+                 tag="taper with great circle")
 
 # example of calling the taper version directly 
 # Note that default covariance is exponential and default taper is 
@@ -132,7 +134,9 @@ stationary.taper.cov( x[1:3,],x[1:10,] , range=1.5,
                       Taper.args= list(k=2,theta=2.0,
                                        dimension=2) )-> temp
 
-test.for.zero(  as.matrix(temp), temp2, tag= "high level test of taper cov")
+test.for.zero(  as.matrix(temp), temp2,
+                tol=1e-7,
+                tag= "high level test of taper cov")
 
 
 

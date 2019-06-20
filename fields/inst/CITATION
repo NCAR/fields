@@ -13,7 +13,7 @@ bibentry(bibtype="Misc",
     organization = "University Corporation for Atmospheric Research",
     address = "Boulder, CO, USA",
     year = 2017,
-    url = "github.com/NCAR/Fields",
+    url = "https://github.com/NCAR/Fields",
     doi ="10.5065/D6W957CT"
     )
 

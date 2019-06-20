@@ -1204,7 +1204,7 @@ Krig.null.function <- function(x, Z = NULL, drop.Z = FALSE,
     }
 }
 
-"Krig.parameters" <- function(obj, mle.calc = obj$mle.calc) {
+Krig.parameters <- function(obj, mle.calc = obj$mle.calc) {
     # if nondiag W is supplied then use it.
     # otherwise assume a diagonal set of weights.
     #

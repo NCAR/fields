@@ -25,7 +25,7 @@
 \description{
 These are few model output fields from the North American Regional Climate
  Change and Assessment Program (NARCCAP). 
- The imagea are transformed surface precipitation fields simulated by the WRFP
+ The images are transformed surface precipitation fields simulated by the WRFP
 regional climate model (RCM) over North Amreica forced by observation
 data. The fields are 3 hour precipitation for 8 time periods in January
 1, 1979. The grid is unequally spaced in longitude and latitude  appropriate projection centered on the model
@@ -58,11 +58,9 @@ atmospheric boundery conditions for 6 different regional climate
 models. In the current data the forcing is the observations derived
 from the NCEP reanalysis data and is for Janurary 1, 1979. The full
 simulation runs for 20 years from this starting date. See
-\url{www.image.ucar.edu/Data} for more information about these data.
+\url{https://www.narccap.ucar.edu} for more information about these data.
 
-To facilatate an animation of these fields the raw precipitation values 
-have been transformed to the log scale with all values below 4.39E-5 cm/3 hours
-set to this lower bound.  
+To facilatate a better representation of these fields the raw precipitation values  have been transformed to the log scale with all values below 4.39E-5 cm/3 hours set to this lower bound.  
 
 }
 \examples{

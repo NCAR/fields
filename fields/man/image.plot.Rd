@@ -22,16 +22,16 @@
 \name{image.plot}
 \alias{image.plot}
 \title{
-  Draws image plot with a legend strip for the color scale based on either
+  Draws an image plot with a legend strip for the color scale based on either
 a regular grid or a grid of quadrilaterals.  
 }
 \description{
 This function combines the R image function with some automatic 
-placement of a legend. This is done by automatically splitting the plotting region  
+placement of a legend. This is done by splitting the plotting region  
 into two parts. Putting the image in one and the legend in the other. After the
 legend is added the plot region is reset to the image plot.
 This function also allows for plotting quadrilateral cells in the image format that
-often arise from regular grids transformed with a map projection. 
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. 
 
 }
 \usage{
@@ -51,19 +51,16 @@ often arise from regular grids transformed with a map projection.
 	
 \item{\dots}{
  The usual arguments to the \code{image} function as x,y,or z or as a
-list with x,y,z as components. One can also include a \code{breaks} an
+list with x,y,z as components. One can also include a \code{breaks} 
 argument for an unequal spaced color scale with color scale boundaries
 at the breaks (see example below).  If a "quadrilateral grid",
 arguments must be explicitly x,y and z with x, and y being matrices of
 dimensions equal to, or one more than, z giving the grid
 locations. The basic concept is that the coordinates of x and y still
 define a grid but the image cells are quadrilaterals rather than being
-restricted to rectangles.  See details below as to how one handles
-whether the quads are specified by their vertices or by their
-midpoints. NOTE graphical argruments passed here will only have impact
+restricted to rectangles. NOTE: graphical argruments passed here will only have impact
 on the image plot. To change the graphical defaults for the legend use
-the \code{par} function beforehand e.g. par( lab.cex=2.0) to increase
-colorbar labels.
+ the individual legend arguments and \code{legend.arg} listed below. 
 }
 
 \item{add}{
@@ -90,7 +87,7 @@ the same as the interior color. Otherwise this specifies the color to use.}
 \item{col}{
 Color table to use for image (See help file on image for details.).
 Default is a pleasing range of 64 divisions suggested by Tim Hoar and is similar to 
-the MATLAB (TM) jet color scheme. Note that if \code{breaks} is specified there must be one less colors specified than the number of breaks. 
+the MATLAB (TM) jet color scheme. Note that if \code{breaks} is specified there must be one less color specified than the number of breaks. 
 }
 
 \item{graphics.reset}{
@@ -192,14 +189,15 @@ the legend. Some adjustments are made to this rule by not shrinking the
 \code{bigplot} if there is already room for the legend strip and also
 sticking the legend strip close to the image plot. One can specify the
 plot regions explicitly by \code{bigplot} and  \code{smallplot} if the
-default choices do not work. There may be problems with small plotting
-regions in fitting both of these elements in the plot region and one may 
+default choices do not work.(Note that these in figure coordinates.
+) There may be problems with small plotting
+regions in fitting both of these elements into the plot region and one may 
 have to change the default character sizes or margins to make things fit.
 Sometimes this function will not reset the type of margins correctly and the
 "null" call \code{par(mar = par("mar"))} may help to fix this issue.
 
 \strong{The text is too small!} 
-This always seems to happen as one is rushing to finish a talk and the figures have tiny default axis labels. Try just calling the function \code{fields.style} before plotting. List out this function to see what is changed, however, all text is increased by 20\% in size. 
+This always seems to happen as one is rushing to finish a talk  and the figures have tiny default axis labels. Try just calling the function \code{fields.style} before plotting. List out this function to see what is changed, however, all text is increased by 20\% in size. 
 
 \strong{Why ``image.plot" and not ``image"?} The R Base function \code{image} is very 
 useful but it is awkward to place a legend quickly. However, that said if you are
@@ -227,11 +225,14 @@ functions \code{quilt.plot.Rd} and \code{as.image} to discretise
 irregular observations to a grid. If the values makes sense as points on 
 a smooth surface see \code{Tps} and \code{fastTps} for surface interpolation.
 
+\strong{Adding separate color to indicate the grid box boundaries.} Sometimes you want to show to the grid box borders to emphasize this is not a smooth surface. To our knowledge there is no easy way to do this as an option in \code{image}. But if your image is formatted in the "poly image" style where x and y are also matrices you can use the polyimage  (see the \code{border} argument above) option to draw in boundaries. 
+
+
 \strong{Grids with unequally spacing -- quadrialteral pixels:}
 If x and y are matrices that are a smooth transformation of a regular grid  then
-z[i,j] is rendered at a quadrilateral that is centered at x[i,j] and
+z[i,j] can be interperted as representing the average value in a quadrilateral that is centered at x[i,j] and
 y[i,j] (\code{midpoint} TRUE). The details of how this cell is found
-are buried in \code{poly.image} but it it essentially found using midpoints between the centers.If \code{midpoint} is FALSE then x
+are buried in \code{poly.image} but it it essentially found using midpoints between the centers. If \code{midpoint} is FALSE then x
 and y are interpreted as the corners of the quadrilateral cells. But
 what about z? The four values of z are now averaged to represent a
 value at the midpoint of the cell and this is what is used for
@@ -241,19 +242,22 @@ defined according to one map projection but the image plotting is required
 in another projection. Typically the regular grid becomes distorted in 
 a smooth way when this happens. See the regional climate example for
 a illustration of this application. One can add border colors in this case
-easily because these choices are jsut passed onto the polygon function. 
+easily because these choices are just passed onto the polygon function. 
 
-Adding the pixel grid for rectangular images:
-For adding the grid of pixel borders to a rectangular image try this example
-after calling \code{image.plot}
+\strong{Adding the pixel grid for rectangular images:}
+For adding the grid of pixel borders to a rectangular image try this example 
+after calling \code{image.plot}. 
 
-%\preformatted{ 
-\code{ dx<- x[2] - x[1]} \cr
-\code{ dy <- y[2]-y[1]} \cr
-\code{ xtemp<- seq(  min( x)- dx/2, max(x)+ dx/2,, length(x) +1) } \cr
-\code{ ytemp<- seq(  min( y)- dy/2, max(y)+ dy/2,, length(y) +1)} \cr
-\code{ xline( xtemp, col="grey50", lwd=2);  yline( ytemp, col="grey50", lwd=2)} 
-%}
+\preformatted{ 
+ dx <- x[2] - x[1]  
+ dy <- y[2] - y[1]  
+ xtemp<- seq(  min( x)- dx/2, max(x)+ dx/2,
+         length.out = length(x) +1) 
+ ytemp<- seq(  min( y)- dy/2, max(y)+ dy/2,
+         length.out = length(y) +1)
+ xline( xtemp, col="grey", lwd=2)
+ yline( ytemp, col="grey", lwd=2) 
+}
 
 Here \code{x} and \code{y} here are the x and y grid values from the image list.  
 
@@ -268,7 +272,7 @@ annotate the legend axis in an informative matter.
 
 \strong{Adding just the legend strip:}
 Note that to add just the legend strip all the numerical information one
-needs is the \code{zlim} argument and the color table!
+needs is the \code{zlim} argument and the color table! See examples for tricks in positioning.
 
 \strong{About color tables:}
 We like \code{tim.colors}
@@ -316,7 +320,7 @@ similar function to image.plot and a formula syntax in the call.
 
 By keeping the \code{zlim} argument the same across images one can generate the
 same color scale. (See the \code{image} help file.)  One useful technique for a
-panel of images is to just draw the images with \code{image} 
+panel of images is to just draw the images with good old \code{image} 
 and then use image.plot to add a legend to the last plot. (See example 
 below for messing with the outer margins to make this work.) 
 Usually a square plot (\code{pty="s"}) done in a rectangular plot region will
@@ -380,6 +384,17 @@ add.image, colorbar.plot, tim.colors, designer.colors }
 image.plot(x,y,z, 
        legend.args=list( text="unknown units",
      col="magenta", cex=1.5, side=4, line=2))
+     
+# and finally add some grid lines
+ dx <- x[2] - x[1]  
+ dy <- y[2] - y[1]  
+ xtemp<- seq(  min( x)- dx/2, max(x)+ dx/2,
+         length.out = length(x) +1) 
+ ytemp<- seq(  min( y)- dy/2, max(y)+ dy/2,
+         length.out = length(y) +1)
+ xline( xtemp, col="grey", lwd=2)
+ yline( ytemp, col="grey", lwd=2)
+#
 
 #### example using a irregular quadrilateral grid
 data( RCMexample)

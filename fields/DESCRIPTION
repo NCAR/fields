@@ -1,6 +1,6 @@
 Package: fields
-Version: 9.8-4
-Date: 2019-06-20
+Version: 9.8-5
+Date: 2019-07-16
 Title: Tools for Spatial Data
 Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "douglasnychka@gmail.com"),
@@ -42,6 +42,6 @@ License: GPL (>= 2)
 URL: https://github.com/NCAR/Fields
 Depends: R (>= 3.0), methods, spam, maps
 NeedsCompilation: yes
-Packaged: 2018-06-20; nychka
+Packaged: 2018-07-16; nychka
 Repository: CRAN
 NeedsCompilation: yes

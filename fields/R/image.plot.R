@@ -76,8 +76,9 @@
             image(..., breaks=breaks, add = add, col = col)
         }
         else {
-            poly.image(..., add = add, col = col, midpoint = midpoint, 
-                border = border, lwd.poly = lwd)
+            poly.image(..., add = add,breaks=breaks, col = col,
+                       midpoint = midpoint, 
+                    border = border, lwd.poly = lwd)
         }
         big.par <- par(no.readonly = TRUE)
     }

@@ -24,7 +24,9 @@
 \alias{larry.colors}
 \alias{two.colors}
 \alias{designer.colors}
+
 \alias{color.scale}
+\alias{snow.colors}
 \alias{fieldsPlotColors}
 \title{ Some useful color tables for images and tools to handle them. }
 \description{
@@ -38,6 +40,8 @@ real valued vector.
 tim.colors(n = 64, alpha=1.0)
 
 larry.colors()
+
+snow.colors(n=256, alpha=1)
 
 two.colors(n=256, start="darkgreen", end="red", middle="white",
 alpha=1.0)
@@ -89,18 +93,22 @@ The color in R can be represented as three vectors in RGB coordinates
 and these coordinates are interpolated separately using a cubic spline
 to give color values that intermediate to the specified colors.
 
- Ask Tim Hoar about \code{tim.colors}! He is a matlab black belt and
+ Ask Tim Hoar about \code{tim.colors}! He is a Mattlab black belt and
 this is his favorite scale in that system.  \code{two.colors} is
 really about three different colors. For other colors try
 \code{fields.color.picker} to view possible choices.
 \code{start="darkgreen", end="azure4"} are the options used to get a
 nice color scale for rendering aerial photos of ski trails.  (See
 \url{https://github.com/dnychka/MJProject}.)  \code{larry.colors}
-is a 13 color palette used by Larry McDaniel and is particularly
+is a 13 color palette used by Larry McDaniel (retired software engineer from NCAR) and is particularly
 useful for visualizing fields of climate variables.
 
- \code{designer.color} is the master function for two.colors and
-tim.colors.  It can be useful if one wants to customize the color
+\code{snow.colors} is the scale used by Will Klieber's team for
+visualizing snow cover from remotely sensed data products. See the commented code for the script as to how how this was formed from an orignal raw 256 level scale. Note the that first color in this table is grey and is desigend to represent the minimum value of the range ( e.g. 0). If the image in in percent snow cover then \code{zlim=c(0,100)}
+would make sense as a range to fit grey pixels to zero and white to 100 percent.
+
+ \code{designer.color} is the master function for the otther scales. 
+ It can be useful if one wants to customize the color
 table to match quantiles of a distribution.  e.g. if the median of the
 data is at .3 with respect to the range then set \code{x} equal to
 c(0,.3,1) and specify three colors to provide a transtion that matches
@@ -112,12 +120,13 @@ easy. For example
 \code{designer.color( 256, rainbow(4), x= c( 0,.2,.8,1.0))}
 
 leaves the choice of the colors to Dr. R after a thunderstorm.
+See also colorBrewer to choose sequences of colors that form a good palette. 
 
 \code{color.scale} assigns colors to a numerical vector in the same way as 
 the \code{image} function. This is useful to kept the assigment of colors consistent
 across several vectors by specifiying a common \code{zlim} range.  
 
-\code{plotColorScale} A simple function to plot a vector of colors to examinet their values. 
+\code{plotColorScale} A simple function to plot a vector of colors to examine their values. 
 }
 
 \value{
@@ -138,14 +147,16 @@ tim.colors(10)
 # rgb( 16/255, 255/255, 239/255, alpha=.5)
 #   gives   "#10FFEF80"  note extra "alpha channel"
 
-# veiw some color table choices
-set.panel( 2,3)
-z<- outer( 1:20,1:20, "+")
-obj<- list( x=1:20,y=1:20,z=z )
-
-image( obj, col=tim.colors( 200)) # 200 levels
-
-image( obj, col=two.colors() )
+# view some color table choices
+set.panel( 4,1)
+fieldsPlotColors( tim.colors())
+title("tim.colors")
+fieldsPlotColors( larry.colors())
+title("larry.colors")
+fieldsPlotColors( two.colors())
+title("two.colors")
+fieldsPlotColors( snow.colors())
+title("snow.colors")
 
 # using tranparency without alpha the image plot would cover points
 plot( 1:20,1:20)

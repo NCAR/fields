@@ -24,6 +24,8 @@ tim.colors(n = 64, alpha=1.0)
 
 larry.colors()
 
+snow.colors(n=256, alpha=1)
+
 two.colors(n=256, start="darkgreen", end="red", middle="white",
 alpha=1.0)
 
@@ -105,18 +107,22 @@ that the x values are equally spacesd from 0 to 1.</p>
 and these coordinates are interpolated separately using a cubic spline
 to give color values that intermediate to the specified colors.
 </p>
-<p>Ask Tim Hoar about <code>tim.colors</code>! He is a matlab black belt and
+<p>Ask Tim Hoar about <code>tim.colors</code>! He is a Mattlab black belt and
 this is his favorite scale in that system.  <code>two.colors</code> is
 really about three different colors. For other colors try
 <code>fields.color.picker</code> to view possible choices.
 <code>start="darkgreen", end="azure4"</code> are the options used to get a
 nice color scale for rendering aerial photos of ski trails.  (See
-<a href="http://www.image.ucar.edu/Data/MJProject">http://www.image.ucar.edu/Data/MJProject</a>.)  <code>larry.colors</code>
-is a 13 color palette used by Larry McDaniel and is particularly
+<a href="https://github.com/dnychka/MJProject">https://github.com/dnychka/MJProject</a>.)  <code>larry.colors</code>
+is a 13 color palette used by Larry McDaniel (retired software engineer from NCAR) and is particularly
 useful for visualizing fields of climate variables.
 </p>
-<p><code>designer.color</code> is the master function for two.colors and
-tim.colors.  It can be useful if one wants to customize the color
+<p><code>snow.colors</code> is the scale used by Will Klieber's team for
+visualizing snow cover from remotely sensed data products. See the commented code for the script as to how how this was formed from an orignal raw 256 level scale. Note the that first color in this table is grey and is desigend to represent the minimum value of the range ( e.g. 0). If the image in in percent snow cover then <code>zlim=c(0,100)</code>
+would make sense as a range to fit grey pixels to zero and white to 100 percent.
+</p>
+<p><code>designer.color</code> is the master function for the otther scales. 
+It can be useful if one wants to customize the color
 table to match quantiles of a distribution.  e.g. if the median of the
 data is at .3 with respect to the range then set <code>x</code> equal to
 c(0,.3,1) and specify three colors to provide a transtion that matches
@@ -128,12 +134,13 @@ easy. For example
 <p><code>designer.color( 256, rainbow(4), x= c( 0,.2,.8,1.0))</code>
 </p>
 <p>leaves the choice of the colors to Dr. R after a thunderstorm.
+See also colorBrewer to choose sequences of colors that form a good palette. 
 </p>
 <p><code>color.scale</code> assigns colors to a numerical vector in the same way as 
 the <code>image</code> function. This is useful to kept the assigment of colors consistent
 across several vectors by specifiying a common <code>zlim</code> range.  
 </p>
-<p><code>plotColorScale</code> A simple function to plot a vector of colors to examinet their values. 
+<p><code>plotColorScale</code> A simple function to plot a vector of colors to examine their values. 
 </p>
 
 
@@ -162,14 +169,16 @@ tim.colors(10)
 # rgb( 16/255, 255/255, 239/255, alpha=.5)
 #   gives   "#10FFEF80"  note extra "alpha channel"
 
-# veiw some color table choices
-set.panel( 2,3)
-z&lt;- outer( 1:20,1:20, "+")
-obj&lt;- list( x=1:20,y=1:20,z=z )
-
-image( obj, col=tim.colors( 200)) # 200 levels
-
-image( obj, col=two.colors() )
+# view some color table choices
+set.panel( 4,1)
+fieldsPlotColors( tim.colors())
+title("tim.colors")
+fieldsPlotColors( larry.colors())
+title("larry.colors")
+fieldsPlotColors( two.colors())
+title("two.colors")
+fieldsPlotColors( snow.colors())
+title("snow.colors")
 
 # using tranparency without alpha the image plot would cover points
 plot( 1:20,1:20)
@@ -204,5 +213,5 @@ set.panel()
 
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.8-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

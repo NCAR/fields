@@ -15,33 +15,33 @@ fields - tools for spatial data
 fitting with an emphasis on spatial data and spatial statistics. The
 major methods implemented include cubic and thin plate splines, 
 universal
-Kriging and Kriging for large data sets. One main feature is any
+Kriging and Kriging for large data sets.  One main feature is any
 covariance function implemented in R code can be used for spatial prediction. Another important feature is that fields will take advantage of compactly supported covariance functions in a seamless way through 
 the spam package. See <code>library( help=fields)</code> for a listing of all the
-fields contents. 
+fields contents and I recommend the excellent fields vignette created by Ashton and Mitch:
+<a href="https://github.com/NCAR/fields/blob/master/fieldsVignette.pdf">Fields Vignette</a>
 </p>
 <p>fields stives to have readable and tutorial code. Take a look at the 
-source code for <code>Krig</code> and <code>mKrig</code> to see how things work 
-&quot;under the hood&quot;. 
-To load fields with the comments retained in the source
+source code for  <code>mKrig</code> to see how things work 
+&quot;under the hood&quot; and how a statistical, linear algebra computation is
+overloaded to handle sparse matrices.
+</p>
+<p>To load fields with the comments retained in the source
 use <code> keep.source = TRUE</code> in the <code>library</code> command. 
 We also keep the source on-line:
-browse the directory 
-<a href="http://www.image.ucar.edu/~nychka/Fields/Source">http://www.image.ucar.edu/~nychka/Fields/Source</a> for commented source. 
-<a href="http://www.image.ucar.edu/~nychka/Fields/Help/00Index.html">http://www.image.ucar.edu/~nychka/Fields/Help/00Index.html</a> is a
-page for html formatted help files. (If you obtain the source version of the
-package (file ends in .gz) the commented source code is the R subdirectory.) 
+refer to  the github directory 
+<a href="https://github.com/NCAR/Fields">https://github.com/NCAR/Fields</a> for commented source. 
 </p>
 <p><strong>Major methods</strong> 
 </p>
  
 <ul>
-<li> <p><code><a href="Tps.html">Tps</a></code> Thin Plate spline
-regression including GCV and REML estimates for the smoothing parameter. 
-</p>
-</li>
 <li> <p><code><a href="spatialProcess.html">spatialProcess</a></code> An easy to use method that fits a spatial process model
 ( e.g. Kriging) but also estimates the key spatial parameters:  nugget variance, sill variance and range by maximum likelihood. Default covariance model is a Matern covariance function.
+</p>
+</li>
+<li> <p><code><a href="Tps.html">Tps</a></code> Thin Plate spline
+regression including GCV and REML estimates for the smoothing parameter. 
 </p>
 </li>
 <li> <p><code><a href="Krig.html">Krig</a></code> Spatial process estimation that is the core function of fields.
@@ -196,5 +196,5 @@ fit2&lt;- spatialProcess( x,y)
 
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.8-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

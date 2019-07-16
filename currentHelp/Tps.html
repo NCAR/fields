@@ -201,8 +201,9 @@ included to reflect other model degrees of freedom.  </p>
 <p>Both of these functions are special cases of using the 
 <code>Krig</code> and <code>mKrig</code> functions. See the help on each of these
 for more information on the calling arguments and what is returned. 
+<code>Tps</code> makes use of the stable computations via eigen decompositions in <code>Krig</code>. <code>fastTps</code> follows the more standard computations for spatial statistics centered around the Cholesky decomposition in <code>mKrig</code>.
 </p>
-<p>A thin plate spline is result of minimizing the residual sum of 
+<p>A thin plate spline is the result of minimizing the residual sum of 
 squares subject to a constraint that the function have a certain 
 level of smoothness (or roughness penalty). Roughness is 
 quantified by the integral of squared m-th order derivatives. For one 
@@ -274,7 +275,7 @@ This function does have the potential to approximate estimates of Tps
 for very large spatial data sets. See <code>wendland.cov</code> and help on 
 the SPAM package for more background.
 Also, the function <code>predictSurface.fastTps</code> has been made more efficient for the 
-case of k=2 and m=2. 
+case of k=2 and m=2. Also see the handy function <code><a href="mKrigMLE.html">fastTpsMLE</a></code> to estimate lambda by maximum likelihood. 
 </p>
 <p>See also the mKrig function for handling larger data sets and also for an example
 of combining Tps and mKrig for evaluation on a huge grid. 
@@ -304,9 +305,18 @@ See &quot;Additive Models&quot; by Hastie and Tibshirani.
 
 <h3>See Also</h3>
 
-<p>Krig, summary.Krig, predict.Krig, predictSE.Krig, predictSurface, predictSurface.fastTps, plot.Krig, mKrig  
+<p><code><a href="Krig.html">Krig</a></code>,
+<code><a href="mKrig.html">mKrig</a></code>,
+<code><a href="spatialProcess.html">spatialProcess</a></code>,
+<code><a href="summary.Krig.html">summary.Krig</a></code>,
+<code><a href="predict.Krig.html">predict.Krig</a></code>,
+<code><a href="predictSE.Krig.html">predictSE.Krig</a></code>,
+<code><a href="predictSurface.html">predictSurface</a></code>,
+<code><a href="predictSurface.html">predictSurface.fastTps</a></code>,
+<code><a href="plot.Krig.html">plot.Krig</a></code>,
 <code><a href="surface.Krig.html">surface.Krig</a></code>, 
-<code><a href="sreg.html">sreg</a></code> 
+<code><a href="sreg.html">sreg</a></code>,
+<code><a href="mKrigMLE.html">fastTpsMLE</a></code>
 </p>
 
 
@@ -526,5 +536,5 @@ surface(fit)
 
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.6 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.8-5 <a href="00Index.html">Index</a>]</div>
 </body></html>

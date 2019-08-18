@@ -319,19 +319,21 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
 
 \dontrun{
 #perform joint likelihood maximization over lambda, theta, and smoothness.  
-#optim can get a bad answer with poor initial guesses.
+#note: finding smoothness is not robust optim 
+#      can get a bad answer with poor initial guesses.
 obj2<- mKrigMLEJoint(x,Y, 
-                      cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.start=list(theta=.2),
-                       lambda.start=.1)
+                      cov.args=list(Covariance="Matern"), 
+                      cov.params.start=list(theta=.18, smoothness=1.1),
+                       lambda.start=.08)
 
 #look at lnLikelihood  evaluations
 obj2$summary
 #compare to REML
 obj3<- mKrigMLEJoint(x,Y, 
-                      cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.start=list(theta=.2),
-                       lambda.start=.1, REML=TRUE)
+                      cov.args=list(Covariance="Matern"), 
+                      cov.params.start=list(theta=.18, smoothness=1.1),
+                        lambda.start=.08
+                       , REML=TRUE)
 }
 \dontrun{
 #look at lnLikelihood  evaluations

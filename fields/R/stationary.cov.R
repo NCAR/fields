@@ -55,6 +55,11 @@
   if (Distance == "rdist.earth" & !is.null(V)) {
     stop("V not supported with great circle distance")
   }
+  # use V the anisotropic scaling and rotation from covariance arguments 
+  # if exists
+  if( !is.null(cov.args$V) ){
+    V<- cov.args$V
+  }
   if (!is.null(V)) {
     if (theta != 1) {
       stop("can't specify both theta and V!")

@@ -158,34 +158,40 @@ title("two.colors")
 fieldsPlotColors( snow.colors())
 title("snow.colors")
 
+# a bubble plot with some transparency for overlapping dots
+set.seed(123)
+loc<- matrix( rnorm( 200), 100,2)
+Z<- loc[,1] + loc[,2]
+colorMap<- color.scale( Z, col=tim.colors(10, alpha=.8))
+par( mar=c(5,5,5,5)) # extra room on right for color bar
+plot( loc, col=colorMap, pch=16, cex=2)
+#  add a color scale
+ image.plot(legend.only=TRUE, zlim=range( Z), col=tim.colors(10))
+
 # using tranparency without alpha the image plot would cover points
-plot( 1:20,1:20)
+
+obj<- list( x= 1:8, y=1:10, z= outer( 1:8, 1:10, "+") )
+plot( 1:10,1:10)
+
 image(obj, col=two.colors(alpha=.5), add=TRUE)
 
 coltab<- designer.colors(col=c("blue", "grey", "green"),
-                   x= c( 0,.3,1) ) 
+                   x= c( 0,.3,1) )
+		   
+
 image( obj, col= coltab )
 
 # peg colors at some desired quantiles  of data.
 # NOTE need 0 and 1 for the color scale to make sense
-x<- quantile( c(z), c(0,.25,.5,.75,1.0) )
+x<- quantile( c(obj$z), c(0,.25,.5,.75,1.0) )
 # scale these to [0,1]
-zr<- range( c(z))
+zr<- range( c(obj$z))
 x<- (x-zr[1])/ (zr[2] - zr[1])  
 
 coltab<- designer.colors(256,rainbow(5), x)
-image( z, col= coltab )
+image( obj$z, col= coltab )
 # see image.plot for adding all kinds of legends
 
-# some random color values
-set.seed(123)
-z<- rnorm(100)
-hex.codes<- color.scale(z, col=two.colors())
-N<-length( hex.codes)
-# take a look at the coded values
-# or equivalently create some Xmas wrapping paper!
-image( 1:N, N, matrix(1:N, N,1) , col=hex.codes, axes=FALSE,
-                               xlab="", ylab="")
 
 set.panel()
 

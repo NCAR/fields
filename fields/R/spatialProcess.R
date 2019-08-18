@@ -69,6 +69,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                                mKrig.args = mKrig.args,
 	                              cov.function = cov.function, 
 	                                  cov.args = cov.args,
+	                             
 	                               theta.start = theta.start, 
 	                               theta.range = theta.range, 
 	                                   	 gridN = 20,

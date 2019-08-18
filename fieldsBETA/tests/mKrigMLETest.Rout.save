@@ -1,0 +1,87 @@
+
+R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+Copyright (C) 2019 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+>  # fields is a package for analysis of spatial data written for
+>   # the R software environment .
+>   # Copyright (C) 2018
+>   # University Corporation for Atmospheric Research (UCAR)
+>   # Contact: Douglas Nychka, nychka@ucar.edu,
+>   # National Center for Atmospheric Research,
+>   # PO Box 3000, Boulder, CO 80307-3000
+>   #
+>   # This program is free software; you can redistribute it and/or modify
+>   # it under the terms of the GNU General Public License as published by
+>   # the Free Software Foundation; either version 2 of the License, or
+>   # (at your option) any later version.
+>   # This program is distributed in the hope that it will be useful,
+>   # but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   # GNU General Public License for more details.
+> 
+> suppressMessages(library( fields ))
+> options( echo=FALSE)
+Testing:  Likelihood Values summary and optim
+PASSED test at tolerance  1e-08
+Testing:  Likelihood Values summary and profile
+PASSED test at tolerance  1e-08
+Testing:  rho MLE
+PASSED test at tolerance  1e-08
+Testing:  consistency of Likelihood values
+PASSED test at tolerance  1e-08
+PASSED test at tolerance  1e-08
+Testing:  Testing MLESpatialProcess 
+PASSED test at tolerance  0.002
+Testing:  spatialProcess finding MLE 
+PASSED test at tolerance  1e-08
+Testing:  spatialProcess given MLE 
+PASSED test at tolerance  5e-08
+Testing mKrigMLEJoint against true values
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.002
+Testing mKrigMLEJoint  with REML against true values
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.002
+Testing mKrigMLEJoint  with REML FALSE  against true values
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.02
+PASSED test at tolerance  0.002
+lnProfileLike.FULL             lambda              theta           sigmaMLE 
+      -32.24048063         0.09913720         0.09942723         0.31460485 
+            rhoMLE            funEval           gradEval 
+        0.99837609        12.00000000        11.00000000 
+lnProfileREML.FULL             lambda              theta           sigmaMLE 
+      -32.24048063         0.09913720         0.09942723         0.31460485 
+            rhoMLE            funEval           gradEval 
+        0.99837609        12.00000000        11.00000000 
+lnProfileLike.FULL             lambda              theta           sigmaMLE 
+      -32.24016911         0.09913435         0.09941980         0.31459145 
+            rhoMLE            funEval           gradEval 
+        0.99831983        12.00000000        11.00000000 
+1  2   
+Testing:  Monte Carlo theta
+PASSED test at tolerance  0.005
+Testing:  Monte Carlo lambda
+PASSED test at tolerance  0.05
+all done with mKrigMLEGrid tests
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  5.136   0.659   5.788 

@@ -22,6 +22,7 @@
 \name{rdist.earth}
 \alias{rdist.earth}
 \alias{rdist.earth.vec}
+\alias{RdistEarth}
 
 \title{
   Great circle distance matrix or vector
@@ -35,6 +36,7 @@ method and is used in empirical variogram calculations.
 }
 \usage{
 rdist.earth(x1, x2, miles = TRUE, R = NULL)
+RdistEarth(x1, x2=NULL, miles=TRUE, R=NULL)
 rdist.earth.vec(x1, x2, miles = TRUE, R = NULL)
 }
 \arguments{
@@ -46,7 +48,7 @@ and second is the latitudes.
 \item{x2}{
 Matrix of second  set of lon/lat coordinates first column is the
 longitudes
-and second is the latitudes. If missing x1 is used. 
+and second is the latitudes. If missing  or NULL x1 is used. 
 }
 \item{miles}{
 If true distances are in statute miles if false distances in kilometers. 
@@ -63,9 +65,17 @@ x2)=n then the returned matrix will be mXn.
 }
 \details{
 Surprisingly the distance matrix is computed efficiently in R by dot products of the
-direction cosines. Thanks to Qing Yang for pointing this out a long time 
-ago. }
-\author{Doug Nychka, John Paige}
+direction cosines. This is the calculation in \code{rdist.earth}. Thanks to Qing Yang for pointing this out a long time 
+ago.  A more efficient version has been implemented in C with the
+R function \code{RdistEarth} by Florian Gerber who has also experimented with parallel versions of fields functions. 
+
+As Florian writes:
+
+" The current fields::rdist.earth() is surprisingly fast. In the case where only the argument 'x1' is specified, the new C implementation is faster. In the case where 'x1' and 'x2' are given, fields::rdist.earth() is a bit faster. This might be because fields::rdist.earth() does not check its input arguments and uses a less complicated (probably numerically less stable) formula."
+
+
+}
+\author{Doug Nychka, John Paige, Florian Gerber}
 \seealso{
   \link{rdist}, \link{stationary.cov}, \link{fields.rdist.near}
 }

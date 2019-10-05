@@ -1,6 +1,6 @@
 Package: fields
-Version: 9.8-5
-Date: 2019-07-16
+Version: 9.9
+Date: 2019-10-05
 Title: Tools for Spatial Data
 Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "douglasnychka@gmail.com"),
@@ -10,10 +10,11 @@ Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "paigejo@uw.edu"),
             person("Stephan", "Sain", role = "aut",
                email = "sainsr2@gmail.com"),
+	     person("Florian", "Gerber", role = "aut",
+               email = "flora.fauna.gerber@gmail.com")
 	       person("University Corporation for Atmospheric Research",
 	       role="cph", email="nychka@ucar.edu")
 	       ) 
-Author: Douglas Nychka [aut, cre], Reinhard Furrer [aut], John Paige [aut], Stephan Sain [aut], University Corporation for Atmospheric Research [cph]
 Maintainer: Douglas Nychka <douglasnychka@gmail.com>
 Description: For curve, surface and function fitting with an emphasis
  on splines, spatial data, geostatistics,  and spatial statistics. The major methods
@@ -42,6 +43,6 @@ License: GPL (>= 2)
 URL: https://github.com/NCAR/Fields
 Depends: R (>= 3.0), methods, spam, maps
 NeedsCompilation: yes
-Packaged: 2018-07-16; nychka
+Packaged: 2018-08-19; nychka
 Repository: CRAN
 NeedsCompilation: yes

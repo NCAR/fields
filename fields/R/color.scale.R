@@ -43,8 +43,9 @@ color.scale <- function(z, col = tim.colors(256),
 # legend.     
     attr( colorMap,"zlim")<- zlim
     attr(colorMap,"col")<- col
-    colorMapInfo<- list( col=col, zlim=zlim)
-    assign( ".colorMapInfo", colorMapInfo, pos=1)
+    # potential hooks for colorBar functions
+    #colorMapInfo<- list( col=col, zlim=zlim)
+    #assign( ".colorMapInfo", colorMapInfo, pos=1)
     return( colorMap)
 }
 

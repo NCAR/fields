@@ -11,7 +11,7 @@ Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
             person("Stephan", "Sain", role = "aut",
                email = "sainsr2@gmail.com"),
 	     person("Florian", "Gerber", role = "aut",
-               email = "flora.fauna.gerber@gmail.com")
+               email = "flora.fauna.gerber@gmail.com"),
 	       person("University Corporation for Atmospheric Research",
 	       role="cph", email="nychka@ucar.edu")
 	       ) 

@@ -58,7 +58,7 @@ atmospheric boundery conditions for 6 different regional climate
 models. In the current data the forcing is the observations derived
 from the NCEP reanalysis data and is for Janurary 1, 1979. The full
 simulation runs for 20 years from this starting date. See
-\url{https://www.narccap.ucar.edu} for more information about these data.
+the NARCCAP web page for more information about these data.
 
 To facilatate a better representation of these fields the raw precipitation values  have been transformed to the log scale with all values below 4.39E-5 cm/3 hours set to this lower bound.  
 

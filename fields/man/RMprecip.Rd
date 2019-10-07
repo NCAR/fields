@@ -29,7 +29,7 @@ Region and some gridded 4km elevation data sets (m).
 }
 \description{
 \code{RMprecip} is a useful spatial data set of moderate size consisting of 806
-locations. See www.image.ucar.edu/Data for the source of these data. 
+locations. 
 \code{PRISMelevation} and \code{RMelevation} are gridded elevations for the 
 continental US and Rocky Mountain region at 4km resolution. 
 Note that the gridded elevations from the PRISM data product are
@@ -73,7 +73,8 @@ Average  elevation for grid cell in meters
 
 These elevations and the companion grid formed the basis for the
 103-Year High-Resolution Precipitation Climate Data Set for the
-Conterminous United States ( see \url{http://www.prism.oregonstate.edu/documents/PRISM_downloads_FTP.pdf}
+Conterminous United States
+( see \url{http://www.prism.oregonstate.edu/documents/PRISM_downloads_FTP.pdf}
 and also archived at the National
 Climate Data Center. This work is authored by Chris Daly
 \url{http://www.prism.oregonstate.edu} and his PRISM group but had some
@@ -83,10 +84,8 @@ takes into account topography such as elevation and aspect.
 
 }
 \details{
-The binary file \code{RData.USmonthlyMet.bin}
-can be downwloaded from   
-\url{http://www.image.ucar.edu/Data/US.monthly.met}
-and also includes information on its source. 
+Contact Doug Nychka for the binary file \code{RData.USmonthlyMet.bin}
+and  information on its source. 
 
 \preformatted{
 # explicit source code to create the RMprecip data

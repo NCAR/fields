@@ -46,12 +46,8 @@
 Source:
  These is a group of R data sets for monthly min/max temperatures and
 precipitation over the period 1895-1997. It is a subset extracted from
-the more extensive US data record described in at
-\url{http://www.image.ucar.edu/Data/US.monthly.met}. Observed monthly
-precipitation, min and max temperatures for the conterminous US
-1895-1997. See also
- \url{http://www.image.ucar.edu/Data/US.monthly.met/CO.shtml} for an
-on line document of this Colorado subset. Temperature is in degrees C and
+the more extensive US data record.
+Temperature is in degrees C and
 precipitation is total monthly accumulation in millimeters. Note that
 minimum (maximum) monthly tempertuare is the mean of the daily minimum
 (maximum) temperatures. 
@@ -129,9 +125,8 @@ out<- MLE.Matern(CO.loc[good,],CO.tmax.MAM.climate[good],
 }
 \section{Creation of data subset}{
 Here is the precise R script used to create this data subset from the 
-larger US monthly data set. This parent data set is available from 
-\url{http://www.image.ucar.edu/public/Data} with a general description at
-\url{http://www.image.ucar.edu/Data/US.monthly.met}.
+larger US monthly data set. This parent, R binary file can be obtained
+by contacting Doug Nychka (nychka@mines.edu).
 
  These technical details are not needed for casual use of the data -- 
 skip down to examples for some R code that summarizes these data.

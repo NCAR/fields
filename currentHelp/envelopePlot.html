@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Add a shaded the region between two functions to an existing...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for envelopePlot {fields}"><tr><td>envelopePlot {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Add a shaded the region between two functions to an existing plot</h2>
+
+<h3>Description</h3>
+
+<p>This function shades the region vertically between two functions, specified as pairs of x and y vectors,
+and draws the functions in a darker shade. More formally, it shades all points (x,y) such that f1(x) &lt; y
+&lt; f2(x) or f2(x) &lt; y &lt; f1(x). When both functions have the same group of x values, 
+the x values only need to be set once but y2 needs to be passed in by name. 
+If the two functions intersect, the vertical space between the functions will be shaded on both sides, as
+implied in the definition above.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+envelopePlot(x1, y1, x2 = x1, y2,
+                         col ="thistle1" , lineCol = "thistle3", ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x1</code></td>
+<td>
+<p>The x coordinates for the first function (or possibly both functions).</p>
+</td></tr>
+<tr valign="top"><td><code>y1</code></td>
+<td>
+<p>The y coordinates for the first function.</p>
+</td></tr>
+<tr valign="top"><td><code>x2</code></td>
+<td>
+<p>The x coordinates for the second function.</p>
+</td></tr>
+<tr valign="top"><td><code>y2</code></td>
+<td>
+<p>The y coordinates for the second function.</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>The color to make the filling between the functions.</p>
+</td></tr>
+<tr valign="top"><td><code>lineCol</code></td>
+<td>
+<p>The color to make the lines representing the functions.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Additional arguments to the base R function <code>polygon</code> </p>
+</td></tr>
+</table>
+
+
+<h3>Author(s)</h3>
+
+<p>Matt Iverson
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x &lt;- seq(0, 2*pi,, 100)
+y1 &lt;- cos(x)
+y2 &lt;- sin(x)
+plot(x, y1, type="l")
+envelopePlot(x, y1, y2=y2)
+
+x1 &lt;- c(0, 0.5, 1)
+y1 &lt;- c(0, 2, 1)
+x2 &lt;- c(0, 1)
+y2 &lt;- c(-1, 0)
+plot(x1, y1, type="l", ylim=c(-1, 2))
+envelopePlot(x1, y1, x2, y2)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.9 <a href="00Index.html">Index</a>]</div>
+</body></html>

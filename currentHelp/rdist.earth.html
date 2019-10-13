@@ -23,6 +23,7 @@ method and is used in empirical variogram calculations.
 
 <pre>
 rdist.earth(x1, x2, miles = TRUE, R = NULL)
+RdistEarth(x1, x2=NULL, miles=TRUE, R=NULL)
 rdist.earth.vec(x1, x2, miles = TRUE, R = NULL)
 </pre>
 
@@ -43,7 +44,7 @@ and second is the latitudes.
 
 <p>Matrix of second  set of lon/lat coordinates first column is the
 longitudes
-and second is the latitudes. If missing x1 is used. 
+and second is the latitudes. If missing  or NULL x1 is used. 
 </p>
 </td></tr>
 <tr valign="top"><td><code>miles</code></td>
@@ -66,8 +67,14 @@ argument. If R=1 then distances are of course in radians.
 <h3>Details</h3>
 
 <p>Surprisingly the distance matrix is computed efficiently in R by dot products of the
-direction cosines. Thanks to Qing Yang for pointing this out a long time 
-ago. </p>
+direction cosines. This is the calculation in <code>rdist.earth</code>. Thanks to Qing Yang for pointing this out a long time 
+ago.  A more efficient version has been implemented in C with the
+R function <code>RdistEarth</code> by Florian Gerber who has also experimented with parallel versions of fields functions. 
+</p>
+<p>As Florian writes:
+</p>
+<p>&quot; The current fields::rdist.earth() is surprisingly fast. In the case where only the argument 'x1' is specified, the new C implementation is faster. In the case where 'x1' and 'x2' are given, fields::rdist.earth() is a bit faster. This might be because fields::rdist.earth() does not check its input arguments and uses a less complicated (probably numerically less stable) formula.&quot;
+</p>
 
 
 <h3>Value</h3>
@@ -79,7 +86,7 @@ x2)=n then the returned matrix will be mXn.
 
 <h3>Author(s)</h3>
 
-<p>Doug Nychka, John Paige</p>
+<p>Doug Nychka, John Paige, Florian Gerber</p>
 
 
 <h3>See Also</h3>
@@ -105,5 +112,5 @@ dists = rdist.earth.vec(x1, x2)
 print(dists)
 </pre>
 
-<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.8-5 <a href="00Index.html">Index</a>]</div>
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 9.9 <a href="00Index.html">Index</a>]</div>
 </body></html>

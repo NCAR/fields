@@ -1,5 +1,5 @@
 
-R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
+R version 3.6.1 (2019-07-05) -- "Action of the Toes"
 Copyright (C) 2019 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin15.6.0 (64-bit)
 
@@ -33,25 +33,7 @@ Type 'q()' to quit R.
 >   # GNU General Public License for more details.
 > 
 > 
-> library( fields )
-Loading required package: spam
-Loading required package: dotCall64
-Loading required package: grid
-Spam version 2.2-2 (2019-03-07) is loaded.
-Type 'help( Spam)' or 'demo( spam)' for a short introduction 
-and overview of this package.
-Help for individual functions is also obtained by adding the
-suffix '.spam' to the function name, e.g. 'help( chol.spam)'.
-
-Attaching package: 'spam'
-
-The following objects are masked from 'package:base':
-
-    backsolve, forwardsolve
-
-Loading required package: maps
-See https://github.com/NCAR/Fields for
- an extensive vignette, other supplements and source code 
+> suppressMessages(library( fields ))
 > options( echo=FALSE)
 [1] "testing using distance matrix"
 [1] "finished default case"
@@ -64,4 +46,4 @@ all done with mKrig.MLE tests
 > 
 > proc.time()
    user  system elapsed 
-  7.899   0.483   8.394 
+  7.943   0.460   8.393 

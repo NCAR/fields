@@ -16,7 +16,7 @@
   # GNU General Public License for more details.
 
 
-supressMessages(library( fields ))
+suppressMessages(library( fields ))
 options( echo=FALSE)
 test.for.zero.flag<- 1
 

@@ -8,8 +8,9 @@
 cd fields.Rcheck
 sed -e "s/##D/ /" fields-ex.R > temp.r
 sed -e "s/library('fields')/library('fields', lib.loc='.')/" temp.r > all-ex.R 
-/Users/nychkaadmin/Desktop/R/R-devel/bin/R   --save < all-ex.R > all-ex.Rout
+R   --save < all-ex.R > all-ex.Rout
 #
+
 R --save < all-ex.R > all-ex.Rout
 # take a look 
  grep FAILED all-ex.Rout
@@ -48,3 +49,9 @@ cp  fields.Rcheck/tests/cov.test2.Rout  fields/tests/cov.test2.Rout.save
 cp  fields.Rcheck/tests/mKrigMLETest.Rout  fields/tests/mKrigMLETest.Rout.save
 cp  fields.Rcheck/tests/mKrigREMLTest.Rout  fields/tests/mKrigREMLTest.Rout.save
 cp  fields.Rcheck/tests/SEFixedParameters.Rout  fields/tests/SEFixedParameters.Rout.save
+
+
+#Adding help files
+R CMD INSTALL --library=lib --html fields_9.9.tar.gz
+cp lib/fields/html/* currentHelp
+

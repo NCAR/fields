@@ -22,6 +22,8 @@
 \alias{multwendlandg}
 \alias{mltdrb}
 \alias{RdistC}
+\alias{distMatHaversin}
+\alias{distMatHaversin2}
 %
 \docType{data}
 \title{Information objects that register
@@ -80,6 +82,11 @@ package source (src) directory.
 
 \item{RdistC}{ Euclidean distance function between sets of coordinates.
 See \code{rdist}.}
+
+\item{distMatHaversin}{ Used in \code{RdistEarth}.}
+
+\item{distMatHaversin2}{ Used in \code{RdistEarth}.}
+
 }
 
 See \code{package_native_routine_registration_skeleton} for the 

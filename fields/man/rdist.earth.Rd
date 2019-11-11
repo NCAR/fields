@@ -68,10 +68,10 @@ Surprisingly the distance matrix is computed efficiently in R by dot products of
 direction cosines. This is the calculation in \code{rdist.earth}. Thanks to Qing Yang for pointing this out a long time 
 ago.  A more efficient version has been implemented in C with the
 R function \code{RdistEarth} by Florian Gerber who has also experimented with parallel versions of fields functions. 
+The main advantage of \code{RdistEarth} is the largely reduce memory usage.
+The speed seems simillar to \code{rdist.earth}. As Florian writes:
 
-As Florian writes:
-
-" The current fields::rdist.earth() is surprisingly fast. In the case where only the argument 'x1' is specified, the new C implementation is faster. In the case where 'x1' and 'x2' are given, fields::rdist.earth() is a bit faster. This might be because fields::rdist.earth() does not check its input arguments and uses a less complicated (probably numerically less stable) formula."
+"The current fields::rdist.earth() is surprisingly fast. In the case where only the argument 'x1' is specified, the new C implementation is faster. In the case where 'x1' and 'x2' are given, fields::rdist.earth() is a bit faster. This might be because fields::rdist.earth() does not check its input arguments and uses a less complicated (probably numerically less stable) formula."
 
 
 }
@@ -83,6 +83,10 @@ As Florian writes:
 data(ozone2)
 out<- rdist.earth ( ozone2$lon.lat)
 #out is a 153X153 distance matrix
+
+out2<- RdistEarth ( ozone2$lon.lat)
+all.equal(out, out2)
+
 upper<-  col(out)> row( out)
 # histogram of all pairwise distances. 
 hist( out[upper])

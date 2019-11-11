@@ -30,6 +30,8 @@ extern SEXP compactToMatC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP ExponentialUpperC(SEXP, SEXP, SEXP);
 extern SEXP multebC(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP RdistC(SEXP, SEXP);
+extern SEXP distMatHaversin(SEXP, SEXP, SEXP);
+extern SEXP distMatHaversin2(SEXP, SEXP, SEXP, SEXP);
 
 /* .Fortran calls */
 extern void F77_NAME(css)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
@@ -51,6 +53,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"ExponentialUpperC", (DL_FUNC) &ExponentialUpperC, 3},
     {"multebC",           (DL_FUNC) &multebC,           8},
     {"RdistC",            (DL_FUNC) &RdistC,            2},
+    {"distMatHaversin",   (DL_FUNC) &distMatHaversin,   3},
+    {"distMatHaversin2",   (DL_FUNC) &distMatHaversin,   4},
     {NULL, NULL, 0}
 };
 

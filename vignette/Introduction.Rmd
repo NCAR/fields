@@ -1,0 +1,64 @@
+---
+title: "Introduction"
+output: 
+  html_document:
+    toc: true
+---
+
+```{r , include=FALSE}
+library(fields)
+```
+
+#Introduction
+
+
+`fields` is an R package for curve and function fitting with an emphasis on spatial data. The major methods include:  
+
+
+
+*  `spatialProcess` An easy to use method that fits a spatial process model (aka Kriging) but also estimates the key spatial parameters: nugget variance, sill variance, and range by maximum likelihood. The default covariance model is a Matern covariance function, although it is easy to provide a user supplied covariance coded in R.  
+*  `Tps` Thin Plate spline regression including GCV and REML estimates for the smoothing parameter.
+*  `mKrig` (micro Krig) and `fastTps` compute fast efficient Universal Kriging and spline-like functions. They can take advantage of sparse covariance functions and thus handle very large numbers of
+spatial locations. 
+*  `Krig` Spatial process estimation that is a core function of fields. Again, any covariance function implemented in R code can be used for spatial prediction. This engine uses a numerically stable eigendecomposition for computation (compared to `mKrig`).
+ 
+
+Other noteworthy functions include:
+
+*  `vgram` find variograms for spatial data (and with temporal replications).  
+*  `as.surface`, `as.image`, `image.plot`, `drape.plot`, `quilt.plot`, `add.image`, `designer.colors` Many convenient functions for working with image data.  
+*  `sreg`, `splint`, `qsreg` Fast 1-D smoothing splines,  interpolating cubic splines, and quantile splines.  
+* `image.smooth`, `smooth.2d`, `interp.surface` Some image processing functions useful for spatial data analysis. 
+
+Generic functions that support the methods:
+
+* `plot` - diagnostic plots of fit  
+* `summary` - statistical summary of fit  
+* `print` - shorter version of summary  
+* `surface` - graphical display of fitted surface  
+* `predict` - evaluation fit at arbitrary points  
+* `predictSE` - prediction standard errors at arbitrary points.  
+* `sim.rf` - simulate a random field on a 2-d grid.  
+
+
+For many of these functions, we present their basic usage in this vignette. We have edited out secondary arguments in the presentation to focus on the essential options.
+
+***
+
+We have tried to present this vignette as a narrative that introduces spatial statistics, describes how to use the functions in `fields`, and also includes some relevant theory about splines and Kriging. The goal is to get the interested reader started quickly with many data based examples. Core functions in `fields` return S3 objects that are compatible with generic functions such as `plot`, `predict`, `surface`, etc. Thus, the analysis flow will seem familiar to other methods such as `lm`. If the reader is familiar with Kriging, they can skip to Chapters 6-8 to see some examples.
+
+We begin by showing quick examples using some of `fields`' most important functions. This gives the user an idea of what kind of problems can be solved and how to implement the functions in `fields` to solve them.
+
+In the third chapter we discuss fitting splines to univariate data. We begin with a simple time series data set, but the discussion applies more generally to data with one predictor variable x and one response variable y. The functions `splint` and `sreg` are used to fit cubic splines to this type of data. Then we introduce `Tps`, a core function in the package that can fit thin plate splines.
+
+Chapters 4-6 build up to Kriging. We have tried give an intuitive presentation of the fundamental concepts in spatial statistics, and at the same time introduce the corresponding functions in `fields`. Initially, the Kriging linear algebra is done manually for exposition, and then the package's most important function `spatialProcess` is presented in Chapter 7.
+
+There is a brief interlude to discuss the package's plotting functions as well as some image processing functions in Chapters 8-9. Many of them will have been used up to this point, but here we give a thorough description of the plotting options to be used with images, surfaces, and the package's models. See `quilt.plot` to get a quick plot of raw data to discern spatial patterns. There are also several functions for working with image data specifically. The functions `image.smooth` and `smooth.2d` are capable of smoothing images, and `interp.surface` performs fast bilinear interpolation (often useful when zooming in on images from a grid).
+
+In Chapter 10, we return to covariances and Kriging in more detail, including all of the covariance options in `fields`. Then we show how the user can write their own covariance function for use with all of the functionality in `fields`. This allows use to discuss three important wrappers on `Krig` in the following chapters.
+
+In Chapter 11, we cover the Kriging optimization workhorse `spatialProcess`. The user only needs to specify the data and a covariance model, and then `spatialProcess` will perform a grid search for the optimal values of the rest of the parameters and return the spatial model. Optimization methods include restricted maximum likelihood (REML) and generalized cross validation (GCV). The user should exercise caution, however, when using black box optimization routines. We hope this chapter will help explain the optimization procedure and assist the user with fitting the right model parameters.
+
+In Chapter 12, we introduce the concept of using a compactly supported covariance function to generate a sparse covariance matrix. The function `mKrig` (microKrig) is set up to take advantage of this sparsity in computation by using the `spam` package. We return to the `Tps` function in Chapter 13 with spatial data. The theory of thin plate splines is presented in the framework of Kriging. Finally, we show how the `fastTps` function is an analogue of `mKrig` that can similarly take advantage of sparse linear algebra.
+
+The Appendix gives the mathematical definition of the Kriging estimators for simple, ordinary, and universal Kriging, as well as brief explanations of restricted maximum likelihood (REML) and generalized cross validation (GCV).

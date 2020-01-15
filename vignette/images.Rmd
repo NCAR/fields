@@ -1,0 +1,216 @@
+# Images, Surfaces, and Plotting
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+library(RColorBrewer)
+```
+
+In the course of spatial analysis of 2-d fields, one needs simple functions to create, plot, and smooth rectangular images. We present many of the `fields` functions for working with image data and simulatneously highlight the plotting capabilites of the package. By a surface or image object, we mean a list with components `x`, `y` and `z`, where `x` and `y` are equally spaced grids and `z` is a matrix of values.  This is the same format as used by the R functions `contour`, `image`, and `persp`. The `x` and `y` components index each pixel and also index the matrix, whereas the `z` component gives the pixel values.
+
+## `as.image`
+
+`as.image` creates an image object from irregular `x`, `y`, and `z` coordinates by discretizing the 2-d locations to a grid and then producing an image object with the `z` values in the correct cells. The basic idea is that each observation is identified with a grid box, and then the mean value for all observations is returned for that box. If no observations fall into a particular box, an `NA` is returned for that location. Missing values are handled deftly by the contouring and image functions, such as `image.plot`.
+ 
+The required argument for `as.image` is `Z`, the values for the image and the most common optional argument is `x`, a 2 column matrix with the spatial locations of `Z`.  
+
+In the following example we grid the `RMprecip` data and plot it. The default is a 64 by 64 grid using the ranges of the data. One can also specify alternative grids: the third panel in the next plot demonstrates a 25 by 40 point discretization.
+
+```{r, results='hide', fig.width=11}
+set.panel(1,3)
+out.p <- as.image( RMprecip$y,  x= RMprecip$x)
+image( out.p)
+#compare to quilt.plot
+quilt.plot(RMprecip$x, RMprecip$y)
+grid<- list( x=seq( -111, -99,,25), y=seq( 35, 45,,40)) 
+as.image( RMprecip$y, RMprecip$x, grid=grid)-> out.p
+image(out.p)
+```
+
+Several other useful options are available. One can specify weights to use in finding a weighted mean for each box, or just give the number of grid points and use the ranges of the data for gridding. Also note that the list returned by `as.image` has components to indicate the counts in each bin and membership. 
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> as.image(Z, ind=NULL, grid=NULL, x=NULL, nrow=64,   ncol=64,weights=NULL)    
+
+${\large{\mathbf{Value}}}$
+
+`as.image` returns a list: in addition to x,y, and z components, the list has the counts `N`, the indices of the nonmissing boxes `ind` and sum of the weights for each nonmissing box `weights`.
+  
+***
+  
+&nbsp;
+
+## Plotting with `image`, `image.plot`
+
+The function `image.plot` has the same functionality as `image` but adds a legend strip. It can be used to add a legend strip to an existing plot or create a new image and legend. Its chief benefit is that this function resizes the plot region automatically to make room for the legend strip. The argument `horizontal`, if true, will put the legend strip under the plot. One effective graphical plot is a panel of images on a similar scale and plot region size but with only one legend strip. `image.plot` makes this fairly easy to do.   
+
+The function `add.image` is useful for adding an image to an existing plot. The user gives the matrix of intensities of the image as `z`, as well as simple arguments that control the location and size. `xpos` and `ypos` give the position of the image, and `adj.x` and `adj.y` determine whether the image is centered on that location (0.5,0.5), to the bottom right (1,1), Finally, we can change the width and height of the image as a fraction of the plotting region with `image.width` and `image.height`. If `NULL`, height is scaled to make image pixels square.
+
+To lead by example, we plot the `RMprecip` data at several discrtetizations. We see that indeed only `image.plot` includes a colorbar, and the color palettes are quite different. Then we use `add.image` to put John on the Four Corners for fun!
+
+```{r, results='hide', fig.width=12}
+set.panel( 1,3)
+par( pty="s")   # square plotting regions 
+image.plot( as.image( RMprecip$y, x = RMprecip$x), col=heat.colors(12)); US( add=TRUE, col="black", lwd=2)
+image(  as.image( RMprecip$y, x = RMprecip$x, ncol=32,nrow =32)); US( add=TRUE, col="black", lwd=2)
+image(as.image( RMprecip$y, x = RMprecip$x, ncol=16, nrow=16)); US( add=TRUE, col="black", lwd=2)
+data(lennon)
+add.image( -109,37, lennon , col=grey( (0:256)/256))
+```
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> image.plot(image, col = tim.colors(nlevel))  
+> add.image(xpos, ypos, z, adj.x = 0.5, adj.y = 0.5, image.width = 0.15, image.height = NULL)  
+
+***
+  
+&nbsp;
+
+<Here is an example using the full functionality of `image.plot`. >
+
+```{r,  include=FALSE, eval=FALSE}
+x<- 1:10
+y<- 1:15
+z<- outer( x,y,"+")
+image.plot(x,y,z)
+# or
+obj<- list( x=x,y=y,z=z)
+image.plot(obj)
+# adding breaks and distinct colors for intervals of z
+# with and without lab.breaks
+brk<- quantile( c(z))
+colorTable<- designer.colors(4, c( "blue","purple", "red") )
+image.plot(x,y,z, breaks=brk, col=colorTable, lab.breaks=names(brk))
+# annotate legend strip at break values and add a label
+# compare to
+zp <-quantile(c(z), c( .05, .1,.5, .9,.95))
+image.plot(x,y,z, axis.args=list( at=zp, labels=names(zp) ) )
+```
+
+***
+
+## `grid.list`, `make.surface.grid`, and `as.surface`
+
+
+`grid.list` refers to an x, y list format for a grid. `make.surface.grid` (a wrapper around the R base function `expand.grid`) is a useful function that expands the grid from the `grid.list` into a full set of locations.
+
+`as.surface` is a similar function to `as.image`. This function was written to simply to go back and forth between a matrix of gridded values and the stacked vector obtained by stacking columns. The input `obj` can be a `grid.list` of x and y coordinates, or a matrix of the grid points produced by `make.surface.grid`. `z` denotes the values of the function at the grid points, and finally `order.variables` (either `"xy"` or `"yx"`) specifies how the x and y variables used to evaluate the function are matched with the x and y grids in the surface object. (Note: to convert irregular 2-d data to a surface object where there are missing cells, see the function `as.image`.)
+
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> make.surface.grid(grid.list)  
+> as.surface(obj, z, order.variables="xy")    
+
+${\large{\mathbf{Value}}}$
+
+The result will be a list with x, y, and z components suitable for plotting with functions such as `persp`, `image`, `surface`, `contour`, `drape.plot`.
+
+`make.surface.grid` returns a full set of grid locations as a matrix, and `as.surface` returns a list of class `surface`.
+
+***
+
+&nbsp;
+
+```{r}
+grid.list <- list( x= -111:-99, y=35:45)
+xg <- make.surface.grid(grid.list)
+str(grid.list)
+str(xg)
+```
+
+A typical operation is to go from a `grid.list` to the set of grid locations, evaluate a function at these locations, and then reformat this as an image/surface for plotting. Here is how to do this cleanly:
+
+```{r}
+fit <- spatialProcess(RMprecip$x, RMprecip$y, theta=20)
+grid.list <- list( x= -111:-99, y=35:45)
+xg<- make.surface.grid(grid.list)
+look <- predict(fit, xg)
+look.surface <- as.surface(xg, look)
+```
+
+The next example gives the user an idea of the comparison of the plotting functions in `fields` or the standard libraries that are relevant to images, surfaces, grids, and object in classes defined in `fields`. 
+
+```{r}
+image(look.surface)
+```
+
+Using `image.plot` in `fields` adds a colorbar and a different default color scale. 
+
+```{r}
+image.plot(look.surface)
+```
+
+Here is the standard R function `contour`.  
+
+```{r}
+contour(look.surface)
+```
+
+Using `surface` combines `image.plot` with `contour` as its default.
+
+```{r}
+surface(look.surface)
+```
+
+There is a graphics function `persp` which can produce 3-d plots. `drape.plot` is a wrapper function in `fields` that automatically adds color based on how it's done in `image.plot`/`surface`.  
+
+```{r, results='hide', fig.width=12}
+set.panel(1,2)
+persp(look.surface)
+drape.plot(look.surface)
+```
+
+In summary, we fit a `spatialProcess` object from our data, created a "grid.list", constructed a full set of gridded locations using the "grid.list," found Kriging estimates at the gridded locations, converted back to a "grid.list", and then plotted with `surface`. Compare this with the convenient `surface.mKrig`.
+
+```{r}
+fit <- spatialProcess(RMprecip$x, RMprecip$y, theta=20)
+surface(fit)
+```
+
+
+## `surface`
+
+We saw in the last example that we can use `surface` to visualize both `surface` objects and also `spatialProcess`/`mKrig`/`Krig` objects. It is a great tool to be able to fit a class object and quickly plot predictions in a few short lines of code.
+
+This `surface` function is essentially a combination of `predictSurface` and `plot.surface`. It may not always give a great rendition but is easy to use for checking the fitted surface. The default of `extrap=F` is designed to discourage looking at the estimated surface outside the range of the observations. Note that any `Z` covariates in the the model will be dropped and only the spatial part of the model will be evaluated.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> surface( object, grid.list = NULL, extrap = FALSE, type="C")  
+
+***
+
+&nbsp;
+
+The `type` argument has the following options: `"p"` gives `persp`, `"c"` gives `contour` with legend strip (`image.plot`), and `"C"` gives `image plot` with contours overlaid.
+
+
+```{r}
+quilt.plot(ChicagoO3$x, ChicagoO3$y,col=terrain.colors(50))
+```
+
+```{r, results='hide', fig.width=11}
+fit<- Krig(ChicagoO3$x,ChicagoO3$y, theta=30) 
+set.panel(1,2)
+surface(fit, type="C", nx=128, ny=128,col=terrain.colors(50))
+surface(fit, type="p", nx=56, ny=56, extrap = TRUE, border=NA, theta=-8, phi=20,col=terrain.colors(50))
+```

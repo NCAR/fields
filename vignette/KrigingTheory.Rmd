@@ -1,0 +1,62 @@
+#Appendix
+
+This appendix will formulate the kriging estimates described in the vignette, as well as the theory behind the parameter estimation in `fields`. Here, we change the kriging notation, where we now absorb the low-order spatial polynomial $P(\cdot)$ into the covariate matrix $\mathbf{Z}$.
+
+##Kriging theory
+
+There are three main types of kriging.
+
+1.    Simple Kriging. Assume the mean function $\mathbf Z \mathbf{d}$ is spatially constant and known; denote it as $\mu$. Thus our model is $Y(\mathbf s) = \mu + g(\mathbf s) + \epsilon(\mathbf s)$. It follows that $Y(\mathbf s) - \mu$ has mean zero, and hence we krige on the residuals $R(\mathbf s) := Y(\mathbf s) - \mu$ and add $\mu$ for our prediction.
+\[\hat Y(\mathbf x_0) = \mu + \Sigma_0 \Sigma^{-1} ( \mathbf Y - \boldsymbol \mu )
+\]
+
+
+2.   Ordinary Kriging. Again, we assume that the mean function $\mathbf {Zd}= \mu$ is spatially constant, but here we suppose $\mu$ is unknown.
+\[
+\hat Y(\mathbf x_0) = \Sigma_0 \Sigma^{-1} \mathbf{Y} + \dfrac{ 1 - \Sigma_0 \Sigma^{-1} \mathbf{1}}{\mathbf 1^T \Sigma^{-1} \mathbf 1} \mathbf 1^T \Sigma^{-1} \mathbf Y = \text{ simple kriging + correction for estimating } \mu
+\]
+
+3.    Universal Kriging. Here, the mean function $\mathbf{ Zd}$ is a general linear function. Let $\mathbf Z_0$ be the matrix of covariates at the location $\mathbf x_0$. 
+\[ \hat Y(\mathbf x_0) = \left(\Sigma_0  + (\mathbf Z_0 - \Sigma_0 \Sigma^{-1} \mathbf{Z}) (\mathbf Z^T \Sigma^{-1} \mathbf Z)^{-1} \mathbf{Z}^T  \right) \Sigma^{-1} \mathbf{Y}
+\]
+
+In general, the kriging predictor of our `fields` model
+$Y(\mathbf x) =  \mathbf Z(\mathbf x) \mathbf{d} + g(\mathbf x) + \epsilon(\mathbf x)$
+is given by
+\[
+\hat Y(\mathbf x_0) = \mathbf Z_0 \hat{\mathbf{d}} + \Sigma_0 ( \Sigma + \lambda I)^{-1} (\mathbf{Y} - \mathbf Z_0 \hat{ \mathbf{d}} )
+\]
+where $\hat{\mathbf d}$ is the Generalized Least Squares estimate of $\mathbf d$ and $\lambda = \frac{ \sigma^2}{\rho}$ is the nugget-to-sill ratio.
+
+##REML
+
+Variogram fitting is often not a reliable way of finding the parameters of our spatial model. Statisticians usually take two routes for parameter estimation: generalized cross validation (GCV), or maximum likelihood estimation (MLE).
+
+Under the `fields` spatial model $Y(\mathbf x) =  \mathbf Z(\mathbf x) \mathbf{d} + g(\mathbf x) + \epsilon(\mathbf x)$,  we have Gaussian observations $\mathbf Y \sim N( \mathbf{Zd}, \rho \mathbf K + \sigma^2 \mathbf I)$. Thus, calculating the log-likelihood $\ell(\mathbf{d},\boldsymbol{\xi})$ is easy. Here, we denote the variance of $\mathbf{Y}$ as $\Sigma := \rho \mathbf K + \sigma^2 \mathbf I$ and use $\boldsymbol \xi$ as a vector of spatial parameters (e.g. $\boldsymbol \xi = (\rho,\sigma^2,\theta,\nu)$).
+\[
+\ell(\mathbf{d},\boldsymbol{\xi}) \propto -\frac{1}{2} \left( \log( \det(\Sigma))  + (\mathbf Y - \mathbf{Zd})^T \Sigma^{-1} (\mathbf Y - \mathbf{Zd}) \right)
+\]
+
+For any fixed $\boldsymbol \xi$, the value of $\mathbf d$ that maximizes $\ell$ is the Generalized Least Squares (GLS) estimate $\hat{\mathbf d} = (\mathbf{Z}^T \Sigma^{-1} \mathbf{Z})^{-1} \mathbf{Z}^T \Sigma^{-1} \mathbf{Y}$.
+
+To maximize $\ell$, one often "profiles" and eliminates $\mathbf{d}$ in the equation for $\ell$ by substituting $\mathbf{d}  = \hat {\mathbf d}$. Then $\ell(\mathbf{d},\boldsymbol \xi)=\ell(\boldsymbol \xi)$ only depends on $\boldsymbol \xi$. Numerical optimization (nonlinear methods like BFGS) is used to find the remaining parameters, and then the GLS estimate $\hat {\mathbf d}$ is updated with the optimal parameter values. (See Handbook of Spatial Statistics, p. 46).
+
+However, this process of Maximum Likelihood Estimation (MLE) tends to give biased results, as 
+\[
+(\mathbf{Y} - \mathbf{Z} \hat{\mathbf{d}})^T \Sigma^{-1} (\mathbf Y - \mathbf{Z} \hat {\mathbf{d}}) 
+\le (\mathbf{Y}-\mathbf{Zd}) \Sigma^{-1} (\mathbf Y - \mathbf{Zd}), \quad \forall \mathbf{d}.
+\]
+Intuitively, this means that $\mathbf{Z} \hat{\mathbf d}$ is "closer" to $\mathbf{Y}$ than any other estimate $\mathbf{Zd}$, even if $\mathbf{d}$ is the true parameter! As a result, the MLE for $\boldsymbol \xi$ is biased due to this simultaneous estimation of $\mathbf{d}$. In particular, the MLE for $\boldsymbol \xi$ tends to underestimate the process variance.
+
+This leads to Restricted Maximum Likelihood (REML), which attempts to reduce this bias when using maximum likelihood methods. We use a linear transformation $\mathbf Y^* = \mathbf {AY}$ of the data so that the distribution of $\mathbf{Y}^*$ does not depend on $\mathbf{d}$. In particular, we use the matrix $\mathbf A = \mathbf{I} - \mathbf{Z} (\mathbf{Z}^T \mathbf{Z})^{-1} \mathbf{Z}^T$ that projects $\mathbf{Y}$ to ordinary least squares residuals. The resulting matrix product $\mathbf{AY}$ is independent of $\mathbf{d}$.
+\[
+\ell_R(\boldsymbol \xi) = - \frac{1}{2} \left(\log(\det(\Sigma)) + \frac{1}{2} \log( \det( \mathbf{Z}^T \Sigma^{-1} \mathbf{Z}))   + \mathbf{Y}^T (\Sigma^{-1} - \Sigma^{-1} \mathbf{Z} (\mathbf{Z}^T \Sigma^{-1} \mathbf{Z})^{-1} \mathbf{Z}^T \Sigma^{-1}) \mathbf{Y} \right)
+\]
+This ends up being the profile log-likelihood with an additional term involving $\log( \det( \mathbf{Z}^T \Sigma^{-1} \mathbf{Z}))$. Again, this expression must be maximized numerically with respect to $\boldsymbol \xi$. The procedure concludes by estimating $\mathbf d$ with GLS and the estimate $\hat{\boldsymbol \xi}$ plugged in.
+
+##GCV
+
+The GCV function is 
+\[ V(\lambda) = \dfrac{ \frac{1}{n} \| ( \mathbf I - \mathbf A(\lambda)) \mathbf{Y} \|^2}{ \left( \frac{1}{n} \cdot \text{tr}(\mathbf I - \mathbf A(\lambda) \right)^2}
+\]
+where $\mathbf{A}(\lambda)= \Sigma_0 (\Sigma + \lambda I)^{-1}$ (with $\lambda = \frac{\sigma^2}{\rho}$) and the GCV estimate for $\lambda$ is $\hat \lambda = \operatorname{argmin} V(\lambda)$. GCV is a predictive MSE criteria.

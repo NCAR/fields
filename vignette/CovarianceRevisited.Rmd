@@ -1,0 +1,159 @@
+#Covariance Models Revisited
+
+```{r,include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+library(colorspace)
+```
+
+We have seen in the sections on spatial statistics that the crux of modeling spatial data lies in choosing a covariance model and specifying its parameters. In this section we discuss the remaining covariance functions available in `fields`. (Note: the package documentation lists all of the options under `Covariance functions`). 
+
+Recall that these functions take one or two sets of locations and compute the (cross) covariance matrix. Most commonly fit are the exponential, Gaussian, and covariance Matern models we have discussed. There are a wealth of other options. We first discuss radial basis functions (RBFs).
+
+##`Rad.cov`, `Rad.cov.simple`, `cubic.cov`, and `wendland.cov`
+
+Radial basis functions are the natural covariance that comes out of the thin plate spline minimization problem (see the section `Tps` Revisited). The functional form is the following:
+$$\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) =c_0(m,d) *\begin{cases} r^{2m-d}, & d \text{ odd} \\ r^{2m-d} \ln(r), & d \text{ even} \end{cases}$$
+where $r = \| \mathbf x - \mathbf x' \|$ and $c_0(m,d)$ is a multiplicative constant depending on $m$ and $d$.
+
+The argument `d` is inferred from the dimension of the input data. If `m` isn't specified by the user, by default it is set to the smallest integer such that $p = 2m-d$ is positive. Alternatively, the user can specify `p`.
+
+Note that these RBFs are generalized covariance functions, which means they are only valid covariances when restricted to a subspace of linear combinations of the field. The function `Rad.simple.cov` is a straightforward implementation in R code (computes fewer checks on the data). It can be used like `Exp.cov` to write a new covariance function.
+
+`cubic.cov` is a specific case of `Rad.cov` where we set `d=1` and `m=1`.
+
+All of these covariance functions can be equipped to take advantage of sparsity in the covariance matrix by using the `SPAM` package. The functions `Wendland` and `wendland.cov` allow easy use of the Wendland compactly supported polynomials as covariance functions. This will output a sparse covariance matrix, which helps shorten the computation time when working with large datasets. The main argument (besides location) to in the `Wendland` function is `theta`, which by default is set to 1. This is the taper range, or the radius of support of the function. The Wendland function is identically 0 for distances greater than `theta`. If the user would like to scale each coordinate independently, they can provide a matrix or the diagonal of a matrix for the argument `V`, which is the inverse linear transformation of the coordinates before distances are found. Another parameter that can be chosen is `k`, the order of the Wendland polynomial, which determines the smoothness.
+
+```{r, echo=FALSE}
+dt<- seq( 0,1.5,, 200)
+# a radial basis function using the Wendland. the "knot" is at (.25,.25)
+gl<- list( x= seq( -1,1,,60), y = seq( -1,1,,60) )
+bigD<- rdist( make.surface.grid( gl), matrix( c(.25,.25), nrow=1))
+RBF<- matrix(Wendland( bigD, k=2, dimension=2), 60,60)
+# perspective with some useful settings for shading.
+persp( gl$x, gl$y, RBF, theta=30, phi=20, shade=.3, border=NA, col="grey90", main="Wendland k=2", xlab="", ylab="", zlab="")
+```
+
+
+## `stationary.taper.cov`
+
+Just like `stationary.cov`, `stationary.taper.cov` is a general covariance function for mixing and matching different options. The user can choose the covariance model, its parameters, and the distance function used just like in `stationary.cov`. `stationary.taper.cov` additionally takes the argument `Taper` with default `Wendland`. This function uses `rdist.near` with the `spam` package to efficiently compute a sparse covariance matrix. The resulting cross covariance is the direct (or Schur) product of the tapering function and covariance function. In R code, given location matrices x1 and x2 and using Euclidean distance we have `Cov(rdist(x1,x2)/theta) * Taper(rdist(x1,x2)/Taper.args$theta)`.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Rad.cov(x1, x2, p = 1, m=NA)  
+> Rad.simple.cov(x1, x2, p=1)  
+> cubic.cov(x1, x2, theta = 1)  
+> stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist",theta = 1, V = NULL)  
+> stationary.taper.cov(x1, x2, Covariance="Exponential",Taper="Wendland",theta=1.0,V=NULL)  
+> wendland.cov(x1, x2, theta = 1, V=NULL, k = 2)  
+
+${\large{\mathbf{Value}}}$
+
+These functions all return the cross-covariance matrix. In general if `nrow(x1)=m` and
+`nrow(x2)=n` then the returned matrix will be m by n.
+
+***
+
+&nbsp;
+
+## Writing your own covariance function
+
+Construction of covariance functions in `fields` is straightforward. Once built, we can then pass the new covariances into `spatialProcess`, `mKrig`, or `Krig` to make covariance matrices.
+
+If the user creates a function (e.g. `spherical(d,theta)`) that takes distances as an argument, they can use this in `stationary.cov`.
+
+Suppose we want to create the isotropic spherical covariance, which is compactly supported and only depends on the  parameter distance $r = \| \mathbf x - \mathbf x'\|$ and the range $\theta$:
+\[
+C(r) = \left( 1 - \frac{3r}{2 \theta}  + \frac{1}{2} \left( \frac{r}{\theta} \right)^3 \right) \cdot \mathbf{1}_{\{0 \le r < \theta \} }
+\]
+
+Here, we show two alternatives to constructing and using a covariance function in `fields`.
+
+```{r}
+   spherical <-  function (x1, x2=NULL, theta=1, C=NA, Distance="rdist" ) {
+       if (is.null(x2)) {x2 <- x1}
+       if (Distance == "rdist.earth"){
+         r <- rdist.earth(x1,x2)
+       }else {r <- rdist(x1,x2) }
+       if (is.na(C[1]) ) {
+           return( ifelse(r<theta , 1 - 3*r / (2*theta) + (1/2) * (r/theta)^3,0))
+       }
+       if (!is.na(C[1])) {
+           return( ifelse(r<theta , 1 - 3*r / (2*theta) + (1/2) * (r/theta)^3,0) %*% C)
+       }
+   }
+
+
+spherical.d <- function(d, theta=1)
+{
+  return( ifelse(d<theta , 1 - 3*d / (2*theta) + (1/2) * (d/theta)^3,0))
+}
+```
+
+Now we can use `Krig` or `mKrig` with our newly constructed covariances.
+
+```{r, fig.width=11, results='hide', warning=FALSE, message=FALSE}
+data(COmonthlyMet)
+y <- CO.tmax.MAM.climate
+x <- CO.elev  
+grd <- as.matrix(CO.loc)
+
+keep <- !is.na(y)      #removing all NA's from the temperatures
+y <- y[keep]
+x <- x[keep]
+grd <- grd[keep,]
+rm(keep)
+
+fit <- Krig(grd,y, cov.function = "spherical",theta=60, Distance="rdist.earth")
+fit2 <- Krig(grd,y,Covariance = "spherical.d", theta=60, Distance="rdist.earth")
+fit3 <- Krig(grd,y,Covariance="Matern",theta=60, Distance="rdist.earth")
+
+rainbow <- rainbow_hcl(n=50)
+
+par(mfrow=c(1,3))
+surface(fit, main="Spherical Covariance",col=rainbow)
+surface(fit2, main="Spherical Covariance (alternative)",col=rainbow)
+surface(fit3, main="Matern Covariance",col=rainbow)
+```
+
+Notice that the first two plots are identical and the third plot is different, especially in the bottom right.
+
+## `stationary.taper.cov` details
+
+Using `stationary.taper.cov` boils down to multiplying a chosen covariance function by a Wendland. (See a direct comparison below). This makes the overall covariance model compactly supported, which in turn speeds up computation time. 
+
+```{r}
+data( ozone2)
+x<- ozone2$lon.lat
+y<- ozone2$y[16,]
+good<- !is.na( y)
+x<- x[good,]
+y<- y[good]
+# Note that default covariance is exponential and default taper is Wendland (k=2).
+temp <- stationary.taper.cov( x[1:3,],x[1:10,], theta=1.5, Taper.args= list(k=2,theta=2.0,dimension=2) )
+temp2<- Exp.cov( x[1:3,],x[1:10,], theta=1.5) * Wendland(rdist(x[1:3,],x[1:10,]),theta= 2.0, k=2, dimension=2)
+test.for.zero( as.matrix(temp), temp2)
+```
+
+Now we visualize the difference in predictions when using a taper.
+
+```{r, results='hide', fig.width=11}
+spatialProcess(x,y, cov.function = "stationary.taper.cov", theta=1.5,cov.args = 
+       list(Taper.args= list(k=2, dimension=2,theta=2.0) )) -> out2
+spatialProcess(x,y, theta= 1.5)-> out
+set.panel(1,2)
+surface(out, main="Exponential",smallplot= c(.89,.9,0.2,.8) ,zlim=c(15,170),col=rev(heat_hcl(50)))
+surface(out2, main="Exponential * Wendland",smallplot= c(.89,.9,0.2,.8),zlim=c(15,170),col=rev(heat_hcl(50)))
+```
+
+
+
+
+
+
+

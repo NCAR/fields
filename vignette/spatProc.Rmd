@@ -1,0 +1,415 @@
+#`spatialProcess`
+
+```{r include=FALSE}
+library( fields)
+library( geoR)
+library(sp)
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+```
+
+Spatial statistics refers to the class of models and methods for data collected over a spatial region, and informally we will refer to spatial estimates based on a covariance model as Kriging. Examples of such regions might be a mineral field, a quadrant in a forest, or a geographic region. Also, these methods are not limited to two or three dimensions of geographical coordinates. A typical problem is to predict values of a measurement at locations where it is not observed, or, if the measurements are observed with error, to estimate a smooth spatial process from the data. The Kriging functions in `fields` have the advantage that it can use arbitrary covariance functions. For this reason, `spatialProcess`, `mKrig`, etc., are not limited to two dimensional problems or standard models. 
+  
+Suppose we have observations at locations $\mathbf x_1,\dots, \mathbf x_n$. The
+`fields` package assumes a spatial model of the form
+\[
+Y(\mathbf x_i) = P(\mathbf x_i) + \mathbf{Z}(\mathbf x_i) \mathbf{d}_i + g(\mathbf x_i) + \epsilon_i
+\]
+where $P(\cdot)$ is a low order polynomial (default is a linear function `m=2`), $\mathbf{Z}$ is a matrix of covariates weighted by a vector $\mathbf{d}$, $g(\cdot)$ is a mean zero Gaussian stochastic process with a covariance $\rho \cdot k(\mathbf x, \mathbf x')$ that is known up to a scale constant $\rho$, and $\boldsymbol \epsilon \sim N(\mathbf 0, \sigma^2 W^{-1})$ is measurement error. Typically, the weights matrix $W$ is taken as the identity $I$, so $\epsilon_i \sim N(0,\sigma^2)$. Consistent with the spline estimate, we take $\lambda = \rho/\sigma^2$. The covariance function $k(\cdot,\cdot)$ may also depend on other parameters: we explain below the parameter estimation process in `spatialProcess` and the remaining parameters that should be specified. Throughout this discussion the reader should keep in mind that a low order polynomial $\mathbf{P}$ fixed effect is also part of the estimate. By default this is a linear function in the spatial coordinates, but the degree can be changed. 
+
+Of course, we could consider the spatial coordinates as covariates in the $\mathbf{Z}$ matrix and simply write the model as
+\[
+Y(\mathbf x_i) =  \mathbf{Z}(\mathbf x_i) \mathbf{d}_i + g(\mathbf x_i) + \epsilon_i.
+\]
+However, we want to make it clear that the spatial polynomial $P(\cdot)$ is (by default) included in the kriging estimate, while other covariates $\mathbf{Z}$ must be specified.
+
+***
+
+`spatialProcess` represents one-stop shopping for fitting a spatial model in `fields`. It was designed so that users are able to quickly fit models and visualize them. We also add one caution: it hides several default model choices from the user. After a covariance model is chosen, a grid search is performed to find the optimal values of the parameters `theta`, `rho`, and `sigma2`, and then the spatial model is computed with these estimated parameters. Any other covariance parameters (e.g. the smoothness) need to be specified. The default call uses the covariance function `stationary.cov`, specifically with the `Matern` and smoothness `nu=1`. The optimization is done by `MLESpatialProcess`.
+
+A good way to think about the spatial model functions in `fields` is in the context of engines and wrappers. The two engines in `fields` which perform the Kriging computations are `Krig` and `mKrig`. `Krig` is a more numerically stable algorithm: if a covariance matrix is close to singular, `mKrig` will fails whereas `Krig` may still be able to perform the calculations. On the other hand, `mKrig` is set up to handle large data sets with sparse covariance matrices by using the `SPAM` package.
+
+A wrapper is an easy to use function that is based on an underlying function or engine. Often default parameters values are set to make the function accessible to the user. The function `Tps` is a wrapper on `Krig`. `Tps` performs thin plate spline regression, which is a special case of Kriging, so it makes sense to use the `Krig` engine. On the other hand, the functions `fastTps` and `spatialProcess` are wrappers for `mKrig`. See the chapters and examples on these functions for specifics.
+
+There is always a hazard in providing a simple to use method that makes many default choices for the spatial model. As in any analysis be aware of these choices and try alternative models and parameter values to assess the robustness of your conclusions. Also examine the residuals to check the adequacy of the fit!
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> spatialProcess(x, y, Z = NULL, cov.function = "stationary.cov",   
+> $\> \> \> \quad$ cov.args = list(Covariance = "Matern", smoothness = 1), theta = NULL)  
+> Krig(x, Y, theta, Covariance="Matern", smoothness, Distance="rdist")   
+
+${\large{\mathbf{Value}}}$
+
+`spatialProcess` returns object of classes `mKrig` and `spatialProcess`. The main difference from `mKrig` is an extra component `MLEInfo` that has the results of the grid evaluation over `theta` (maximizing `lambda`), joint maximization over `theta` and `lambda`, and a grid evaluation over `lambda` with `theta` fixed at its MLE. The `Krig` function produces an object of class `Krig`.
+
+***
+
+&nbsp;
+
+There are a number of S3 functions associated with `spatialProcess` objects (also `mKrig`, `Krig`, `fastTps`, etc). The `coef` method gives the coefficients `d` from the fixed part of the model (null space or spatial drift). `surface` returns an image of the model fit with `Z` covariates dropped by default. `predict` allows the user to predict the fit at new locations, and `predictSE` gives the predicted standard errors at new locations. `plot` returns a series of diagostic plots, and `print(fit)` or `summary(fit)` give details about the estimated parameters and model.
+
+## Analysis of soil pH
+
+This example is meant to quickly highlight the basic functionality of `spatialProcess` for fitting a model using pH soil samples. The data can be found at http://homepage.divms.uiowa.edu/~dzimmer/spatialstats/soilphmatrix.dt.   
+
+We visualize the raw data, fit a `spatialProcess` model, and plot the resulting predictions for comparison.  
+
+```{r}
+file1 <- read.table("soilphmatrix.txt", sep=" ")
+dat <- as.matrix(file1, nr=11, nc=11)
+image.plot(dat) #from sp package
+title("pH in Soil")
+
+grid.list <- list(x=seq(1,11), y=seq(1,11))
+full.grid <- make.surface.grid(grid.list)
+fit <- spatialProcess(x=full.grid, y=c(dat))
+surface(fit)
+title("Kriging Predictions")
+```
+
+Next we look at the summary of the model parameters. The optimization search is automated in `fields`, but all of the information is easily accessible for the user. Recall the range is $\theta$, the nugget is $\sigma^2$, the sill is $\rho$, and we set $\lambda=\sigma^2/\rho$.
+
+```{r}
+print(c(fit$cov.function.name,fit$args))
+fit$summary # same as fit$MLEInfo$summary
+```
+
+The summary shows the value of the profile log likelihood function, the estimates for the parameters, and the number of evaluations needed in the optimization.  
+
+
+
+We can use `plot` to view diagnostic plots of the fit. The first three plots are the same as `sreg` and `mKrig` objects. Plot 1 shows data vs. predicted values, and plot 2 shows predicted values vs. residuals. Plot 3 shows the criteria to select the smoothing parameter $\lambda = \sigma^2 / \rho$. The x axis has transformed $\lambda$ in terms of effective degrees of freedom to make it easier to interpret. Note that here the GCV function is minimized while the REML is maximized.
+
+One of the main features of `spatialProcess` is the ability to optimize over `theta` as well as the usual `lambda`/`rho`/`sigma` combination. For this reason, plot 4 shows the profile likelihood versus values of `theta` instead of a histogram of the standard residuals displayed in the plots of other class objects
+
+```{r,results="hide"}
+set.panel(2,2)
+plot(fit)
+```
+
+## Analysis of Coal Ash
+
+`coalash` is a classic geostatistics data set used to illustrate statistical methods. This example shows in more depth the features that are available for use with a `spatialProcess` model.
+
+```{r,message=FALSE,warning=FALSE}
+library(gstat)
+data(coalash)
+x <- cbind(coalash$x, coalash$y)
+y <- coalash$coalash
+quilt.plot(x, y,col=topo.colors(100))
+
+fit <- spatialProcess(x, y)
+surface(fit,col=topo.colors(100))
+```
+
+Note that `surface` displays the full model, except `Z` covariates if they are included; i.e. by default `Z` is dropped. To additionally include the `Z` covariates, one can use `predict` or `predictSurface`. In these functions, the default is to retain `Z` in the computation.  
+
+We can use our spatial model to predict on a grid using `predict`, or `predictSurface` which is more convenient for plotting. 
+
+```{r}
+grid.list <- list(x=seq(0,17), y=seq(0,24) )
+pred.grid <- predict(fit, grid=grid.list)
+look <- as.surface(grid.list, pred.grid)
+surface(look,col=topo.colors(100))  #Try image.plot(look)
+```
+
+
+We use `predictSurface` to quickly generate the full model, and then supply `just.fixed=TRUE` to see the fixed polynomial. Thus, the difference of the two will just be the spatial part of the model. Refer to the last example in this section to see such a decomposition of a spatial model with a `Z` covariate included.
+
+(Note: `smallplot` is used to properly format this document, and the reader can ignore it.)
+
+```{r, results='hide', fig.width=11,fig.height=4}
+out.full <- predictSurface(fit,extrap=TRUE)
+out.poly <- predictSurface(fit,just.fixed=TRUE,extrap=TRUE)
+
+out.spatial <- out.full
+out.spatial$z <- out.full$z - out.poly$z
+
+out.check <- out.full
+out.check$z <- out.poly$z +  out.spatial$z
+
+set.panel(1,3)
+surface(out.full,smallplot= c(.88,.9,0.2,.8),col=topo.colors(100) ); title("Full model")
+surface(out.poly,smallplot= c(.88,.9,0.2,.8),col=topo.colors(100)); title("Low-order spatial polynomial P(x)")
+surface(out.spatial,smallplot= c(.88,.9,0.2,.8),col=topo.colors(100)); title("Spatial part g(x)")
+```
+
+We can also use `sim.spatialProcess` to produce conditional simulations by supplying the model, locations at which to simulate in `xp`, and the number of Monte Carlo simulations with `M`.
+
+```{r,fig.width=11,results="hide"}
+full.grid <- make.surface.grid(grid.list)
+sim <- sim.spatialProcess(fit, xp=full.grid, M=2)
+sim.surf <- as.surface(full.grid, sim[2,])
+
+set.panel(1,2)
+surface(sim.surf,col=topo.colors(100)); title("Conditional Simulation")
+
+drape.plot(sim.surf, border=NA, theta = 30, phi= 25,col=topo.colors(100)) -> dp
+title("3D Perspective with observations in black")
+trans3d( x[,1], x[,2],y,dp)-> uv
+points( uv, col="black", pch="+", cex=0.5)
+```
+
+Finally we take a look at the uncertainty in our model predictions with `predictSE`. The white points show the locations of the observations.
+
+```{r, results='hide',fig.width=12}
+set.panel(1,2)
+SEobs <- predictSE.mKrig(fit)
+SEout <- predictSE(fit, xnew=full.grid)
+lookSE <- as.surface(full.grid, SEout)
+{surface(lookSE,col=topo.colors(100))
+title("Kriging Uncertainty")
+points(x[,1],x[,2],col="magenta",bg="white",pch=21)}
+{drape.plot(lookSE, border=NA, theta=160, phi=55,col=topo.colors(100)) -> dp2
+title("Drape Plot")
+pushpin(x[,1],x[,2],SEobs,dp2, cex=0.4, col="white")}
+```
+
+##`ozone2`
+
+Now we consider the `ozone2` dataset in `fields`, which consists of CO2 observations over 89 days at a set of 153 locations. We'll restrict ourselves to day 16 (June 18, 1987) and remove all `NA` values. We fit several covariance models: Matern, exponential, and Wendland. We first visually inspect the different surfaces, then we compare the parameters of the three models using `summary`.
+
+```{r,results='hide'}
+data( ozone2)
+x<- ozone2$lon.lat
+y<- c(ozone2$y[16,])
+set.panel(1,2)
+US( xlim= c(-94,-83),  ylim=c(37, 45) )
+points( ozone2$lon.lat, pch="o")
+title("Locations")
+
+keep <- !is.na(y)
+y <- y[keep]
+x <- ozone2$lon.lat[keep,]
+
+quilt.plot(x,y,add.legend=TRUE,main="Values for Day 16", col=heat.colors(100))
+US(add=TRUE)
+
+# exponential vs Wendland covariance function
+obj <- spatialProcess( x, y, Distance = "rdist.earth")
+obj2<- spatialProcess( x, y, Distance = "rdist.earth",
+            cov.args = list(Covariance ="Exponential") )
+obj3<- spatialProcess( x, y, Distance = "rdist.earth",
+           cov.args = list(Covariance = "Wendland",
+           dimension = 2, k = 2) )
+rbind(obj$summary,obj2$summary,obj3$summary)
+```
+
+Since the exponential is a Matern covariance with $\nu = 0.5$, the first two fits can be compared in terms of their likelihoods. The REML value is slightly higher for `obj` verses `obj2` ($598.4 > 596.7$). These are the negative log likelihoods so this suggests a preference for the exponential model. But... does it really matter in terms of spatial prediction?
+
+```{r, results='hide', fig.width=12}
+library(sp) #for colors
+set.panel(1,3)
+surface(obj, col=heat.colors(100),smallplot= c(.88,.9,0.2,.8))
+US( add=TRUE)
+title("Matern sm=1.0")
+surface(obj2, col=heat.colors(100),smallplot= c(.88,.9,0.2,.8))
+US( add=TRUE)
+title("Matern sm=.5")
+surface(obj3, col=heat.colors(100),smallplot= c(.88,.9,0.2,.8))
+US( add=TRUE)
+title("Wendland k=2")
+```
+
+It is always a good idea to take a look at the prediction standard errors. Of course, the standard errors are lower in areas with many observations, and they are higher in regions with few observations. These computations take a while because prediction errors are based directly on the kriging weight matrix. See the chapter on `mKrig` for an approximate alternative using conditional simulations.
+
+```{r, results='hide', fig.width=10}
+set.panel(1,2)
+quilt.plot(x,y,add.legend=TRUE,main="Values for Day 16", col=heat.colors(100))
+US(add=TRUE)
+xg <- fields.x.to.grid(x)
+std.err <- predictSE(obj,x=make.surface.grid(xg),Distance="rdist.earth")   #takes a while
+out.p <- as.surface(xg,std.err)
+#out.p<- predictSurfaceSE(obj, nx=40,ny=40)
+surface(out.p, col=heat.colors(100))
+US( add=TRUE)
+title("Matern sm= 1.0 SE")
+points( x, col="white")
+```
+
+Finally, we use this data set to test whether the MLE computations yield the same results using `spatialProcess` in `fields` versus `likfit` in `geoR`.
+
+```{r,results="hide"}
+#library(geoR)
+obj<- spatialProcess( x, y, mKrig.args= list(m=1), smoothness = .5 )
+ml.n <- likfit(coords= x, data=y, ini = c(570, 3), nug = 50)
+```
+
+```{r}
+# Comparing the two
+stuffFields<- obj$MLEInfo$MLEJoint$summary[c(1,3,4,5)]
+stuffGeoR<- c( ml.n$loglik, ml.n$phi,
+               sqrt(ml.n$nugget),ml.n$sigmasq)
+
+print(rbind(stuffFields,stuffGeoR))
+
+test.for.zero( stuffFields, stuffGeoR, tol=.005)
+```
+
+## `COmonthlyMet`
+
+We'll return to the dataset `COmonthlyMet`. When using other `fields` functions for Kriging such as `Krig` and `mKrig`, the user has to pass in a range `theta`, which can be initally guessed for a quick fit by looking at a variogram. 
+
+Note that the estimated `theta` without including the `Z` covariate `CO.elev` will probably change if do we include `Z`.
+
+Ultimately, using a variogram to determine spatial parameters for our covariance is not a reliable method. A more rigorous way to determine parameters is via Maximum Likelihood, which is performed within `spatialProcess`. To be precise, the parameters `theta`, `rho`, and `sigma2` are estimated using Maximum Likelihood, and the user only needs to input `x`, `y`, and a type of covariance. (Note: If a Matern covariance is used, then smoothness must be supplied. See below how one might select between different smoothness values.)
+
+Of course, `spatialProcess` runs slower than the functions would with a user-supplied `theta`. One must take caution when using `spatialProcess` with large datasets. Below, we run through this climate example using `spatialProcess` to construct our model.  
+ 
+```{r}
+data(COmonthlyMet)
+y.CO <- CO.tmax.MAM.climate
+z.CO <- CO.elev
+grd.CO <- as.matrix(CO.loc)
+keep <- !is.na(y.CO)  #removing all NA's from the temperatures
+y.CO <- y.CO[keep]
+z.CO <- z.CO[keep]
+grd.CO <- grd.CO[keep,]
+
+out0.5 <- spatialProcess(grd.CO,y.CO,Z=z.CO, Distance="rdist.earth", 
+                           cov.args=list(Covariance="Matern"), smoothness=0.5)
+out1 <- spatialProcess(grd.CO,y.CO,Z=z.CO, Distance="rdist.earth", 
+                           cov.args=list(Covariance="Matern"), smoothness=1)
+out2.5 <- spatialProcess(grd.CO,y.CO,Z=z.CO, Distance="rdist.earth", 
+                           cov.args=list(Covariance="Matern"), smoothness=2.5)
+out5 <- spatialProcess(grd.CO,y.CO,Z=z.CO, Distance="rdist.earth", 
+                           cov.args=list(Covariance="Matern"), smoothness=5)
+
+rbind(out0.5$summary,out1$summary,out2.5$summary,out5$summary)
+```
+
+Observe the largely different values for parameters, but similar values for log-likelihood. Note that there is an interplay between smoothness and range, so directly comparing `theta` is not appropriate. Will the underlying spatial process be much different if we vary the `smoothness`? We'll use the `drop.Z` command to make the differences in the spatial process clear.
+
+<Note that `predictSurface.Krig` and `predictSurface.mKrig` are the same. With a `spatialProcess` object, just using `predictSurface` throws an error, you must use `predictSurface.Krig`. (Take this out soon.)>
+
+```{r,results="hide", fig.width=11,fig.height=8}
+pred0.5 <- predictSurface.Krig( out0.5,grid.list=CO.Grid,ZGrid=CO.elevGrid,drop.Z=TRUE) 
+pred1 <- predictSurface.Krig( out1,grid.list=CO.Grid,ZGrid=CO.elevGrid,drop.Z=TRUE) 
+pred2.5 <- predictSurface.Krig( out2.5,grid.list=CO.Grid,ZGrid=CO.elevGrid,drop.Z=TRUE) 
+pred5 <- predictSurface.Krig( out5,grid.list=CO.Grid,ZGrid=CO.elevGrid,drop.Z=TRUE) 
+
+set.panel(2,2)
+
+mycol <- rev(bpy.colors())
+
+surface(pred0.5,type="C",col = mycol)
+title("Smoothness 0.5")
+US(add=TRUE)
+
+surface(pred1,type="C",col = mycol)
+title("Smoothness 1")
+US(add=TRUE)
+
+surface(pred2.5,type="C",col = mycol)
+title("Smoothness 2.5")
+US(add=TRUE)
+
+surface(pred5,type="C",col = mycol)
+title("Smoothness 5")
+US(add=TRUE)
+```
+
+Notice that smoothness values 2.5 and 5 look nearly identical. In practice, one usually selects smoothness values from the set $\{ 0.5, 1, 1.5, 2, 2.5\}$.
+
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+<possible section below>
+
+
+```{r,include=FALSE,eval=FALSE}
+n=1000
+set.seed(124)
+x = matrix(runif(2*n), nrow=n)  #generate observations at the locations
+trueTheta = .1   #scale
+trueSigma = .01   #nugget
+Sigma = exp( -rdist(x,x) /trueTheta )  
+y = t(chol(Sigma))%*% (rnorm(n))  +  trueSigma * rnorm(n)
+out = MLESpatialProcess(x, y, smoothness=.5,
+                        mKrig.args = list( m = 1))
+out$summary
+```
+
+<We see that `MLEspatialProcess` estimates `theta` decently well but `sigmaMLE` is far from the truth. Try with more data points! Now we switch to a Matern covariance, then compute the joint MLE of range, smoothness, and lambda. > 
+
+```{r,include=FALSE,eval=FALSE}
+testSmoothness = c(.5, 1, 2)
+for( nu in testSmoothness){
+  out = MLESpatialProcess(x, y, cov.args=list(Covariance="Matern"), smoothness=nu) 
+  print( out$MLEJoint$summary)
+}
+```
+
+## Decomposition of a Spatial Model
+
+Finally, we show how to access the low-order polynomial $P(\cdot)$, the mean trend $\mathbf{Zd}$, and the stochastic process $g(\cdot)$ that make up a spatial process.
+
+```{r, results='hide'}
+data(COmonthlyMet)
+# predicting average daily minimum temps for spring in Colorado
+obj<- spatialProcess( CO.loc, CO.tmin.MAM.climate, Z= CO.elev)
+out.p<-predictSurface( obj, grid.list=CO.Grid, ZGrid= CO.elevGrid, extrap=TRUE)
+
+image.plot(out.p, col =  mycol)
+US(add=TRUE, col="grey")
+contour( CO.elevGrid, add=TRUE, levels=seq(1000,3000,,5), col="black")
+title("Average Spring daily min. temp in CO")
+```
+
+Now that we have our `spatialProcess`, we will extract these different components of the model.
+
+```{r, results='hide', fig.width=12, fig.height=15}
+out.dropZ <- predictSurface( obj, grid.list=CO.Grid, ZGrid=CO.elevGrid, 
+                             drop.Z=TRUE, extrap=TRUE)
+out.fixed <- predictSurface( obj, grid.list=CO.Grid, ZGrid=CO.elevGrid, 
+                             just.fixed=TRUE, extrap=TRUE)
+out.poly <- predictSurface( obj, grid.list=CO.Grid, ZGrid=CO.elevGrid,
+                            just.fixed=TRUE, drop.Z=TRUE, extrap=TRUE)
+
+Zd <- out.fixed$z - out.poly$z
+out.Z <- as.surface(CO.Grid, Zd)
+
+spatial.part <- out.dropZ$z - out.poly$z
+out.sp <- as.surface(CO.Grid, spatial.part)
+
+set.panel(3,2)
+surface( out.p,  main="Full model",col =  mycol)
+surface(out.poly, main="Spatial polynomial P(x)",col = mycol)
+surface(out.fixed, main="Mean Part: P(x) + Zd ",col = mycol)
+surface( out.dropZ, main="Spatial Part + Spatial Polynomial",col = mycol)
+surface(out.Z, main="Covariate trend Zd",col = mycol)
+surface(out.sp, main="Only Spatial Part",col = mycol)
+```
+
+```{r, results='hide'}
+temp <- out.poly$z + out.Z$z + out.sp$z
+out.total <- as.surface(CO.Grid, temp)
+surface(out.total, main="Full model, checked by adding parts",col = rev(bpy.colors()))
+```
+
+```{r, echo=FALSE, include=FALSE,eval=FALSE}
+#temp2 <- make.surface.grid(CO.Grid)
+#design <- cbind(1, temp2, as.vector(CO.elevGrid$z) )
+#mn <- matrix(design%*%obj$d, nr=205, ncol=119, byrow = FALSE)
+#mn2 <- as.surface(CO.Grid,mn)
+#image.plot(mn, col=terrain.colors(128))
+#surface(mn2, col=terrain.colors(128))
+#title("byhand matches mean")
+```
+

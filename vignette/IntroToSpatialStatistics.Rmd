@@ -1,0 +1,460 @@
+#Introduction to Spatial Statistics
+
+```{r,include=FALSE, results='hide'}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+```
+
+Here we'll cover the fundamentals of spatial statistics. In particular, we will examine the basic definitions and concepts of the field before giving a geostatistics mini-course. As this is a vignette, we can only scratch the theory behind spatial statistics. A few useful resources are:
+
+* *Statistics for Spatial Data* by Noel Cressie
+
+* *Handbook of Spatial Statistics* by Alan E. Gelfand, Peter J. Diggle, Montserrat Fuentes, and Peter Guttorp
+
+* *Statistics for Spatio-Temporal Data* by Noel Cressie and Christopher K. Wikle
+
+## The spatial problem
+
+Let's return to a previous `quilt.plot`. Suppose we want to predict the maximum March/April/May temperature at a new location $(-103,39.5)$ in Colorado, which is shown below as the **x**.
+
+```{r, echo=FALSE}
+data(COmonthlyMet)
+y.CO <- CO.tmax.MAM.climate
+x.CO <- CO.elev/1000     #convert elevation to kilometers instead of meters
+grd.CO <- as.matrix(CO.loc)
+keep <- !is.na(y.CO)      #removing all NA's from the temperatures
+y.CO <- y.CO[keep]
+x.CO <- x.CO[keep]
+grd.CO <- grd.CO[keep,]
+rm(keep)
+quilt.plot(grd.CO,y.CO)
+US(add=TRUE)
+points(-103,39.5, pch=4,lwd=3,cex=1.25, col='black')
+```
+
+An initial thought may be to use OLS regression with covariates of $\texttt{longitude}$ and $\texttt{latitude}$. 
+
+Recall Tobler's First Law of Geography: "Everything is related to everything else, but near things are more related than distant things." We see this reflected in the plot above, as temperatures in one area are similar to the temperature in nearby areas. This spatial autocorrelation violates many typical statistical assumptions -- our observations are no longer independent! Fortunately, in the field of spatial statistics, we can relax our assumption of independence and work with observations that are spatially dependent.
+
+To make a "spatial prediction", we need some way to quantify the change in our observation variable (temperature) as a function of distance. 
+
+## Covariance
+
+A covariance function $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x'))$ describes the joint variability between a stochastic process $Y(\cdot)$ at two locations $\mathbf{x}$ and $\mathbf{x}'$. This covariance function is vital in spatial prediction. The `fields` package includes common parametric covariance families (e.g. exponential and Matern) as well as nonparametric models (e.g. radial and tensor basis functions).
+
+When modeling $\operatorname{Cov}(Y(\mathbf{x}), Y(\mathbf{x}'))$, we are often forced make simplifying assumptions. 
+
+*   Stationarity assumes we can represent the covariance function as 
+\[
+ \operatorname{Cov}(Y(\mathbf{x}+ \mathbf h), Y(\mathbf{x}) ) = C(\mathbf{h})
+ \]
+for some function $C : \mathbb{R}^d \to \mathbb{R}$ where $\text{dim}(\mathbf x) = d$.
+
+*   Isotropy assumes we can represent the covariance function as 
+\[ \operatorname{Cov}(Y(\mathbf{x}+\mathbf h), Y(\mathbf{x})) = C( \| \mathbf h \| ) \]
+for some function $C: \mathbb{R}
+\to \mathbb{R}$, where $\| \cdot\|$ is a vector norm.
+
+The most common covariance functions are the exponential and Matern. These parameterized covariances are functions of distance, and return a covariance corresponding to that distance based on the response. Each is isotropic, meaning that $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x'))$ *only* depends on the distance $r := \| \mathbf x - \mathbf x'\|$. The exact formulas are provided below.
+
+* Exponential. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) =\rho e^{- r/\theta} + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$.
+
+* Matern. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) = \rho \left( \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{ r}{\theta} \right)^\nu K_\nu \left( \frac{r}{\theta} \right) \right) + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$, where $K_{\nu}$ is a modified Bessel function of the second kind, of order $\nu$. 
+
+Note that the Matern covariance function depends on parameters  $(\rho,\theta,\nu,\sigma^2)$, and the Exponential covariance depends on parameters $(\rho,\theta,\sigma^2)$. The parameters $\rho,\theta,\sigma^2$ and $\nu$ respectively denote the marginal variance (or sill), range, nugget effect, and smoothness of our process. 
+
+The range $\theta$ of the process is the distance at which observations become uncorrelated. The sill $\rho$ is the marginal variance of the spatial process. The nugget effect $\sigma^2$ corresponds to small-scale variation such as measurement error. The smoothness $\nu$ corresponds to how "smooth" our spatial process appears. An illustration in the `vgram` section shows the visual interpretation of these parameters.
+
+
+For such isotropic covariances, the `fields` packages uses relies on the function `rdist`, which is used to  calculate the distance between two sets of locations.
+
+
+### `rdist` 
+
+`rdist` is a function that computes pairwise distance given one or two vectors of locations, say $\mathbf x_1$ and $\mathbf x_2$. 
+
+<The function `rdist.vec` calculates the pairwise distances between vectors. >
+
+For applications, `rdist.earth` computes the geographic distance (Great Circle distance) between two input matrices, and the syntax is similar to that of `rdist`.
+
+If `x2=NULL`, then `rdist(x1,x1)` is performed.
+
+ &nbsp; 
+ 
+*** 
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> rdist(x1, x2 = NULL)    
+< > rdist.vec(x1, x2)    >
+
+
+${\large{\mathbf{Value}}}$
+
+The result of `rdist` is a matrix whose $i,j$-th entry is the Euclidean distance between the $i$-th element of $\mathbf x_1$ and the $j$-th element of $\mathbf x_2$. < The result of `rdist.vec` is a vector whose $i$-th entry is the Euclidean distance between the $i$-th element of $\mathbf x_1$ and the $i$-th element of $\mathbf x_2$. >
+
+***
+
+&nbsp;
+
+Here are two examples of `rdist` (in 1D and 2D).
+
+```{r}
+#compute pairwise distance vector
+x1 = 1:3    #x1 = (1,2,3)
+x2 = 3:1    #x2 = (3,2,1)
+rdist(x1,x2) 
+```
+
+
+
+```{r} 
+data(COmonthlyMet)
+y.CO <- CO.tmax.MAM.climate
+z.CO <- CO.elev     
+grd.CO <- as.matrix(CO.loc)
+keep <- !is.na(y.CO)
+y.CO <- y.CO[keep]
+z.CO <- z.CO[keep]
+grd.CO <- grd.CO[keep,]
+
+quilt.plot(grd.CO,y.CO)
+US(add=TRUE)
+```
+
+It is easy two find the distance between two points on the `quilt.plot`. Here, we use `rdist.earth` since our vectors consist of longitude/latitude pairs.
+
+```{r}
+three.locations <- grd.CO[1:3,]
+#location one is (-109.10, 36.90)
+#location two is (-103.17, 40.12)
+#location three is (-105.85, 37.43)
+rdist.earth(three.locations)  #i,j entry is the distance between location i and location j
+```
+
+
+
+### `Exponential` and `Matern` covariances
+
+The `Exponential` and `Matern` functions produce these isotropic covariances in R. The inputs are a matrix of distances `d`, either the range parameter `range` (this is $\theta$ in our notation) or `alpha = 1/range`, and finally the marginal variance `phi` (which is $\rho$ in our notation), and the smoothness `nu` for the Matern covariance. Note that the exponential covariance is identical to the Matern covariance with smoothnes `nu = 0.5`.
+
+There are other (generalized) covariances in `fields`, such as `RadialBasis` and `Wendland`, that will be discussed later. To set the nugget variance $\sigma^2$, we use the `sigma2` argument in the functions `Krig` or `mKrig` that we also discuss later.
+
+Below are plots that illustrate the shape of these covariance functions. The Exponential, Matern, and Wendland correlations (marginal variances $\rho=1$) behave exactly how one would expect. That is, the covariance between two nearby objects is close to 1, indicating a strong positive correlation among the two observations. The appearance of the Radial-Basis correlation may be shocking -- we will return to it later.
+
+ &nbsp; 
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Exponential(d, range=1, alpha=1/range, phi=1.0)   
+> Matern(d , range=1, alpha=1/range, smoothness = 0.5, nu=smoothness, phi=1.0)  
+
+${\large{\mathbf{Value}}}$
+
+The result is a matrix of covariances with the same dimension as the input distance matrix `d`.
+
+***
+
+&nbsp;
+
+
+```{r}
+d <- seq(0,10,,200) #Will visualize a 1D set of images
+e <- Exponential(d, range = 1) #alpha = 1/range, phi=1.0
+m <- Matern(d , range = 1.5, smoothness = 1.5) #alpha=1/range, nu=smoothness, phi=1.0)
+rbf <- RadialBasis(d,M=2,dimension=2, derivative = 0)
+w <- Wendland(d, theta=1, dimension=1, k=2)
+w2 <- Wendland(d, theta=5, dimension=1, k=5)
+dat <- cbind(e,m,rbf,w,w2)
+matplot(d, dat, type = c("l"), lwd=2, ylim=c(0,1), xlab="Distance",
+        ylab="Correlation",col = c("blue","red", "green", "orange", "purple"))
+title("Correlation (covariance) functions")
+legend(x=6, y=0.9, legend=c("Exp", "Matern", "RBF", "Wendland (Theta=1, k=2)", "Wendland (Theta=5, k=5)"),
+       col=c("blue", "red", "green", "orange", "purple"), pch=15,cex=0.5)
+```
+
+
+
+### `Matern.cor.to.range` 
+
+The range parameter means something different for different values of smoothness in the Matern family. To compare the spatial dependence across different covariance functions, it is helpful to quantify them in a similar way.
+
+For a given smoothness `nu`, `Matern.cor.to.range` returns the range at which the Matern correlation function drops below numeric `cor.target`. 
+
+ &nbsp; 
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Matern.cor.to.range(d, nu, cor.target=.5)  
+
+${\large{\mathbf{Value}}}$
+
+The result is the range value `theta` at which `Matern( d, range=theta, nu=nu) == cor.target`.
+
+***
+
+&nbsp;
+
+
+The example following shows how much the range parameter by itself can vary for different smoothness parameters.
+
+
+```{r}
+r1<- Matern.cor.to.range( 10, nu=.5, cor.target=.1)
+r2<- Matern.cor.to.range( 10, nu=1.0, cor.target=.1)
+r3<- Matern.cor.to.range( 10, nu=2.0, cor.target=.1)
+# note that these equivalent ranges with respect to this correlation length are 
+# quite different due the different smoothness parameters.
+d<- seq( 0, 15,,200)
+y<- cbind( Matern( d, range=r1, nu=.5), Matern( d, range=r2, nu=1.0), Matern( d, range=r3, nu=2.0))
+matplot( d, y, type="l", lty=1, lwd=2)
+xline( 10)
+yline( .1)
+legend( x=6, y=0.9, legend=c("Range = r1", "Range = r2", "Range = r3"),col=c("black", "red", "green"), pch=15,cex=0.5)
+```
+
+
+
+### `Exp.cov` and `stationary.cov`
+
+The functions `Exp.cov` and `stationary.cov` are similar to the previous covariance functions mentioned, but they take two sets of locations as inputs rather than a precomputed distance matrix. This form is what is required for the spatial methods in `fields`.
+
+Notation is largely the same as with `Matern` and `Exponential`; of course, `theta` controls the range of the covariance model, while `smoothness` can be used only with the Matern. The `Exp.cov` function includes an additional argument `p`, where `p=1` corresponds to the typical exponential covariance and `p=2` corresponds to the Gaussian covariance. Both `Exp.cov` and `stationary.cov` have the input `C`. If `C` is specified, then the resulting covariance matrix is multiplied by `C`. This feature offers the potential for more efficient memory because the entire covariance matrix need not be created at once to accomplish the matrix multiplication.
+
+`stationary.cov` is essentially a wrapper function. One can input `Matern` or `Exponential` in the `Covariance=` argument, as well an argument `Distance`, which takes character strings `rdist` or `rdist.earth`. 
+
+These functions can take advantage of sparsity in the covariance matrix and are also capable of taking a precomputed distance matrix as an argument to save repeated computation. This feature, while largely hidden from the user, often provides added speed to the statistical computations in `fields`.
+
+&nbsp; 
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Exp.cov(x1, x2=NULL, theta = 1, p=1)  
+> stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", theta = 1)  
+
+${\large{\mathbf{Value}}}$
+
+If the argument `C` is `NULL`, then the (cross-)covariance matrix is returned. If `C` is a vector of length n, then returned value is the multiplication of the (cross-)covariance matrix with this vector. The `C` functionality is used internally by all `fields` Kriging-related functions.
+
+***
+
+&nbsp;
+
+In the following example we demonstrate that we can specify a particular covariance in several ways, and they all end up being equivalent.
+
+```{r}
+x1 <- seq(1,10 ,,100)
+x2 <- seq(1,20,,100)
+MyTheta <- 5
+
+cov1 <- Exp.cov(x1,x2, theta=MyTheta)
+cov2 <- stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist", Covariance="Exponential")
+cov3 <- stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist", Covariance="Matern",smoothness=.5)
+
+{test.for.zero(cov1,cov2)
+test.for.zero(cov2,cov3)}
+```
+
+### Simulating Random Fields (`sim.rf` and `image.cov`)
+
+To gain an intuition of how the smoothness `nu` affects a stochastic process, we need to create random fields and visualize them.
+
+Suppose $Y(\cdot)$ is a mean zero Gaussian process with covariance $\operatorname{Cov}(\cdot,\cdot)$. To simulate $Y(\cdot)$ at locations $\mathbf x_1,\dots, \mathbf x_n$, perform the following steps:
+
+* Form the covariance matrix $\Sigma = \left( \operatorname{Cov}(\mathbf x_i, \mathbf x_j) \right)_{i,j=1}^n$.
+
+* Take the Cholesky Decomposition $\Sigma = L L^T$.
+
+* Multiply $L \boldsymbol{\epsilon}$, where $\boldsymbol{\epsilon} \sim N(\mathbf 0, I)$.
+
+The resulting random vector $L \boldsymbol \epsilon$ is an exact simulation of a Gaussian process. The only problem with this approach is the computations and storage grow rapidly for larger grids. For example, a $128 \times 128$ image would mean that the dimension of $\Sigma$ is huge ($16,000 \times 16,000$) and effectively prohibit the use of the Cholesky decomposition. For rectangular grids, one can sometimes simulate Gaussian random fields very efficiently using an alternative algorithm called "circulant embedding" that is based on the Fast Fourier Transform. The restrictions are that the covariance function needs to be stationary and the correlation range needs to the small relative to the size of the domain (see Chan and Wood, 1994).
+
+The `sim.rf` function uses circulant embedding to simulate a stationary Gaussian random field (GRF) on a regular grid with unit marginal variance (i.e. $\rho=1$). Note that the marginal variance is readily changed by scaling the resulting GRF.
+
+A limitation when using `sim.rf` presents itself with `Error in sim.rf(obj) : FFT of covariance has negative values`. This comes from the circulant embedding method used to create the GRF; in short, it occurs when the correlation range is too large. One fix is to increase the domain size so this correlation is then small relative to the size of the domain.
+
+The input of `sim.rf` is a list that includes information about the covariance function, its FFT, and the grid for evaluation. Usually this is created by a setup call `image.cov` (i.e. `Exp.image.cov`, `matern.image.cov`, `stationary.image.cov`). 
+
+&nbsp; 
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> sim.rf(obj)  
+> matern.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid ,theta= 1.0, smoothness=.5)   
+> Exp.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)  
+
+${\large{\mathbf{Value}}}$
+
+A matrix with the random field values.
+
+***
+
+&nbsp;
+
+```{r, fig.height=7, results='hide'}
+grid <- list( x= seq( 0,20,,100), y= seq(0,20,,100)) 
+obj1 <- matern.image.cov(grid=grid, theta = 0.5 , smoothness = 0.5, setup=TRUE)
+obj2 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 1, setup=TRUE)
+obj3 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 2, setup=TRUE)
+obj4 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 2.5, setup=TRUE)
+
+set.seed(2008)
+
+look1 <- sim.rf(obj1)
+look2 <- sim.rf(obj2)
+look3 <- sim.rf(obj3)
+look4 <- sim.rf(obj4)
+
+set.panel(2,2)
+image.plot(grid$x, grid$y, look1, main='Smoothness = 0.5',zlim=c(-4.25,4.25)) 
+image.plot(grid$x, grid$y, look2, main='Smoothness = 1',zlim=c(-4.25,4.25)) 
+image.plot(grid$x, grid$y, look3, main='Smoothness = 2',zlim=c(-4.25,4.25)) 
+image.plot(grid$x, grid$y, look4, main='Smoothness = 2.5',zlim=c(-4.25,4.25)) 
+```
+
+## Variograms 
+
+Given a set of spatial data, we need some tools to investigate the covariance of the underlying spatial process. The variogram describes correlation over distance, which can be useful when looking at isotropic covariances. 
+
+We define the theoretical variogram of a stationary process $Y(\cdot)$ as $\gamma(\mathbf h) = \frac{1}{2} \operatorname{Var}[ Y(\mathbf s +\mathbf h) -Y( \mathbf s)]$, where $\mathbf h \in \mathbb{R}^d$. Assuming $Y(\cdot)$ has covariance $C(\cdot)$, it is easy to verify that $\gamma(\mathbf h ) = C(\mathbf 0 ) - C(\mathbf h)$. Therefore, $\gamma(\mathbf h)$ is simply a shift and reflection of the covariance function $C(\mathbf h)$. 
+
+In the context of variograms, the spatial parameters $(\rho,\theta,\nu,\sigma^2)$ have a straightforward visual interpretation.
+
+
+```{r, echo=FALSE}
+x <- seq(0,21,,500)
+d <- rdist(0,x)
+out <- Matern(d, range=1, smoothness=4)
+out2 <- Exponential(d, range=1)
+x2 <- seq(0,1,,1000)
+x3 <- seq(0,0.4,,1000)
+d2 <- rdist(0,x2)
+d3 <- rdist(0,x3)
+ou <- Matern(d2,range=1,smoothness=4)
+ou2 <- Exponential(d3, range=1)
+{plot(x[x>1],1.25-out[x>1], xlim=c(0,15), ylim=c(-0.1,1.5), 
+      ylab="(Semi)Variance",xlab="Distance", type="l", lwd=1.2)
+  lines(x[x>0.35],1.25-out2[x>0.35], lwd=1.2)
+  title('Exponential and Matern Correlations')
+  yline(y=0, lwd=2)
+  xline(x=0, lwd=2)
+  xline(x=10, lty="dashed", col="orange", lwd=2)
+  yline(y=1.26, lty="longdash", col="purple2", lwd=2)
+  segments(0,0, 0,0.24, lty="solid", col="red2", lwd=3)
+  xtext <- c(4.6,4.6,13.6,13.6,2.5,2.5,5.2,5.4,1.2,2.2)
+  ytext <- c(0.08,0.17,0.65,0.75,1.38,1.48,0.35,0.45,1.1,0.755)
+  labels <- c(expression(sigma^2),expression(Nugget),expression(theta),expression('Range (of Matern)')
+              ,expression(rho),expression(Sill),expression(nu),expression(Smoothness), expression(Exp), expression(Matern))
+  col <- rep(c("red2","orange","purple2","royalblue2","black"), rep(2,5))
+  text(x=xtext,y=ytext,labels=labels,col=col)
+  arrow.plot(3.5, 0.065, -1, 0 , arrow.ex=1.6, length=.1, col='red2', lwd=1)
+  arrow.plot(12.6, 0.675, -20, -1 , arrow.ex=1.1, length=.1, col='orange', lwd=1)
+  arrow.plot(3.5, 1.4, 20,-1 , arrow.ex=1.1, length=.1, col='purple2', lwd=1)
+  arrow.plot(3.5, 0.37, -30, -1 , arrow.ex=1.45, length=.1, col='royalblue2', lwd=1)
+  arrow.plot(-1,0, 0,1, arrow.ex=0.73, length=0.07, code=3, col="purple2", lwd=2, 
+             angle=90)
+  arrow.plot(0.5,0.01, 0,1, arrow.ex=0.13, length=0.04, code=3, col="red2", lwd=1.5,
+             angle=90)
+  arrow.plot(0, -0.07, 1,0, arrow.ex=5.79, length=0.07, code=3, col="orange", lwd=2,
+             angle=90)
+  lines(x2, 1.25-ou, col='royalblue2', lwd=3)
+  lines(x3, 1.25-ou2, col='royalblue2', lwd=3)
+}
+```
+
+The definition is readily translated to an *empirical* variogram.
+Let $N(h)$ be the set of pairs of observations $y_i, y_j$ such that $\| \mathbf x_i - \mathbf x_j \| = h$. The empirical variogram (`vgram`) is defined as
+\[
+ \widehat{\gamma}(h) = \frac{1}{2 \cdot|N(h)| } \sum_{(i,j) \in N(h)} ( y_i - y_j )^2
+\]  
+
+The default "cloud" variogram is done for each distance $h$, but it is noisy and hard to interpret. Often, we specify a number of bins `N` in which values for nearby values are averaged. In this way, the choices for a variogram may seem similar to finding a histogram. The `breaks` argument allows the user to explicitly provide distances at which bins are created.
+
+`crossCoVGram` is the same as `vgram` but differences are taken across different variables rather than the same variable. `boxplotVGram` uses the base R boxplot function to display the variogram neatly.
+
+&nbsp; 
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> vgram(loc, y, d = NULL, lon.lat = FALSE, N = NULL, breaks = NULL)   
+> boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1))  
+> vgram.matrix(dat, R)
+
+${\large{\mathbf{Value}}}$
+
+`vgram` and `crossCoVGram` return a `vgram` object containing the following values:
+
+* `vgram`: 	Variogram or covariogram values   
+* `d`:  Pairwise distances   
+* `call`:  Calling string   
+* `stats`: Matrix of statistics for values in each bin. Rows are the summaries returned by the stats function or describe. If not either breaks or N arguments are not supplied then this component is not computed. 
+* `centers`: Bin centers.  
+
+`vgram.matrix` returns an object of class vgram.matrix with the following components: `d`, a vector of distances for the differences, and `vgram`, the variogram values. This is the traditional variogram ignoring direction.
+
+Note that `vgram.matrix` also has components:
+
+* `d.full`: a vector of distances for all possible shifts up distance `R`
+* `ind`: a two column matrix giving the x and y increment used to compute the shifts  
+* `vgram.full`: the variogram at each of these separations
+* `vgram.robust`: Cressie's version of a robust variogram statistic.
+
+***
+
+&nbsp;
+
+
+
+```{r,warning=FALSE}
+v <- vgram(loc=grd.CO,y=y.CO,N=30,lon.lat=TRUE) #use 30 bins
+plot(v$d, v$vgram, ylab="sqrt(Variance)", xlab="distance")
+lines(v$stats["mean",]~v$centers,main='Binned Variogram',col='red',ylab="sqrt(Variance)", xlab="distance")
+plot(v$stats["mean",]~v$centers,main='Binned Variogram',ylab="sqrt(Variance)", xlab="distance")    #red line plotted alone
+boxplotVGram(v,y.CO,N=30,breaks=v$breaks,lon.lat=TRUE, ylab="sqrt(Variance)", xlab="distance")
+```
+
+
+Finally, we show how to use `vgram.matrix` with a synthetic field `look1` generated in the previous section. We look for neighbors within a radius of `R=5`.
+
+```{r}
+vm <- vgram.matrix(look1,R=5)
+plot(vm$d, vm$vgram, ylab="sqrt(Variance)", xlab="distance")
+```
+
+
+## Simple Kriging
+
+The additive spatial model is \[
+Y(\mathbf x) =  \mathbf Z(\mathbf x) \mathbf{d} + g(\mathbf x) + \epsilon(\mathbf x),\]
+where $Y(\cdot)$ is an observation, $\mathbf Z  \mathbf{d}$ is a deterministic (nonrandom) product of covariates $\mathbf Z$ with a weight vector $\mathbf d$ that acts as a mean function, $g(\cdot) \sim N(\mathbf 0, \rho \mathbf K)$ is spatial process, and $\epsilon(\cdot) \sim N( \mathbf 0, \sigma^2  \mathbf I)$ is error (i.e. white noise).
+
+Thus, we assume that our observations $Y(\cdot)$ are Gaussian; in particular, 
+$\mathbf Y \sim N( \mathbf{Zd}, \rho \mathbf K + \sigma^2 \mathbf I)$
+
+For now, we'll assume $\mathbf Z\mathbf{d} \equiv \mathbf 0$ and focus on the spatial aspect $g(\mathbf x)$. This is known as *simple* kriging, where the mean of the stochastic process is known. Denote our locations of observed points as $\mathbf x_1,\dots,\mathbf x_n$. 
+
+Suppose we want to predict $Y(\cdot)$ at a new location $\mathbf x_0$. The kriging estimate $\hat Y(\mathbf x_0)$ of our mean zero Gaussian process $Y(\cdot)$ is given by:
+\[
+\hat Y(\mathbf x_0) = \Sigma_0 \Sigma^{-1} \mathbf Y
+\]
+
+*   $\mathbf Y = \begin{pmatrix} Y(\mathbf x_1) \\ \vdots \\ Y(\mathbf x_n) \end{pmatrix}$ is of dimension $n \times 1$, 
+
+*   $\Sigma_0 =\left( \operatorname{Cov}[Y(\mathbf x_0), Y(\mathbf x_1)], \operatorname{Cov}[Y(\mathbf x_0), Y(\mathbf x_2)] ,\dots, \operatorname{Cov}[Y(\mathbf x_0), Y(\mathbf x_n)] \right)$ is of dimension $1 \times n$,
+
+*   $\Sigma =  \left( \operatorname{Cov}[ Y(\mathbf x_i),Y(\mathbf x_j) ] \right)_{i,j=1}^n$ is the $n \times n$ covariance matrix of $Z(\cdot)$ with $ij$-entry equal to $\operatorname{Cov}[Y(\mathbf x_i),Y(\mathbf x_j)]$.
+
+
+Briefly, when the covariance parameters are known, the Kriging estimate represents the best prediction at $\mathbf x_0$ based on a linear combination of the observations. By best we mean in terms of mean squared error.
+
+In the next section, we see an example of how to perform simple kriging. Other types of kriging (i.e. ordinary kriging and universal kriging) are explained in the appendix. 

@@ -1,0 +1,151 @@
+#`fields` in action
+
+```{r, include=FALSE, results='hide'}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+```
+
+This package deals with fitting curves and surfaces to data to try to represent the underlying model/process. Our overall goal is to write R functions that make data analysis fluid and simple. Much of the framework can be thought of as a generalization of what one learns in a basic statistics course - namely fitting a model by finding the optimal parameters using some measure of goodness-of-fit such as the residual sum of squares. This means that all of the model objects fit in this package will include standard statistical output such as the parameters, fitted values, and residuals. In general we strive to code the `fields` functions in a modular way with numerous comments. We also tend to avoid formula and additional object classes to keep code structure transparent.
+
+Some readers may be interested in analyzing the source code of `fields` functions. Comments in the source code are not available when `fields` is downloaded from CRAN, but are available when downloaded from https://www.image.ucar.edu/~nychka/Fields/.
+
+In this first section we highlight some of the high-level functions and how to use them for the impatient reader. The rest of the vignette goes into much more depth concerning the theory behind and use of the most of the external functions in `fields`.
+
+***
+
+##Visualizing raw data with `quilt.plot`
+
+The `quilt.plot` function takes irregularly-spaced data, puts it on a grid, and plots the result. This can be useful if you have many datapoints that are nearly collocated.
+Consider the `NorthAmericanRainfall` dataset, which describes precipitation over North American at non-gridded longitude and latitude values. The following shows how to use `quilt.plot`.
+
+```{r plot}
+library(fields)
+data(NorthAmericanRainfall)
+x<- cbind(NorthAmericanRainfall$longitude, NorthAmericanRainfall$latitude)
+y<- NorthAmericanRainfall$precip
+quilt.plot(x,y)
+world(add=TRUE)
+```
+
+The `fields` commands `world(add=TRUE)` and `US(add=TRUE)` can quickly add outlines to our maps.
+
+
+Of course, `ggplot2` can reproduce a `quilt.plot`, but it is often more laborious when using spatial data. Here, we include `ggplot2` code for comparison. 
+
+```{r}
+library(ggplot2)
+data(NorthAmericanRainfall)
+df <- data.frame(NorthAmericanRainfall$longitude,NorthAmericanRainfall$latitude,
+                 NorthAmericanRainfall$precip)
+names(df) <- c("Longitude","Latitude","Precip")
+us = map_data("usa")
+
+ggplot()  + geom_polygon(data = us, aes(x=long, y = lat, group = group), fill = NA, color = "black") + geom_point(aes(x=Longitude,y=Latitude,colour=Precip),data=df,size=2.5,shape=20) +
+scale_colour_gradientn(colours = tim.colors()) + labs(colour="Precip")
+```
+
+Be aware that there is an important difference between these functions: `quilt.plot` by default finds the average in each grid box, while `ggplot` overlays all the individual values.
+
+## `spatialProcess` with a covariate
+
+`fields` makes it easy to fit a spatial model from data, predict at arbitrary locations or on a grid, and plot the results. Additional covariates (e.g. elevation) can also be included in the linear trend. We can use `predictSurface` to predict on a grid and output a surface object, much like `predict` but more convenient for plotting.
+
+```{r, results='hide'}
+data( COmonthlyMet)
+# predicting average daily minimum temps for spring in Colorado
+obj<- spatialProcess( CO.loc, CO.tmin.MAM.climate, Z= CO.elev)
+out.p<-predictSurface.Krig( obj, grid.list=CO.Grid, ZGrid= CO.elevGrid, extrap=TRUE)
+
+image.plot( out.p, col=larry.colors())
+US(add=TRUE, col="grey")
+contour( CO.elevGrid, add=TRUE, levels=seq(1000,3000,,5), col="black")
+title("Average Spring daily min. temp in CO")
+```
+
+We can also find standard errors (for a fixed set of parameter estimates):
+
+```{r, eval=FALSE}
+out.p<-predictSurfaceSE( obj, grid.list=CO.Grid, ZGrid= CO.elevGrid, extrap=TRUE) #ZGrid= CO.elevGrid
+# error drop.Z not supported ??
+image.plot( out.p, col=larry.colors())
+US(add=TRUE, col="grey")
+points(CO.loc[,1], CO.loc[,2], col="magenta", pch=21, bg="white")
+title("Standard errors for avg Spring daily min. temp in CO")
+```
+
+Computing standard errors can be computationally expensive. An alternative is to use `sim.spatialProcess` to conditionally simulate the process, and then use these simulations to approximate the standard errors. In practice, a large `M` (e.g. 100) should be used to produce many simulations to reduce the variability when  finding sample standard deviations in the Monte Carlo sample.
+
+```{r, fig.height=10, fig.width=13, results='hide',eval=FALSE}
+sim <- sim.spatialProcess(obj, xp=make.surface.grid(CO.Grid)[1:5,], Z=CO.elevGrid$z[1:5], M=30)
+look <- as.surface(CO.Grid, t(sim[1,]))
+look2 <- as.surface(CO.Grid, t(sim[2,]))
+look3 <- as.surface(CO.Grid, t(sim[3,]))
+zgrid <- matrix(CO.elevGrid, nr=NGRID, nc=NGRID)
+surf <-predictSurface.Krig( fit1E, grid.list=CO.Grid, ZGrid= zgrid, extrap=TRUE)
+
+set.panel(2,2)
+surface(surf, main="Model Prediction")
+surface(look, main="Simulation 1")
+surface(look2, main="Simulation 2")
+surface(look3, main="Simulation 3")
+```
+
+Finally, we use these conditional simulations to approximate the standard errors.
+
+```{r, results='hide',eval=FALSE}
+surSE <- apply(sim, 2, sd)
+set.panel()
+image.plot(as.surface( COGridPoints, surSE))
+title("Uncertainty and Observations")
+points(fit1E$x, col="magenta", pch=21, bg="white")
+```
+
+## Univariate `Tps`
+
+A final example shows how to fit a thin plate spline for one-dimensional smoothing and interpolation. We use the `WorldBankCO2` data included in `fields`, which is a $75 \times 5$ matrix with row names identifying countries. The five columns are 
+* `GDP.cap`: Gross Domestic Product (in dollars) per capita  
+* `Pop.mid`: Percentage of population within ages of 15 to 65  
+* `Pop.urb`: Percentage of population living in an urban environment  
+* `CO2.cap`: Equivalent CO2 emissions per capita  
+* `Pop`: Total population.    
+
+We examine the relationship between the log of `Pop.mid` and the log of`CO2.cap`. We use the `fields` function `Tps` to fit a thin plate spline and also include a plot using `lm` to fit a linear regression. (Note: In this one-dimeonsional case, the `Tps` and the classical cubic smoothing spline are the same). The confidence intervals are shown as dashed red around the fit.
+
+```{r,results="hide",fig.width=11}
+data("WorldBankCO2")
+pairs(WorldBankCO2)
+x <- log(WorldBankCO2[,'Pop.mid'])
+y <- log(WorldBankCO2[,'CO2.cap'])
+
+set.panel(1,2)
+out <- Tps(x,y)
+xgrid<- seq(  min( out$x), max( out$x),,100)
+fhat<- predict( out,xgrid)
+plot(x,y)
+title('Tps')
+lines( xgrid, fhat,)
+SE<- predictSE( out, xgrid)
+lines( xgrid,fhat + 1.96* SE, col="red", lty=2)
+lines(xgrid, fhat - 1.96*SE, col="red", lty=2)
+
+out2 <- lm(y~x)
+ci <- predict(out2, data.frame(x=xgrid), level=0.95, interval='confidence')
+matplot(xgrid, ci, col=c(1,2,2), type='l', lty=c(1,2,2),xlab="x",ylab="y")
+title('lm')
+points(x,y)
+```
+
+
+
+
+```{r, include=FALSE, eval=FALSE}
+# to get an elevation grid ... be careful making NGRID larger
+NGRID <- 60
+COGrid<- list( x=seq(-109.5, -101,,NGRID), y= seq(39, 41.5,,NGRID))
+COGridPoints<- make.surface.grid(COGrid)
+data( RMelevation) # 4km Rocky Mountain elevation fields data set.
+drape.plot(RMelevation$x, RMelevation$y, RMelevation$z, border=NA)
+title("Colorado Elevation")
+COElevGrid<- interp.surface( RMelevation, COGridPoints )
+```
+

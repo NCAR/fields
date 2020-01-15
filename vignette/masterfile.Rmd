@@ -1,0 +1,84 @@
+---
+title: '`fields` vignette'
+author: "Ashton Wiens and Mitchell Krock"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output:
+  html_document:
+    number_sections: yes
+    toc: yes
+---
+
+```{r set-options, echo=FALSE, eval=FALSE}
+options(width = 400)
+knitr::opts_chunk$set(fig.show = 'hide')   #only if you want no figures
+```
+<style type="text/css">
+
+body{ /* Normal  */
+      font-size: 14px;
+  }
+td {  /* Table  */
+  font-size: 8px;
+}
+h1.title {
+  font-size: 38px;
+  color: DarkRed;
+}
+h1 { /* Header 1 */
+  font-size: 28px;
+  color: DarkBlue;
+}
+h2 { /* Header 2 */
+    font-size: 20px;
+  color: DarkGreen;
+}
+h3 { /* Header 3 */
+  font-size: 18px;
+  font-family: "Times New Roman", Times, serif;
+  color: DarkBlue;
+}
+code.r{ /* Code block */
+    font-size: 12px;
+}
+pre { /* Code block - determines code spacing between lines */
+    font-size: 14px;
+}
+</style>
+
+```{r child="Introduction.Rmd"}
+```
+
+```{r child="FieldsInAction.Rmd"}
+```
+
+```{r child="splines.Rmd"}
+```
+
+```{r child="IntroToSpatialStatistics.Rmd"}
+```
+
+```{r child="TraditionalGeostatistics.Rmd"}
+```
+
+
+```{r child="spatProc.Rmd"}
+```
+
+```{r child="images.Rmd"}
+```
+
+```{r child="smooth.Rmd"}
+```
+
+```{r child="CovarianceRevisited.Rmd"}
+```
+
+
+```{r child="mKrig.Rmd"}
+```
+
+```{r child="Tpsfast.Rmd"}
+```
+
+```{r child="KrigingTheory.Rmd"}
+```

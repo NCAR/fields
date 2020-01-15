@@ -1,0 +1,367 @@
+# Univariate Splines
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+```
+
+While the `fields` package is primarily concerned with methods for fitting spatial data and higher dimensional surfaces, it also includes functions for one dimensional curve fitting as special cases with $d=1$. These functions can be used for interpolating and smoothing data, and allow for statistical inference of uncertainty.
+
+* Thin plate splines: `Tps`, `fastTps`
+* Cubic splines: `splint`, `sreg`  
+* Quantile/robust regression splines: `qsreg`, `QTps`
+
+***
+
+## `splint` and `sreg`
+
+
+
+We begin with a simple example that illustrates interpolating and smoothing a 1-d time series. Here we consider the `rat.diet` data set that comes with the package. The data includes the median food intake of two groups of rats over about 100 days. The treatment group `trt` received an appetite suppressant for 65 days and then was taken off the suppressant, while the control group `con` never received the suppressant.
+
+```{r}
+# 1d example
+data("rat.diet")
+x <- rat.diet$t
+y <- rat.diet$trt
+matplot( rat.diet$t, cbind( rat.diet$trt, rat.diet$con), 
+          ylab="Median Food Intake", xlab="Days", pch=16)
+title("Rat diet data: treatment and control groups")
+```
+
+We might be interested in fitting a model to these data in order to predict new values or to summarize the trend over time. The functions `splint` (spline interpolation) and `sreg` (spline regression) can be used to fit interpolating or smoothing cubic splines to univariate data. Both of these functions are FORTRAN based and faster than `Tps`. `sreg` will estimate the smoothing parameter `lambda`, and `splint` is designed to be a fast interpolator and requires a fixed `lambda` value. In either case, setting `lambda` equal to zero will give an interpolation. 
+
+Both `splint` and `sreg` can work with irregularly spaced data, but `splint` will not accept repeated values in the input variable `x`. (For repeated data, use `sreg`).
+
+Note that the function `splint` requires the `xgrid` argument for locations to predict at. Alternatively, we can `predict` at new locations with an `sreg` object to get a similar result.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> splint(x, y, xgrid, derivative=0, lam=0, df=NA, lambda=NULL)    
+> sreg(x, y, lambda = NA, df = NA)    
+> predict( sregObject , x, derivative = 0)      
+
+${\large{\mathbf{Value}}}$
+
+The `splint` function returns a vector of values of the interpolating spline evaluated at `xgrid`, while `sreg` returns a list of class `sreg`. Some of the relevant components of the `sreg` list are the original data `x` and `y`, the smoothness parameters `lambda` and `df` (same as `trace`), and the `residuals` and `fitted.values`. Note that the identical parameters `lam` and `lambda` both appear for covenience.
+  
+***  
+  
+&nbsp;
+
+First, we'll use interpolation to fit the control group data. We use the `x` data coordinates as nodes to interpolate, and then evaluate the model at the grid locations to plot. Interpolation of a set of data points $(x_i,y_i)_{i=1}^n$ means that the interpolating function passes exactly through these points.
+
+```{r}
+grd <- seq(range(x)[1], range(x)[2], length.out = 400)
+spl <- splint(x,y,grd)
+plot(y~x, pch=".", cex=5, ylab="Median Food Intake", xlab="Days")
+title("Interpolating Observed Data")
+lines(grd,spl)
+legend( x=0 , y=30, legend=c("Interpolation using splint"), 
+        col=c("black"), pch=15, cex=1)
+```
+
+Often we want to smooth the data rather than interpolate, for example if we assumed possible error in data collection. Loosely, a smoothing function follows the general "trend" of the data, but it may not exactly interpolate the data points.
+
+The parameters `df` and `lambda` both control the smoothing in these functions. Interpolating the data corresponds to $\lambda=0$ and `df=` the number of observations. As `lambda` increases, the spline gets smoother. 
+
+In place of `lambda`, a more useful scale is in terms of the effective number of parameters (degrees of freedom) associated with the estimate. We denote this by EDF (effective degrees of freedom). There is a 1-1 relationship between $\lambda$ and EDF, and both are useful measures in slightly different contexts: $\lambda$ for computing with the spatial process model versus EDF for data smoothing. The user should be aware that `splint` defaults to `lambda = 0` (interpolation), while `sreg` defaults to using GCV to find `lambda`. 
+
+
+```{r}
+#Note this small lambda almost interpolates, close to splint model fit above
+sr <- sreg(x,y, lambda=0.001)
+pr <- predict(sr, grd)
+
+#Fit a model with fewer effective degrees of freedom
+spl2 <- splint(x,y, grd, df=20)
+#Think of reducing df as increasing the smoothness of the model
+spl3 <- sreg(x,y,df=15)
+pr3 <- predict(spl3, grd)
+spl4 <- sreg(x,y)
+pr4 <- predict(spl4,grd)
+plot(y~x, pch=".", cex=5, ylab="Median Food Intake", xlab="Days")
+title("Smoothing Observed Data")
+mat <- cbind( spl, pr, spl2, pr3, pr4)
+matplot(grd,mat,col=2:6,lwd=2,type="l",lty=c(rep(1,4),2),add=TRUE) 
+legend( x=0 , y=30, legend=c("Interpolation","lambda = 0.001", "df=20", "df=15",
+                             "GCV: lambda=11.13"), col=2:6, pch=15, cex=1)
+```
+
+***
+
+## `sreg` and S3 methods
+
+We saw in the previous example that after we that we could use the general R function `predict` on an `sreg` object. This is known as an S3 method, and there are many other S3 methods available in `fields`. Examples of classes that use these methods are `sreg`, `Tps`, `Krig`, `spatialProcess`, `qsreg`, `mKrig`, `fastTps`, etc.
+
+`predict` provides prediction estimates at arbitrary points/new data. Other
+values of the smoothing parameter $\lambda$ can be input and the predictions are computed efficiently.
+
+`summary` gives a summary of the object. The components include the function call, number of observations, effective degrees of freedom, residual degrees of freedom, root mean squared error, R-squared and adjusted R-squared, log10(lambda), cost, GCV minimum and a summary of the residuals. This list automatically prints in a useful format.
+
+```{r}
+fit <- sreg(x,y) # fit a GCV spline to test group of rats
+summary( fit)
+```
+
+`plot` gives a series of four diagnostic plots describing the fit. For `sreg`, plot 1 shows data vs. predicted values, and plot 2 shows predicted values vs. residuals. Plot 3 shows the criteria to select the smoothing parameter $\lambda = \sigma^2/\rho$. The x axis has transformed $\lambda$ in terms of effective degrees of freedom to make it easier to interpret. Note that here the GCV function is minimized while the REML is maximized. Finally, plot 4 shows a histogram of the standard residuals.
+
+```{r, message=FALSE, results='hide',fig.width=11,fig.height=8}
+set.panel(2,2)
+plot(fit) # four diagnostic plots of fit
+```
+
+Finally, we will illustrate the flexibility in a evaluating the fitted function and its derivatives.
+
+```{r}
+predict( fit) # predicted values at data points
+xg <- seq(0,110,,50)
+sm <-predict( fit, xg) # spline fit at 50 equally spaced points
+der.sm <- predict( fit, xg, deriv=1) # derivative of spline fit
+```
+
+```{r, results='hide', fig.width=11}
+set.panel( 1,2)
+plot( fit$x, fit$y) # the data
+lines( xg, sm) # the spline
+title("The Data and Spline Fit")
+plot( xg,der.sm, type="l") # plot of estimated derivative
+title("Predicted Derivative")
+```
+
+To get proper standard errors on our predictions, we recommend switching to the thin plate spline function.
+
+***
+
+## `Tps`
+
+The `Tps` function is used for fitting curves and surfaces to interpolate or smooth data by thin plate spline regression. This is a very useful technique and is often as informative as more complex methods.  
+
+The assumed model for Tps is additive. Namely,
+$$ Y_i = f(\mathbf{X}_i) + \epsilon_i,$$  
+where $f(\mathbf{X})$ is a `d` dimensional surface, and the object is to fit a thin plate spline surface to irregularly spaced data. $\epsilon_i$ are uncorrelated random errors with zero mean and variances $\sigma^2 / w_i$.   
+
+This function also works for just a single dimension and is a special case of a spatial
+process estimate (Kriging). A "fast" version of this function uses a compactly supported Wendland covariance, computing the estimate for a fixed smoothing parameter.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Tps(x, Y, m=NULL, p=NULL,)  
+> fastTps(x, Y, m = NULL, p = NULL, theta, lambda=0)  
+
+${\large{\mathbf{Value}}}$
+
+Returns a list of class `Krig`/`mKrig` (see below), which includes the predicted surface of `fitted.values` and `residuals`. Also includes the results of the GCV grid search in `gcv.grid`. Note that the GCV/REML optimization is done even if `lambda` or `df` is given. Please see the documentation on `Krig` for details of the returned arguments.
+
+***
+
+&nbsp;
+
+`Tps` is a "wrapper function", which is why a `Krig` object is returned. Moreover, any argument that can be used in a call to `Krig` can be used in `Tps`. For example, the user can specify `lambda` or `df` just as in `sreg`. As seen in the minimization problem, `lambda` determines the weight put on the smoothness condition, giving it the same interpretation. `lambda` is the most important argument for `Tps`, which is estimated by GCV if omitted. We can also includes covariates in the linear part of the model by passing the argument `Z`. 
+
+`Tps` and `fastTps` are special cases of using the `Krig` and `mKrig` functions, respectively. The `Tps` estimator is implemented by passing the right generalized covariance function based on a radial basis function (RBF) to the more general function `Krig`. One advantage of this implementation is that once a `Tps`/`Krig` object is created the estimator can be found rapidly for other data and smoothing parameters provided the locations remain unchanged. This makes simulation within R efficient (see example below). 
+
+## `Tps` theory and GCV
+
+This section is more mathematical and offered as a supplement. The estimator of $f(\mathbf{X})$ is the minimizer of the penalized sum of squares  
+$$\frac{1}{n} RSS + J_m(f),$$  
+
+where RSS is a weighted residual sums of squares $\sum_i w_i ( y_i - f(x_i))^2$, and $J_m$ is a roughness penalty based on $m$th order derivatives and a scalar $\lambda > 0$. For `Tps`, $f$ is seperated into a $d-1$ degree polynomial and a smooth function capturing spatial dependence
+
+More specifically, thin plate splines can be viewed as the result of a minimization problem in a reproducting kernel Hilbert space $\mathcal{H}$. We want to minimize the residual sum of squares subject to the constraint that the function has a certain level of smoothness. The smoothness is quantified by the integral of squared $m$th order derivatives of the function, and this integral gives the norm of the Hilbert space. Besides controlling the order of the derivatives, the value of $m$ also determines the base polynomial that is fit to the data.  
+
+The minimization problem written out for the case d=1 and m=2 gives the cubic spline smoothing solution:
+\[
+\min \limits_{f \in \mathcal{H}} \hspace{1mm} \left\{ \sum_i (y_i - f(x_i))^2 + \lambda \int \left[ f'' (x) \right]^2 dx \right\}
+\]  
+For the case d=2 and m=2:  
+\[
+\min \limits_{f \in \mathcal{H}} \hspace{1mm} \left\{ \sum_i (y_i - f(\mathbf{x}_i))^2 + \lambda \int  \left( \frac{\partial^2 f(\mathbf{x})}{\partial x_1^2} \right)^2 + 2 \left(\frac{\partial^2 f(\mathbf{x})}{\partial x_1 \partial x_2} \right)^2+ \left( \frac{\partial^2 f(\mathbf{x})}{\partial x_2^2} \right)^2 d\mathbf{x} \right\}
+\]  
+where $\mathbf{x} =\begin{pmatrix} x_1 \\ x_2 \end{pmatrix}$. The smoothing parameter $\lambda$ can be chosen from the data by GCV. That is, the estimate of the smoothing parameter can be found by minimizing the GCV function
+
+$$V(\lambda) = \frac{1}{n} \frac{RSS(\lambda)}{ \Big( 1 - \frac{EDF(\lambda)}{n} \Big) ^2} $$   
+
+It is also possible to include a cost parameter that can give more (or less) weight to the effective number of parameters beyond the base polynomial model. Note that a frequentist estimate for the residual variance $\sigma^2$ is found using the estimate for $\lambda$ by
+
+$$\hat{\sigma}^2 = \frac{RSS}{(n- EDF(\lambda))}$$
+
+in analogy to ordinary least squares regression.
+
+
+##Confidence intervals with `Tps`
+
+First we show that we can use `Tps` to replicate the `sreg` function if we specify arguments in a certain way. `sreg` does not scale the observations when fitting, so we must instruct `Tps` not to scale either. This will make `lambda` comparable within a factor of n.
+
+```{r}
+# Using Tps on the rat.diet data
+# Tps allows uncertainty quantification
+fit.tps<-Tps( x,y, scale="unscaled")
+summary( fit.tps)
+```
+
+Notice how similar the summary is to `sreg`'s summary. `sreg` is actually a special case of `Tps` (as shown below -- note that `lambda` is not equal for the two functions!) The `m=2` default for `Tps` and leaving the data unscaled results in the cubic smoothing spline `sreg`.
+
+```{r}
+# compare sreg and Tps results to show the adjustment to lambda.
+predict( fit)-> look
+predict( fit.tps, lambda=fit$lambda*fit$N)-> look2
+# test.for.zero is a testing function that checks for equality within tolerance
+# silence means it checks to 1e-8
+test.for.zero( look, look2) 
+```
+
+We can easily get uncertainty intervals from the `Tps` function.
+
+```{r}
+SE <- predictSE(fit.tps)
+
+# 95% pointwise prediction intervals
+Zvalue<- qnorm(.0975)
+upper<- fit.tps$fitted.values + Zvalue* SE
+lower<- fit.tps$fitted.values - Zvalue* SE
+
+# conservative, simultaneous Bonferroni bounds
+ZBvalue<- qnorm(1- .025/fit$N)
+upperB<- fit.tps$fitted.values + ZBvalue* SE
+lowerB<- fit.tps$fitted.values - ZBvalue* SE
+
+plot( fit.tps$x, fit.tps$y)
+lines( fit.tps$predicted, lwd=2)
+matlines( fit.tps$x,
+          cbind( lower, upper, lowerB, upperB), type="l", 
+          col=c( 2,2,4,4), lty=1)
+title( "95 pct pointwise and simultaneous intervals")
+```
+
+```{r, eval=FALSE}
+# or try the more visually honest:
+plot( fit.tps$x, fit.tps$y)
+lines( fit.tps$predicted, lwd=2)
+segments( fit.tps$x, lowerB, fit.tps$x, upperB, col=4)
+segments( fit.tps$x, lower, fit.tps$x, upper, col=2, lwd=2)
+title( "95 pct pointwise and simultaneous intervals")
+```
+
+<Finally, we are able to use the uncertainty estimates from the `Tps` model to produce conditional simulations.>
+
+```{r, eval=FALSE, include=FALSE, echo=FALSE}
+numsim <- 50 #number of conditional simulations
+true<- fit.tps$fitted.values
+N<- length( fit.tps$y)
+temp<- matrix( NA, ncol=numsim, nrow=N)
+sigma<- fit.tps$shat.GCV
+for ( k in 1:numsim){
+  ysim<- true + sigma* rnorm(N)
+  temp[,k]<- predict(fit.tps, y= ysim)
+}
+
+library(scales)
+matplot( fit.tps$x, temp, type="l", col=alpha(rainbow(numsim), 0.5) )
+title('Conditional sims and approx CI')
+lines(fit.tps$x, true, lwd=2)
+```
+
+***
+
+Using the `WorldBankCO2` data, we show a small example using `fastTps`. We plot the data, the mean prediction line, and some approximate confidence intervals in dashed red.
+
+```{r}
+x <- WorldBankCO2[,'Pop.urb']
+y <- log10(WorldBankCO2[,'CO2.cap'])
+out.fast <- fastTps(x,y,lambda=2, theta=20)
+plot(x,y)
+xgrid<- seq(  min(x), max(x),,300)
+fhat.fast <- predict( out.fast,xgrid)
+#se.fast <- predictSE( out.fast) 
+lines( xgrid, fhat.fast)
+#lines( xgrid, fhat.fast+1.96*se.fast, col=2, lty=2)
+#lines( xgrid, fhat.fast-1.96*se.fast, col=2, lty=2)
+title('fastTps fit')
+```
+
+
+
+
+
+
+
+
+```{r, eval=FALSE, include=FALSE}
+# what is a spline doing to the data? 
+
+out  <- Tps( rat.diet$t, rat.diet$trt )
+A    <- out$A.matrix
+look <- A%*% rat.diet$trt
+
+for (i in 1:37){
++     plot(out$matrices$V[,i])
++     Sys.sleep(0.3)
++ }
+
+# predicted from the hat matrix times y 
+
+look2 <- predict( out )
+
+# predicted from the Tps object 
+# list them out to compare 
+
+cbind( look,look2)
+
+# the rows of A are the weights applied to the observed data to 
+# give the spline at the points
+
+row20 <- c(A[20,])
+row35 <- c( A[35,])
+matplot( rat.diet$t , cbind( row20, row35), type="l", col=1)
+yline( 0)
+```
+
+
+
+
+
+
+
+
+
+
+```{r, include=FALSE, eval=FALSE}
+# Just for completeness we show a visual comparison of all of the univariate models we have fit so far.
+data(rat.diet)
+x<- seq( 0, 120,length.out=200)
+splint(rat.diet$t, rat.diet$trt,x )-> y
+
+splint( rat.diet$t, rat.diet$trt,x, df= 7)-> y1
+sreg( rat.diet$t, rat.diet$trt, df= 7)-> obj
+qsreg( rat.diet$t, rat.diet$trt) -> obj4
+predict(obj, x)-> y2
+# in fact predict.sreg interpolates the predicted values using splint!
+# the two predicted lines (should) coincide
+
+obj2 <- Tps(rat.diet$t, rat.diet$trt)
+obj3 <- fastTps(rat.diet$t, rat.diet$trt, theta=10)
+obj5 <- QTps(rat.diet$t, rat.diet$trt)
+predict(obj2, x) -> pred2
+predict(obj3, x) -> pred3
+predict(obj4, x) -> pred4
+predict(obj5, x) -> pred5
+
+{plot( rat.diet$t, rat.diet$trt, main="Comparing different fits")
+lines( x,y1, col="red",lwd=2)
+lines(x,y2, col="blue", lty=2,lwd=2)
+lines(x, pred2, col="green", lty=2, lwd=2)
+lines(x, pred3, col="purple", lwd=2)
+lines(x, pred4, col="orange", lwd=2)
+lines(x, pred5, col="yellow", lwd=2)}
+```
+
+

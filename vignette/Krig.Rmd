@@ -1,0 +1,187 @@
+#`Krig`
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE,cache=TRUE)
+library(fields)
+```
+
+```{r, include=FALSE}
+#setup from last chapter geostats mini course
+data(COmonthlyMet)
+y.CO <- CO.tmax.MAM.climate
+z.CO <- CO.elev
+grd.CO <- as.matrix(CO.loc)
+keep <- !is.na(y.CO)      #removing all NA's from the temperatures
+y.CO <- y.CO[keep]
+z.CO <- z.CO[keep]
+grd.CO <- grd.CO[keep,]
+v <- vgram(loc=grd.CO,y=y.CO,N=30,lon.lat=TRUE) #use 30 bins
+vls.matern <- function(vec){ # vec = (rho,theta,nu,sigmasq)
+	theoretical.vgram <- vec[1] * (1 - Matern(v$centers[1:15], range= vec[2], nu = vec[3])) +vec[4]
+  sum( (theoretical.vgram - v$stats["mean",1:15])^2 )}
+out <- optim(par=c(2,50,2.5,1),fn=vls.matern,method="L-BFGS", lower = c(0,0,1,0), upper = c(25,100,6,3))
+rho <- out$par[1]
+theta <- out$par[2]
+nu <- out$par[3]
+sigmasq <- out$par[4]
+fit <- Krig(grd.CO,y.CO,Covariance="Matern")
+fit2 <- Krig(grd.CO,y.CO,Covariance="Matern",theta=theta,rho=rho,smoothness=nu,sigma2=sigmasq)
+#fit2 <- mKrig(grd,y,cov.function="stationary.cov",Covariance="Matern",theta=theta)
+```
+
+Spatial statistics refers to the class of models and methods for data collected over a spatial region, and informally we will refer to spatial estimates based on a covariance model as kriging. Examples of such regions might be a mineral field, a quadrant in a forest, or a geographic region. A typical problem is to predict values of a measurement at locations where it is not observed, or, if the measurements are observed with error, to estimate a smooth spatial process from the data. The `Krig` function in `fields` has the advantage that it can use arbitrary covariance functions. For this reason, `Krig` is not limited to two dimensional problems or standard models. 
+  
+Suppose we have observations at locations $\mathbf x_1,\dots, \mathbf x_n$. The
+`fields` package assumes a spatial model of the form
+\[
+Y(\mathbf x_i) = P(\mathbf x_i) + \mathbf{Z}(\mathbf x_i) \mathbf{d}_i + g(\mathbf x_i) + \epsilon_i
+\]
+where $P(\cdot)$ is a low order polynomial (default is a linear function `m=2`), $\mathbf{Z}$ is a matrix of covariates weighted by a vector $\mathbf{d}$, $g(\cdot)$ is a mean zero Gaussian stochastic process with a covariance $\rho \cdot k(\mathbf x, \mathbf x')$ that is known up to a scale constant $\rho$, and $\boldsymbol \epsilon \sim N(\mathbf 0, \sigma^2 W^{-1})$ is measurement error. Typically, the weights matrix $W$ is taken as the identity $I$, so $\epsilon_i \sim N(0,\sigma^2)$. Consistent with the spline estimate, we take $\lambda = \rho/\sigma^2$. The covariance function $k(\cdot,\cdot)$ may also depend on other parameters that we explain how to specify below but these are not estimated directly by the `Krig` function. Throughout this discussion the reader should keep in mind that a low order polynomial $\mathbf{P}$ fixed effect is also part of the estimate. By default this is a linear function in the spatial coordinates, but the degree can be changed. 
+
+Of course, we could consider the spatial coordinates as covariates in the $\mathbf{Z}$ matrix and simply write the model as
+\[
+Y(\mathbf x_i) =  \mathbf{Z}(\mathbf x_i) \mathbf{d}_i + g(\mathbf x_i) + \epsilon_i.
+\]
+However, we want to make it clear that the spatial polynomial $P(\cdot)$ is (by default) included in the kriging estimate, while other covariates $\mathbf{Z}$ must be specified.
+
+There are a number of S3 functions associated with `Krig`. `coef.Krig` function gives the coefficients `d` from the fixed part of the model (null space or spatial drift). `surface.Krig` returns an image of the model fit with `Z` covariates dropped by default. `predict.Krig` allows the user to predict the fit at new locations, and `predictSE.Krig` gives the predicted standard errors at new locations. `plot.Krig` returns a series of diagostic plots, and calling `fit` (or `print(fit)` or `summary(fit)`) gives details about the estimated parameters.
+
+&nbsp; 
+  
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> Krig(x, Y, theta, Covariance="Matern", smoothness, Distance="rdist")  
+
+${\large{\mathbf{Value}}}$
+
+The `Krig` function produces an object of class `Krig`. With this object it is easy to subsequently predict with this fitted surface, find standard errors, alter the $Y$ data (but not $\mathbf x$), etc.
+
+***
+
+&nbsp;
+
+## `ozone2`
+
+We'll start with the `ozone2` dataset, in which there are CO2 observations over 89 days at a set of 153 locations. We'll restrict ourselves to day 16 (June 18, 1987) and remove all `NA` values.
+
+```{r, results="hide"}
+data(ozone2)  #names(ozone2) shows variables lon.lat, y, station.id, and dates
+set.panel(1,2)
+## Plot 1 - Locations
+US( xlim= c(-94,-83),  ylim=c(37, 45) )
+points( ozone2$lon.lat, pch="o")
+title("Locations")
+
+##Plot 2 - Day 16
+y.full <- c(ozone2$y[16,])
+keep <- !is.na(y.full)
+y.ozone <- y.full[keep]
+x.ozone <- ozone2$lon.lat[keep,]
+
+quilt.plot(x.ozone,y.ozone,add.legend=TRUE,main="Values for Day 16")
+US(add=TRUE)
+```
+ 
+Performing a spatial prediction via `Krig` is easy, but first we need to propose a range parameter `theta`. To get an estimate of `theta`, we determine sample autocorrelation of matrix `ozone2$y` (which allows us to use all 89 days of measurement), and then plot the correlation versus distance between locations. The sample correlation is around zero when $d=350$, so we will use the range `theta=350` with `Krig`.
+
+```{r}
+ozone.cor <- cor(ozone2$y)
+
+upper    <- col(ozone.cor) > row(ozone.cor)
+cgram.oz <- list( d=rdist.earth( ozone2$lon.lat)[upper], cor=ozone.cor[upper])
+
+plot( cgram.oz$d, cgram.oz$cor, xlab="correlation",
+		ylab="distance",pch=".",main="sample correlation as function of distance")
+```
+
+Now it's time to `Krig` with our estimate `theta=350`. Note that visualizing a `Krig` object via `surface` only displays the spatial part of the model $g(\cdot)$ and the low order spatial polynomial $P(\cdot)$ (i.e. it excludes the `Z ` part of the linear trend). To get a plot of the full estimate involving a covariate `Z`, we need to use `predictSurface.Krig`. Below are few different ways to reach the same result (no `Z` covariate yet).
+
+```{r}
+out <- Krig( x.ozone, y.ozone, theta=350,Covariance="Matern",Distance="rdist.earth")
+surface(out)
+```
+
+```{r,results="hide",fig.width=11,fig.height=9}
+set.panel(2,2)
+##Option 1 - default when grid.list=NULL
+surf1 <- predictSurface.Krig(out)
+surface(surf1)
+US(add=TRUE)
+##Option 2 - just surface(out). This is the same as Option 1 since there is no Z.
+surface(out)
+US(add=TRUE)
+##Option 3 - give a grid of locations to predict at
+NGRID <- 50
+mygridlist <- list(seq(-94,-82,,NGRID),y=seq(36,45,,NGRID))
+surf2 <- predictSurface.Krig(out, grid.list = mygridlist, extrap = TRUE)
+surface(surf2)
+US(add=TRUE)
+##Option 4 - Alternate way to perform Option 2
+xg <- make.surface.grid(mygridlist)
+out.predict <- predict(out,xg)
+surf3 <- as.surface(xg,out.predict)
+surface(surf3)
+US(add=TRUE)
+```
+
+We can also plot standard errors of our predictions. Of course, the standard errors are lower in areas with many observations, and they are higher in regions with few observations.
+
+```{r,results="hide",fig.width=10}
+set.panel(1,2)
+quilt.plot(x.ozone,y.ozone,add.legend=TRUE,main="Values for Day 16")
+US(add=TRUE)
+
+std.err <- predictSE.Krig(out,x=xg,Distance="rdist.earth")   #takes a while
+out.p <- as.surface(xg,std.err)
+surface(out.p)
+US(add=TRUE)
+title("Predicted Standard Errors")
+```
+
+Finally, we can view a series of diagnostic plots describing the fit. Plot 1 shows data vs. predicted values, and plot 2 shows residuals vs. predicted values. Plot 3 shows the criteria to select the smoothing parameter $\lambda = \sigma^2 / \rho$. The x axis has transformed $\lambda$ in terms of effective degrees of freedom to make it easier to interpret. Note that here the GCV function is minimized while the REML is maximized. Finally, plot 4 shows a histogram of the standard residuals.
+
+```{r,results="hide",fig.width=7,fig.height=7}
+set.panel(2,2)
+plot(out)
+```
+ 
+## `COmonthlyMet`
+ 
+Here is the code for the final image in the Geostatistics section. We use the same naming scheme as in that example. Note that the `Krig` function only requires the `theta` parameter, and it will estimate the unspecified parameters by REML or GCV.
+ 
+The function `predictSurfaceSE` doesn't seem to work when used with a `grid.list` or `ZGrid` input. An alternate solution is below, but beware the runtime (about 5 minutes on my laptop). Commands `predictSE` and `predictSurfaceSE` are computationally expensive -- look at the `mKrig` section for standard errors.
+ 
+```{r,results="hide",fig.width=11}
+data(COmonthlyMet)
+set.panel(1,2)
+
+fit1 <- Krig(grd.CO,y.CO,Covariance="Matern",Z=z.CO,theta=350)
+fit2 <- Krig(grd.CO,y.CO,Covariance="Matern",Z=z.CO,theta=350,rho=rho,sigma2=sigmasq,smoothness=nu)
+
+pred1 <- predictSurface(fit1, grid.list=CO.Grid, ZGrid=CO.elevGrid)
+pred2 <- predictSurface(fit2, grid.list=CO.Grid, ZGrid=CO.elevGrid)
+
+surface(pred1,main="Only fix theta",zlim=c(0,23))
+US(add=TRUE)
+surface(pred2,main="Provide all parameters",zlim=c(0,23))
+US(add=TRUE)
+```
+
+<Ask Doug about this next section.>
+
+```{r}
+###### Standard Errors -- computationally intense with such a large grid.
+
+#se1 <- predictSurfaceSE.Krig(fit1, grid.list=CO.Grid, ZGrid=CO.elevGrid) . . . Throws an error. . .  predictSurfaceSE doesn't seem to cooperate with grid.lists. Below is a workaround.
+
+#Workaround 1. This takes about 5 minutes on my computer!
+#start <- Sys.time()
+#temp <- predictSE.Krig(fit1,make.surface.grid(CO.Grid),Z= as.vector(CO.elevGrid$z))
+#end <- Sys.time()
+#se1.surf <- as.surface(make.surface.grid(CO.Grid),temp)
+#surface(se1.surf)
+#US(add=TRUE)
+```
+ 

@@ -1,0 +1,353 @@
+# Smoothing and Bilinear Interpolation of Images
+
+```{r, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
+library(fields)
+```
+
+
+
+## Smoothing with `image.smooth` and `smooth.2d`
+
+`image.smooth` and `smooth.2d` are two functions in `fields` that will smooth 2-d data using a kernel. `image.smooth` requires the data in the form of an image matrix, and it can handle missing values for cells. `smooth.2d` takes irregular data as input  but then discretizes it to a regular grid (possibly with missing cells) and applies the same smoothing operations as `image.smooth`. In both cases the default kernel function is an exponential, although different kernel forms can be specified. For the exponential, the bandwidth parameter is passed as the argument `theta`.
+
+Using `smooth.2d` is essentially the same as applying `as.image` to coerce an irregular grid of data to become equispaced and then `image.smooth`. Both of these functions use the base R `fft` function for efficiency.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> smooth.2d(Y, cov.function = gauss.cov)  
+> image.smooth(x, kernel.function = double.exp, theta = 1)  
+> setup.image.smooth(nrow = 64, ncol = 64, dx = 1, dy = 1, kernel.function = double.exp, theta = 1)  
+
+${\large{\mathbf{Value}}}$
+
+`smooth.2d` return either a matrix of smoothed values or a surface object. The surface object also has a component `ind` that gives the subscripts of the image matrix where the data is present. `image.smooth` returns a list with components x, y and z.
+  
+***
+  
+&nbsp;
+
+Here is an example smoothing the `RMprecip` data and plotting the smoothed image. 
+ 
+```{r, results='hide', fig.width=11}
+set.panel(1,2)
+out<- smooth.2d( RMprecip$y, x=RMprecip$x, theta=1.0)
+quilt.plot( RMprecip$y, x=RMprecip$x,zlim=c(0,250),main="Image")
+image( out, zlim=c(0,250),col=tim.colors(),main="Smoothed Image (same z-scale)")
+```
+
+If we think of an image as a matrix of pixel values, these smoothers work by multiplying every matrix entry by a smaller smoothing matrix, such as
+\[
+\begin{pmatrix}
+0 & -1 & 0 \\ 
+-1& 4 & -1 \\
+0 & -1 & 0 
+\end{pmatrix}
+\]
+
+We can control the behavior of the smoother by specifying `cov.function`/`kernel.function`. The kernel/covariance function is discretized into the form of a smoothing matrix, then the matrices are convolved. Below are examples where we define new kernels based on the gaussian and gamma distributions. Parameters such as `sigma` in the gaussian kernel control the smoothing weights. Especially in this case, since the Fourier transform of a gaussian is gaussian, we can be certain of which high frequencies we attenuate in the signal. To see an example of how to define a new covariance function, see the  `Covariance` section of this vignette. A kernel function that is only being passed to `image.smooth` does not need to satisfy the covariance requirements in the package (see the `C` parameter for covariances). `setup.image.smooth` creates a weighting object outside of a call to `image.smooth`. This is useful when one wants to smooth different data sets but on the same grid with the same kernel function. The argument `theta` is the bandwidth parameter in `setup.image.smooth`.
+
+```{r}
+gaussianKern <- function(x, sigma=2){
+  1/sqrt(2*pi*sigma^2) * exp(-0.5*(x)^2 / sigma^2)
+}
+wght <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
+                   kernel.function = gaussianKern, theta = 0.5)
+```
+
+We use this setup to smooth the `RMprecip` for the final time, showing how we can use either `smooth.2d` or `image.smooth`. We use kernels as well as different levels of resolution in this example.
+
+```{r, results='hide', fig.height=8, fig.width=11}
+# Use our kernel: first coerce data as.image, then image.smooth with our wght setup
+look<- image.smooth( as.image( RMprecip$y, x = RMprecip$x), wght)
+# Normal kernel smooth of the precip data with bandwidth of .5 (degree), now using smooth.2d
+look2 <- smooth.2d( RMprecip$y, x=RMprecip$x, theta=.5)
+# finer resolution used in computing the smooth
+look3<-smooth.2d( RMprecip$y, x=RMprecip$x, theta=.25, nrow=256,
+                  ncol=256,Nwidth=32,Mwidth=32)
+look4 <- image.smooth( as.image(RMprecip$y, x=RMprecip$x), 
+                    kernel.function=double.exp,theta=0.5)
+set.panel(2,2)
+image.plot( look, zlim=c(0,250)); title("gaussianKern, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
+image( look4, zlim=c(0,250),col=tim.colors()); title("double.exp, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
+image.plot( look2, zlim =c(0,250)); title("smooth.2d, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
+image( look3, zlim =c(0,250),col=tim.colors()); title("smooth.2d, finer res, theta=.25"); US( add=TRUE, col="grey", lwd=2)
+
+```             
+
+##`image.smooth` and `lennon`
+
+Here is another quick example showing how to work with an actual image such as a JPEG. Pick any image you want from the web, smooth it, and look at the information lost. We first define a new kernel based on the gamma distribution.
+
+```{r}
+t <- seq(0,1,,1000)
+plot(dgamma(t, shape=1.1)~t, type="l", col="mediumaquamarine", main
+     ="Gamma Distributions", xlab="", ylab="")
+legend(x=0.75,y=0.25,legend=c("Shape=1.1", "Shape=1.4", "Shape=1.8"), pch=21, cex=1, 
+       col=c("mediumaquamarine", "red4", "blue2"))
+lines(dgamma(t,shape=1.4)~t, col="red4")
+lines(dgamma(t,shape=1.8)~t, col="blue2")
+```
+
+```{r}
+gammaKern <- function(x, shape=1.1){
+  dgamma(x, shape=shape)
+}
+set <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
+                   kernel.function = double.exp,theta = 1)
+set2 <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
+                  kernel.function = gammaKern,theta = 1)
+```
+
+Now we apply `image.smooth` to the data.
+
+```{r, results='hide', fig.width=13}
+data(lennon)
+x1 <- image.smooth(lennon, set)
+x2 <- image.smooth(lennon, set2)
+set.panel(1,3)
+image.plot(lennon, col=grey.colors(100), main="Original image",zlim=c(0,200))
+image(x1$z, col=grey.colors(100), main="Smoothed with double.exp",zlim=c(0,200))
+image(x2$z, col=grey.colors(100), main="Smoothed with gammaKern",zlim=c(0,200))
+```
+
+We can look at the difference between the original image and the smoothed version, and also the difference between the two smooths.
+
+```{r, results='hide', fig.width=13}
+set.panel(1,3)
+image.plot(lennon-x1$z, col=grey.colors(10), zlim=c(-5, 60), main="double.exp smoothing difference")
+image(lennon-x2$z, col=grey.colors(10), zlim=c(-5, 60), main="gammaKern smoothing difference")
+image(x2$z-x1$z, col=grey.colors(10), zlim=c(-5,60), main="Difference between smoothing kernels")
+```
+
+***
+
+Here is one final example of smoothing gridded Colorado elevation data many times. We also give details on the nice plotting function `drape.plot` and some of the color palettes included in `fields`. Since we display four plots with the same scale, we withhold the legend and use `image.plot` to manually add one.
+
+```{r, results='hide', fig.width=15, fig.height=15}
+data(COmonthlyMet)
+x <- CO.elevGrid$x
+y <- CO.elevGrid$y
+z <- CO.elevGrid$z
+
+smoothNtimes <- function(im, N=1){
+  for (i in 1:N){
+    temp <- im
+    im <- image.smooth(temp)
+  }
+  im
+}
+z2 <- smoothNtimes(z,1)
+z3 <- smoothNtimes(z2,4)
+z4 <- smoothNtimes(z3,15)
+{par(oma=c( 0,0,0,4))
+set.panel(2,2)
+drape.plot( x,y,z, col=larry.colors(),border=NA,main="Elevation (CO)",
+            xlab="New Mexico",ylab="Kansas", add.legend = FALSE) -> dp
+drape.plot( x,y,z2$z, col=larry.colors(),border=NA, 
+            xlab="New Mexico",ylab="Kansas",main="1 Smooth", add.legend = FALSE)
+drape.plot( x,y,z3$z, col=larry.colors(),border=NA, 
+            xlab="New Mexico",ylab="Kansas",main="5 Smooths", add.legend = FALSE)
+drape.plot( x,y,z4$z, col=larry.colors(),border=NA, add.legend = FALSE,
+            xlab="New Mexico",ylab="Kansas",main="20 Smooths")
+pushpin(-105.2705,40.0150,1655,dp, text="Boulder", height=0.15, cex=1)
+par(oma=c( 0,0,0,1))
+image.plot(legend.only=TRUE, horizontal=TRUE, zlim=c(900,3300), col=larry.colors())}
+```
+
+
+## `drape.plot` and `pushpin`
+
+`drape.plot` produces the usual wireframe perspective plot with the facets being filled with different colors. `drape.plot` is a higher level function that works by calling `drape.color` followed by `persp`, and finally the legend strip is added with `image.plot`. Note that `surface` with `type="p"` gives the same results.
+
+By default, the colors are assigned from a color bar based on the `z` values. `drape.color` can be used to create a color matrix different from the `z` matrix used for the wireframe. When using `drape.color`, just put the results into the `col` argument of `persp`.  The color scales essentially default to the ranges of the `z` values. However, by specifying `zlim` and/or `zlim2` one has more control of how the perspective plot is scaled and the limits of the color scale used to fill the facets. The color assignments are done by dividing up the `zlim2` interval into equally spaced bins and adding a very small inflation to these limits. The mean `z2` values, comprising an $M-1$ by $N-1$ matrix, for each facet are discretized to the bins. The bin numbers then become the indices used for the color scale. If `zlim2` is not specified it is the range of the `z2` matrix that is used to generate the ranges of the color bar. Note that this may be different than the range of the mean facets. If `z2` is not passed then `z` is used in its place and in this case the `zlim2` or `zlim` argument can used to define the color scale.  
+
+The legend strip may obscure part of the plot. If so, add this as another step using `image.plot`. This kind of plot is also supported through the wireframe function in the `lattice` package. The advantage of the `fields` version is that it uses the standard R graphics functions and is written in R code. Note that the drape plot is also drawn by the `surface` function with `type="P"`.
+
+`pushpin` is a small function that adds to an existing 3-d perspective plot a push pin to locate a specific point. Arguments needed are the coordinates and either projection information returns by `persp` in `p.out` or a `persp`/`drape.plot` assigned to a variable. One can adjust the size, length, and color of the pin and also add text.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> drape.plot(x, y, z, z2=NULL, col = tim.colors(64), zlim = range(z, na.rm=TRUE), zlim2 = NULL)  
+> drape.color(z, col = tim.colors(64), zlim = NULL,breaks,transparent.color = "white")  
+> pushpin( x,y,z,p.out, height=.05,col="black",text=NULL,adj=-.1,cex=1.0,...)    
+
+${\large{\mathbf{Value}}}$
+
+If an assignment is made, the projection matrix from `persp` is returned. This information can be used to add additional 3-d features to the plot, such as `pushpin`. See the `persp` help file for an example how to add additional points and lines using the `trans3d` function and also the example below.
+
+`drape.color` returns a list with `color.index` and the numerical `breaks`.
+
+***
+
+&nbsp;
+
+Using the built in `volcano` data set in R, it is easy to see this wrapper on `persp` is very useful, especially using the `zlim2` argument.
+
+```{r}
+# an obvious choice:
+# Dr. R's favorite New Zealand Volcano!
+data( volcano)
+M<- nrow( volcano)
+N<- ncol( volcano)
+x<- seq( 0,1,,M)
+y<- seq( 0,1,,N)
+drape.plot( x,y,volcano, col=terrain.colors(128))-> pm
+# use different range for color scale and persp plot
+# setting of border omits the mesh lines
+drape.plot( x,y,volcano, col=terrain.colors(128),zlim=c(0,300),
+            zlim2=c( 120,200), border=NA) -> pm2
+# note tranparent color for facets outside the zlim2 range
+max( volcano)-> zsummit
+ix<- row( volcano)[volcano==zsummit]
+iy<- col( volcano)[volcano==zsummit]
+trans3d( x[ix], y[iy],zsummit,pm2)-> uv
+points( uv, col="magenta", pch="+", cex=2)
+# overlay volcano wireframe with gradient in x direction.
+dz<- (
+  volcano[1:(M-1), 1:(N-1)] - volcano[2:(M), 1:(N-1)] +
+    volcano[1:(M-1), 2:(N)] - volcano[2:(M), 2:(N)]
+)/2
+# convert dz to a color scale:
+zlim<- range( c( dz), na.rm=TRUE)
+zcol<-drape.color( dz, zlim =zlim)$color.index
+# wireframe with these colors
+persp( volcano, col=zcol, theta=30, phi=20)
+# add legend using image.plot function
+image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE, col=tim.colors(64))
+```
+
+
+
+
+
+
+## Color palettes
+
+Colors in R can be represented as three vectors in RGB coordinates and these coordinates are interpolated separately using a cubic spline to give color values that are intermediate to the specified colors. 
+
+`tim.colors` gives a very nice spectrum that is close to the `jet` color scale in MATLAB® and is the default for `image.plot` and the like.   
+
+`larry.colors` is particularly useful for visualizing fields of climate variables.
+
+`two.colors` is really about three different colors. For other colors try `fields.color.picker` to view possible choices. `start="darkgreen"`, `end="azure4"` are the options used to get a nice color scale for rendering aerial photos of ski trails. (http://www.image.ucar.edu/Data/MJProject)   
+
+`designer.colors` is the master function for `two.colors` and `tim.colors`. It can be useful if one wants to customize the color table to match quantiles of a distribution. e.g. if the median of the data is at .3 with respect to the range then set `x` equal to c(0,.3,1) and specify three colors to provide a transtion that matches the median value. In `fields` language, this function interpolates between a set of colors at locations `x`. While you can be creative about choosing these colors, just using another color scale as the basis is easy. For example, `designer.color( 256, rainbow(4), x= c( 0,.2,.8,1.0))` leaves the choice of the colors to Dr. R after a thunderstorm. 
+
+`color.scale` assigns colors to a numerical vector in the same way as the `image` function. This is useful to keep the assigment of colors consistent across several vectors by specifiying a common `zlim` range. Finally, `plotColorScale`  is a simple function to plot a vector of colors to examine their values.
+
+Also, don't forget the built in `heat.colors`, `topo.colors`, `terrain.colors`, `grey.colors`, etc.
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> tim.colors(n = 64, alpha=1.0)    
+> larry.colors()    
+> two.colors(n=256, start="darkgreen", end="red", middle="white",alpha=1.0)    
+> designer.colors( n=256, col= c("darkgreen", "white", "darkred"), x=seq(0,1,, length(col)) ,alpha=1.0)  
+
+${\large{\mathbf{Value}}}$
+
+A vector giving the colors in a hexadecimal format, two extra hex digits are added for the alpha channel.  
+
+***
+
+&nbsp; 
+
+First we take a look at some of the color options.  
+
+```{r, results='hide', fig.height=8, fig.width=11}
+set.panel( 2,2)
+z<- outer( 1:20,1:20, "+")
+obj<- list( x=1:20,y=1:20,z=z )
+image( obj, col=tim.colors( 200), main="Tim") # 200 levels
+image( obj, col=two.colors(), main="Default two.colors")
+image( obj, col=larry.colors(), main="Larry")
+image( obj, col=two.colors(start="red", end="blue", middle="green"), main="RGB two.colors")
+```
+
+Here is an example using designer colors.  
+
+```{r}
+coltab<- designer.colors(col=c("blue", "grey", "green"), x= c( 0,.3,1) )
+image( obj, col= coltab )
+```
+
+Note that using tranparency without alpha in the image plot would cover points.  
+
+```{r, results='hide', fig.width=10}
+set.panel(1,2)
+plot( 1:20,1:20)
+image(obj, col=two.colors(alpha=.5), add=TRUE)
+plot(1:20,1:20)
+image(obj, col=two.colors(), add=TRUE)
+```
+
+
+##`interp.surface`
+
+Finally, we discuss `interp.surface`, which performs bilinear interpolation on a regular grid. Bilinear interpolation is common in image processing: it is an easy way to to fill in an image and avoid sharp pixel boundaries. Note that bilinear interpolation can produce some artifacts related to the grid and not reproduce higher behavior in the surface. For, example the extrema of the interpolated surface will always be at the parent grid locations. There is nothing special about bilinear interpolation to another grid, this function just includes a for loop over one dimension and a call to the function for irregular locations. It was included in fields for convenience since the grid format is so common.
+
+We recommend this method for fast visualization and presentation of images. However, if the actual interpolated values will be used for analysis, use a statistical method such as `Tps` or `fastTps` to get an interpolation that is based on first principles.
+
+Here is a brief explanation of the interpolation: Suppose that the location (`locx`, `locy`) lies in between the first two grid points in both x and y. That is, `locx` is between x1 and x2 and `locy` is between y1 and y2. Let 
+$e_x= (l_1-x_1)/(x_2-x_1)$ and $e_y= (l_2-y_1)/(y_2-y_1)$. The interpolant is
+
+$$(1-e_x)(1-e_y)z_{11} + (1-e_x)(e_y)z_{12} + (e_x)(1-e_y)z_{21} + (e_x)(e_y)z_{22}$$
+
+where the z's are the corresponding elements of the `Z` matrix. See also the `akima` package for fast interpolation from irregular locations.
+
+
+&nbsp;
+
+***
+
+${\large{\mathbf{Basic \> Usage}}}$
+
+> interp.surface(obj, loc)  
+> interp.surface.grid(obj, grid.list)  
+
+${\large{\mathbf{Value}}}$
+
+`interp.surface` returns a vector of interpolated values. `NA` are returned for regions of the `obj$z` that are `NA` and also for locations outside of the range of the parent grid.
+  
+***
+  
+&nbsp;
+
+In this example, we take a subset of the `lennon` image and predict at several random points and also on a grid. We show how predicting on a fine grid can give us seemingly higher resolution when plotting.
+
+```{r, results='hide',fig.width=11}
+# evaluate an image at a finer grid
+# take a subset of the lennon image
+data( lennon)
+# create an example in the right list format like image or contour
+obj<- list( x= 1:20, y=1:20, z= lennon[ 201:220, 201:220])
+set.seed( 123)
+# lots of random points
+N<- 500
+loc<- cbind( runif(N)*20, runif(N)*20)
+z.new<- interp.surface( obj, loc)
+# compare the image with bilinear interpolation at scattered points
+set.panel(1,2)
+image.plot( obj, main="Original Image",zlim=c(20,110))
+quilt.plot( loc, z.new, main="Bilinear interp at random points",add.legend=FALSE,zlim=c(20,110))
+# sample at 100X100 equally spaced points on a grid
+grid.list<- list( x= seq( 1,20,,100), y= seq( 1,20,,100))
+interp.surface.grid( obj, grid.list)-> look
+# take a look
+set.panel(1,2)
+image.plot( obj, main="Original image",zlim=c(20,110))
+image( look, main="Bilinear interpolation on grid",col=tim.colors(),zlim=c(20,110))
+```

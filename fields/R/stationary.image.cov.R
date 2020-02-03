@@ -53,7 +53,7 @@ stationary.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
         #
         out<- do.call(cov.function, c(cov.args, list(x1 = xg, x2 = center)))  
         # check if this is a sparse result and if so expand to full size
-        if( class( out)=="spam"){
+        if( is( out,"spam") ){
            out <- spam2full(out)
          }
         # coerce to a matrix (image)

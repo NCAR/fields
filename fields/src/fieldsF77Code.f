@@ -95,7 +95,7 @@ c              same design
 c
 c  ierr : on return ierr>0 indicates all is not well :-(
 c
-      parameter (NMAX=20000)  
+      parameter (NMAX=50000)  
       implicit double precision (a-h,o-z)  
       double precision h,trace,vlam  
       double precision wght(npoint),X(npoint),Y(npoint)

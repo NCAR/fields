@@ -46,6 +46,9 @@
     out <- c(out, out2)
     # number of unique locations
     out$np <- length(out$yM)
+    if( out$np > 5e4){
+        stop("sreg not dimensioned for more than 50000 observations")
+        }
     # now set maximum of trace for upper bound of GCV grid search
     if (is.na(trmax)) {
         trmax <- out$np * 0.99

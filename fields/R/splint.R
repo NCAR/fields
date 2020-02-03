@@ -43,6 +43,9 @@
     if (length(x) != length(y)) 
         stop("Lengths of x and y must match")
     n <- length(x)
+    if( n > 5e4){
+        stop("splint not dimensioned for more than 50000 observations")
+        }
     #default values for weights
     # NOTE: weights do not matter when interpolating (lam==0)
     if (is.null(wt)) {

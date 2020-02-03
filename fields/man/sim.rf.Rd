@@ -40,9 +40,6 @@ setup call to Exp.image.cov, stationary.image.cov, matern.image.cov or
 other related covariance functions. (See details below.)
 }
 
-\item{\dots}{
-Additional arguments passed to a particular method.}
-
 }
 \value{
 A matrix with the random field values 

@@ -18,7 +18,11 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"fields.mkpoly" <- function(x, m = 2) {
+"fields.mkpoly" <- function(x, m = 2, tag="term") {
+# m-1 is the degree of the polynomial
+# this is hold over notation from splines 
+# where an mth order spline has a m-1 degree polynomial
+# null space. 
     if (m < 0) 
         stop("'m' has to be zero or larger.")
     if( m==0){
@@ -37,6 +41,27 @@
             d * m)), info = as.integer(0), ptab = as.integer(rep(0, 
             nterms * d)), ldptab = as.integer(nterms))
     temp2 <- matrix(temp$tmatrix, nrow = n)
-    attr(temp2, "ptab") <- matrix(temp$ptab, nrow = nterms, ncol = d)
+    # add some column names
+      xNames<- colnames(x)
+      powerTable<- matrix(temp$ptab, nrow = nterms, ncol = d)
+    if( m <2){
+        colnames( temp2)<- "Intercept"
+      }
+    if( !is.null( xNames) & m >= 2 ){  
+     varNames<- c("Intercept",xNames)
+     
+     if( m > 2){
+       termNames<- NULL
+       for ( k in (d+ 2): nterms){
+         termNames<- c( termNames,
+         paste(powerTable[k,],collapse = "", sep="")
+         )
+       }
+       termNames<- paste0( tag, termNames)
+       varNames<- c( varNames,termNames)
+     }
+        colnames( temp2)<- varNames
+    }
+    attr(temp2, "ptab") <- powerTable
     temp2
 }

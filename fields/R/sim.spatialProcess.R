@@ -20,6 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 sim.spatialProcess<- function(object, xp,  M = 1, 
     verbose = FALSE, ...) {
+    # important variance parameters estimated from the data  
         sigma2 <- (object$sigma.MLE.FULL)^2
         rho <- object$rho.MLE.FULL
         xp<- as.matrix( xp)
@@ -29,8 +30,8 @@ sim.spatialProcess<- function(object, xp,  M = 1,
         stop("data locations should be unique")
     }
     #
-    # set up various sizes of arrays
-    m <- nrow(xp)
+    # find sizes of arrays
+    m <- nrow(xp) 
     n<- nrow( object$x)
     N <- length(object$y)
     if (verbose) {
@@ -76,8 +77,8 @@ sim.spatialProcess<- function(object, xp,  M = 1,
     }
     #
     # Sigma is full covariance at the data locations and at prediction points.
-    #
-    
+    # not to be confused with the lowercase sigma that is the nugget variance
+    # 
     Sigma <- rho * do.call(object$cov.function.name, c(object$args, 
         list(x1 = xUnique, x2 = xUnique)))
     #

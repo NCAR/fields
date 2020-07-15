@@ -42,21 +42,21 @@
     }
     if (any(which == 3)) {
     	mar.old<- par()$mar
-    	summary<- out$MLEInfo$MLEProfileLambda$summary
+    	summary<- out$MLEGridSearch$MLEProfileLambda$summary
     	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
-            plot(summary[,"lambda.MLE" ], summary[,2 ],  xlab = "lambda", 
-                ylab ="log Profile Likelihood(lamdba)", type="l", log="x",
+            plot(summary[,"lambda" ], summary[,"lnProfileLike.FULL" ],  xlab = "lambda", 
+                ylab ="log Profile Likelihood(lambda)", type="l", log="x",
                  ...)
              ind<- which.max(summary[,2] )
-            xline( summary[ind,"lambda.MLE"] )
+            xline( summary[ind,"lambda"] )
             usr.save <- par()$usr
             usr.save[3:4]<- range( summary[,"GCV" ] )
             par( usr= usr.save, ylog=FALSE)
-            lines(summary[,"lambda.MLE" ], summary[,"GCV" ],
+            lines(summary[,"lambda" ], summary[,"GCV" ],
             lty=2, lwd=2, col="blue")
             ind<- which.min(summary[,"GCV"] )
-            xline( summary[ind, "lambda.MLE"],
+            xline( summary[ind, "lambda"],
                    col="blue", lwd=2)
             axis( side=4, col="blue")
             mtext( side=4, line=2,  "GCV function",cex=.75,
@@ -67,8 +67,8 @@
             par( mar=mar.old)
     }
     if (any(which == 4)) {
-      summary<- out$MLEInfo$MLEGrid$summary
-      thetaGrid<- (out$MLEInfo$MLEGrid$par.grid)$theta
+      summary<- out$MLEGridSearch$MLEGrid$summary
+      thetaGrid<- (out$MLEGridSearch$MLEGrid$par.grid)$theta
     	plot(thetaGrid,summary[,2], pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
     	title("Profile likelihood for theta \n (range parameter)")
     	xline( out$theta.MLE, lwd=2, col="grey20")

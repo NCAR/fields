@@ -142,7 +142,7 @@
     # notice how all the information is in the list axis.args
     do.call("axis", axis.args)
     # add a box around legend strip
-    box()
+    # box() 
     #
     # add a label to the axis if information has been  supplied
     # using the mtext function. The arguments to mtext are

@@ -21,86 +21,118 @@
 spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                   mKrig.args = list( m=2),
                 cov.function = "stationary.cov", 
-                   	cov.args = list(Covariance = "Matern", smoothness = 1),
-                       theta = NULL, 
-              	 theta.start = NULL,
-                lambda.start = .5, 
-                 theta.range = NULL, 
+                  	cov.args = list(Covariance = "Matern", smoothness = 1),
+                   gridTheta = NULL, 
                       abstol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
-                      REML = FALSE, 
+                        REML = FALSE, 
+             confidenceLevel = .95,
+            cov.params.start = NULL,
                            ...) {
- 
 # NOTE all ... information is assumed to be for the cov.args list
 # overwrite the default choices (some R arcania!)
   ind<- match( names( cov.args), names(list(...) ) )
   cov.args <- c(cov.args[is.na(ind)], list(...))
+# theta and lambda  are  handled specially because are almost always 
+# estimated and this will simply the call for this top level function 
+# NOTE that being in the cov.params.start list means a parameter will be optimized
+# by maximum likelhood
+# If a  parameter is in the cov.args list it will be fixed in its value
+# 
+  if( is.null( cov.args$lambda) & is.null(cov.params.start$lambda) ){
+    cov.params.start$lambda <- .5
+  }
+  
+  if( is.null( cov.args$theta) & is.null(cov.params.start$theta) ){
+    cov.params.start$theta <- NA
+  }
+  
+  if( !is.null( cov.params.start$theta ) & is.null( cov.params.start$lambda ) ){
+    stop(" optimizing over theta for fixed lambda not supported")
+  }
+  
   if( verbose){
     cat("extra arguments from ... " , names( list(...)) , fill=TRUE)
     cat(" full list from cov.args: ", names(cov.args) )
   }
- 
-# NOTE: switch to find theta MLE    is.null( theta)
-  if( !is.null(theta)){
-    par.grid<- list( theta = theta)
-    MLEInfo <-mKrigMLEGrid(x, y,  weights = weights, Z= Z, 
-                 mKrig.args = mKrig.args,
+# NOTE: if theta is specified then just do a simple optimization
+# if not  ... first a grid search theta followed by an full optimization 
+  if( !is.null(cov.args$theta)){
+###########################################################
+#   case to   optimze over all parameters with theta fixed 
+# parameter list to optimize over  
+    cov.params.startTemp <-  cov.params.start
+    MLEInfo <-mKrigMLEJoint(x, y,  weights = weights, Z= Z, 
+              mKrig.args = mKrig.args,
                  cov.fun = cov.function, 
-                 cov.args  = cov.args,
-                 par.grid = par.grid, 
-                 lambda = lambda.start, 
-                 lambda.profile = TRUE, 
-                 na.rm = na.rm,
-                 verbose = FALSE,
+               cov.args  = cov.args,
+                   na.rm = na.rm,
+                 verbose = verbose,
+        cov.params.start = cov.params.startTemp,
                     REML = REML) 
-    lambda.MLE <- MLEInfo$lambda.MLE
-    theta.MLE <- NA
-    theta.95CI<- NA
-    thetaModel <- theta
-    if( verbose){
-      print( MLEInfo$summary)
-    }
+    lambdaModel <- MLEInfo$lambdaModel
+     lambda.MLE <- MLEInfo$lambda.MLE
+      theta.MLE <- NA
+    theta.CI    <- NA
+    thetaModel  <- cov.args$theta
+  MLEGridSearch <- NULL
   }
   else{
 #  
-# NOTE MLEspatialProcess omits NAs
-	MLEInfo <- MLESpatialProcess(x, y, weights = weights, Z=Z, 
+	MLEGridSearch <- MLESpatialProcess(x, y, weights = weights, Z=Z, 
 	                                mKrig.args = mKrig.args,
 	                              cov.function = cov.function, 
 	                                  cov.args = cov.args,
-	                             
-	                               theta.start = theta.start, 
-	                               theta.range = theta.range, 
+	                                 gridTheta = gridTheta,
 	                                   	 gridN = 20,
-                            	  lambda.start = lambda.start,
 	                                    abstol = abstol,
-                                  		verbose = FALSE,
-	                                       REML = REML
+                                  		verbose = verbose,
+	                                       REML = REML,
+	                           cov.params.start = cov.params.start
 	                                       	 )
-	lambda.MLE <- MLEInfo$MLEJoint$pars.MLE[1] 
-	theta.MLE<- MLEInfo$MLEJoint$pars.MLE[2]
-	thetaModel<- theta.MLE
+	
+	lambda.MLE <- MLEGridSearch$MLEJoint$pars.MLE["lambda"] 
+	lambdaModel<- lambda.MLE
+	theta.MLE  <-   MLEGridSearch$MLEJoint$pars.MLE["theta"]
+	thetaModel <-  theta.MLE
 # approximate confidence interval for theta 
-	thetaGrid<- MLEInfo$MLEGrid$par.grid$theta
-  lgProfileLike<- MLEInfo$MLEGrid$summary[,2]
+	thetaGrid<-     MLEGridSearch$MLEGrid$par.grid$theta
+  lgProfileLike<- MLEGridSearch$MLEGrid$summary[,"lnProfileLike.FULL"]
 	splineFit<- splint(thetaGrid, lgProfileLike, nx=500)
-	cutLevel<- max(splineFit$y ) - qchisq(.95, 1) / 2
+	cutLevel<- max(splineFit$y ) - qchisq(confidenceLevel, 1) / 2
 	ind<- splineFit$y> cutLevel
 	lower<- min( splineFit$x[ ind] )
 	upper<- max(splineFit$x[ ind])
-	theta.95CI = c( lower, upper)
+	theta.CI = c( lower, upper)
+	MLEInfo<- MLEGridSearch$MLEJoint
   }
 #  
 	if( verbose){
 	  cat("Summary from joint optimization", fill=TRUE)
-	  print( MLEInfo$MLEJoint$summary )
-	  print( MLEInfo$MLEJoint$pars.MLE)
-	  print(theta.95CI )
+	  print( MLEInfo$summary )
+	  print( MLEInfo$pars.MLE)
+	  print(theta.CI )
 	}
+  
+################################################################################  
+# final fit 
 # now fit spatial model with MLE for theta (range parameter)
 #  or the value supplied in the call
 # reestimate the other parameters for simplicity to get the complete mKrig object
+# add added optimized parameter values to the covariance argument (cov.arg)
+  cov.argsFull <-  cov.args
+  dupParameters<- match( names(MLEInfo$pars.MLE ), names(cov.args) )
+  if( all( is.na(dupParameters)) ){
+  cov.argsFull<- c( cov.argsFull, as.list(MLEInfo$pars.MLE) )
+  }
+  
+  if( verbose){
+    print( names( cov.args))
+    print( names( cov.params.start))
+    print( names(cov.argsFull) )
+  }
+  
   obj <- do.call( "mKrig", 
 	                c( list(x=x,
 	                        y=y,
@@ -108,18 +140,24 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                        Z=Z),
 	                  mKrig.args,
 	          list( na.rm=na.rm),
-	             list(           
-	              cov.function = cov.function,
-	              cov.args = cov.args, 
-	              lambda = lambda.MLE,
-	              theta  = thetaModel
-	             )
+	             list(cov.function = cov.function),
+	                  cov.argsFull 
 	            	)
 	)
-	obj <- c(obj, list(   MLEInfo = MLEInfo,
+	obj <- c(obj,   
+	                 list(   
+	                       mKrig.args = mKrig.args,
+	                     cov.function = cov.function, 
+	                         cov.args = cov.args,
+	                 cov.params.start = cov.params.start ),
+	                 list(  
+	                      MLEInfo = MLEInfo,
+	                MLEGridSearch = MLEGridSearch,
 	                   thetaModel = thetaModel,
 	                    theta.MLE = theta.MLE,
-	                   theta.95CI = theta.95CI,
+	                     theta.CI = theta.CI,
+	              confidenceLevel = confidenceLevel,
+	                  lambdaModel = lambdaModel,
 	                   lambda.MLE = lambda.MLE,
 	                      summary = MLEInfo$summary)
 	        )

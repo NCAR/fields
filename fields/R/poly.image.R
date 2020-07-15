@@ -82,6 +82,7 @@ poly.image <- function(x, y, z, col = tim.colors(64),
             y[i, 2:N], rep(NA, Nm1))
         xp <- c(t(xp))
         yp <- c(t(yp))
+       
         pcol <- c(zcol[i, 1:Nm1])
         
         # draw each poly with different color including the border
@@ -93,6 +94,8 @@ poly.image <- function(x, y, z, col = tim.colors(64),
         
         # fill in border with different color if it is not an NA.
         if (!is.na(border)) {
+# this does not quite work           
+#  borderWithNA<- ifelse( pcol == transparent.color, NA,border)
             polygon(xp, yp, border = border, col = NA, lwd = lwd.poly)
         }
         

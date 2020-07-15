@@ -25,31 +25,36 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                             cov.function = "stationary.cov", 
                             cov.args = list(Covariance = "Matern",
                                             smoothness = 1), 
-                          lambda.start = .5,
-                           theta.start = NULL, 
-                           theta.range = NULL,
+                             gridTheta = NULL,
                                  gridN = 20,
                             optim.args = NULL,
                                  na.rm = TRUE,
                                verbose = FALSE,
                                abstol  = 1e-4,
                                   REML = FALSE,
+                      cov.params.start = NULL,
                                ...) {
   if( verbose){
-    cat(" MLESpatialProcess extra arguments:" , full=TRUE)
+    cat(" MLESpatialProcess extra arguments:" , fill=TRUE)
      print( names( list(...)))
   }
   # combine  list(...) with cov.args and omit duplicates but favoring the ... value
   ind<- match( names( cov.args), names(list(...) ) )
   cov.args = c(cov.args[is.na(ind)], list(...))
-  
+  # add lambda as a component to the starting parameters if missing
+  if( is.null( cov.params.start$lambda)){
+    cov.params.start <- c( cov.params.start, list( lambda= .5))
+  }
   ########################################################################
   #  evaluate likelihood for a grid of theta on log scale
   # maximizing over lambda.
-  #
+  #########################################################################
   # if range or starting value  for range is missing use quantiles of pairwise
   # distances among data.  
-  if( is.null( theta.range) ){
+  cov.params.startTemp <-  cov.params.start 
+  cov.params.startTemp$theta<- NULL
+  
+  if( is.null( gridTheta) ){
     if( is.null( cov.args$Distance)){
       pairwiseD<- dist(x)
     }
@@ -58,60 +63,77 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
       pairwiseD<- pairwiseD[col(pairwiseD) > row( pairwiseD) ]
     }
     theta.range<- quantile( pairwiseD, c(.02,.97))
+    gridTheta  <- 10**seq( log10(theta.range[1]), log10(theta.range[2]), length.out=gridN )
   }
-  thetaGrid<- 10**seq( log10(theta.range[1]), log10(theta.range[2]), length.out=gridN )
   # 
-  par.grid<- list( theta= thetaGrid)
+  par.grid<- list( theta= gridTheta )
+  
   timeGrid<- system.time(
-  MLEGrid<- mKrigMLEGrid(x, y,  weights = weights, Z= Z, 
-                         mKrig.args = mKrig.args,
+  MLEGrid<- mKrigMLEGrid(x, y,  
+                         weights = weights, Z= Z, 
+                      mKrig.args = mKrig.args,
                          cov.fun = cov.function, 
                        cov.args  = cov.args,
                         par.grid = par.grid, 
-                          lambda = lambda.start, 
-                  lambda.profile = TRUE, 
                            na.rm = na.rm,
                          verbose = verbose,
-                            REML = REML)
+                            REML = REML,
+                cov.params.start = cov.params.startTemp)
   )
-  ##################################################################################
-  #refine MLE for lambda and theta use the best value of theta from grid search if
-  # starting value not passed. 
-  if ( is.null(theta.start) ) {
-    ind<- which.max( MLEGrid$summary[,2] )
-    theta.start <-  par.grid$theta[ind]
-    lambda.start<- MLEGrid$lambda.best
+  if( verbose){
+    cat("mKrigMLEGrid summary", fill=TRUE)
+     print(MLEGrid$summary)
   }
+  #######################################################################
+  # refine MLE for lambda and theta use the best value of theta from grid 
+  # search if starting value not passed. 
+  ########################################################################
+  
+    ind<- which.max( MLEGrid$summary[,"lnProfileLike.FULL"] )
+    theta.start <-  par.grid$theta[ind]
+    lambda.start<- MLEGrid$summary[ind,"lambda"] 
+    cov.params.startTemp <- cov.params.start 
+    # update starting values with results from grid search over theta
+    cov.params.startTemp$lambda <- lambda.start
+    cov.params.startTemp$theta  <- theta.start
+    
   timeOptim<- system.time(
   MLEJoint <- mKrigMLEJoint(x, y, weights = weights, Z = Z,
                                             mKrig.args = mKrig.args,
                                                cov.fun = cov.function,
                                               cov.args = cov.args, 
-                                          lambda.start = lambda.start, 
-                                      cov.params.start = list(theta=theta.start), 
+                                      cov.params.start = cov.params.startTemp,
                                             optim.args = optim.args,
                                                 abstol = abstol,
                                                  na.rm = na.rm,
                                                verbose = verbose,
                                                   REML = REML)
   )
-  #####################################################################################
+  if( verbose){
+    cat("mKrigMLEJoint summary", fill=TRUE)
+    print( MLEJoint$summary)
+  }
+  ###########################################################################
   # evaluate likelihood on grid of log lambda with MLE for theta
-  #NOTE lambda.profile = FALSE makes this work.
-  lambdaGrid<-   (10^(seq( -4,4,,gridN)  ))*MLEJoint$pars.MLE[1]
-  par.grid<- list( theta= rep(MLEJoint$pars.MLE[2], gridN) )
-  if( verbose){ print( par.grid) }
+  # NOTE lambda.profile = FALSE makes this work.
+  ###########################################################################
+  par.grid<- list( lambda = (10^(seq( -2,2,length.out=gridN)  ))*MLEJoint$pars.MLE["lambda"] )
+  thetaMLE<- MLEJoint$pars.MLE["theta"]
+  #par.grid<- list( theta= rep(thetaMLE, gridN) )
+  cov.params.startTemp <- cov.params.start
+  # do _not_ optimze over lambda (we are profiling)
+  cov.params.startTemp$lambda <- NULL
+  cov.params.startTemp$theta  <- thetaMLE
   timeProfile<- system.time(
   MLEProfileLambda <- mKrigMLEGrid(x, y,  weights = weights, Z= Z,
                                           cov.fun = cov.function, 
                                         cov.args  = cov.args,
                                        mKrig.args = mKrig.args,
                                          par.grid = par.grid, 
-                                           lambda = lambdaGrid, 
-                                   lambda.profile = FALSE, 
                                             na.rm = na.rm,
-                                          verbose = verbose,
-                                             REML = REML) 
+                                 cov.params.start = cov.params.startTemp,
+                                             REML = REML,
+                                          verbose = FALSE) 
   )
   timingTable<- cbind( timeGrid, timeOptim, timeProfile)
   return(

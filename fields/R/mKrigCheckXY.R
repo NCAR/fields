@@ -92,5 +92,6 @@ mKrigCheckXY <- function(x, y,  weights, Z, na.rm)
   # save x, weights  and y w/o NAs
   N <- length(y)
   return(list(N = N, y = y, x = x, weights = weights, Z = Z, 
-              NA.ind = ind) )
+              NA.ind = ind, nreps = ncol( y) )
+         )
 }

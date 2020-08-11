@@ -29,7 +29,7 @@ simSpatialData<- function(object,  M = 1,
     #    
         rho <- object$rho.MLE.FULL
     #
-    xUnique<- obj$x
+    xUnique<- object$x
     if( any( duplicated(xUnique)) ){
       stop('Can not handle repeated
            prediction locations')}

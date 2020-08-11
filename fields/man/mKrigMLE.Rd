@@ -35,21 +35,21 @@ different covariance parameters with the option of maximizing over
 sigma and rho. They used the \code{mKrig} base are designed for computational efficiency.
 }
 \usage{
-mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
-    cov.fun = "stationary.cov", cov.args = NULL, na.rm = TRUE, 
-    par.grid = NULL, lambda = NULL, lambda.profile = TRUE,
-    relative.tolerance = 1e-04, 
-    REML = FALSE, verbose = FALSE)
+mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, cov.fun = "stationary.cov", cov.args = NULL,
+                 na.rm = TRUE, par.grid = NULL, relative.tolerance =
+                 1e-04, REML = FALSE, optim.args = NULL,
+                 cov.params.start = NULL, verbose = FALSE )
 
-mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
-                 = NULL, na.rm = TRUE, cov.fun = "stationary.cov",
-                 cov.args = NULL, lambda.start = 0.5, cov.params.start
-                 = NULL, optim.args = NULL, abstol = 1e-04,
-                 parTransform = NULL, REML = FALSE, verbose = FALSE)
+mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args = NULL, 
+    na.rm = TRUE, cov.fun = "stationary.cov", cov.args = NULL, 
+    cov.params.start = NULL, optim.args = NULL, abstol = 1e-04, 
+    parTransform = NULL, find.trA = TRUE, REML = FALSE, verbose = FALSE) 
 
 
 fastTpsMLE(x, y, weights = rep(1, nrow(x)), Z = NULL, ...,
-                 par.grid=NULL, theta, lambda = NULL, lambda.profile = TRUE,
+                 par.grid=NULL, theta, lambda = NULL,
+		 lambda.profile = TRUE,
                  verbose = FALSE, relative.tolerance = 1e-04)
 
 mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
@@ -70,29 +70,24 @@ Additional arguments that would also be included in calls
   to the covariance function to specify the fixed part of 
   the covariance model.
 }
+\item{ find.trA}{ This argument is used to determine if the the effective degrees of frreedom is found for given set of covariance parameters. It is more efficient not ot find this in the optimization. This is a logical and is passed to the \link{mKrig} function internally.
+}
 
 \item{cov.params.start}{
 A list of initial starts for covariance parameters over which 
   the user wishes to perform likelihood maximization.  The list 
   contains the names of the parameters as well as the values.
+  It usually makes sense to optimize over the important lambda  parameter is most spatial applications and so if $\code{lambda}$ is omitted then the component
+  $\code{lambda = .5} is added to this list. 
 }
   \item{lambda}{
-If \code{lambda.profile=FALSE} the values of lambda to evaluate
-  the likelihood if "TRUE" the starting values for the
-  optimization. If lambda is NA then the optimum value from
-  previous search is used as the starting value. If lambda is
-  NA and it is the first value the starting value defaults to
-  1.0.
+The value of lambda to evaluate
+  the likelihood. 
 }
-  \item{lambda.start}{
-The initial guess for lambda in the joint log-likelihood 
-  maximization process
+\item{lambda.profile}{ If TRUE will find the profile likelihood for
+\code{lambda}.
 }
-
-  \item{lambda.profile}{
-  If \code{TRUE} maximize likelihood over lambda.
-}
-
+ 
 \item{mKrig.args}{A list of additional parameters to supply to the base 
 \code{mKrig} function that are distinct from the covariance model. 
 For example \code{mKrig.args= list( m=1 )} will set the polynomial to be 
@@ -173,20 +168,25 @@ Linear covariates to be included in fixed part of the
   polynomial in \code{x}
 }
 
-\item{\dots}{Other arguments to pass to the mKrig function. }
+\item{\dots}{Other arguments assumed to covariance parameters for the
+covariance function. }
 }
 \details{
 The observational model follows the same as that described in the
 \code{Krig} function and thus the two primary covariance parameters
 for a stationary model are the nugget standard deviation (sigma) and
 the marginal variance of the process (rho). It is useful to
-reparametrize as rho and\ lambda= sigma^2/rho. The likelihood can be
+reparametrize as \code{rho} and  \code{ lambda = sigma^2/rho}.
+The likelihood can be
 maximized analytically over rho and the parameters in the fixed part
-of the model the estimate of rho can be substituted back into the
+of the model, this estimate of rho can be substituted back into the
 likelihood to give a expression that is just a function of lambda and
-the remaining covariance parameters. It is this expression that is
-then maximized numerically over lambda when \code{ lambda.profile =
-TRUE}.
+the remaining covariance parameters. This operation is called concentrating the likelhood by maximizing over a subset of parameters
+
+For these kind of computations there has to be some device to identify parameters that are fixed and those that are optimized. For \code{mKrigMLEGrid} and \code{mKrigMLEJoint} the list \code{cov.args} should have the fixed parameters.
+For example this is how to fix a lambda value in the model. The list
+\code{cov.params.start} should be list with all parameters to optimize. The values for each component are use as the starting values. This is how the \link{optim} function works.
+
 
 Note that \code{fastTpsMLE} is a convenient variant of this more general
 version to use directly with fastTps, and \code{mKrigMLEJoint} is 
@@ -212,17 +212,10 @@ For \code{mKrigMLEJoint} the
 \value{
 \strong{\code{mKrigMLEGrid}} returns a list with the components:
 
-\item{summary}{A matrix giving the results for evaluating the
+\item{summary}{A matrix with eah row giving the results for evaluating the
  likelihood for each covariance model.}
 
-\item{par.grid}{The par.grid argument used.}
-
-\item{cov.args.MLE}{The list of covariance arguments (except for
-lambda) that have the largest likelihood over the list covariance
-models. NOTE: To fit the surface at the largest likelihood among those tried
-\code{ do.call( "mKrig", c(obj$mKrig.args,
-obj$cov.args.MLE,list(lambda=obj$lambda.opt)) )} where \code{obj} is
-the list returned by this function.}
+\item{par.grid}{The par.grid argument used. A matrix where rows are the combination of parameters considered.}
 
 \item{call}{The calling arguments to this function.}
 
@@ -234,7 +227,7 @@ the list returned by this function.}
 A table containing information on all likelihood evaluations 
 performed in the maximization process.
 }
-\item{optimResults}{The list returned from the optim function.}
+\item{optimResults}{The list returned from the optim function. Note that the parameters may be transformed values. }
 
 \item{par.MLE}{The maximum likelihood estimates.}
 
@@ -258,8 +251,10 @@ Douglas W. Nychka, John Paige
 }
 
 \examples{
+
+\dontrun{
 #perform joint likelihood maximization over lambda and theta. 
-#optim can get a bad answer with poor initial starts.
+# NOTE: optim can get a bad answer with poor initial starts.
 data(ozone2)
 x<- ozone2$lon.lat
 y<- ozone2$y[16,]
@@ -303,7 +298,8 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
 # profile over theta
   plot( par.grid$theta, obj1b$summary[,"lnProfileLike.FULL"],
     type="b", log="x")
-  
+ }
+ 
   \dontrun{
 # m=0 is a simple switch to indicate _no_ fixed spatial drift
 # (the default and highly recommended  is linear drift, m=2). 
@@ -317,9 +313,46 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
  test.for.zero( obj1a$summary["theta"], theta, tol=.05)
 } 
 
+##########################################################################
+# A bootstrap example
+# Here is a example of a more efficient (but less robust) bootstrap using 
+# mKrigMLEJoint and tuned starting values
+##########################################################################
+\dontrun{
+data( ozone2)
+obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
+
+######### boot strap 
+  set.seed(123)
+  M<- 100
+# create M indepedent copies of the observation vector
+  ySynthetic<- simSpatialData( obj, M)
+  
+  bootSummary<- NULL
+
+  for(  k in 1:M){
+  cat( k, " " )
+# here the MLEs are found using the easy top level level wrapper
+# see mKrigMLEJoint for a more efficient strategy
+  out <- mKrigMLEJoint(obj$x, ySynthetic[,k],
+                 weights = obj$weights,
+              mKrig.args = obj$mKrig.args,
+                 cov.fun = obj$cov.function.name,
+                cov.args = obj$cov.args, 
+            lambda.start = obj$lambda.MLE,
+        cov.params.start = list( theta = obj$theta.MLE)
+                      )
+  newSummary<- out$summary
+  bootSummary<- rbind( bootSummary, newSummary)
+  }
+   cat(  " ", fill=TRUE )
+  obj$summary
+  stats( bootSummary)
+  
+}
 \dontrun{
 #perform joint likelihood maximization over lambda, theta, and smoothness.  
-#note: finding smoothness is not robust optim 
+#note: finding smoothness is not a robust optimiztion 
 #      can get a bad answer with poor initial guesses.
 obj2<- mKrigMLEJoint(x,Y, 
                       cov.args=list(Covariance="Matern"), 

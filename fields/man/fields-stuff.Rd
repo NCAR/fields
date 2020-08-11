@@ -39,7 +39,7 @@ fields.diagonalize2(A,B, verbose=FALSE)
 fields.diagonalize(A,B)
 fields.duplicated.matrix(mat, digits = 8) 
 
-fields.mkpoly(x, m = 2)
+fields.mkpoly(x, m = 2, tag = "term")
 
 fields.derivative.poly(x, m,dcoef)
 
@@ -67,7 +67,9 @@ vector}
 \item{dcoef}{ Coefficients of a multidimensional polynomial}
 
 \item{coef}{Polynomial coefficients.}
-\item{ptab}{Table of powers of different polnomial terms.}   
+\item{ptab}{Table of powers of different polnomial terms.}
+\item{tag}{\code{mkpoly} fills in as columns names the higher order terms of the polynomial terms. The tag is the  text string prefix for thes column names and the powers of the individual variables arer appended. Default is just "terms".
+}
 \item{verbose}{If TRUE prints condition number of A+B}
 }
 
@@ -118,7 +120,8 @@ object.
 [6,]    0    2
 }
 
-This information is used in finding derivatives of the polynomial. 
+This information is used in finding derivatives of the polynomial is also used
+to create column names  for the terms that are of higher order than linear. 
 
 \code{fields.deriviative.poly} finds the partial derivative matrix of
 a multidimensional polynomial of degree (m-1) at different vector

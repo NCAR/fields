@@ -22,7 +22,7 @@
 \name{sim.rf}
 \alias{sim.rf}
 \title{
-  Simulates a Stationary Gaussian random field  
+  Efficiently Simulates a Stationary  1 and 2D Gaussian random fields  
 }
 \description{
 Simulates a stationary Gaussian random field on a regular grid with
@@ -30,6 +30,7 @@ unit marginal variance.
 }
 \usage{
 sim.rf(obj)
+sim.rf1D(obj, N=1)
 }
 \arguments{
 
@@ -38,6 +39,7 @@ A covariance object that includes information about the covariance
 function and the grid for evaluation. Usually this is created by a
 setup call to Exp.image.cov, stationary.image.cov, matern.image.cov or
 other related covariance functions. (See details below.)
+\item{N}{Number of 1D fields  to simulate}
 }
 
 }
@@ -79,6 +81,7 @@ simulation. Usually M = 2*m and N =2*n and results in an exact
 simulation of the stationary Gaussian field.  wght is a matrix from
 the FFT of the covariance function.  The easiest way to create this
 object is to use for example Exp.image.cov with setup=T ( see below).
+This object is simpler for the 1D case with n and N omitted.
 
 The classic reference for this algorithm is 
 Wood, A.T.A. and Chan, G. (1994).
@@ -97,10 +100,10 @@ Exp.image.cov, matern.image.cov, stationary.image.cov
 #field at a 100X100 grid.  
 grid<- list( x= seq( 0,5,,100), y= seq(0,5,,100)) 
 obj<-Exp.image.cov( grid=grid, theta=.5, setup=TRUE)
+set.seed( 223)
 look<- sim.rf( obj)
 # Now simulate another ... 
 look2<- sim.rf( obj)
-
 # Suppose one requires an exponential, range = 2
 # but marginal variance = 10 ( rho in fields notation)
 look3<- sqrt( 10)*  sim.rf( obj)
@@ -111,6 +114,19 @@ set.panel(2,1)
  title("simulated gaussian fields")
  image.plot( grid$x, grid$y, look2) 
  title("another realization ...")
+ 
+ 
+#1D example 5 realizations
+grid<- list( x=seq( 0,1,length.out=200) )
+obj<- stationary.image1D.cov( grid= grid,
+ cov.args= list( theta = .05,Covariance=Matern, smoothness=2.0),
+ setup=TRUE)
+ set.seed( 222)
+ out<- sim.rf1D( obj, N=5)
+ matplot( grid$x, out, type="l")
+ 
+
+ 
 }
 \keyword{spatial}
 % docclass is function

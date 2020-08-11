@@ -31,7 +31,7 @@ placement of a legend. This is done by splitting the plotting region
 into two parts. Putting the image in one and the legend in the other. After the
 legend is added the plot region is reset to the image plot.
 This function also allows for plotting quadrilateral cells in the image format that
-often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. 
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic to the ggplot package. 
 
 }
 \usage{
@@ -276,7 +276,9 @@ needs is the \code{zlim} argument and the color table! See examples for tricks i
 
 \strong{About color tables:}
 We like \code{tim.colors}
-as a default color scale and so if this what you use this can be omitted. Unfortunately this is not the default for the \code{image} function.   The
+as a default color scale and so if this what you use this can be omitted. Unfortunately this is not the default for the \code{image} function. Another important color scale is \code{ viridis() } from the viridis package. It seems that by and large everyone seems to react postively to viridis -- guess that is the point!
+
+The
 topographic color scale (\code{topo.colors}) is
 also a close second showing our geophysical bias.
 Users may find \code{larry.colors} useful for coding distinct regions
@@ -308,26 +310,36 @@ default solutions to placing information on graphs but the choices made
 here may be useful for most cases. The most annoying thing is that after
 using image.plot and adding information the next plot that is made may
 have the slightly smaller plotting region set by the image plotting.
-The user should set \code{reset.graphics=TRUE} to avoid the plotting size 
+The user should set \code{reset.graphics=TRUE} to avoid the plotting
+size 
 from changing. The disadvantage, however, of resetting the graphics 
-is that one can no longer add additional graphics elements to the image 
+is that one can no longer add additional graphics elements to the 
+image 
 plot. Note that filled.contour always resets the graphics but provides 
 another mechanism to pass through plotting commands. Apparently 
 \code{filled.contour}, while very pretty, does not work for multiple plots. 
+
+\strong{Other packages}
 \code{levelplot} that is part of the lattice package has a very 
-similar function to image.plot and a formula syntax in the call. 
+similar function to image.plot and a formula syntax in the call.
+The \code{geom_raster} for setting up a graphics object within \code{ggplot} is another alternative forr image plots with legends.
+See the last example to compare the steps in creating an image plot using \code{image.plot} that is close to the ggplot version. Mostly this involves resetting base graphics parameters using the {\code{par}} function. 
 
-
+\strong{Multiple images:} 
 By keeping the \code{zlim} argument the same across images one can generate the
 same color scale. (See the \code{image} help file.)  One useful technique for a
 panel of images is to just draw the images with good old \code{image} 
 and then use image.plot to add a legend to the last plot. (See example 
 below for messing with the outer margins to make this work.) 
-Usually a square plot (\code{pty="s"}) done in a rectangular plot region will
+Usually a square plot (\code{pty="s"}) done in a rectangular plot
+region will
 have room for the legend stuck to the right side without any other 
 adjustments. See the examples below for more complicated arrangements
  of multiple image plots and a summary 
-legends.  
+legend.  
+The reader is also referred to the package \code{autoimage} as a set of
+functions in base to help with drawing multiple images and also more
+support for geographic coordinates. 
 
 
 }
@@ -344,30 +356,49 @@ add.image, colorbar.plot, tim.colors, designer.colors }
 # or 
   obj<- list( x=x,y=y,z=z)
   image.plot(obj, legend.lab="Sverdrups")
-
+  
+################################################################ 
+# the next sequence of examples explain how to quickly 
+# adpat this basic plot to include morre features
+# In another direction see the very last example where 
+# we use many of the setting in base R graphic to mimic a 
+# (beautiful) ggplot version. 
+###############################################################
+#
 # add some points on diagonal using standard plot function
 #(with some clipping beyond 10 anticipated)
-  points( 5:12, 5:12, pch="X", cex=3)
 
+  points( 5:12, 5:12, pch="X", cex=3)
+  
+# in general image.plot will reset the plot window so you
+# can add any feature that normally works in base R
+# e.g. lines, text, contour, boxplots, ....
+#
 # adding breaks and distinct colors for intervals of z
 # with and without lab.breaks
+
   brk<- quantile( c(z))
   image.plot(x,y,z, breaks=brk, col=rainbow(4))
-# annotate legend strip  at break values and add a label
+  
+# annotate legend strip with the  break point values and add a label
+
   image.plot(x,y,z, breaks=brk, col=rainbow(4),
                        lab.breaks=names(brk))
 #
 # compare to 
+
   zp <-quantile(c(z), c( .05, .1,.5, .9,.95))
   image.plot(x,y,z, 
      axis.args=list( at=zp, labels=names(zp) ) )
+     
 # a log scaling for the colors
+
   ticks<- c( 1, 2,4,8,16,32)
   image.plot(x,y,log(z), axis.args=list( at=log(ticks), labels=ticks))
 
 # see help file for designer.colors to generate a color scale that adapts to 
 # quantiles of z. 
-# Two add some color scales together here is an example of  5 blues to white to 5 reds
+# Add some color scales together here is an example of  5 blues to white to 5 reds
 # with white being a specific size.
  colorTable<- designer.colors(11, c( "blue","white", "red") )
 # breaks with a gap of 10 to 17 assigned the white color
@@ -394,9 +425,10 @@ image.plot(x,y,z,
          length.out = length(y) +1)
  xline( xtemp, col="grey", lwd=2)
  yline( ytemp, col="grey", lwd=2)
-#
 
-#### example using a irregular quadrilateral grid
+###############################################################
+#### example using an irregular quadrilateral grid
+###############################################################
 data( RCMexample)
 
 image.plot( RCMexample$x, RCMexample$y, RCMexample$z[,,1])
@@ -404,13 +436,14 @@ ind<- 50:75 # make a smaller image to show bordering lines
 image.plot( RCMexample$x[ind,ind], RCMexample$y[ind,ind], RCMexample$z[ind,ind,1],
                                       border="grey50", lwd=2)
 
-
+###############################################################
 #### multiple images with a common legend
-
+###############################################################
 set.panel()
 
-# Here is quick but quirky way to add a common legend to several plots. 
-# The idea is leave some room in the margin and then over plot in this margin
+# Here is quick but quirky way to add a common legend to several plots.
+# The idea is leave some room in the margin and then at the end 
+# overplot the legend in this margin
 
 par(oma=c( 0,0,0,4)) # margin of 4 spaces width at right hand side
 set.panel( 2,2) # 2X2 matrix of plots
@@ -475,26 +508,52 @@ col=topo.colors(64))
 }
 #
 # 
-# sorting out the difference in formatting between matrix storage 
-# and the image plot depiction 
-# this really has not much to do with image.plot but I hope it is useful
+#######################################################
+##### Comparison to ggplot
+#######################################################
+# the following example was created as way avoid doing more important
+# things
+\dontrun{
+library( viridis)
+library(ggplot2)
 
-A<- matrix( 1:48, ncol=6, nrow=8)
-# first column of A will be 1:8 
-#   ...  second  is  9:16 
+x<- 1:20
+y<-  1:24
+z<- outer( x, y, "+")
 
-image.plot(1:8, 1:6, A)
-# add labels to each box 
-text( c( row(A)), c( col(A)), A)
-# and the indices ...
-text( c( row(A)), c( col(A))-.25,  
-   paste( "(", c(row(A)), ",",c(col(A)),")", sep=""), col="grey")
 
-# "columns" of A are horizontal and rows are ordered from bottom to top!
-#
-# matrix in its usual tabular form where the rows are y  and columns are x
-image.plot( t( A[8:1,]), axes=FALSE)
- 
+# ggplot version 
+  mesh<- expand.grid( x= x, y=y)
+  mesh$z <- c(z)
+  ggplot( data=mesh, aes( x=x, y=y, fill=z)) + 
+    geom_raster(interpolate= FALSE)  + 
+    scale_fill_continuous(type = "viridis")  +
+    theme_bw()
+
+
+# inflate range to give a margin around image
+  xr<- range(x) +  c(-.08, .08)* diff( range(x))
+  yr<- range(y) +  c(-.08, .08)* diff( range(y))
+  
+# changing these graphics parameters tends to push 
+# text closer to the axes. 
+  par( mgp=c(1.5,.5,0),mar=c(2.5,2.5,.5,1), cex=.8)
+  
+  image.plot(x,y,z, 
+             col = viridis(128), 
+   legend.shrink = .27,
+            xlim = xr, 
+            ylim = yr,
+    legend.width = 1.5,
+      legend.mar = 3,
+     legend.args = list( text = "z",
+                          cex = .8,
+                         side = 3,
+                         line = .5)
+   )
+
+}
+
 }
 \keyword{hplot}
 % docclass is function

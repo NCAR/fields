@@ -38,13 +38,18 @@
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-spatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, 
-mKrig.args = list(m = 2), 
-cov.function = "stationary.cov", cov.args = list(Covariance = "Matern", 
-        smoothness = 1), theta = NULL, theta.start = NULL, lambda.start = 0.5,
-         theta.range = NULL,
-    abstol = 1e-04, na.rm = TRUE, verbose = FALSE, REML = FALSE, ...)
-    
+spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
+                  mKrig.args = list( m=2),
+                cov.function = "stationary.cov", 
+                  	cov.args = list(Covariance = "Matern", smoothness = 1),
+                   gridTheta = NULL, 
+                      abstol = 1e-4,
+                       na.rm = TRUE,
+                  	 verbose = FALSE,
+                        REML = FALSE, 
+             confidenceLevel = .95,
+            cov.params.start = NULL,
+                           ...)   
 \method{summary}{spatialProcess}(object,  ...)
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{print}{spatialProcessSummary}(x, digits = 4, ...)
@@ -64,19 +69,20 @@ E.g. elevation for fitting climate data over space. }
 
 \item{mKrig.args}{Arguments passed to the mKrig function.}
 
+\item{confidenceLevel}{Confidence level for intervals for the estimated parameters.}
+
+ \item{cov.args}{ A list specifying parameters and other components of the covariance function.}
+ 
 \item{cov.function}{A character string giving the name of the  covariance function
   	 for the spatial component.}
   	 
- \item{cov.args}{ A list specifying parameters and other components of the covariance function.}
+\item{cov.params.start}{ A list where the names are  parameter names that appear in the covariance function. The values of each component are assumed to be the starting values when optimizing to find MLEs. If lambda does not appear
+as additional
+argument when calling spatialProcess it is added internally to this list with the starting
+value .5.}
  
- \item{theta}{If not NULL the range parameter for the covariance is fixed at this value. }
- 
- \item{theta.start}{Starting value for MLE fitting of the scale (aka range) parameter. If omitted the starting value is taken from a grid search ove theta.}
- 
- \item{lambda.start}{Starting value for MLE fitting of the lambda parameter. Note lambda
-  is the ratio of the nugget variance to the process variance. In code variables this is
-  \code{sigma^2} divided by \code{rho}. }
-  \item{ theta.range }{A range for the ML search to estimate theta. Default is based on quantiles of the location pairwise distances.}
+ \item{gridTheta}{A grid for searching over theta (range parameter). If omitted, default is
+ based on quantiles of the location pairwise distances.}
 
  \item{na.rm}{If TRUE NAs are removed from the data. }
 
@@ -96,8 +102,9 @@ E.g. elevation for fitting climate data over space. }
 
   \item{\dots}{
   	Any other arguments that will be passed to the \code{mKrig} function and interpreted
-  	as additional arguments to the covariance function. E.g. \code{smoothness} for the
-  	Matern covariance. 
+  	as additional arguments to the covariance function. E.g. \code{lambda} for a fixed
+	value of lambda or  \code{smoothness} for the
+  	Matern covariance.
   	}
   	
   \item{abstol}{The absolute tolerance bound used to judge convergence. This is applied
@@ -118,11 +125,13 @@ E.g. elevation for fitting climate data over space. }
 
 where ".k" means subscripted by k, Y.k is the dependent variable
 observed at location x.k. P is a low degree polynomial (default is a
-linear function in the spatial coordinates) and Z is a matrix of covariates (optional) that enter as a linear model the fixed part. g is a mean zero,
+linear function in the spatial coordinates) and Z is a matrix of covariates (optional) that
+enter as a linear model the fixed part. g is a mean zero,
 Gaussian stochastic process with a marginal variance of rho and a
 scale (or range) parameter, theta. The measurement errors, e.k, are
 assumed to be uncorrelated, normally distributed with mean zero and
-standard deviation sigma. If weights are supplied then the variance of e is assumed to be  \code{sigma^2/ weights}.
+standard deviation sigma. If weights are supplied then the variance of e is assumed to be
+\code{sigma^2/ weights}.
 
 
 Perhaps the most important aspect of this  function is that
@@ -199,25 +208,33 @@ some help in how to do this easily in fields. Also see quilt.plot to
 get an quick plot of a spatial field  to discern obvious spatial paterns.
 
 
-\strong{summary} method forms a list with class \code{spatialProcessSummary} that hasa subset of information from the output object and also creates a table of the estimates of the linear parameters in the fixed part of the model.
+\strong{summary} method forms a list with class \code{spatialProcessSummary} that has a
+subset of information from the output object and also creates a table of the estimates
+of the linear parameters in the fixed part of the model.
 With replacated fields there is an option to estimate different linear parameters for each field
-( \code{ collapseFixedEffect = FALSE } ) and in this case a table is not created because there is more than one estimate. See (\code{Omega} and \code{fixedEffectsCov}) in the \code{mKrig} object to build the standard errors.
+( \code{ collapseFixedEffect = FALSE } ) and in this case a table is not created because
+there is more than one estimate. See (\code{Omega} and \code{fixedEffectsCov}) in the
+\code{mKrig} object to build the standard errors.
 
 \strong{plot} method  provides a panel of 4 diagnositic plots of the fit. 
 Use \code{set.panel(2,2)} to see all 4 at once. The third plot gives the likelihood and
 GCV functions as a function of lambda evaluated at the global MLE for theta.
 This is based on the gird evaluations in the component MLEInfo$MLEProfileLambda.
 The fourth
-plot is a profile likelihood trace for theta  having maximized over lambda and is based on the component MLEInfo$MLEGrid. 
+plot is a profile likelihood trace for theta  having maximized over lambda and is based on
+the component MLEInfo$MLEGrid. 
 
-\strong{print} method prints the  \code{spatialProcessSummary} object of the fit, adding some details and explanations.
+\strong{print} method prints the  \code{spatialProcessSummary} object of the fit, adding
+some details and explanations.
 
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
 	An object of classes \code{mKrig} and  \code{SpatialProcess}. The main difference
-	from mKrig is an extra component, \code{MLEInfo} that has the results of the profile likelihood grid
-	evaluation over theta ( having maximizing lamdba), joint maximization over theta and lambda,
+	from mKrig is an extra component, \code{MLEInfo} that has the results of the
+	profile likelihood grid
+	evaluation over theta ( having maximizing lamdba), joint maximization over
+	theta and lambda,
 	and a grid evaluation over lambda with theta fixed at its MLE. 
 }
 
@@ -226,7 +243,9 @@ Doug Nychka%%  ~~who you are~~
 }
 
 \seealso{
-Tps, MLESpatialProcess, mKrigMLEGrid, mKrigMLEJoint, plot.Krig, predict.mKrig, predictSE.mKrig 
+\link{Tps}, \link{MLESpatialProcess},  \link{mKrigMLEGrid},
+\link{mKrigMLEJoint},  \link{plot.Krig},  \link{predict.mKrig},
+\link{predictSE.mKrig} 
 }
 \examples{
 data( ozone2)

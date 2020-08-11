@@ -21,6 +21,7 @@
 
 \name{sim.spatialProcess}
 \alias{sim.Krig}
+\alias{simSpatialData}
 \alias{sim.spatialProcess}
 \alias{sim.Krig.approx}
 \alias{sim.mKrig.approx}
@@ -38,6 +39,7 @@ to stationary correlation functions.
  }
 \usage{
 sim.spatialProcess(object, xp,  M = 1, verbose = FALSE, ...)
+simSpatialData(object,  M = 1, verbose = FALSE)
 
 sim.Krig(object, xp, M = 1, verbose = FALSE, ...)
 
@@ -117,18 +119,31 @@ or from the range and and \code{nxSimulation}, \code{nySimulation}.}
 }
 
 \details{
-These functions generate samples from a conditional multivariate 
-distribution, or an approximate one, that describes the uncertainty in the estimated spatial 
+
+These functions generate samples from an unconditional or conditional multivariate (spatial) 
+distribution, or an approximate one. The  \strong{unconditiona} simulation function,
+\code{simSpatialData},
+is a handy way to generate synthetic observations from a fitted model.
+Typically one would use these for a parametric bootstrap.
+The functions that simulate \strong{conditional} distributions arre much more invovled
+in their coding. They are useful
+for describing the uncertainty in predictions using the estimated spatial 
 process under Gaussian assumptions. An important assumption throughout 
 these functions is that all covariance parameters are fixed at their 
-estimated or prescribed values from the passed object. 
+estimated or prescribed values from the passed object. Although these functions might
+be coded up easily by the users these
+versions have the advantage hat theytake the \code{mKrig}, \code{spatialProcess} or
+\code{Krig} objects as a way to specify the
+model in an unambiguous way. 
 
 Given a spatial process  h(x)= P(x) + g(x) observed at 
 
 Y.k =  Z(x.k)d + P(x.k) + g(x.k) + e.k
 
 where P(x) is a low order, fixed polynomial and g(x) a Gaussian spatial 
-process and Z(x.k) is a vector of covariates that are also indexed by space (such as elevation). Z(x.k)d is a linear combination of the the covariates with the parameter vector d being a component of the fixed part of the 
+process and Z(x.k) is a vector of covariates that are also indexed by space (such as elevation).
+Z(x.k)d is a linear combination of the the covariates with the parameter vector d being a
+component of the fixed part of the 
 model and estimated in the usual way by generalized least squares.
 
 With Y= Y.1, ..., Y.N,
@@ -225,6 +240,41 @@ e.g. if \code{simOut} is the output object then to plot the 3rd draw:
 \author{Doug Nychka}
 \seealso{ sim.rf, Krig, spatialProcess}
 \examples{
+\dontrun{
+## A simple example for setting up a bootstrap 
+## M below should be
+## set to much larger sample size ( e.g. M <- 1000) for better
+## statistics
+
+data( ozone2)
+obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
+
+######### boot strap 
+set.seed(123)
+M<- 20
+# create M indepedent copies of the observation vector
+ySynthetic<- simSpatialData( obj, M)
+
+bootSummary<- NULL
+
+for(  k in 1:M){
+# here the MLEs are found using the easy top level level wrapper
+# see mKrigMLEJoint for a more efficient strategy
+  newSummary<- spatialProcess(obj$x,ySynthetic[,k],
+                               theta.start  = obj$theta.MLE,
+                               lambda.start = obj$lambda.MLE)$summary
+  bootSummary<- rbind( bootSummary, newSummary)
+  }
+# the results and 95% confidence interval  
+  stats( bootSummary )
+
+  obj$summary
+  confidenceInterval <- apply(bootSummary[,2:5],2,
+                               quantile, probs=c(0.025,0.975) )
+# compare to estimates used as the "true" parameters			       
+  obj$summary[2:5] 
+  print( confidenceInterval)
+}
 
 \dontrun{
 # conditional simulation with covariates

@@ -115,12 +115,12 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	  print(theta.CI )
 	}
   
-################################################################################  
+################################################################################
 # final fit 
 # now fit spatial model with MLE for theta (range parameter)
-#  or the value supplied in the call
-# reestimate the other parameters for simplicity to get the complete mKrig object
-# add added optimized parameter values to the covariance argument (cov.arg)
+# or the value supplied in the call
+# reestimate the other parameters for simplicity to get the
+# complete mKrig object
   cov.argsFull <-  cov.args
   dupParameters<- match( names(MLEInfo$pars.MLE ), names(cov.args) )
   if( all( is.na(dupParameters)) ){

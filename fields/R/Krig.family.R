@@ -233,6 +233,9 @@
     if (!out$fixed.model) {
         if (out$knot.model) {
             # the knot model engine
+            if( verbose){
+              cat("called Krig.engine.knots: ", fill=TRUE)
+            }
             out$matrices <- Krig.engine.knots(out, verbose = verbose)
             out$pure.ss <- out$matrices$pure.ss
         }
@@ -946,6 +949,10 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
     H[(nt + 1):np, (nt + 1):np] <- do.call(out$cov.function.name, 
         c(out$args, list(x1 = out$knots, x2 = out$knots)))
     # X is the monster ...
+    if( verbose){
+      print( out$cov.function.name)
+      print( out$args)
+    }
     X <- cbind(do.call(out$null.function.name, c(out$null.args, 
         list(x = out$xM, Z = out$ZM))), do.call(out$cov.function.name, 
         c(out$args, list(x1 = out$xM, x2 = out$knots))))

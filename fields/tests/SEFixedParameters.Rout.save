@@ -1,7 +1,7 @@
 
-R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
-Copyright (C) 2019 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
+R version 4.0.0 (2020-04-24) -- "Arbor Day"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -40,4 +40,4 @@ Type 'q()' to quit R.
 PASSED test at tolerance  0.05
 > proc.time()
    user  system elapsed 
-  0.820   0.095   0.906 
+  0.886   0.150   0.943 

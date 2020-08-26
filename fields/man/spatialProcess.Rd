@@ -49,6 +49,7 @@ spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                         REML = FALSE, 
              confidenceLevel = .95,
             cov.params.start = NULL,
+	               gridN = 10,
                            ...)   
 \method{summary}{spatialProcess}(object,  ...)
 \method{print}{spatialProcess}(x, digits = 4, ...)
@@ -86,9 +87,8 @@ value .5.}
 
  \item{na.rm}{If TRUE NAs are removed from the data. }
 
-% \item{gridN}{Number of grid points for evaluating profile likelihood over
-% theta and
-% also over lambda (using MLE for theta).}
+ \item{gridN}{Number of grid points for evaluating profile likelihood over
+ theta and also over lambda.}
 
 \item{object}{A spatialProcess object returned from the spatialProcess function.}
  
@@ -252,11 +252,21 @@ data( ozone2)
 # x is a two column matrix where each row is a location in lon/lat 
 # coordinates
   x<- ozone2$lon.lat
-# y is a vector of ozone measurements at day 16 a the locations. 
+# y is a vector of ozone measurements at day 16. Note some missing values. 
   y<- ozone2$y[16,]
+  
+# artifically reduce size of data for a quick example to pass CRAN ...
+  x<- x[1:75,]
+  y<- y[1:75]
+  
+# lots of default choices  made here -- see gridN to increase 
+# the number of points in grid searches for MLEs
+
   obj<- spatialProcess( x, y)
+  
 # summary of model
   summary( obj)
+  
 # diagnostic plots
   set.panel(2,2)
   plot(obj)
@@ -264,19 +274,25 @@ data( ozone2)
 # plot 2 residuals vs. predicted
 # plot 3 criteria to select the smoothing
 #        parameter lambda = sigma^2 / rho
-#        the x axis has transformed lambda
-#        in terms of effective degrees of freedom 
-#        to make it easier to interpret
+#        the x axis has log10 lambda
 #        Note that here the GCV function is minimized
-#        while the REML is maximzed. 
+#        while the log profile likelihood  is maximzed. 
 # plot 4 the log profile likelihood used to 
-#        determine theta. 
+#        determine range parameter theta. 
 #
+set.panel()
 # predictions on a grid 
-  surface( obj)
+surface( obj, xlab="longitude", ylab="latitude")
+US( add=TRUE, col="grey", lwd=2)
+title("Predicted ozone (in PPB)  June 18, 1987 ")  
 #(see also predictSurface for more control on evaluation grid
 # and plotting)
-#  
+
+# prediction standard errors, note two steps now to generate and then plot surface
+look<- predictSurfaceSE( obj)
+surface( look, xlab="longitude", ylab="latitude")
+points( x, col="magenta")
+title("prediction standard errors (PPB)")
 
 \dontrun{
 # working with covariates and filling in missing station data
@@ -286,7 +302,8 @@ data( ozone2)
 # covariates. 
 data(COmonthlyMet)
   fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev, 
-                               theta.range= c(.25, 2.0) )
+                               gridTheta= seq(.25, 2.0, length.out=10)
+			       )
   set.panel( 2,2)                             
   plot( fit1E)
   
@@ -300,7 +317,7 @@ data(COmonthlyMet)
 # interpretation is that these infilled values are all equally plausible 
 # given the observations and also given the estimated covariance model
 #  
-# for extra credit one could now standardized the infilled values to have
+# EXTRA CREDIT:  standardized the infilled values to have
 # conditional mean and variance from the exact computations
 #  e.g. predict( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])
 #  and  predictSE(fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])  
@@ -308,10 +325,11 @@ data(COmonthlyMet)
 # among the infilled values that is also important for considering them as a
 # multivariate prediction.
 # conditional simulation on a grid but not using the covariate of elevation
- fit2<- spatialProcess(CO.loc,CO.tmin.MAM.climate, 
-                               theta.range= c(.25, 2.0) )
+ fit2<- spatialProcess(CO.loc,CO.tmin.MAM.climate,
+                        gridTheta= seq(.25, 2.0, length.out=10)
+                       )
 # note larger range parameter
-# create 2500 grids using handy function
+# create 2500 grid points using a handy fields function
 gridList <- fields.x.to.grid( fit2$x, nx=50,ny=50)
 xGrid<- make.surface.grid( gridList)
 ensemble<- sim.spatialProcess( fit2, xp=xGrid, M= 5)
@@ -322,7 +340,7 @@ set.panel()
 }
 
 \dontrun{
-data( ozone2)
+data(ozone2)
 # x is a two column matrix where each row is a location in lon/lat 
 # coordinates
   x<- ozone2$lon.lat
@@ -381,8 +399,9 @@ surface( out.p)
 US( add=TRUE)
 points( x, col="magenta")
 title("Matern sm= .5")
-}
 set.panel(1,1)
+}
+
 
 \dontrun{
 ### comparison with GeoR
@@ -392,13 +411,15 @@ set.panel(1,1)
   good<-!is.na(y)
   x1<- x[good,]
   y1<- y[good]
-  
-  obj<- spatialProcess( x, y, mKrig.args= list(m=1), smoothness = .5 )
+  obj<- spatialProcess( x1, y1,
+                        mKrig.args= list(m=1),
+			cov.params.start= list( lambda=.01, theta=3),
+			smoothness = .5)
   
   library( geoR)
   ml.n <- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
   # compare to 
-  stuffFields<- obj$MLEInfo$MLEJoint$summary[c(1,3,4,5)]
+  stuffFields<- obj$MLEInfo$summary[c(1,3,4,5)]
   stuffGeoR<- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),ml.n$sigmasq) 
   test.for.zero(  max(stuffFields/stuffGeoR), 1, tol=.004)    
 }

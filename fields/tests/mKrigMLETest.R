@@ -262,9 +262,9 @@ test.for.zero( MLEfitC$summary[ "theta"],  .1, tol=.02)
 test.for.zero( MLEfitC$summary["rhoMLE"], 1.0, tol=.002)
 
 
-MLEfitA$summary
-MLEfitB$summary
-MLEfitC$summary
+signif( MLEfitA$summary,5)
+signif( MLEfitB$summary,5)
+signif( MLEfitC$summary,5)
 
 
 # simple Monte Carlo test

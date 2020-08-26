@@ -260,16 +260,15 @@ x<- ozone2$lon.lat
 y<- ozone2$y[16,]
 obj<- mKrigMLEJoint(x,y, 
                       cov.args=list(Covariance="Matern", smoothness=1.0), 
-                      cov.params.start=list(theta=.2), lambda.start=.1)
+                      cov.params.start=list(theta=.2, lambda = .1) 
+                      )
 #                      
 # check  lnLikeihood evaluations that were culled from optim
 # these are in obj$lnLike.eval
 # funny ranges are set to avoid  very low likelihood values
 
-quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
-             xlim=c(-1.2,-.40), ylim=c( -1,1), zlim=c( -625, -610))
-             points( log10(obj$pars.MLE[1]), log10(obj$pars.MLE[2]),
-	     pch=16, col="grey" )
+quilt.plot( log10(obj$lnLike.eval[,c("theta","lambda") ] ), obj$lnLike.eval[,"lnProfileLike.FULL"])
+points( log10(obj$pars.MLE[1]), log10(obj$pars.MLE[2]), pch=16, col="grey" )
 
 # some synthetic data with replicates
   N<- 50
@@ -303,10 +302,11 @@ quilt.plot( log10(cbind(obj$lnLike.eval[,1:2])), obj$lnLike.eval[,5],
   \dontrun{
 # m=0 is a simple switch to indicate _no_ fixed spatial drift
 # (the default and highly recommended  is linear drift, m=2). 
-# this results in MLEs that are less biased -- in fact it nails it !
+# However, m=0 results in MLEs that are less biased, being the correct model
+# -- in fact it nails it !
   obj1a<- mKrigMLEJoint(x,Y, 
                     cov.args=list(Covariance="Matern", smoothness=1.0), 
-                    cov.params.start=list(theta=.5), lambda.start=.5,
+                    cov.params.start=list(theta =.5, lambda = .5),
                      mKrig.args= list( m=0))
  
  test.for.zero( obj1a$summary["sigmaMLE"], sigma, tol=.0075)
@@ -324,7 +324,7 @@ obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
 
 ######### boot strap 
   set.seed(123)
-  M<- 100
+  M<- 50
 # create M indepedent copies of the observation vector
   ySynthetic<- simSpatialData( obj, M)
   
@@ -339,8 +339,8 @@ obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
               mKrig.args = obj$mKrig.args,
                  cov.fun = obj$cov.function.name,
                 cov.args = obj$cov.args, 
-            lambda.start = obj$lambda.MLE,
-        cov.params.start = list( theta = obj$theta.MLE)
+        cov.params.start = list( theta = obj$theta.MLE,
+                                lambda = obj$lambda.MLE)
                       )
   newSummary<- out$summary
   bootSummary<- rbind( bootSummary, newSummary)
@@ -356,28 +356,32 @@ obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
 #      can get a bad answer with poor initial guesses.
 obj2<- mKrigMLEJoint(x,Y, 
                       cov.args=list(Covariance="Matern"), 
-                      cov.params.start=list(theta=.18, smoothness=1.1),
-                       lambda.start=.08)
+                      cov.params.start=list( theta = .18,
+                                        smoothness = 1.1,
+                                            lambda =.08),
+                       )
 
 #look at lnLikelihood  evaluations
 obj2$summary
 #compare to REML
 obj3<- mKrigMLEJoint(x,Y, 
                       cov.args=list(Covariance="Matern"), 
-                      cov.params.start=list(theta=.18, smoothness=1.1),
-                        lambda.start=.08
+                      cov.params.start=list(theta = .18, 
+                                       smoothness = 1.1,
+                                           lambda = .08),
                        , REML=TRUE)
+obj3$summary                      
 }
 \dontrun{
 #look at lnLikelihood  evaluations
-obj3$summary
+
 # check convergence of MLE to true fit with no fixed part
 # 
 obj4<- mKrigMLEJoint(x,Y, 
                       mKrig.args= list( m=0),
                       cov.args=list(Covariance="Matern", smoothness=1), 
-                      cov.params.start=list(theta=.2),
-                       lambda.start=.1, REML=TRUE)
+                      cov.params.start=list(theta=.2, lambda=.1),
+                       REML=TRUE)
 #look at lnLikelihood  evaluations
 obj4$summary
 # nails it!

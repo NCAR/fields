@@ -1,7 +1,7 @@
 
-R version 3.6.0 (2019-04-26) -- "Planting of a Tree"
-Copyright (C) 2019 The R Foundation for Statistical Computing
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
+R version 4.0.0 (2020-04-24) -- "Arbor Day"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
 You are welcome to redistribute it under certain conditions.
@@ -34,17 +34,22 @@ Type 'q()' to quit R.
 > 
 > suppressMessages(library( fields ))
 > options( echo=FALSE)
+Testing:  Likelihood Values optim and the fast return
+PASSED test at tolerance  1e-08
 Testing:  Likelihood Values summary and optim
 PASSED test at tolerance  1e-08
-Testing:  Likelihood Values summary and profile
+Testing:  Likelihood Values summary and direct mKrig call
 PASSED test at tolerance  1e-08
-Testing:  rho MLE
+Testing:  ... and rho.MLE
 PASSED test at tolerance  1e-08
 Testing:  consistency of Likelihood values
 PASSED test at tolerance  1e-08
+Testing:  grid search with and w/o profile
+PASSED test at tolerance  1e-08
+Testing:  crude test of maxmimum
 PASSED test at tolerance  1e-08
 Testing:  Testing MLESpatialProcess 
-PASSED test at tolerance  0.002
+PASSED test at tolerance  0.004
 Testing:  spatialProcess finding MLE 
 PASSED test at tolerance  1e-08
 Testing:  spatialProcess given MLE 
@@ -61,21 +66,27 @@ Testing mKrigMLEJoint  with REML FALSE  against true values
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
-lnProfileLike.FULL             lambda              theta           sigmaMLE 
-      -32.24048063         0.09913720         0.09942723         0.31460485 
-            rhoMLE            funEval           gradEval 
-        0.99837609        12.00000000        11.00000000 
-lnProfileREML.FULL             lambda              theta           sigmaMLE 
-      -32.24048063         0.09913720         0.09942723         0.31460485 
-            rhoMLE            funEval           gradEval 
-        0.99837609        12.00000000        11.00000000 
-lnProfileLike.FULL             lambda              theta           sigmaMLE 
-      -32.24016911         0.09913435         0.09941980         0.31459145 
-            rhoMLE            funEval           gradEval 
-        0.99831983        12.00000000        11.00000000 
+lnProfileLike.FULL              theta             lambda           sigmaMLE 
+        -32.240000           0.099427           0.099137           0.314600 
+            rhoMLE            funEval           gradEval             eff.df 
+          0.998380          12.000000          11.000000          19.453000 
+               GCV 
+       3531.500000 
+lnProfileREML.FULL              theta             lambda           sigmaMLE 
+        -32.240000           0.099427           0.099137           0.314600 
+            rhoMLE            funEval           gradEval             eff.df 
+          0.998380          12.000000          11.000000          19.453000 
+               GCV 
+       3531.500000 
+lnProfileLike.FULL              theta             lambda           sigmaMLE 
+        -32.240000           0.099420           0.099134           0.314590 
+            rhoMLE            funEval           gradEval             eff.df 
+          0.998320          12.000000          11.000000          19.658000 
+               GCV 
+       3807.500000 
 1  2   
 Testing:  Monte Carlo theta
-PASSED test at tolerance  0.005
+PASSED test at tolerance  0.006
 Testing:  Monte Carlo lambda
 PASSED test at tolerance  0.05
 all done with mKrigMLEGrid tests
@@ -84,4 +95,4 @@ all done with mKrigMLEGrid tests
 > 
 > proc.time()
    user  system elapsed 
-  5.136   0.659   5.788 
+  8.270   1.424   8.664 

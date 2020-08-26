@@ -28,6 +28,7 @@
 \alias{discretize.image}
 \alias{make.surface.grid}
 \alias{unrollZGrid}
+\alias{makeMultiIndex}
 
 \title{
 Some simple functions for working with gridded data and 
@@ -49,6 +50,7 @@ irregular 2-d points to a grid.
 }
 
 \usage{
+makeMultiIndex(M)
 parse.grid.list( grid.list, order.variables="xy")
 fields.x.to.grid(x,nx=80, ny=80, xy=c(1,2))
 fields.convert.grid( midpoint.grid )
@@ -59,6 +61,7 @@ make.surface.grid( grid.list)
 unrollZGrid( grid.list, ZGrid)
 }
 \arguments{
+\item{M}{An vector of integers.}
 \item{grid.list}{ No surprises here -- a grid list! These can be unequally 
 spaced.}
 \item{order.variables}{ If "xy" the x variable will be subsequently plotted
@@ -98,7 +101,31 @@ the z component follows the shape described above for the no list
 case. 
 }
 }
-\details{The form of a grid.list is  
+\details{
+\code{makeMultiIndex} creates an expanded set of indices to referencce a
+regular grid. M are  L integers with product prodM
+ Will create a  prodM by L matrix that is all combinations of (1:M[i]) for i =1,2, ...L
+This is organized in the standard array ordering where the first
+column varies the fastest for M = c( 3,2,4) the result will be a 24X3 matrix
+with the entries:
+
+\preformatted{
+                          1,1,1 
+                          2,1,1
+                          3,1,1
+                          1,2,1
+                          2,2,1
+                          3,2,1
+                      etc ...
+		          ...
+             and  ending with
+                          2,2,4
+                          3,2,4
+ }
+
+\strong{All about grid lists:}
+
+The form of a grid.list is
 
 \code{list( var.name1= what1  , var.name2=what2 , ... var.nameN=what3)}
 

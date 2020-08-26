@@ -261,8 +261,11 @@ for(  k in 1:M){
 # here the MLEs are found using the easy top level level wrapper
 # see mKrigMLEJoint for a more efficient strategy
   newSummary<- spatialProcess(obj$x,ySynthetic[,k],
-                               theta.start  = obj$theta.MLE,
-                               lambda.start = obj$lambda.MLE)$summary
+                    cov.params.start= list(
+			                   theta = obj$theta.MLE,
+			                  lambda = obj$lambda.MLE
+					  )
+                               )$summary
   bootSummary<- rbind( bootSummary, newSummary)
   }
 # the results and 95% confidence interval  

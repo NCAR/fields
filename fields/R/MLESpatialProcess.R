@@ -26,7 +26,7 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                             cov.args = list(Covariance = "Matern",
                                             smoothness = 1), 
                              gridTheta = NULL,
-                                 gridN = 20,
+                                 gridN = 15,
                             optim.args = NULL,
                                  na.rm = TRUE,
                                verbose = FALSE,
@@ -93,12 +93,15 @@ MLESpatialProcess <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
     theta.start <-  par.grid$theta[ind]
     lambda.start<- MLEGrid$summary[ind,"lambda"] 
     cov.params.startTemp <- cov.params.start 
-    # update starting values with results from grid search over theta
-    cov.params.startTemp$lambda <- lambda.start
+    #  update starting values with results from grid search over theta
     cov.params.startTemp$theta  <- theta.start
+    #  But do not use the lambda value this causes problems in the
+    #  ozone2 example --- still mysterious to me why!
+    #   commented out line:
+     cov.params.startTemp$lambda <- lambda.start
     
-  timeOptim<- system.time(
-  MLEJoint <- mKrigMLEJoint(x, y, weights = weights, Z = Z,
+    timeOptim<- system.time(
+    MLEJoint <- mKrigMLEJoint(x, y, weights = weights, Z = Z,
                                             mKrig.args = mKrig.args,
                                                cov.fun = cov.function,
                                               cov.args = cov.args, 

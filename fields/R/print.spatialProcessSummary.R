@@ -19,7 +19,7 @@ print.spatialProcessSummary <- function(x, digits = 4, ...) {
   cat("CALL:\n")
   dput(x$call)
   cat("\n")
-  cat("SUMMARY OF MODEL FIT:\n")
+  cat(" SUMMARY OF MODEL FIT:\n")
   print(x$summaryTable, quote = FALSE)
   cat("\n")
   cat(" ESTIMATED COEFFICIENTS FOR FIXED PART:", fill = TRUE)
@@ -49,5 +49,20 @@ print.spatialProcessSummary <- function(x, digits = 4, ...) {
       }
     }
   }
+  cat("\n")
+  cat(" SUMMARY FROM ML ESTIMATION:", fill=TRUE)
+  if( !is.null( x$MLEpars)){
+    cat("  parameters found from optim: ", x$MLEpars, fill=TRUE )
+    cat(" sigma and rho found analytically", fill=TRUE)
+    cat("\n")
+    print( x$MLESummary)
+  }
+  else{
+    cat(" lambda is fixed: ", fill=TRUE)
+    cat(" sigma and rho  analytically  derived from lambda", fill=TRUE)
+    cat("\n")
+    print( x$MLESummary)
+  }
+ 
   invisible(x)
 }

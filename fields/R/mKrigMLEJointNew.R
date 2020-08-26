@@ -51,6 +51,8 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
     cat("cov.params.start:  ",  fill=TRUE)
     print( cov.params.start)
   }
+    #cat("starts", fill=TRUE)
+    #print( cov.params.start)
 # precompute distance matrix if possible so it only needs to be computed once
   supportsDistMat = supportsArg(cov.fun, "distMat")
   if(supportsDistMat & is.null( cov.args$distMat)) {

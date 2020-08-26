@@ -148,11 +148,13 @@ this package.
 }
 
 \examples{
-
+\dontrun{
 # some air quality data, daily surface ozone measurements for the Midwest:
 data(ozone2)
 x<-ozone2$lon.lat
 y<- ozone2$y[16,] # June 18, 1987
+# (artifically) reduce data size for CRAN ...
+
 
 # pixel plot of spatial data
 quilt.plot( x,y)
@@ -178,6 +180,7 @@ fit2<- spatialProcess( x,y)
 # the nugget, sill and range parameters are found by maximum likelihood
 # summary, plot, and surface also work for  fit2 !
 
+}
 
 }
 \keyword{datasets}

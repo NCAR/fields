@@ -21,65 +21,63 @@
 "plot.spatialProcess" <- function(x, digits = 4, which = 1:4, 
     ...) {
     out <- x
-    #
-    #   don't do plots 2:4 if a fixed lambda
-    #
+    
+###########    plot 1  predicted vs. residua values   
     fitted.values <- predict(out)
-    std.residuals <- (out$residuals * sqrt(out$weights))/out$sigma.MLE
     if (any(which == 1)) {
         #temp <- summary(out)
         plot(fitted.values, out$y, ylab = "Y", xlab = " predicted values", 
             bty = "n", ...)
-        abline(0, 1)
+        abline(0, 1, col="red")
         hold <- par("usr")
        title("Observations by predicted values")    
 
     }
+##################### plot 2 residual plot
+    std.residuals <- (out$residuals * sqrt(out$weights))/out$sigma.MLE
     if (any(which == 2)) {
         plot(fitted.values, std.residuals, ylab = "(STD) residuals", 
             xlab = " predicted values", bty = "n", ...)
         yline(0)
     }
-    if (any(which == 3)) {
+################### plot 3 profile over lambda     
+    summary<- out$MLEGridSearch$MLEProfileLambda$summary
+    profileLambda<- !is.null( summary)
+    if (any(which == 3)& profileLambda ) {
     	mar.old<- par()$mar
-    	summary<- out$MLEGridSearch$MLEProfileLambda$summary
+    
     	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
-            plot(summary[,"lambda" ], summary[,"lnProfileLike.FULL" ],  xlab = "lambda", 
-                ylab ="log Profile Likelihood(lambda)", type="l", log="x",
+            plot(summary$lambda, summary$lnProfileLike.FULL,  xlab = "lambda", 
+                ylab ="log Profile Likelihood(lambda)", type="p", log="x", pch=16,cex=.5,
                  ...)
-             ind<- which.max(summary[,2] )
-            xline( summary[ind,"lambda"] )
+            
+            splineFit <- splint(log(summary$lambda), summary$lnProfileLike.FULL, nx = 500)
+            lines(exp(splineFit$x),splineFit$y, lwd = 2, col = "red")
+            xline( out$lambda.MLE )
             usr.save <- par()$usr
             usr.save[3:4]<- range( summary[,"GCV" ] )
             par( usr= usr.save, ylog=FALSE)
-            lines(summary[,"lambda" ], summary[,"GCV" ],
+            points(summary$lambda, summary$GCV,
             lty=2, lwd=2, col="blue")
-            ind<- which.min(summary[,"GCV"] )
-            xline( summary[ind, "lambda"],
-                   col="blue", lwd=2)
             axis( side=4, col="blue")
             mtext( side=4, line=2,  "GCV function",cex=.75,
                    col="blue")
-            title("Profile likelihood over lambda \n (with theta at MLE)", 
+            title("Profile likelihood over lambda", 
                 cex = 0.6)
-            box()
             par( mar=mar.old)
     }
-    if (any(which == 4)) {
+    
+#################### plot 4 profile over theta (range)
+    summary<- out$MLEGridSearch$MLEGrid$summary
+    profileTheta<- !is.null( summary)
+    if ( any(which == 4) & profileTheta ) {
       summary<- out$MLEGridSearch$MLEGrid$summary
-      thetaGrid<- (out$MLEGridSearch$MLEGrid$par.grid)$theta
-    	plot(thetaGrid,summary[,2], pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
+    	plot(summary$theta, summary$lnProfileLike.FULL, pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
     	title("Profile likelihood for theta \n (range parameter)")
-    	xline( out$theta.MLE, lwd=2, col="grey20")
-    	splineFit<- splint(thetaGrid, summary[,2], nx=500)
-    	lines( splineFit, lwd=2, col="red")
-    	cutLevel<- max(splineFit$y ) - qchisq(.95, 1) / 2
-    	ind<- splineFit$y> cutLevel
-    	lower<- max( splineFit$x[ ind] )
-    	upper<- min(splineFit$x[ ind])
-    	segments( lower, cutLevel, upper, cutLevel, col="grey", lwd=3)
-    	xline( c( lower, upper), lwd=.5, col="grey")
-    	
+    	xline( out$theta.MLE, lwd=2, col="grey40")
+    	xline( out$theta.CI, lwd=4, col="grey70", lty=2)
+    	splineFit <- splint(summary$theta, summary$lnProfileLike.FULL, nx = 500)
+    	lines(splineFit, lwd = 2, col = "red")
            }
 }

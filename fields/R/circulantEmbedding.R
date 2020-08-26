@@ -19,47 +19,17 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "circulantEmbedding" <- function(obj) {
-  if( is.null(obj$mDim )){
-# backwards compatibility for 2D case     
-    mDim<-c( obj$m, obj$n)
-    MDim<-c( obj$M, obj$N)
-  }
-  else{
-    mDim<- obj$mDim
-    MDim<- obj$MDim
-  }
-  
-    nZ<- length(MDim)
-    if (any(Re(obj$wght) < 0)) {
-        stop("FFT of covariance has negative\nvalues")
-    }
-    prodM<- prod( MDim)
-    Z <- fft( array(rnorm(prodM), MDim) )
-    # create the multindex that is 1:mDim[1] , 1:nDim[2] ..., 1:mDim[,nZ ]
-    # two special cases, 1D and 2D  added for efficiency and clarity ...
-     if( nZ ==1){ 
-       bigIndex<- cbind( 1 : mDim[1] )
-     }
-    if( nZ==2){
-      bigIndex<-  cbind( rep( 1:mDim[1], mDim[2]),  
-                         rep( 1:mDim[2], rep(mDim[1], mDim[2]) )
-                       )
-    }
-    if( nZ > 2){
-      bigIndex<-  cbind( rep( 1:mDim[1], mDim[2]),  rep( 1:mDim[2], mDim[1]) )
-    for ( k in 3 : nZ){
-      bigN<- nrow( bigIndex)
-      bigIndex<- cbind(
-        rep( bigIndex,mDim[k]), 
-        rep( 1 : mDim[k], rep( bigN,mDim[k]) )
-      )
-    }
-    }
-    
+    m<- obj$m   
+    M<- obj$M
+    prodM<- prod( M)
+    Z <- fft( array(rnorm(prodM), M) )
     #bigIndex<- as.matrix(expand.grid( 1:mDim[1], 1:mDim[2]))
+    if( any( Re(obj$wght) < 0)){
+      stop("Weight function has negtive values")
+    }
     out<-  Re(
                fft(sqrt(obj$wght) * Z, inverse = TRUE)
              )/sqrt(prodM)
-    out<- array( out[bigIndex], mDim)
+    out<- array( out[makeMultiIndex(m)], m)
     return( out)
 }

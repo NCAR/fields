@@ -29,6 +29,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                         REML = FALSE, 
              confidenceLevel = .95,
             cov.params.start = NULL,
+                       gridN = 10,
                            ...) {
 # NOTE all ... information is assumed to be for the cov.args list
 # overwrite the default choices (some R arcania!)
@@ -61,7 +62,9 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
   if( !is.null(cov.args$theta)){
 ###########################################################
 #   case to   optimze over all parameters with theta fixed 
-# parameter list to optimize over  
+# parameter 
+# list to optimize over if this list is NULL then function 
+# will just evaluate at the parameters 
     cov.params.startTemp <-  cov.params.start
     MLEInfo <-mKrigMLEJoint(x, y,  weights = weights, Z= Z, 
               mKrig.args = mKrig.args,
@@ -71,8 +74,14 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                  verbose = verbose,
         cov.params.start = cov.params.startTemp,
                     REML = REML) 
+    if( is.null( cov.params.startTemp$lambda)){
+      lambdaModel <- cov.args$lambda
+      lambda.MLE <- NA
+    }
+    else{
     lambdaModel <- MLEInfo$lambdaModel
      lambda.MLE <- MLEInfo$lambda.MLE
+    }
       theta.MLE <- NA
     theta.CI    <- NA
     thetaModel  <- cov.args$theta
@@ -85,7 +94,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                              cov.function = cov.function, 
 	                                  cov.args = cov.args,
 	                                 gridTheta = gridTheta,
-	                                   	 gridN = 20,
+	                                   	 gridN = gridN,
 	                                    abstol = abstol,
                                   		verbose = verbose,
 	                                       REML = REML,

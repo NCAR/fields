@@ -1,6 +1,6 @@
 Package: fields
-Version: 11.1
-Date: 2020-08-18
+Version: 11.4
+Date: 2020-08-28
 Title: Tools for Spatial Data
 Authors@R: c( person("Douglas", "Nychka", role = c("aut", "cre"),
                email = "douglasnychka@gmail.com"),
@@ -39,7 +39,8 @@ Description: For curve, surface and function fitting with an emphasis
  and looking in the R subdirectory. The reference for fields can be generated
  by the citation function in R and has DOI <doi:10.5065/D6W957CT>. Development
  of this package was supported in part by the National Science Foundation  Grant
- 1417857,  the National Center for Atmospheric Research, and Colorado School of Mines.  See the Fields URL
+ 1417857,  the National Center for Atmospheric Research, and Colorado School of Mines.
+ See the Fields URL
  for a vignette on using this package and some background on spatial statistics.
 License: GPL (>= 2)
 URL: https://github.com/NCAR/Fields

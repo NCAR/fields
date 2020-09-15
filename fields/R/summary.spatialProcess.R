@@ -87,9 +87,12 @@ summary.spatialProcess <- function(object, ...) {
   c1<- c(c1, "log Likelihood REML: " )
   c2<- c( c2, object$lnProfileREML.FULL)
   
-  sum <- cbind(c1, c2)
-  dimnames(sum) <- list(rep("", dim(sum)[1]), rep("", dim(sum)[2]))
+  summaryStuff<-  cbind(c1, c2)
+  dimnames(summaryStuff) <- list(rep("",
+                               dim(summaryStuff)[1]), 
+                               rep("", dim(summaryStuff)[2]))
 ###########  
+  outObject$summaryTable<- summaryStuff
   outObject$collapseFixedEffect<- object$collapseFixedEffect
 ###########
   outObject$MLEpars<-  names( object$MLEInfo$pars.MLE) 

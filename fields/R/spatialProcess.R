@@ -20,8 +20,8 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                   mKrig.args = list( m=2),
-                cov.function = "stationary.cov", 
-                  	cov.args = list(Covariance = "Matern", smoothness = 1),
+                cov.function = NULL, 
+                  	cov.args = NULL,
                    gridTheta = NULL, 
                       abstol = 1e-4,
                        na.rm = TRUE,
@@ -33,12 +33,29 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                            ...) {
 # NOTE all ... information is assumed to be for the cov.args list
 # overwrite the default choices (some R arcania!)
+# default covariance and   Matern  arguments with smoothness 1.
+  
   ind<- match( names( cov.args), names(list(...) ) )
   cov.args <- c(cov.args[is.na(ind)], list(...))
+  
+  if( is.null( cov.function)){
+    cov.function <- 'stationary.cov'
+    if( is.null(cov.args) ){
+      cov.args<- list()
+    }
+    if( is.null(cov.args$Covariance )){
+        cov.args$Covariance<- "Matern"
+        if( is.null(cov.args$smoothness )){
+          cov.args$smoothness<- 1.0
+        }
+    }
+  }  
+#
 # theta and lambda  are  handled specially because are almost always 
-# estimated and this will simply the call for this top level function 
+# estimated and this will simplify the call in  this top level function 
 # NOTE that being in the cov.params.start list means a parameter will be optimized
 # by maximum likelhood
+#
 # If a  parameter is in the cov.args list it will be fixed in its value
 # 
   if( is.null( cov.args$lambda) & is.null(cov.params.start$lambda) ){
@@ -77,15 +94,15 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
     if( is.null( cov.params.startTemp$lambda)){
       lambdaModel <- cov.args$lambda
       lambda.MLE <- NA
-    }
+     }
     else{
-    lambdaModel <- MLEInfo$lambdaModel
-     lambda.MLE <- MLEInfo$lambda.MLE
-    }
+    lambdaModel <- MLEInfo$pars.MLE["lambda"] 
+     lambda.MLE <- lambdaModel
       theta.MLE <- NA
     theta.CI    <- NA
     thetaModel  <- cov.args$theta
   MLEGridSearch <- NULL
+    }
   }
   else{
 #  

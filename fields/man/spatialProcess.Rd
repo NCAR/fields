@@ -40,8 +40,8 @@
 \usage{
 spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                   mKrig.args = list( m=2),
-                cov.function = "stationary.cov", 
-                  	cov.args = list(Covariance = "Matern", smoothness = 1),
+                cov.function = NULL, 
+                  	cov.args = NULL,
                    gridTheta = NULL, 
                       abstol = 1e-4,
                        na.rm = TRUE,
@@ -72,10 +72,16 @@ E.g. elevation for fitting climate data over space. }
 
 \item{confidenceLevel}{Confidence level for intervals for the estimated parameters.}
 
- \item{cov.args}{ A list specifying parameters and other components of the covariance function.}
+ \item{cov.args}{ A list specifying parameters and other components of the
+ covariance function. Default is not extra arguments required.]
+ (But see the next item.). }
  
 \item{cov.function}{A character string giving the name of the  covariance function
-  	 for the spatial component.}
+  	 for the spatial component.
+  	 If NULL, the default,  this is  filled in as \code{stationary .cov} and then
+  	 if \code{cov.args} is also NULL this is filled in as 
+  	 \code{ list(Covariance = "Matern", smoothness = 1.0)}
+  	 }
   	 
 \item{cov.params.start}{ A list where the names are  parameter names that appear in the covariance function. The values of each component are assumed to be the starting values when optimizing to find MLEs. If lambda does not appear
 as additional
@@ -340,15 +346,16 @@ set.panel()
 }
 
 \dontrun{
+## changing the covariance model.
+
 data(ozone2)
-# x is a two column matrix where each row is a location in lon/lat 
-# coordinates
+
   x<- ozone2$lon.lat
-# y is a vector of ozone measurements at day 16 a the locations. 
   y<- ozone2$y[16,]
+  
 # a comparison to using an exponential and Wendland covariance function
 # and great circle distance -- just to make range easier to interpret.
-    obj <- spatialProcess( x, y,
+  obj <- spatialProcess( x, y,
                               Distance = "rdist.earth")
 	obj2<- spatialProcess( x, y,
 	        cov.args = list(Covariance = "Exponential"), 
@@ -363,14 +370,16 @@ data(ozone2)
 #	                          
 # Note very different range parameters - BTW these are in miles
 # but similar nugget variances. 
-obj$pars
-obj2$pars
-obj3$pars
+ rbind( Whittle= obj$summary,
+ Exp= obj2$summary,
+Wendland= obj3$summary
+)
+
 # since the exponential is Matern with smoothness == .5 the first two
 # fits can be compared in terms of their likelihoods
-# the REML value is slightly higher for obj verses obj2 (598.4  > 596.7)
+# the ln likelihood   value is slightly higher for obj verses obj2 (-613.9 >  -614.9)
 # these are the _negative_ log  likelihoods so suggests a preference for the
-# exponential model 
+# smoothness = 1.0 (Whittle)  model 
 # 
 # does it really matter in terms of spatial prediction?
 set.panel( 3,1)

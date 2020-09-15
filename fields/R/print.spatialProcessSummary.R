@@ -38,13 +38,14 @@ print.spatialProcessSummary <- function(x, digits = 4, ...) {
     nlist <- as.character(names(x$args))
     NL <- length(nlist)
     for (k in 1:NL) {
-      cat("   Argument:", nlist[k], " ")
-      if (object.size(x$args[[k]]) <= 1024) {
-        cat("has the value(s): ", fill = TRUE)
-        print(x$args[[k]])
+      covItem<- x$args[[k]]
+      cat( nlist[k], ":",
+           fill = TRUE)
+      if (object.size(covItem) > 10) {
+        print(covItem)
       }
       else {
-        cat("too large to print value, size > 1K ...", 
+        cat("Too large to print value, size > 10 ...", 
             fill = TRUE)
       }
     }

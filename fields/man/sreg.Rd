@@ -31,13 +31,13 @@ smoothness can be specified or estimated from the data by GCV.
 <!--brief description-->
 }
 \usage{
-sreg(x, y, lambda = NA, df = NA, offset = 0, 
-     weights = rep(1, length(x)), cost = 1, 
-     nstep.cv = 80, tol=1e-5,find.diagA = TRUE, trmin = 2.01,
-     trmax = NA, lammin = NA, 
-     lammax = NA, verbose = FALSE,
-     do.cv = TRUE, method = "GCV", rmse = NA,
-      na.rm =  TRUE)
+sreg(x, y, lambda = NA, df = NA, offset = 0, weights =
+                 rep(1, length(x)), cost = 1, nstep.cv = 80, tol =
+                 1e-05, find.diagA = TRUE, trmin = 2.01, trmax = NA,
+                 lammin = NA, lammax = NA, verbose = FALSE, do.cv =
+                 TRUE, method = "GCV", rmse = NA, na.rm = TRUE, digits
+                 = 8)
+
 
 \method{predict}{sreg}(object, x, derivative = 0, model = 1,...) 
 }
@@ -118,6 +118,8 @@ parameter. Choices are
 Value of the root mean square error to match by varying lambda.}
 
 \item{na.rm}{If TRUE NA's are removed from y before analysis.}
+
+\item{digits}{Number of significant digits used to determine replicate x values.}
 
 \item{\dots}{Other optional arguments to pass to the predict function.}
 

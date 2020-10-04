@@ -1,5 +1,5 @@
 
-R version 4.0.0 (2020-04-24) -- "Arbor Day"
+R version 4.0.2 (2020-06-22) -- "Taking Off Again"
 Copyright (C) 2020 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
@@ -96,4 +96,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  0.987   0.154   1.117 
+  1.083   0.163   1.238 

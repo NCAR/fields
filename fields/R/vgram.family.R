@@ -18,6 +18,7 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
+
 "vgram" <- function(loc, y, id = NULL, d = NULL, lon.lat = FALSE, 
                     dmax = NULL, N = NULL, breaks = NULL, 
                     type=c("variogram", "covariogram", "correlogram")) {
@@ -169,7 +170,7 @@ plot.vgram = function(x, N=10, breaks = pretty(x$d, N, eps.correct = 1), add=FAL
   #set y axis label if not set by user
   if(is.null(otherArgs$ylab)) {
     if(type=="variogram")
-      otherArgs$ylab = "sqrt(Variance)"
+      otherArgs$ylab = "Variance"
     else if(type == "covariogram" || type=="cross-covariogram")
       otherArgs$ylab = "Covariance"
     else if(type == "correlogram" || type=="cross-correlogram")
@@ -294,7 +295,8 @@ plot.vgram = function(x, N=10, breaks = pretty(x$d, N, eps.correct = 1), add=FAL
 }
 
 # Returns the variogram bin centers and means
-getVGMean = function(x, N = 10, breaks = pretty(x$d, N, eps.correct = 1)) 
+getVGMean = function(x, N = 10,
+                     breaks = pretty(x$d, N, eps.correct = 1)) 
 {
   # Can calculate mean or other statistical functions of the values in the bins
   VGstat = function(VG, minD=-Inf, maxD=Inf, statFun="mean", ...) {
@@ -314,9 +316,9 @@ getVGMean = function(x, N = 10, breaks = pretty(x$d, N, eps.correct = 1))
   centers = apply(breakBounds, 1, mean, na.rm=TRUE)
   ys = apply(breakBounds, 1, meansFromBreak)
   
-  #take square root if variogram
-  if(x$type == "variogram")
-    ys=sqrt(ys)
+ #take square root if variogram
+ # if(x$type == "variogram")
+ #   ys=sqrt(ys)
   
   return(list(centers=centers, ys=ys, type=x$type))
 }

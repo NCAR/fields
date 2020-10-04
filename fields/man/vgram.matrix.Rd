@@ -31,30 +31,31 @@ and returning summary information about the differences in each of these
 directions.  
 }
 \usage{
-vgram.matrix(dat, R=5, dx = 1,dy = 1 )
+vgram.matrix(dat, R = NULL, dx = NULL, dy = NULL)
 
 \method{plot}{vgram.matrix}(x,...)
 }
 \arguments{
 \item{dat}{
-A matrix spacing of rows and columns are assumed to have the same 
-distance. 
+Either a matrix spacing of rows and columns are assumed to have the same 
+distance or a list in image format with components x, y and z. 
 }
 \item{R}{
 Maximum radius for finding variogram differences assuming that the grid
 points are spaced one unit a part. Default is go out to a 
-radius of 5.  
+radius of \code{5*max( c(dx, dy) )}.  
 }
 
 \item{dx}{
 The spacing of grid points on the X axis. This is used to calculate the 
 correct distance between grid points. If dx is not equal to dy then the 
-collapse argument must be FALSE. 
+collapse argument must be FALSE. If an image object is passed and dx and dy are not specified they will be calculated from the x and y components of the image
+list.
 }
 \item{dy}{ The spacing of grid points on the Y axis.
 See additional notes for dx.}
 
-\item{x}{ Returned list from vgram.matrix}
+\item{x}{Returned object from vgram.matrix}
 
 \item{\dots}{ Arguments for image.plot}
 

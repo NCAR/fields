@@ -28,7 +28,8 @@
 A fast, FORTRAN based function for cubic spline interpolation. 
 }
 \usage{
-splint(x, y, xgrid, wt=NULL, derivative=0,lam=0, df=NA, lambda=NULL, nx=NULL)
+splint(x, y, xgrid, wt = NULL, derivative = 0, lam = 0, df =
+                 NA, lambda = NULL, nx = NULL, digits = 8)
 }
 \arguments{
 \item{x}{
@@ -55,6 +56,7 @@ df equal to the number of observations.}
 \item{nx}{If not NULL this should be the number of points
 to evaluate on an equally spaced grid in the
 range of \code{x}}
+\item{digits}{Number of significant digits uused to determine what is a replicate x value.}
 
 }
 \value{

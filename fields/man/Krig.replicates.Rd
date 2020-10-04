@@ -29,7 +29,8 @@ In case that several observations are available for a single spatial location fi
 group means and replicate variability
 }
 \usage{
-Krig.replicates(out, x, y, Z, weights=rep( 1, length(y)), verbose = FALSE)
+Krig.replicates(out = NULL, x, y, Z = NULL, weights = rep(1,
+                 length(y)), digits = 8, verbose = FALSE)
 }
 
 \arguments{
@@ -39,8 +40,8 @@ Krig.replicates(out, x, y, Z, weights=rep( 1, length(y)), verbose = FALSE)
 \item{y}{Spatial observations}
 \item{Z}{Spatial covariates.}
 \item{weights}{Weights proportional to reciprocal varainces of observations.}
-
-\item{verbose}{ If TRUE print out details for debugging. }
+\item{digits}{Number of significant digits to consider in determing a replicate location.}
+\item{verbose}{If TRUE print out details for debugging. }
 }
 \details{
 This function figures out which locations are the same and within the function fast.1way 

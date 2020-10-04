@@ -22,7 +22,7 @@
     weights = rep(1, length(x)), cost = 1, nstep.cv = 80, tol = 1e-05, 
     find.diagA = TRUE, trmin = 2.01, trmax = NA, lammin = NA, 
     lammax = NA, verbose = FALSE, do.cv = TRUE, method = "GCV", 
-    rmse = NA, na.rm = TRUE) {
+    rmse = NA, na.rm = TRUE, digits=8) {
     call <- match.call()
     out <- list()
     out$call <- match.call()
@@ -42,7 +42,7 @@
     # find duplicate rows of the x vector
     # unique x values are now in out$xM and the means of
     # y are in out$yM.
-    out <- Krig.replicates(out, verbose = verbose)
+    out <- Krig.replicates(out, verbose = verbose, digits=digits)
     out <- c(out, out2)
     # number of unique locations
     out$np <- length(out$yM)

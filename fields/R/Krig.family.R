@@ -1249,11 +1249,12 @@ Krig.parameters <- function(obj, mle.calc = obj$mle.calc) {
 }
 
 "Krig.replicates" <- function(out=NULL, x,y, Z=NULL, weights=rep( 1, length(y)),
+                               digits=8,
                                verbose = FALSE) {
     if( is.null(out)){
       out<- list( x=x, y=y, N= length(y), Z=Z, weights=weights)
     }
-    rep.info <- cat.matrix(out$x)
+    rep.info <- cat.matrix(out$x, digits=digits)
     if (verbose) {
         cat("replication info", fill = TRUE)
         print(rep.info)

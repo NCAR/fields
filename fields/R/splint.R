@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "splint" <- function(x, y, xgrid, wt = NULL, derivative = 0, 
-    lam = 0, df = NA, lambda = NULL, nx=NULL) {
+    lam = 0, df = NA, lambda = NULL, nx=NULL, digits=8) {
     #
     # reform calling args if passed as a matrix or list
     
@@ -35,8 +35,27 @@
         y <- x$y
         x <- x$x
     }
+  #default values for weights
+  # NOTE: weights do not matter when interpolating (lam==0)
+  if (is.null(wt)) {
+    wt <- rep(1, length( x))
+  }
+  
+  print( x)
+  print( y)
     if (any(duplicated(x))) {
-        stop("duplicated x values, use sreg")
+      warning("Duplicate x's using the average value")
+      N<- length( x)
+      print( x)
+      print( y)
+      out <- Krig.replicates(
+        list( x=x, y=y, weights= wt, N=N, Z=NULL), 
+        verbose=TRUE
+        )
+      x<- out$xM
+      y<- out$yM
+      wt<- out$weightsM 
+      #stop("duplicated x values, use sreg")
     }
     if ((derivative > 2) | (derivative < 0)) 
         stop("derivative must be 0,1,2")
@@ -46,17 +65,16 @@
     if( n > 5e4){
         stop("splint not dimensioned for more than 50000 observations")
         }
-    #default values for weights
-    # NOTE: weights do not matter when interpolating (lam==0)
-    if (is.null(wt)) {
-        wt <- rep(1, n)
-    }
+    
     # find lambda from eff degrees of freedom if it is passed
     if (!is.na(df)) {
         if ((df < 2) | (df > n)) {
             stop("df out of range")
         }
+      print( x)
+      print(wt)
         lam <- sreg.df.to.lambda(df, x, wt)
+        print( lam)
     }
     # use lambda is it is passed
     if (!is.null(lambda)) {

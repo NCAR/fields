@@ -18,7 +18,7 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-vgram.matrix <- function(dat, R = 5, dx = 1, dy = 1) {
+vgram.matrix <- function(dat, R = NULL, dx = NULL, dy = NULL) {
 
 # a useful function for matching shifted indices
 # (the kind of internal function Dorit does not like!)
@@ -29,6 +29,41 @@ vgram.matrix <- function(dat, R = 5, dx = 1, dy = 1) {
         return(cbind(n1[good], n2[good]))
      }
 #  
+# check if dat is in $x $y $z image format
+# if so extract z and find dx and dy
+if( is.list( dat)){
+    if(is.null(dat$z)){
+        stop("need a z matrix in dat")
+    }
+    if( !is.null(dat$x)& is.null(dx)){
+        dx<- dat$x[2]-dat$x[1]
+        if( any( diff( dat$x)-dx > 10 *.Machine$double.eps) ){
+            stop(" x grid values are not equal")
+        }
+       
+    }
+    if( !is.null(dat$y)& is.null(dy)){
+        dy<- dat$y[2]-dat$y[1]
+        if( any( diff( dat$y)-dy > 10 *.Machine$double.eps) )
+            {
+            stop(" x grid values are not equal")
+        }
+    }
+    dat <- dat$z
+}
+# if dat is not an image defaults for dx and dy are 1.0    
+    if( is.null( dx)){
+        dx<- 1
+    }
+    if( is.null( dy)){
+        dy<- 1
+    }
+    # if R not specified go out to 5 grid boxes in distance
+    # 
+    if( is.null(R)){
+        R<-  5* max( c(dx, dy))
+    }
+    
     M<- nrow(dat)
     N<- ncol( dat)
     # create all possible separations for a grid up to a distance R

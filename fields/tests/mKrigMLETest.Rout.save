@@ -50,10 +50,6 @@ Testing:  crude test of maxmimum
 PASSED test at tolerance  1e-08
 Testing:  Testing MLESpatialProcess 
 PASSED test at tolerance  0.004
- [1] 0.1249617 0.1849927 0.2738623 0.4054245 0.6001885 0.8885163 1.3153555
- [8] 1.9472462 2.8826943 4.2675275
- [1] -122.0773 -120.9705 -120.3266 -120.1449 -120.2992 -120.6448 -121.0779
- [8] -121.5447 -122.0222 -122.5004
 Testing:  spatialProcess finding MLE 
 PASSED test at tolerance  1e-08
 Testing:  spatialProcess given MLE 
@@ -99,4 +95,4 @@ all done with mKrigMLEGrid tests
 > 
 > proc.time()
    user  system elapsed 
-  7.609   1.348   8.009 
+  7.392   1.392   7.766 

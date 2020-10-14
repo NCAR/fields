@@ -40,14 +40,9 @@
   if (is.null(wt)) {
     wt <- rep(1, length( x))
   }
-  
-  print( x)
-  print( y)
     if (any(duplicated(x))) {
       warning("Duplicate x's using the average value")
       N<- length( x)
-      print( x)
-      print( y)
       out <- Krig.replicates(
         list( x=x, y=y, weights= wt, N=N, Z=NULL), 
         verbose=TRUE
@@ -58,14 +53,13 @@
       #stop("duplicated x values, use sreg")
     }
     if ((derivative > 2) | (derivative < 0)) 
-        stop("derivative must be 0,1,2")
+        stop("derivative must be 0,1, or 2")
     if (length(x) != length(y)) 
         stop("Lengths of x and y must match")
     n <- length(x)
     if( n > 5e4){
         stop("splint not dimensioned for more than 50000 observations")
-        }
-    
+        } 
     # find lambda from eff degrees of freedom if it is passed
     if (!is.na(df)) {
         if ((df < 2) | (df > n)) {
@@ -81,7 +75,7 @@
         lam <- lambda
     }
     igcv <- ifelse(lam == 0, 2, 0)
-    # call to FORTRAN -- only return the evaluated poiints (ygrid).
+    # call to FORTRAN -- only return the evaluated points (ygrid).
     if( !is.null(nx)){
       xgrid<- seq( min( x), max(x),,nx)
     }

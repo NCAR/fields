@@ -1,0 +1,94 @@
+
+R version 4.0.2 (2020-06-22) -- "Taking Off Again"
+Copyright (C) 2020 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin17.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # fields is a package for analysis of spatial data written for
+>   # the R software environment .
+>   # Copyright (C) 2018
+>   # University Corporation for Atmospheric Research (UCAR)
+>   # Contact: Douglas Nychka, nychka@ucar.edu,
+>   # National Center for Atmospheric Research,
+>   # PO Box 3000, Boulder, CO 80307-3000
+>   #
+>   # This program is free software; you can redistribute it and/or modify
+>   # it under the terms of the GNU General Public License as published by
+>   # the Free Software Foundation; either version 2 of the License, or
+>   # (at your option) any later version.
+>   # This program is distributed in the hope that it will be useful,
+>   # but WITHOUT ANY WARRANTY; without even the implied warranty of
+>   # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+>   # GNU General Public License for more details.
+> 
+> suppressMessages(library(fields))
+> #
+> #
+> #  test of fixed lambda case
+> #  Check against linear algebra
+> #
+> 
+> options( echo=FALSE)
+Testing:   d coef
+PASSED test at tolerance  1e-08
+Testing:  c coef
+PASSED test at tolerance  1e-08
+Testing:  predict for null fixed
+PASSED test at tolerance  1e-08
+Testing:  predict for null spatial
+PASSED test at tolerance  1e-08
+Testing:  predict for null drift
+PASSED test at tolerance  1e-08
+Testing:  predict for null fixed
+PASSED test at tolerance  1e-08
+Testing:  predict for null spatial
+PASSED test at tolerance  1e-08
+Testing:  predict for null drift 
+PASSED test at tolerance  1e-08
+Testing:   knots/weights fixed/default d coef
+PASSED test at tolerance  1e-08
+Testing:  knots/weights fixed/default c coef
+PASSED test at tolerance  1e-08
+Testing:   knots d coef
+PASSED test at tolerance  1e-08
+Testing:  knots c coef
+PASSED test at tolerance  1e-08
+Testing:  knots predict for null
+PASSED test at tolerance  1e-08
+Testing:  knots predict for null
+PASSED test at tolerance  1e-08
+Testing:  knots predict w/o Z
+PASSED test at tolerance  1e-08
+Testing:  knots predict for drift
+PASSED test at tolerance  1e-08
+Testing:  predict for null
+PASSED test at tolerance  1e-08
+Testing:  predict for null
+PASSED test at tolerance  1e-08
+Testing:  predict for null
+PASSED test at tolerance  1e-08
+Testing:  predict for null
+PASSED test at tolerance  1e-08
+PASSED test at tolerance  1e-08
+Testing:  SE w/o covariate
+PASSED test at tolerance  1e-08
+Testing:  SE with covariate
+PASSED test at tolerance  1e-08
+Testing:  SE for fixed part
+PASSED test at tolerance  1e-08
+All done with Z tests and Krig/Tps including predict and predictSE !
+> 
+> proc.time()
+   user  system elapsed 
+  0.824   0.081   0.915 

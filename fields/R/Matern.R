@@ -34,7 +34,7 @@
         stop("distance argument must be nonnegative")
     d <- d * alpha
     # avoid sending exact zeroes to besselK
-    d[d == 0] <- 10* .Machine$double.eps
+    d[d == 0] <- 1e-10
     #
     # the hairy constant ...
     con <- (2^(nu - 1)) * gamma(nu)

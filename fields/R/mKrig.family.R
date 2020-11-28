@@ -20,18 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 
 mKrig.trace <- function(object, iseed, NtrA) {
-# the next if avoid resetting the random seed if random number generation is being done 
-# outside this call. Otherwise the Monte Carlo would always be reset to iseed after this 
-# call!
- 
-    if(!exists(".Random.seed") ){
-        set.seed(iseed)
-    
-    seedSet<- TRUE
-    }
-  else{
-    seedSet<- FALSE
-  }
+    set.seed(iseed)
     # if more MonteCarlo samples > number of data points just
     # find A exactly using  np  calls to predict.
     np<- object$np

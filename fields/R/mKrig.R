@@ -107,10 +107,10 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # observation vector, y.
   #
   # cholesky decoposition of Mc
-  # do.call used to supply other arguments to the function
+  # do.call is used to supply other arguments to the function
   # especially for sparse applications.
   # If chol.args is NULL then this is the same as
-  #              Mc<-chol(Mc), chol.args))
+  #              Mc<-chol(Mc)
   Mc <- do.call("chol", c(list(x = Mc), chol.args))
  
   lnDetCov <- 2 * sum(log(diag(Mc)))
@@ -183,7 +183,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   #    rhohat <- c(colSums(as.matrix(c.coef * y)))/(np - nt)
   # NOTE if y is a matrix then each of these are vectors of parameters.
   rho.MLE <- quad.form/np
-  rhohat <- c(colSums(as.matrix(c.coef * object$y)))/np
+  # rhohat <- c(colSums(as.matrix(c.coef * object$y)))/np
   shat.MLE <- sigma.MLE <- sqrt(lambda * rho.MLE)
   # the  log profile likehood with  rhohat  and  dhat substituted
   # leaving a profile for just lambda.
@@ -191,7 +191,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # likelihood values.
   lnProfileLike <- (-np/2 - log(2 * pi) * (np/2) - (np/2) * 
                       log(rho.MLE) - (1/2) * lnDetCov)
-  # see section 4.2 handbook of spatial statistics (Zimmermanchapter)
+  # see section 4.2 handbook of spatial statistics (Zimmerman chapter)
   lnProfileREML <-  lnProfileLike + (1/2) * lnDetOmega
   rho.MLE.FULL <- mean(rho.MLE)
   sigma.MLE.FULL <- sqrt(lambda * rho.MLE.FULL)
@@ -207,7 +207,6 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                              - (1/2) * lnDetCov
                              + (1/2) * lnDetOmega  )
                             )
-  
   #
   # return coefficients and   include lambda as a check because
   # results are meaningless for other values of lambda
@@ -224,14 +223,15 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
               lambda.fixed = lambda, 
               cov.function.name = cov.function, 
               args = cov.args, m = m, chol.args = chol.args, call = match.call(), 
-              nonzero.entries = nzero, shat.MLE = sigma.MLE, sigma.MLE = sigma.MLE, 
+              nonzero.entries = nzero,
+              shat.MLE = sigma.MLE, sigma.MLE = sigma.MLE, 
               rho.MLE = rho.MLE, rhohat = rho.MLE, lnProfileLike = lnProfileLike, 
               rho.MLE.FULL = rho.MLE.FULL, sigma.MLE.FULL = sigma.MLE.FULL, 
               lnProfileLike.FULL = lnProfileLike.FULL,
               lnProfileREML.FULL =  lnProfileREML.FULL,
               lnProfileREML =  lnProfileREML,
               lnDetCov = lnDetCov, lnDetOmega = lnDetOmega,
-              quad.form = quad.form, Omega = Omega,lnDetOmega=lnDetOmega,
+              quad.form = quad.form, Omega = Omega,
               qr.VT = qr.VT, 
               Mc = Mc,
           Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ,

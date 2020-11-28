@@ -167,19 +167,15 @@
     call.name <- object$cov.function.name
     #
     # default is to predict at data x's
-    
     if (is.null(xnew)) {
         xnew <- object$x
     }
-    xnew <- as.matrix(xnew)
-    
-    if (!is.null(Z)) {
-      Z <- as.matrix(Z)
-    }
-    else{
     if ((!drop.Z) & !is.null(object$Z)) {
         Z <- object$Z
     }
+    xnew <- as.matrix(xnew)
+    if (!is.null(Z)) {
+        Z <- as.matrix(Z)
     }
     if (verbose) {
         print(xnew)
@@ -196,7 +192,6 @@
     # fixed effects matrox includes both spatial drift and covariates.
     if (!drop.Z) {
         t0 <- t(cbind(fields.mkpoly(xnew, m = object$m), Z))
-        #print( t0)
     }
     else {
         stop(" drop.Z not supported")

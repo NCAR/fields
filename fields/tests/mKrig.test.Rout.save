@@ -38,8 +38,10 @@ Type 'q()' to quit R.
 NULL
 Testing:  addToDiag
 PASSED test at tolerance  1e-08
+HERE
 Testing:  spam vs no spam
 PASSED test at tolerance  1e-08
+HERE
 Testing:  Krig mKrig d coef
 PASSED test at tolerance  1e-08
 Testing:  Krig mKrig c coef
@@ -49,28 +51,30 @@ PASSED test at tolerance  1e-08
 Testing:  test of matrix Y predicts
 PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
+HERE
 Testing:  predictSurface with mKrig
 PASSED test at tolerance  1e-08
+HERE
 Testing:  Wendland/no spam
 PASSED test at tolerance  1e-08
 Testing:  Wendland/spam
 PASSED test at tolerance  1e-08
 Testing:  new coef c no spam
 PASSED test at tolerance  1e-08
-Testing:  new d coef no spam
+Testing:  new beta coef no spam
 PASSED test at tolerance  1e-08
 Testing:  new coef c spam
 PASSED test at tolerance  1e-08
-Testing:  new d coef spam
+Testing:  new beta coef spam
 PASSED test at tolerance  1e-08
 Testing:  nzero in call to mKrig
 PASSED test at tolerance  1e-08
+HERE
 Testing:  mKrig vs. Krig for ozone2
 PASSED test at tolerance  1e-08
+HERE
 Testing:  predict Wendland  mKrig vs Krig
 PASSED test at tolerance  1e-08
-Warning message:
-In fastTps(xdat, ydat, theta = 0.3) : fastTps will interpolate observations
 Testing:  fastTps interp1
 PASSED test at tolerance  1e-08
 Testing:  fastTps interp2
@@ -96,4 +100,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  1.083   0.163   1.238 
+  1.398   0.208   1.580 

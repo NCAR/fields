@@ -53,19 +53,19 @@ test.for.zero( look1, look2,tol=1e-6, tag="radial basis function exact" )
 
 
 DD<- cbind( seq(.01,2,,50))
-look2<- Wendland(DD, theta=1.0, dimension=2,k=3,derivative=1) 
+look2<- Wendland(DD, aRange=1.0, dimension=2,k=3,derivative=1) 
 
-look1<- (Wendland(DD+1e-5, theta=1.0, dimension=2,k=3)
-- Wendland(DD-1e-5, theta=1.0, dimension=2,k=3))/2e-5
+look1<- (Wendland(DD+1e-5, aRange=1.0, dimension=2,k=3)
+- Wendland(DD-1e-5, aRange=1.0, dimension=2,k=3))/2e-5
 
 test.for.zero( look1, look2,tol=1e-6)
 
 
 
-look2<- Wendland(DD, theta=1.5, dimension=2,k=3,derivative=1) 
+look2<- Wendland(DD, aRange=1.5, dimension=2,k=3,derivative=1) 
 
-look1<- (Wendland(DD+1e-5, theta=1.5, dimension=2,k=3)
-- Wendland(DD-1e-5, theta=1.5, dimension=2,k=3))/2e-5
+look1<- (Wendland(DD+1e-5, aRange=1.5, dimension=2,k=3)
+- Wendland(DD-1e-5, aRange=1.5, dimension=2,k=3))/2e-5
 
 test.for.zero( look1, look2,tol=1e-6, tag="Wendland exact")
 
@@ -74,39 +74,39 @@ x<- seq( -1,1,,5)
 ctest<- rep(0,5)
 ctest[3]<- 1
 
-wendland.cov( x,x, k=2, theta=.75)-> look0
+wendland.cov( x,x, k=2, aRange=.75)-> look0
 Wendland( rdist(x,x)/.75, k=2, dimension=1)-> sanity.look
 test.for.zero( look0, sanity.look)
 
 look0%*% ctest->look0
 
-wendland.cov( x,x, k=2, theta=.75, C=ctest, derivative=0)-> look
+wendland.cov( x,x, k=2, aRange=.75, C=ctest, derivative=0)-> look
 
 test.for.zero( look0, look, tag="Wendland C multiply")
 
 
-wendland.cov( x,x, k=2, theta=1.0, C=ctest, derivative=1)-> look
+wendland.cov( x,x, k=2, aRange=1.0, C=ctest, derivative=1)-> look
 
-wendland.cov( x+1e-5, x, k=2, theta=1.0, C=ctest)-
-wendland.cov( x-1e-5, x, k=2, theta=1.0, C=ctest)-> look2
+wendland.cov( x+1e-5, x, k=2, aRange=1.0, C=ctest)-
+wendland.cov( x-1e-5, x, k=2, aRange=1.0, C=ctest)-> look2
 look2<- look2/2e-5
  
-test.for.zero( look, look2,tol=1e-7, tag="Wendland.cov theta=1.0")
+test.for.zero( look, look2,tol=1e-7, tag="Wendland.cov aRange=1.0")
 
 
-wendland.cov( x,x, k=2, theta=.75, C=ctest, derivative=1)-> look
-wendland.cov( x+1e-5, x, k=2, theta=.75, C=ctest)-
-wendland.cov( x-1e-5, x, k=2, theta=.75, C=ctest)-> look2
+wendland.cov( x,x, k=2, aRange=.75, C=ctest, derivative=1)-> look
+wendland.cov( x+1e-5, x, k=2, aRange=.75, C=ctest)-
+wendland.cov( x-1e-5, x, k=2, aRange=.75, C=ctest)-> look2
 look2<- look2/2e-5
-test.for.zero( look, look2,tol=1e-7, tag="Wendland.cov theta=.75")
+test.for.zero( look, look2,tol=1e-7, tag="Wendland.cov aRange=.75")
 
 
 stationary.cov( x,x, Covariance="Wendland", dimension=1,
-                k=2, theta=1.0, C=ctest, derivative=0)-> look
+                k=2, aRange=1.0, C=ctest, derivative=0)-> look
 look0<- Wendland( rdist(x,x), k=2, dimension=1)%*%ctest
 test.for.zero( look0, look, tag="stationary.cov and exact C multiply for Wendland")
 
-wendland.cov( x,x, k=2,C=ctest, theta=1.0)-> look
+wendland.cov( x,x, k=2,C=ctest, aRange=1.0)-> look
 look0<- Wendland( rdist(x,x), k=2, dimension=1)%*%ctest
 test.for.zero( look0, look, tag="  Wendland C multiply")
 
@@ -114,7 +114,7 @@ test.for.zero( look0, look, tag="  Wendland C multiply")
 
 x<- make.surface.grid( list(x=seq( -1,1,,20), y=seq( -1,1,,20)))
 y<- (.123*x[,1] + .234*x[,2])
-obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3, theta=.4)
+obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3, aRange=.4)
 
 xp<- make.surface.grid( list(x=seq(-.5,.5,,24),y= seq( -.5,.5,,24)) )
 predict( obj, xp, derivative=1)-> outd
@@ -127,7 +127,7 @@ test.for.zero( outd[,2],.234)
 x<- make.surface.grid( list(x=seq( -1,1,,20), y=seq( -1,1,,20)))
 y<- (.123*x[,1] + .234*x[,2])
 obj<- mKrig( x,y, lambda=0, cov.function="stationary.cov",
-            cov.args=list(k=3, theta=.2, dimension=2, Covariance="Wendland"))
+            cov.args=list(k=3, aRange=.2, dimension=2, Covariance="Wendland"))
 
 xp<- make.surface.grid( list(x=seq(-.5,.5,,24),y= seq( -.5,.5,,24)) )
 predict( obj, xp, derivative=1)-> outd
@@ -140,7 +140,7 @@ x<- make.surface.grid( list(x=seq( -1,1,,20), y=seq( -1,1,,20)))
 y<- (x[,1]**2 - 2* x[,1]*x[,2] +  x[,2]**2)/2
 
 ############## wendland.cov
-obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3, theta=.8)
+obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3, aRange=.8)
 xp<- make.surface.grid( list(x=seq(-.5,.5,,24),y= seq( -.5,.5,,24)) )
 true<- cbind( xp[,1] -  xp[,2], xp[,2]- xp[,1])
 ############## wendland.cov
@@ -152,7 +152,7 @@ test.for.zero( rmse,0, tol=5e-3,relative=FALSE, tag="wendland.cov quad 2-d")
 x<- make.surface.grid( list(x=seq( -1,1,,20), y=seq( -1,1,,20)))
 y<- (x[,1]**3 +  x[,2]**3)
 obj<- mKrig( x,y, lambda=0, cov.function="stationary.cov",
-            cov.args=list(k=3, theta=.8, dimension=2, Covariance="Wendland"))
+            cov.args=list(k=3, aRange=.8, dimension=2, Covariance="Wendland"))
 
 xp<- make.surface.grid( list(x=seq(-.5,.5,,24),y= seq( -.5,.5,,24)) )
 true<- cbind( 3*xp[,1]**2 , 3*xp[,2]**2)
@@ -180,7 +180,8 @@ test.for.zero( rmse,0, tol=5e-3,relative=FALSE,
   x<- make.surface.grid( list(x=seq( -1,1,,20), y=seq( -1,1,,20)))
   y<- (x[,1]**3 +  x[,2]**3)
 
-  obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3,  V=diag(c( 1.1,1.1) ))
+  obj<- mKrig( x,y, lambda=0, cov.function="wendland.cov", k=3, 
+               V=diag(c( 1.1,1.1) ))
   xp<- make.surface.grid( list(x=seq(-.5,.5,,24),y= seq( -.5,.5,,24)) )
   predict( obj, xp, derivative=1)-> outd
   true<- cbind( 3*xp[,1]**2 , 3*xp[,2]**2)

@@ -23,11 +23,11 @@ simSpatialData<- function(object,  M = 1,
     # object is assummed to have the spatial model according to the
     # components in a spatialProcess or mKrig object
     # important variance parameters estimated from the data  
-        tau2 <- (object$tau.MLE.FULL)^2
+        tau <- (object$summary["tau"])
     #   set tau2 equal to zero if not there
-        if( is.null(tau2)){ tau2 <- 0}
+        if( is.null(tau)){ tau <- 0}
     #    
-        sigma <- object$sigma.MLE.FULL
+        sigma2 <- object$summary["sigma2"]
     #
     xUnique<- object$x
     if( any( duplicated(xUnique)) ){
@@ -46,7 +46,7 @@ simSpatialData<- function(object,  M = 1,
     # Sigma is full covariance at the data locations and at prediction points.
     # not to be confused with the lowercase tau that is the nugget variance
     # 
-    Sigma <- sigma * do.call(object$cov.function.name, c(object$args, 
+    Sigma <- sigma2 * do.call(object$cov.function.name, c(object$args, 
         list(x1 = xUnique, x2 = xUnique)))
     #
     # square root of Sigma for simulating field
@@ -64,8 +64,8 @@ simSpatialData<- function(object,  M = 1,
     # value of simulated field at observations
       out<- h.data 
     # add measurement error (aka the "nugget")  
-      if( tau2 > 0){
-        nugget.error<- sqrt(tau2)*matrix( rnorm(N.full*M), N.full,M)/object$weights
+      if( tau > 0){
+        nugget.error<- tau*matrix( rnorm(N.full*M), N.full,M)/object$weights
         out<- out + nugget.error
       }
     #

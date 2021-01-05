@@ -27,6 +27,27 @@ suppressMessages(library(fields))
 options( echo=FALSE)
 test.for.zero.flag<- 1
 
+# utility function foor testing 
+REML.test <- function(x, y, rho, sigma2, theta, nu = 1.5) {
+  Tmatrix <- fields.mkpoly(x, 2)
+  qr.T <- qr(Tmatrix)
+  N <- length(y)
+  Q2 <- qr.yq2(qr.T, diag(1, N))
+  ys <- t(Q2) %*% y
+  N2 <- length(ys)
+  A <- (rho * Matern(rdist(x, x), range = theta, smoothness = nu) + 
+          sigma2 * diag(1, N))
+  A <- t(Q2) %*% A %*% Q2
+  Ac <- chol(A)
+  w <- backsolve(Ac, ys, transpose = TRUE)
+  REML.like <- (N2/2) * log(2 * pi) + (1/2) * 2 * sum(log(diag(Ac))) + 
+    (1/2) * t(w) %*% w
+  REML.like <- -1 * REML.like
+  ccoef <- rho * Q2 %*% solve(A) %*% ys
+  return(list(REML.like = REML.like, A = A, ccoef = ccoef, 
+              quad.form = t(w) %*% w, rhohat = (t(w) %*% w/N2) * rho, 
+              det = 2 * sum(log(diag(Ac))), N2 = N2))
+}
 
 data( ozone2)
 x<- ozone2$lon.lat
@@ -35,19 +56,19 @@ is.good <- !is.na( y)
 x<- x[is.good,]
 y<- y[is.good]
 
-theta<- 2.0
+aRange<- 2.0
 
 # check log likelihood calculation
   nu<- 1.5
   lambda<- .2
-  out<- mKrig( x,y, theta=theta,Covariance="Matern", smoothness=nu, lambda=lambda) 
+  out<- mKrig( x,y, aRange=aRange,Covariance="Matern", smoothness=nu, lambda=lambda) 
 
 # peg sigma and tau as MLEs from mKrig
-  sigma <- out$sigma.MLE
+  sigma <- out$summary["sigma2"]
   tau2<- sigma*lambda
   N<- length( y)
   dd<- rdist( x,x)
-  M<-  sigma* Matern( dd, range= theta, smoothness=nu) + tau2* diag( 1, N)
+  M<-  sigma* Matern( dd, range= aRange, smoothness=nu) + tau2* diag( 1, N)
   X<- fields.mkpoly( x, 2)
   Mi<- solve( M)
   betahat<-  solve(t(X)%*%Mi%*%X)%*% t(X)%*% Mi%*% y
@@ -55,28 +76,28 @@ theta<- 2.0
   ccoef<- ( Mi%*% ( res))*sigma
 
 # sanity check that estimates are the same
-  test.for.zero( ccoef, out$c, tag="check ccoef")
+  test.for.zero( ccoef, out$c.coef, tag="check ccoef")
 
 # find full log likelihood
   chol(M)-> cM
   lLike<-  -(N/2)*log(2*pi) - (1/2)* (2*sum( log( diag(cM)))) - (1/2)* t(res)%*% Mi %*% res
+  test.for.zero( lLike, out$summary["lnProfileLike.FULL"], tag="llike profile from mKrig")
+  
 # formula for full likelihood using peices from mKrig
-  lLike.test<- -(N/2)*log(2*pi) - (1/2)* out$lnDetCov - (1/2)*(N)*log( sigma) - (1/2)*out$quad.form/sigma
-
-  test.for.zero( lLike, lLike.test, tag="llike full verses sigmahat")
-  test.for.zero( lLike, out$lnProfileLike, tag="llike profile from mKrig")
-
+# lLike.test<- -(N/2)*log(2*pi) - (1/2)* out$lnDetCov - (1/2)*(N)*log( sigma) - (1/2)*out$quad.form/sigma
+#  test.for.zero( lLike, lLike.test, tag="llike full verses sigmahat")
+  
 # REML check
   nu<- 1.5
-  theta<- .6
-  obj<- Krig( x,y, theta=theta,Covariance="Matern", smoothness=nu )
+  aRange<- .6
+  obj<- Krig( x,y, aRange=aRange,Covariance="Matern", smoothness=nu )
 
 # sanity check that c coefficients agree with Krig
   sigma<- 500
   lambda<- .2
   tau2<- lambda*sigma
 
-  hold<- REML.test( x,y,sigma, tau2, theta, nu=1.5)
+  hold<- REML.test( x,y,sigma, tau2, aRange, nu=1.5)
   ccoef2<- Krig.coef( obj, lambda)$c
   test.for.zero( hold$ccoef, ccoef2, tag="ccoefs")
 
@@ -107,28 +128,6 @@ theta<- 2.0
 test.for.zero( hold$REML.like, lLikeREML.test, tag="REML using matrices")
 
 
-# profile likelihood
-
-# lnProfileLike <- (-np/2 - log(2*pi)*(np/2)
-#                      - (np/2)*log(sigma.MLE) - (1/2) * lnDetCov)
-#  test using full REML likelihood.
-  nu<- 1.5
-  sigma<- 7000
-  lambda<- .02
-  tau2<- lambda*sigma
-  theta<- 2.0
-  obj<- Krig( x,y, theta=theta,Covariance="Matern", smoothness=nu )
-  hold<- REML.test(x,y,sigma, tau2, theta, nu=1.5)
-  np<- hold$N2
-  sigma.MLE<- c(hold$sigmahat)
-  lnDetCov<-sum( log(eigen( hold$A/sigma)$values))  
-
-  l0<- REML.test(x,y,sigma.MLE, sigma.MLE*lambda, theta, nu=1.5)$REML.like
-  l1<-   (-np/2 - log(2*pi)*(np/2)- (np/2)*log(sigma.MLE) - (1/2) * lnDetCov)
-  l2<-  (-1)*Krig.flplike( lambda, obj)
-
-  test.for.zero( l0,l2, tag="REML profile flplike")
-  test.for.zero( l1,l2, tag="REML profile flplike")
 
 
 cat("all done with likelihood  tests", fill=TRUE)

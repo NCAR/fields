@@ -34,29 +34,35 @@
 
     }
 ##################### plot 2 residual plot
-    std.residuals <- (out$residuals * sqrt(out$weights))/out$tau.MLE
+    tauMLE<- out$summary["tau"]
+    std.residuals <- (out$residuals * sqrt(out$weights))/tauMLE
     if (any(which == 2)) {
         plot(fitted.values, std.residuals, ylab = "(STD) residuals", 
             xlab = " predicted values", bty = "n", ...)
         yline(0)
     }
-################### plot 3 profile over lambda     
-    summary<- out$MLEGridSearch$MLEProfileLambda$summary
-    profileLambda<- !is.null( summary)
+################### plot 3 profile over lambda 
+    profileLambda<- !is.null( out$lambdaProfile)
+    
     if (any(which == 3)& profileLambda ) {
+      summary<- out$lambdaProfile$summary
     	mar.old<- par()$mar
     
     	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
             plot(summary$lambda, summary$lnProfileLike.FULL,  xlab = "lambda", 
-                ylab ="log Profile Likelihood(lambda)", type="p", log="x", pch=16,cex=.5,
+                ylab ="log Profile Likelihood(lambda)",
+                type = "p", log="x", pch=16,cex=.5,
                  ...)
             
             splineFit <- splint(log(summary$lambda), summary$lnProfileLike.FULL, nx = 500)
             lines(exp(splineFit$x),splineFit$y, lwd = 2, col = "red")
             xline( out$lambda.MLE )
             usr.save <- par()$usr
-            usr.save[3:4]<- range( summary[,"GCV" ] )
+            RGCV<-range( summary[,"GCV" ] )
+# 8% expansion of scale 
+            delta<- (RGCV[2]- RGCV[1])* .08
+            usr.save[3:4]<-  c( RGCV[1] -delta, RGCV[2]+ delta)
             par( usr= usr.save, ylog=FALSE)
             points(summary$lambda, summary$GCV,
             lty=2, lwd=2, col="blue")
@@ -68,16 +74,15 @@
             par( mar=mar.old)
     }
     
-#################### plot 4 profile over theta (range)
-    summary<- out$MLEGridSearch$MLEGrid$summary
-    profileTheta<- !is.null( summary)
-    if ( any(which == 4) & profileTheta ) {
-      summary<- out$MLEGridSearch$MLEGrid$summary
-    	plot(summary$theta, summary$lnProfileLike.FULL, pch=16, xlab="theta (range parameter)", ylab="log Profile Likelihood (theta)")
-    	title("Profile likelihood for theta \n (range parameter)")
-    	xline( out$theta.MLE, lwd=2, col="grey40")
-    	xline( out$theta.CI, lwd=4, col="grey70", lty=2)
-    	splineFit <- splint(summary$theta, summary$lnProfileLike.FULL, nx = 500)
+#################### plot 4 profile over aRange (range)
+    profileARange<- !is.null(out$aRangeProfile)
+    if ( any(which == 4) & profileARange ) {
+      summary<- out$aRangeProfile$summary
+    	plot(summary$aRange, summary$lnProfileLike.FULL, pch=16, xlab="aRange (range parameter)", ylab="log Profile Likelihood (aRange)")
+    	title("Profile likelihood for aRange \n (range parameter)")
+    	xline( out$aRange.MLE, lwd=2, col="grey40")
+    #	xline( out$aRange.CI, lwd=4, col="grey70", lty=2)
+    	splineFit <- splint(summary$aRange, summary$lnProfileLike.FULL, nx = 500)
     	lines(splineFit, lwd = 2, col = "red")
            }
 }

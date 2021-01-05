@@ -49,7 +49,7 @@
     temp.d <- object$d
     temp.c <- object$c
     if (verbose) {
-        cat(" d coefs", fill = TRUE)
+        cat(" betas", fill = TRUE)
         print(temp.d)
         cat("c coefs", fill = TRUE)
         print(temp.c)

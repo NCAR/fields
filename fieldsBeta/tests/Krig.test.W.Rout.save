@@ -38,6 +38,7 @@ Warning:
 Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
   (REML) Restricted maximum likelihood 
    minimum at  right endpoint  lambda  =  0.003053154 (eff. df= 14.25 )
+HERE
 Testing:   d coef diag W fixed lam
 PASSED test at tolerance  1e-08
 Testing:   d coef diag W
@@ -72,4 +73,4 @@ all done  testing off diag W case
 > 
 > proc.time()
    user  system elapsed 
-  0.615   0.060   0.669 
+  0.863   0.078   0.935 

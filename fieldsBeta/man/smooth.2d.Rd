@@ -95,7 +95,7 @@ See Nwidth.
 }
 \item{\dots}{
 Parameters that are passed to the smoothing kernel. ( e.g. the scale
-parameter theta for the
+parameter aRange for the
 exponential or gaussian)
 }
 }
@@ -123,7 +123,7 @@ have the call myfun( x1,x2) where x1 and x2 are matrices of 2-d locations
 if nrow(x1)=m and nrow( x2)=n then this function should return a mXn
 matrix where the (i,j) element is K( x1[i,]- x2[j,]).  Optional arguments
 that are included in the ... arguments are passed to this function when it
-is used. The default kernel is the Gaussian and the argument theta is the
+is used. The default kernel is the Gaussian and the argument aRange is the
 bandwidth. It is easy to write other other kernels, just use 
 Exp.cov.simple as
 a template. 
@@ -131,10 +131,10 @@ a template.
 \examples{
 # Normal kernel smooth of the precip data with bandwidth of .5 ( degree) 
 #  
-look<- smooth.2d( RMprecip$y,  x=RMprecip$x, theta=.25)
+look<- smooth.2d( RMprecip$y,  x=RMprecip$x, aRange=.25)
 
 # finer resolution used in computing the smooth 
-look3<-smooth.2d( RMprecip$y, x=RMprecip$x, theta=.25, nrow=256, 
+look3<-smooth.2d( RMprecip$y, x=RMprecip$x, aRange=.25, nrow=256, 
 ncol=256,Nwidth=32,
 Mwidth=32) 
 # if the width arguments were omitted the padding would create a  
@@ -152,7 +152,7 @@ Mwidth=32)
 
 
 # bandwidth changed to .25, exponential kernel   
-look2<- smooth.2d( RMprecip$y, x=RMprecip$x, cov.function=Exp.cov,theta=.25)
+look2<- smooth.2d( RMprecip$y, x=RMprecip$x, cov.function=Exp.cov,aRange=.25)
 # 
 
 

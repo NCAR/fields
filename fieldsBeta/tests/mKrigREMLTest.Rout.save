@@ -48,8 +48,8 @@ Testing:  REML Det shortcut
 PASSED test at tolerance  1e-08
 Testing:  Q2 Det and Eigen Det
 PASSED test at tolerance  1e-08
-Testing:  rho.MLE Krig verses mKrig
+Testing:  sigma.MLE Krig verses mKrig
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  1.431   0.072   1.514 
+  1.911   0.140   2.170 

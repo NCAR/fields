@@ -44,7 +44,7 @@ optim.args = list(method = "BFGS",
                                  ndeps = c(0.05,0.05)))
 
 MLEfit0 <- mKrigMLEJoint(x, y,  
-                         cov.params.start= list(lambda=.5, theta=1.2), 
+                         cov.params.start= list(lambda=.5, aRange=1.2), 
                          cov.fun="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern", smoothness=1.0),
@@ -56,11 +56,11 @@ MLEfit0 <- mKrigMLEJoint(x, y,
 
 MLEfit0C <- mKrigMLEJoint(x, y,
                           cov.params.start = NULL,  
-                                   cov.fun = "stationary.cov",
+                              cov.function = "stationary.cov",
                                   cov.args = list(Covariance = "Matern",
                                                   lambda = MLEfit0$pars.MLE["lambda"],
                                                    smoothness = 1.0,
-                                                   theta = MLEfit0$pars.MLE["theta"]),
+                                                   aRange = MLEfit0$pars.MLE["aRange"]),
                                      na.rm = TRUE,
                                 mKrig.args = list( m=1),
                                    verbose = FALSE
@@ -79,17 +79,17 @@ obj0<- mKrig( x,y, cov.args = list(Covariance = "Matern",
                                 smoothness = 1.0),
                                 na.rm=TRUE, m=1,
                                 lambda= MLEfit0$pars.MLE["lambda"],
-                                theta=MLEfit0$pars.MLE["theta"])
+                                aRange=MLEfit0$pars.MLE["aRange"])
 test.for.zero( MLEfit0$summary["lnProfileLike.FULL"],
-                  obj0$lnProfileLike.FULL,
+                  obj0$summary["lnProfileLike.FULL"],
                tag="Likelihood Values summary and direct mKrig call")
 
-test.for.zero( MLEfit0$summary["sigmaMLE"],obj0$sigma.MLE, 
-               tag="... and sigma.MLE")
+test.for.zero( MLEfit0$summary["sigma2"],obj0$summary["sigma2"], 
+               tag="... and sigma^2.MLE")
 
 # test that grid seraching is correct
-theta.MLE<- MLEfit0$summary["theta"]
-par.grid<- list( theta= c(.5, 1.0, 1.5)*theta.MLE )
+aRange.MLE<- MLEfit0$summary["aRange"]
+par.grid<- list( aRange= c(.5, 1.0, 1.5)*aRange.MLE )
 MLEfit1<- mKrigMLEGrid(x, y,  
                            cov.fun = "stationary.cov", 
                          cov.args  = list(Covariance = "Matern",
@@ -113,24 +113,24 @@ test.for.zero(as.numeric(hold), 1, relative=FALSE,
 ### now evaluate on the "grid" of lambdas found by profiling
 lambda.MLEs<- MLEfit1$summary[,"lambda"]
 par.grid<- list( lambda = lambda.MLEs, 
-                  theta = c(.5, 1.0, 1.5)*theta.MLE )
+                  aRange = c(.5, 1.0, 1.5)*aRange.MLE )
 MLEfit1B<- mKrigMLEGrid(x, y,  
-                         cov.fun = "stationary.cov", 
+                    cov.function = "stationary.cov", 
                        cov.args  = list(Covariance = "Matern", smoothness = 1.0),
                         par.grid = par.grid, 
                       mKrig.args = list( m=1),
                            na.rm = TRUE,
                          verbose = FALSE) 
 tempCol<- c( "lnProfileLike.FULL",
-            "lambda", "tauMLE","sigmaMLE")
+            "lambda", "tau","sigma2")
 test.for.zero( as.matrix(MLEfit1$summary[,tempCol]),
                as.matrix(MLEfit1B$summary[,tempCol]),
                tag="grid search with and w/o profile")
 
 par.grid<- list( lambda = c(.999, 1.0, 1.001)*MLEfit0$summary["lambda"],
-                 theta  =  rep(MLEfit0$summary["theta"] ,3 ) )
+                 aRange  =  rep(MLEfit0$summary["aRange"] ,3 ) )
 MLEfit2 <- mKrigMLEGrid(x, y, 
-                                 cov.fun = "stationary.cov", 
+                                 cov.function  = "stationary.cov", 
                                  cov.args  = list(Covariance = "Matern",
                                                   smoothness = 1.0),
                                  mKrig.args = list( m=1),
@@ -140,32 +140,40 @@ hold<- (MLEfit2$summary[1,"lnProfileLike.FULL"] < MLEfit2$summary[2,"lnProfileLi
   (MLEfit2$summary[3,"lnProfileLike.FULL"] < MLEfit2$summary[2,"lnProfileLike.FULL"])
 test.for.zero(as.numeric(hold), 1, relative=FALSE, tag="crude test of maxmimum")
 
-MLEfit3<- MLESpatialProcess( x,y, 
-                             cov.args  = list(Covariance = "Matern",
-                                              smoothness = 1.0),
-                             mKrig.args = list( m=1),
-                             cov.params.start = list( lambda =.2, theta = NA)
-                             )
+#MLEfit3<- MLESpatialProcess( x,y, 
+#                             cov.args  = list(Covariance = "Matern",
+ #                                             smoothness = 1.0),
+ #                            mKrig.args = list( m=1),
+ #                            cov.params.start = list( lambda =.2, aRange = NA)
+ #                            )
+
+MLEfit3<- spatialProcess( x,y, 
+                          cov.args  = list(Covariance = "Matern",
+                                               smoothness = 1.0),
+                         mKrig.args = list( m=1),
+                   cov.params.start = list( lambda =.2)
+                                                      )
 
 test.for.zero(MLEfit0$summary[1:5]/ 
-              (MLEfit3$MLEJoint$summary[1:5]), 1, tol=4e-3,
-               tag="Testing MLESpatialProcess ")
+              (MLEfit3$summary[1:5]), 1, tol=2e-3,
+               tag="Testing MLE from spatialProcess ")
 
 ######### making sure spatialProcess uses parameter information correctly
 
 obj<- spatialProcess( x, y, mKrig.args= list(m = 1),
-                          theta = MLEfit0$summary["theta"] 
+                          lambda= MLEfit0$summary["lambda"], 
+                          aRange = MLEfit0$summary["aRange"] 
                       )
 
 obj1<- spatialProcess( x, y, mKrig.args= list(m = 1), 
                        )
 
 test.for.zero(MLEfit0$summary[1], 
-              obj$lnProfileLike.FULL,
+              obj$summary["lnProfileLike.FULL"],
               tag="spatialProcess finding MLE " )
 
 test.for.zero(MLEfit0$summary[1], 
-              obj1$lnProfileLike.FULL, tol=5e-8,
+              obj1$summary["lnProfileLike.FULL"], tol=5e-8,
               tag="spatialProcess given MLE " 
               )
 
@@ -173,32 +181,35 @@ test.for.zero(MLEfit0$summary[1],
 # testing Krig function 
 #out1<- Krig( x,y,  cov.fun="stationary.cov",
 #            cov.args = list(Covariance = "Matern",
-#                            smoothness=1.0, theta=.9),
+#                            smoothness=1.0, aRange=.9),
 #           na.rm=TRUE,
 #              m=2)
 
 
-genCovMat = function(x, theta, lambda) {
+genCovMat = function(x, aRange, lambda) {
   distanceMatrix<- rdist(x,x)
-  Sigma<- Matern( distanceMatrix/theta, smoothness=1.0 ) + diag(x=lambda, nrow=nrow(distanceMatrix))
+  Sigma<- Matern( distanceMatrix/aRange, smoothness=1.0 )
+  + diag(x=lambda, nrow=nrow(distanceMatrix))
   return(Sigma)
 }
 
 #generate observation locations
-set.seed( 223)
-n=25
+set.seed( 22)
+n=100
 x = matrix(runif(2*n), nrow=n)
 #generate observations at the locations
-trueTheta = .1
+trueARange = .1
 trueLambda = .1
-Sigma = genCovMat(x, trueTheta, trueLambda)
 
+distanceMatrix<- rdist(x,x)
+Sigma<- Matern( distanceMatrix/trueARange, smoothness=1.0 )
 U = chol(Sigma)
-M<- 1e4 # lots of replicated fields.
+M<- 1e5 # lots of replicated fields.
 set.seed( 332)
-y = t(U)%*%matrix( rnorm(n*M), n,M)
+y = t(U)%*%matrix( rnorm(n*M), n,M) + 
+             sqrt(trueLambda)*matrix( rnorm(n*M), n,M)
 
-out<- mKrig( x,y, lambda=trueLambda, theta=trueTheta*.1, 
+out<- mKrig( x,y, lambda=trueLambda, aRange=trueARange, 
        cov.function ="stationary.cov",cov.args = list(Covariance = "Matern",
                                                       smoothness=1.0)
 )
@@ -208,25 +219,26 @@ optim.args = list(method = "BFGS",
                                  ndeps = c(0.05,0.05)))
 
 MLEfitA <- mKrigMLEJoint(x, y, 
-                         cov.params.start= list(theta=.12, lambda=.5), 
-                         cov.fun="stationary.cov",
+                         cov.params.start= list(aRange=.2, lambda=.01), 
+                         cov.function="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
                                          smoothness=1.0),
                          na.rm=TRUE,
+                         abstol = 1e-7,
                          mKrig.args = list( m=0),
                          verbose=FALSE)
 
 cat("Testing mKrigMLEJoint against true values",
     fill=TRUE)
-test.for.zero( MLEfitA$summary["lambda"],.1, tol=.02)
-test.for.zero( MLEfitA$summary["theta"],.1, tol=.02)
-test.for.zero( MLEfitA$summary["sigmaMLE"], 1.0, tol=.002)
+test.for.zero( MLEfitA$summary["lambda"],.1, tol=.002)
+test.for.zero( MLEfitA$summary["aRange"],.1, tol=.0005)
+test.for.zero( MLEfitA$summary["sigma2"], 1.0, tol=.0005)
 
 ### now test REML fitting
 MLEfitB <- mKrigMLEJoint(x, y, 
-                         cov.params.start= list(theta=.12, lambda=.5), 
-                         cov.fun="stationary.cov",
+                         cov.params.start= list(aRange=.12, lambda=.5), 
+                         cov.function="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
                                          smoothness=1.0),
@@ -237,17 +249,17 @@ MLEfitB <- mKrigMLEJoint(x, y,
 
 cat("Testing mKrigMLEJoint  with REML against true values",
     fill=TRUE)
-test.for.zero( MLEfitB$summary["lambda"],.1, tol=.02)
-test.for.zero( MLEfitB$summary["theta"],.1, tol=.02)
-test.for.zero( MLEfitB$summary["sigmaMLE"], 1.0, tol=.002)
+test.for.zero( MLEfitB$summary["lambda"],.1, tol=.002)
+test.for.zero( MLEfitB$summary["aRange"],.1, tol=.002)
+test.for.zero( MLEfitB$summary["sigma2"], 1.0, tol=.001)
 
 
 cat("Testing mKrigMLEJoint  with REML FALSE  against true values",
     fill=TRUE)
 
 MLEfitC <- mKrigMLEJoint(x, y,  
-                         cov.params.start= list(theta=.12, lambda=.5), 
-                         cov.fun="stationary.cov",
+                         cov.params.start= list(aRange=.12, lambda=.5), 
+                         cov.function ="stationary.cov",
                          optim.args=optim.args,
                          cov.args = list(Covariance = "Matern",
                                          smoothness=1.0),
@@ -258,55 +270,8 @@ MLEfitC <- mKrigMLEJoint(x, y,
                          )
           
 test.for.zero( MLEfitC$summary["lambda"],  .1, tol=.02)
-test.for.zero( MLEfitC$summary[ "theta"],  .1, tol=.02)
-test.for.zero( MLEfitC$summary["sigmaMLE"], 1.0, tol=.002)
-
-
-signif( MLEfitA$summary,5)
-signif( MLEfitB$summary,5)
-signif( MLEfitC$summary,5)
-
-
-# simple Monte Carlo test
- 
-NS<- 2
-n<-75  
-M<- 1000
-
-
-set.seed(123)
-x = matrix(runif(2*n), nrow=n)
-trueTheta = .1
-trueLambda = .04
-Sigma = genCovMat(x, trueTheta, trueLambda)
-U = chol(Sigma)
-set.seed( 332)
-hold<- NULL
-for( k in 1:NS){
-cat(k, " ")
-#generate observations at the locations
-
-y = t(U)%*%matrix( rnorm(n*M), n,M)
-
-MLEfitC <- mKrigMLEJoint(x, y,
-                         cov.params.start= list(theta=.12, lambda=.5), 
-                         cov.fun="stationary.cov",
-                         optim.args=optim.args,
-                         cov.args = list(Covariance = "Matern",
-                                         smoothness=1.0),
-                         na.rm=TRUE,
-                         mKrig.args = list( m=2),
-                         REML=FALSE,
-                         verbose=FALSE)
-
-hold<- rbind( hold, c(MLEfitC$summary) )
-}
-cat(" ", fill=TRUE)
-
-test.for.zero( trueTheta, mean(hold[,"theta"]), tol=6e-3,
-               tag="Monte Carlo theta")
-test.for.zero( trueLambda, mean(hold[,"lambda"]), tol=5e-2,
-               tag="Monte Carlo lambda")
+test.for.zero( MLEfitC$summary[ "aRange"],  .1, tol=.02)
+test.for.zero( MLEfitC$summary["sigma2"], 1.0, tol=.002)
 
 
 cat("all done with mKrigMLEGrid tests", fill=TRUE)

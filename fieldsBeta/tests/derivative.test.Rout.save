@@ -52,9 +52,9 @@ PASSED test at tolerance  1e-06
 PASSED test at tolerance  1e-08
 Testing:  Wendland C multiply
 PASSED test at tolerance  1e-08
-Testing:  Wendland.cov theta=1.0
+Testing:  Wendland.cov aRange=1.0
 PASSED test at tolerance  1e-07
-Testing:  Wendland.cov theta=.75
+Testing:  Wendland.cov aRange=.75
 PASSED test at tolerance  1e-07
 Testing:  stationary.cov and exact C multiply for Wendland
 PASSED test at tolerance  1e-08
@@ -90,4 +90,4 @@ done with dervative tests
 > 
 > proc.time()
    user  system elapsed 
-  1.579   0.258   1.797 
+  1.842   0.238   2.031 

@@ -76,4 +76,4 @@ all done testing Tps
 > 
 > proc.time()
    user  system elapsed 
-  0.811   0.104   0.885 
+  1.048   0.121   1.131 

@@ -77,7 +77,7 @@
     #  i.e.   knots <- scale( object$knots, xc, xs)
     #
     # figure out if the coefficients for the surface needto be recomputed.
-    find.coef <- (!is.null(y) | !is.null(yM) | !is.na(lambda) | 
+    find.coef<- (!is.null(y) | !is.null(yM) | !is.na(lambda) | 
         !is.na(df) | !is.na(model[1]))
     if (verbose) {
         cat("find.coef", find.coef, fill = TRUE)
@@ -103,7 +103,7 @@
         temp.c <- object3$c
     }
     if (verbose) {
-        cat(" d coefs", fill = TRUE)
+        cat(" betas", fill = TRUE)
         print(temp.d)
         cat("c coefs", fill = TRUE)
         print(temp.c)
@@ -133,18 +133,6 @@
         temp <- temp + do.call(object$cov.function.name, c(object$args, 
             list(x1 = x, x2 = object$knots, C = temp.c)))
     }
-    #
-    # transform back into raw scale if this is a correlation model.
-    # if y's are in the scale of correlations
-    # if so scale by sd and add back in mean
-    correlation.model <- (object$correlation.model & eval.correlation.model)
-    if (correlation.model) {
-        if (!is.na(object$sd.obj[1])) {
-            temp <- temp * predict(object$sd.obj, x)
-        }
-        if (!is.na(object$mean.obj[1])) {
-            temp <- temp + predict(object$mean.obj, x)
-        }
-    }
+
     return(temp)
 }

@@ -18,7 +18,6 @@
 %# along with the R software environment if not, write to the Free Software
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
-
 \name{Tps}
 \alias{Tps}
 \alias{fastTps}
@@ -28,17 +27,21 @@
 \description{
 Fits a thin plate spline surface to irregularly spaced data. The 
 smoothing parameter is chosen by generalized cross-validation. The assumed 
-model is additive  Y = f(X) +e  where f(X) is a d dimensional surface. 
-This function also works for just a single dimension  and is a special case of a spatial process estimate
-(Kriging).  A "fast" version of this function uses a compactly supported Wendland covariance and computes the estimate for a fixed smoothing parameter.
+model is additive  Y = f(X) +e  where f(X) is a d dimensional surface.
+This is the classic nonparametric curve/surface estimate pioneered in statistics by Grace Wahba.
+This function also works for just a single dimension and is a special case of a Gaussian process estimate as the range parameter in the Matern family increases to infinity. 
+(Kriging). 
+
+A "fast" version of this function uses a compactly supported Wendland covariance and sparse linear algebra for handling larger datta sets. Although a good approximation to Tps for sufficiently large aRange its actual form is very different from the textbook thin-plate definition.
+
 }
 \usage{
 Tps(x, Y, m = NULL, p = NULL, scale.type = "range", lon.lat = FALSE,
          miles = TRUE, method = "GCV", GCV = TRUE, ...)
 
-fastTps(x, Y, m = NULL, p = NULL,  theta, lon.lat=FALSE,
-          find.trA = TRUE, lambda=0, ...)
-
+fastTps(x, Y, m = NULL, p = NULL, aRange, lon.lat = FALSE,
+                 find.trA = FALSE, REML = FALSE, ...)
+          
 }
 \arguments{
 %To be helpful, a more complete list of arguments are described that are the 
@@ -68,19 +71,19 @@ scale.type.
 By default the scale type is "range", whereby 
 the locations are transformed  
  to the interval (0,1) by forming (x-min(x))/range(x) for each x. 
-Scale type of "user" allows specification of an x.center and x.scale by 
-the 
+Scale type of "user" allows specification of an x.center and
+x.scale by the 
 user. The default for "user" is mean 0 and standard deviation 1. Scale 
 type of "unscaled" does not scale the data.  
 }
-\item{theta}{The tapering range that is passed to the Wendland compactly 
+\item{aRange}{The tapering range that is passed to the Wendland compactly 
 supported covariance. The covariance (i.e. the radial basis function) is 
-zero beyond range theta. The larger theta the closer this model will approximate the 
-standard thin plate spline.}
+zero beyond range aRange. The larger aRange the closer this model will
+approximate the standard thin plate spline.}
 
 \item{lon.lat}{If TRUE locations are interpreted as lognitude and
 latitude and great circle distance is used to find distances among
-locations. The theta scale parameter for \code{fast.Tps} (setting the
+locations. The aRange scale parameter for \code{fast.Tps} (setting the
 compact support of the Wendland function) in this case is in units of
 miles (see example and caution below). }
  
@@ -88,26 +91,30 @@ miles (see example and caution below). }
      used. The default is to estimate standard GCV Other choices are:
      GCV.model, GCV.one, RMSE, pure error and REML. The differences
      are explained in the Krig help file.}
- \item{GCV}{If TRUE the decompositions are done to efficiently evaluate the estimate, GCV function and likelihood at multiple values of lambda. }    
+     
+ \item{GCV}{If TRUE the decompositions are done to efficiently evaluate
+ the estimate, GCV function and likelihood at multiple values
+ of lambda. }    
+ 
 \item{miles}{If TRUE great circle distances are in miles if FALSE
 distances are in kilometers}
 
 
-\item{lambda}{Smoothing parameter the ratio of error variance to
-            process variance, default is zero which corresponds to
-            interpolation. See fastTpsMLE to estimate this paramter
-            from the data.}
-
 \item{find.trA}{If TRUE will estimate the effective degrees of freedom
-using a simple Monte Carlo method. This will add to the computational
-burden by approximately \code{NtrA} solutions of the linear system but
+using a simple Monte Carlo method (random trace). This will add to the
+computational burden by approximately \code{NtrA} solutions of the
+linear system but
 the cholesky decomposition is reused.}
+
+\item{REML}{If TRUE find the MLE for lambda using restricted maximum likelihood instead of the full version. }
   
 \item{\dots}{For \code{Tps} any argument that is valid for the
 \code{Krig} function. Some of the main ones are listed below.
 
 For \code{fastTps} any argument that is suitable for the \code{mKrig}
-function see help on mKrig for these choices.
+function see help on mKrig for these choices. The most common would be
+\code{lambda} fixing the value of this parameter (tau^2/sigma^2), \code{Z} linear covariates or 
+\code{ mKrig.args= list( m=1)} setting the regression model to be just a constant function.
 
 Arguments for Tps:
 \describe{
@@ -170,7 +177,6 @@ Arguments for Tps:
 }
 
 
-
 }
 
 \value{
@@ -207,7 +213,7 @@ The degree of this polynomial is (m-1).
 The smoothing parameter controls the amount that the data is 
 smoothed. In the usual form this is denoted by lambda, the Lagrange 
 multiplier of the minimization problem. Although this is an awkward 
-scale, lambda =0 corresponds to no smoothness constraints and the data 
+scale, lambda = 0 corresponds to no smoothness constraints and the data 
 is interpolated.  lambda=infinity corresponds to just fitting the 
 polynomial base model by ordinary least squares.  
 
@@ -249,21 +255,34 @@ examples of building grids and evaluating the Tps results on them:
   surface(out0)
 }
 
-The function \code{fastTps} is really a convenient wrapper function that 
-calls \code{mKrig} with the Wendland covariance function. This is 
-experimental and some care needs to exercised in specifying the taper 
-range and power ( \code{p}) which describes the polynomial behavior of 
+The function \code{fastTps} is really a convenient wrapper function that
+calls \code{spatialProcess} with a suitable Wendland covariance 
+function. This means one can use all the additional functions for
+prediction and simulation built for the \code{spatialProcess} and
+\code{mKrig} objects.
+
+This is function is 
+experimental, however, and some care needs to exercised in specifying
+the support \code{aRange} 
+ and power ( \code{p}) which describes the polynomial behavior of 
 the Wendland at the origin. Note that unlike Tps the locations are not 
-scaled to unit range and this can cause havoc in smoothing problems with 
-variables in very different units. So rescaling the locations \code{ x<- scale(x)} 
-is a good idea for putting the variables on a common scale for smoothing.  
+scaled to unit range and this can cause havoc in smoothing problems with
+variables in very different units. 
+So rescaling the locations \code{ x<- scale(x)} 
+is a good idea for putting the variables on a common scale
+for smoothing.  A conservative rule of thumb is to make \code{aRange}
+large enough so that about 50 nearest neighbors are within this distance
+for every observation location. 
+
 This function does have the potential to approximate estimates of Tps 
 for very large spatial data sets. See \code{wendland.cov} and help on 
 the SPAM package for more background.
-Also, the function \code{predictSurface.fastTps} has been made more efficient for the 
-case of k=2 and m=2. Also see the handy function \code{\link{fastTpsMLE}} to estimate lambda by maximum likelihood. 
+Also, the function \code{predictSurface.fastTps} has been made more
+efficient for the 
+case of k=2 and m=2. 
 
-See also the mKrig function for handling larger data sets and also for an example
+See also the mKrig function for handling larger data sets and also for
+an example
 of combining Tps and mKrig for evaluation on a huge grid. 
 
  }
@@ -277,6 +296,7 @@ See "Additive Models" by Hastie and Tibshirani.
 \code{\link{Krig}},
 \code{\link{mKrig}},
 \code{\link{spatialProcess}},
+\code{\link{sim.spatialProcess}},
 \code{\link{summary.Krig}},
 \code{\link{predict.Krig}},
 \code{\link{predictSE.Krig}},
@@ -284,8 +304,7 @@ See "Additive Models" by Hastie and Tibshirani.
 \code{\link{predictSurface.fastTps}},
 \code{\link{plot.Krig}},
 \code{\link{surface.Krig}}, 
-\code{\link{sreg}},
-\code{\link{fastTpsMLE}}
+\code{\link{sreg}}
 }
 \examples{
 #2-d example 
@@ -399,14 +418,17 @@ set.panel( 1,3)
 
 # with elevation covariate
   out<- Tps( RMprecip$x,RMprecip$y, Z=RMprecip$elev)
+  
 # NOTE: out$d[4] is the estimated elevation coefficient
 # it is easy to get the smooth surface separate from the elevation.
   out.p<-predictSurface( out, drop.Z=TRUE)
   surface( out.p)
   US( add=TRUE, col="grey")
+  
 # and if the estimate is of high resolution and you get by with 
 # a simple discretizing -- does not work in this case!
   quilt.plot( out$x, out$fitted.values)
+  
 #
 # the exact way to do this is evaluate the estimate
 # on a grid where you also have elevations 
@@ -414,11 +436,15 @@ set.panel( 1,3)
   data(RMelevation)  
   grid.list<- list( x=RMelevation$x, y= RMelevation$y)
   fit.full<- predictSurface( out, grid.list, ZGrid= RMelevation)
+  
 # this is the linear fixed part of the second spatial model:
 # lon,lat and elevation
-  fit.fixed<- predictSurface( out, grid.list, just.fixed=TRUE, ZGrid= RMelevation)
+  fit.fixed<- predictSurface( out, grid.list, just.fixed=TRUE,
+                   ZGrid= RMelevation)
+                   
 # This is the smooth part but also with the linear lon lat terms. 
   fit.smooth<-predictSurface( out, grid.list, drop.Z=TRUE)
+  
 #
   set.panel( 3,1)
   
@@ -436,13 +462,14 @@ set.panel( 1,3)
 ### fast Tps
 # m=2   p= 2m-d= 2
 #
-# Note: theta =3 degrees is a very generous taper range. 
-# Use some trial theta value with rdist.nearest to determine a
+# Note: aRange =3 degrees is a very generous taper range. 
+# Use some trial aRange value with rdist.nearest to determine a
 # a useful taper. Some empirical studies suggest that in the 
 # interpolation case in 2 d the taper should be large enough to 
 # about 20 non zero nearest neighbors for every location.
 
-  fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2, theta=3.0) -> out2
+  out2<- fastTps( RMprecip$x,RMprecip$y,m=2, aRange=3.0, 
+                      profileLambda=TRUE)
 
 # note that fastTps produces an mKrig object so one can use all the 
 # the overloaded functions that are defined for the mKrig class. 
@@ -456,11 +483,11 @@ surface( out2)
 
 #
 # now use great circle distance for this smooth 
-# Here "theta" for the taper support is the great circle distance in degrees latitude.
+# Here "aRange" for the taper support is the great circle distance in degrees latitude.
 # Typically for data analysis it more convenient to think in degrees. A degree of
 # latitude is about 68 miles (111 km).
 #
-fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2,lon.lat=TRUE, theta= 3.0) -> out3
+fastTps( RMprecip$x,RMprecip$y,m=2, lon.lat=TRUE, aRange= 210 ) -> out3
 print( out3)  # note the effective degrees of freedom is different.
 surface(out3)
 

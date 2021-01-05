@@ -22,7 +22,7 @@
     smoothness = 0.5, nu = smoothness, phi = 1.0) {
     #
     # Matern covariance function transcribed from Stein's book page 31
-    # nu==smoothness, alpha ==  1/range == theta 
+    # nu==smoothness, alpha ==  1/range == aRange 
     #
     # GeoR parameters map to kappa==smoothness and phi == range
     # check for negative distances

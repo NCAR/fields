@@ -31,16 +31,16 @@ x1<- x[1:5,]
 x2<- x[6:11,]
 
 look<- exp(-1*rdist(x1,x2)/4)
-look2<- stationary.cov( x1,x2, theta=4)
-look3<- Exp.cov( x1, x2, theta=4.0)
+look2<- stationary.cov( x1,x2, aRange=4)
+look3<- Exp.cov( x1, x2, aRange=4.0)
 test.for.zero( look, look2)
 test.for.zero( look, look3)
 
 set.seed(122)
 C<-  rnorm( nrow(x2))
 look<- exp(-1*rdist(x1,x2)/4)%*%C
-look2<- stationary.cov( x1,x2, theta=4, C=C)
-look3<- Exp.cov( x1, x2, theta=4.0, C=C)
+look2<- stationary.cov( x1,x2, aRange=4, C=C)
+look3<- Exp.cov( x1, x2, aRange=4.0, C=C)
 test.for.zero( look, look2)
 test.for.zero( look, look3)
 
@@ -70,10 +70,10 @@ u2<- x2
 
 look1a<- exp(-1*rdist(u1,u2))
 look1b<-  Wendland(rdist(u1,u2),
-                                      k=3, dimension=2, theta= 1)
+                                      k=3, dimension=2, aRange= 1)
 look1<- look1a*look1b
-look2<- stationary.taper.cov( x1,x2, theta=1,
-               Taper.args=list( theta=1,k=3, dimension=2), verbose=FALSE)
+look2<- stationary.taper.cov( x1,x2, aRange=1,
+               Taper.args=list( aRange=1,k=3, dimension=2), verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
@@ -83,10 +83,10 @@ u2<- t(Vi%*% t(x2))
 
 look1a<- exp(-1*rdist(u1,u2))
 look1b<-  Wendland(rdist(u1,u2),
-                                      k=3, dimension=2, theta= 1.5)
+                                      k=3, dimension=2, aRange= 1.5)
 look1<- look1a*look1b
 look2<- stationary.taper.cov( x1,x2,V=V,
-               Taper.args=list( theta=1.5,k=3, dimension=2), verbose=FALSE)
+               Taper.args=list( aRange=1.5,k=3, dimension=2), verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
@@ -96,18 +96,18 @@ u2<- t(Vi%*% t(x2))
 
 look1a<- Matern(rdist(u1,u2), smoothness=1.5)
 look1b<-  Wendland(rdist(u1,u2),
-                                      k=3, dimension=2, theta= 1.5)
+                                      k=3, dimension=2, aRange= 1.5)
 look1<- look1a*look1b
 look2<- stationary.taper.cov( x1,x2,V=V,Covariance=Matern, smoothness=1.5,
-               Taper.args=list( theta=1.5,k=3, dimension=2), verbose=FALSE)
+               Taper.args=list( aRange=1.5,k=3, dimension=2), verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
 # some tests of great circle distance
 
 
-stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args= 
-       list(k=2,theta=300, dimension=2),
+stationary.taper.cov( x[1:3,],x[1:10,] , aRange=200, Taper.args= 
+       list(k=2,aRange=300, dimension=2),
        Dist.args=list( method="greatcircle") )-> temp
 
 # temp is now a tapered 3X10 cross covariance matrix in sparse format. 
@@ -115,7 +115,7 @@ stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args=
 # the direct matrix product
 
 temp2<- Exponential( rdist.earth(x[1:3,],x[1:10,]), range=200) * 
-           Wendland(rdist.earth(x[1:3,],x[1:10,]), theta= 300, k=2, dimension=2)
+           Wendland(rdist.earth(x[1:3,],x[1:10,]), aRange= 300, k=2, dimension=2)
 
 test.for.zero(  as.matrix(temp), temp2, tol=2e-6, tag="taper with great circle")
 
@@ -123,20 +123,20 @@ test.for.zero(  as.matrix(temp), temp2, tol=2e-6, tag="taper with great circle")
 # Note that default covariance is exponential and default taper is 
 # Wendland (k=2).
 
-stationary.taper.cov( x[1:3,],x[1:10,] , theta=1.5, Taper.args= 
-      list(k=2,theta=2.0, dimension=2) )-> temp
+stationary.taper.cov( x[1:3,],x[1:10,] , aRange=1.5, Taper.args= 
+      list(k=2,aRange=2.0, dimension=2) )-> temp
 # temp is now a tapered 5X10 cross covariance matrix in sparse format. 
 # should be identical to
 # the direct matrix product
 
-temp2<- Exp.cov( x[1:3,],x[1:10,], theta=1.5) * 
+temp2<- Exp.cov( x[1:3,],x[1:10,], aRange=1.5) * 
            Wendland(rdist(x[1:3,],x[1:10,]),
-                      theta= 2.0, k=2, dimension=2)
+                      aRange= 2.0, k=2, dimension=2)
 
 test.for.zero(  as.matrix(temp), temp2, tag= "high level test of taper cov")
 
 stationary.taper.cov( x[1:3,],x[1:10,] , range=1.5,
-        Taper.args= list(k=2,theta=2.0,
+        Taper.args= list(k=2,aRange=2.0,
                        dimension=2) )-> temp
 
 test.for.zero(  as.matrix(temp), temp2, tag= "high level test of taper cov")

@@ -324,18 +324,24 @@ lowerB<- fit$fitted.values - ZBvalue* SE
 #
 # take a look
 
-plot( fit$x, fit$y)
-lines( fit$predicted, lwd=2)
-matlines( fit$x, 
-cbind( lower, upper, lowerB, upperB), type="l", col=c( 2,2,4,4), lty=1)
+plot( fit$x, fit$y, type="n")
+envelopePlot(fit$x, lowerB,fit$x, upperB, col = "grey90",
+             lineCol="grey")
+envelopePlot(fit$x, lower,fit$x, upper, lineCol="grey")
+lines( fit$predicted, col="red",lwd=2)
+points( fit$x, fit$y,pch=16)
+
 title( "95 pct pointwise  and simultaneous intervals")
-# or try the more visually  honest:
-plot( fit$x, fit$y)
-lines( fit$predicted, lwd=2)
-segments(  fit$x, lowerB, fit$x, upperB, col=4)
-segments(  fit$x, lower, fit$x, upper, col=2, lwd=2)
+
+# or try the more visually  honest not connecting points
+plot( fit$x, fit$y, type="n")
+segments(  fit$x, lowerB, fit$x, upperB, col="grey",lwd=3)
+segments(  fit$x, lower, fit$x, upper, col="thistle3", lwd=6)
+lines( fit$predicted, lwd=2,col="red")
+points( fit$x, fit$y,pch=16)
 title( "95 pct pointwise  and simultaneous intervals")
 
 set.panel( 1,1)
+
 }
 \keyword{smooth}

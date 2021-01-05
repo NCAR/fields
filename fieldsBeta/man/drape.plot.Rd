@@ -123,7 +123,7 @@ The drape plot is also drawn by the fields \code{surface} function with
 \examples{
 
 # an obvious choice:
-# Dr. R's favorite New  Zealand Volcano!
+# Dr. R's favorite New Zealand Volcano!
 data( volcano)
 M<- nrow( volcano)
 N<- ncol( volcano)
@@ -135,18 +135,17 @@ pm<- drape.plot( x,y,volcano, col=terrain.colors(128))
 # use different range for color scale and persp plot
 # setting of border omits the mesh lines
 
- drape.plot( x,y,volcano, col=terrain.colors(128),zlim=c(0,300),
-                     zlim2=c( 120,165), border=NA)
+ drape.plot( x,y,volcano, col=topo.colors(128),zlim=c(0,300),
+                     zlim2=c( 120,200), border=NA)
 
 # note tranparent color for facets outside the zlim2 range
 
-
 #The projection has been saved in pm
 # add a point marking the summit
-max( volcano)-> zsummit
+zsummit <- max( volcano) 
 ix<- row( volcano)[volcano==zsummit]
-iy<- col( volcano)[volcano==zsummit]
-trans3d( x[ix], y[iy],zsummit,pm)-> uv
+iy <- col( volcano)[volcano==zsummit]
+uv <- trans3d( x[ix], y[iy],zsummit,pm)
 points( uv, col="magenta", pch="+", cex=2)
 
 # overlay volcano wireframe with gradient in x direction. 
@@ -158,14 +157,16 @@ dz<- (
 
 # convert dz to a color scale:
   zlim<- range( c( dz), na.rm=TRUE)
-  zcol<-drape.color( dz, zlim =zlim, col = tim.colors(64) )$color.index
+  zcol<-drape.color( dz, zlim =zlim, col = viridis(64) )$color.index
 
-# wireframe with these colors 
-  persp( volcano, col=zcol, theta=30, phi=20)
+# with these colors 
+
+  persp( volcano, col=zcol, theta=30, phi=20,
+  border=NA,expand=.3 )
 
 # add legend using image.plot function 
-  image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE, col= tim.colors(64))
+  image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE,
+            col= viridis(64))
  
-
 }
 \keyword{hplot}% at least one, from doc/KEYWORDS

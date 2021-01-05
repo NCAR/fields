@@ -30,11 +30,11 @@ MaternGLS.test <- function(x, y, smoothness = 1.5,
     
     loglmvn <- function(pars, nu, y, x, d) {
         lsigma = pars[1]
-        ltheta = pars[2]
+        laRange = pars[2]
         lsig2 = pars[3]
         #  print( pars)
         N <- length(y)
-        M <- (exp(lsigma) * Matern(d, range = exp(ltheta), smoothness = nu) + 
+        M <- (exp(lsigma) * Matern(d, range = exp(laRange), smoothness = nu) + 
             exp(lsig2) * diag(N))
         
         X <- fields.mkpoly(x, 2)
@@ -48,7 +48,7 @@ MaternGLS.test <- function(x, y, smoothness = 1.5,
         
         ycept <- -lLike
         
-        if ((abs(lsigma) > 20) | (abs(ltheta) > 10) | (abs(lsig2) > 
+        if ((abs(lsigma) > 20) | (abs(laRange) > 10) | (abs(lsig2) > 
             40)) {
             return(ycept + 1000 * sum(abs(abs(pars) - 100)))
         }
@@ -77,15 +77,15 @@ MaternGLSProfile.test <- function(x, y, smoothness = 1.5,
     
     loglmvn <- function(pars, nu, y, x, d) {
         llam = pars[1]
-        ltheta = pars[2]
+        laRange = pars[2]
         # print( pars)
         N <- length(y)
-        theta <- exp(ltheta)
+        aRange <- exp(laRange)
         lambda <- exp(llam)
-        lLike <- mKrig(x, y, theta = theta, Covariance = "Matern", 
+        lLike <- mKrig(x, y, aRange = aRange, Covariance = "Matern", 
             smoothness = nu, lambda = lambda)$lnProfileLike
         ycept <- -lLike
-        if ((abs(llam) > 20) | (abs(ltheta) > 10)) {
+        if ((abs(llam) > 20) | (abs(laRange) > 10)) {
             return(ycept + 1000 * sum(abs(abs(pars) - 100)))
         }
         else {
@@ -97,7 +97,7 @@ MaternGLSProfile.test <- function(x, y, smoothness = 1.5,
     temp <- optim(init, loglmvn, method = "L-BFGS-B", nu = nu, 
         y = y, x = x, d = d)
     out <- exp(temp$par)
-    sigma.MLE <- mKrig(x, y, theta = out[2], Covariance = "Matern", 
+    sigma.MLE <- mKrig(x, y, aRange = out[2], Covariance = "Matern", 
         smoothness = nu, lambda = out[1])$sigma.MLE
     tau2.MLE <- out[1] * sigma.MLE
     return(list(smoothness = smoothness, pars = c(sigma.MLE, out[2], 
@@ -118,11 +118,11 @@ MaternQR.test <- function(x, y, smoothness = 1.5,
         ys <- t(Q2) %*% y
         N2 <- length(ys)
         lsigma = pars[1]
-        ltheta = pars[2]
+        laRange = pars[2]
         lsig2 = pars[3]
         d <- rdist(x, x)
         
-        A <- (exp(lsigma)*Matern(d, range = exp(ltheta), 
+        A <- (exp(lsigma)*Matern(d, range = exp(laRange), 
             smoothness = nu) + exp(lsig2) * diag(N))
         A <- t(Q2) %*% A %*% Q2
         A <- chol(A)
@@ -130,7 +130,7 @@ MaternQR.test <- function(x, y, smoothness = 1.5,
         ycept <- (N2/2) * log(2 * pi) + sum(log(diag(A))) + (1/2) * 
             t(w) %*% w
         
-        if ((abs(lsigma) > 100) | (abs(ltheta) > 100) | (abs(ltheta) > 
+        if ((abs(lsigma) > 100) | (abs(laRange) > 100) | (abs(laRange) > 
             100)) {
             return(ycept + 1000 * sum(abs(abs(pars) - 100)))
         }
@@ -155,12 +155,12 @@ MaternQRProfile.test <- function(x, y, smoothness = 1.5,
     # study the variability in estimates of the covariance parameters.
     nu <- smoothness
     loglmvn <- function(pars, nu, x, y) {
-        ltheta = pars[1]
-        # print( exp(ltheta))
-        ycept <- Krig(x, y, Covariance = "Matern", theta = exp(ltheta), 
+        laRange = pars[1]
+        # print( exp(laRange))
+        ycept <- Krig(x, y, Covariance = "Matern", aRange = exp(laRange), 
             smoothness = nu, method = "REML")$lambda.est[6, 5]
-        #        print( c(exp(ltheta),ycept))
-        if ((abs(ltheta) > 100)) {
+        #        print( c(exp(laRange),ycept))
+        if ((abs(laRange) > 100)) {
             return(ycept + 1000 * sum(abs(abs(pars) - 100)))
         }
         else {
@@ -170,14 +170,14 @@ MaternQRProfile.test <- function(x, y, smoothness = 1.5,
     
     temp <- optim(init, loglmvn, method = "L-BFGS-B", nu = nu, 
         x = x, y = y)
-    theta.est <- exp(temp$par[1])
-    out2 <- Krig(x, y, Covariance = "Matern", theta = theta.est, 
+    aRange.est <- exp(temp$par[1])
+    out2 <- Krig(x, y, Covariance = "Matern", aRange = aRange.est, 
         smoothness = nu, method = "REML")
     # MLE based on reduced degrees of freedom:
     
     offset <- (out2$N/(out2$N - 3))
     
-    out3 <- c(out2$sigma.MLE * offset, theta.est, out2$tauHat.MLE^2 * 
+    out3 <- c(out2$sigma.MLE * offset, aRange.est, out2$tauHat.MLE^2 * 
         offset)
     
     return(list(obj = out2, smoothness = smoothness, pars = out3, 
@@ -185,14 +185,14 @@ MaternQRProfile.test <- function(x, y, smoothness = 1.5,
 }
 
 # this function has correct formula for REML likelihood
-REML.test <- function(x, y, sigma, tau2, theta, nu = 1.5) {
+REML.test <- function(x, y, sigma, tau2, aRange, nu = 1.5) {
     Tmatrix <- fields.mkpoly(x, 2)
     qr.T <- qr(Tmatrix)
     N <- length(y)
     Q2 <- qr.yq2(qr.T, diag(1, N))
     ys <- t(Q2) %*% y
     N2 <- length(ys)
-    A <- (sigma * Matern(rdist(x, x), range = theta, smoothness = nu) + 
+    A <- (sigma * Matern(rdist(x, x), range = aRange, smoothness = nu) + 
         tau2 * diag(1, N))
     A <- t(Q2) %*% A %*% Q2
     Ac <- chol(A)

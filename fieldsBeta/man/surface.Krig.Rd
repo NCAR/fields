@@ -32,12 +32,10 @@ quick way to look at the fitted function over reasonable default
 ranges.  
 }
 \usage{
-\method{surface}{Krig}(
-object, grid.list = NULL, extrap = FALSE,
+\method{surface}{Krig}(object, grid.list = NULL, extrap = FALSE,
                  graphics.reset = NULL, xlab = NULL, ylab = NULL, main
                  = NULL, zlab = NULL, zlim = NULL, levels = NULL, type
-                 = "C", nx = 80, ny = 80, ...)
-
+                 = "C", nx = 80, ny = 80, col = viridis(256), ...)
 \method{surface}{mKrig}(
 object, grid.list = NULL, extrap = FALSE,
                  graphics.reset = NULL, xlab = NULL, ylab = NULL, main
@@ -90,7 +88,7 @@ axis (the x-axis). }
 \item{ny}{
  Number of grid points to evaluate surface on the vertical  
 axis (the y-axis). }
-
+\item{col}{Color scale.}
 \item{\dots}{
 Any other plotting options. 
 }
@@ -111,7 +109,7 @@ the model will be evaluated.
 predictSurface, plot.surface, image.plot
 }
 \examples{
-fit<- Krig(ChicagoO3$x,ChicagoO3$y, theta=30)  # krig fit 
+fit<- Krig(ChicagoO3$x,ChicagoO3$y, aRange=30)  # krig fit 
 
 #Image plot of surface with nice, smooth  contours and shading
 

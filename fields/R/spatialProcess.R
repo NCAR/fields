@@ -33,7 +33,8 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                            ...) {
 # NOTE all ... information is assumed to be for the cov.args list
 # overwrite the default choices (some R arcania!)
-# default covariance and   Matern  arguments with smoothness 1.
+# default covariance is  Matern  with smoothness 1.
+# linear regression model also added as the default. 
   
   ind<- match( names( cov.args), names(list(...) ) )
   cov.args <- c(cov.args[is.na(ind)], list(...))
@@ -75,7 +76,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
     cat(" full list from cov.args: ", names(cov.args) )
   }
 # NOTE: if theta is specified then just do a simple optimization
-# if not  ... first a grid search theta followed by an full optimization 
+# if not  ... first a grid search in log theta followed by an full optimization 
   if( !is.null(cov.args$theta)){
 ###########################################################
 #   case to   optimze over all parameters with theta fixed 
@@ -144,8 +145,9 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 ################################################################################
 # final fit 
 # now fit spatial model with MLE for theta (range parameter)
-# or the value supplied in the call
-# reestimate the other parameters for simplicity to get the
+# or the value supplied in the call and any other parameters that have been 
+# been estimated. 
+# re-estimate the other parameters for simplicity to get the
 # complete mKrig object
   cov.argsFull <-  cov.args
   dupParameters<- match( names(MLEInfo$pars.MLE ), names(cov.args) )

@@ -30,12 +30,12 @@ y<- y[good]
 #source("~/Home/Src/fields/R/mKrig.family.R")
 
 # now look at mKrig w/o sparse matrix 
-look<- mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
+look<- mKrig( x,y, cov.function="stationary.cov", aRange=10, lambda=.3,
                       chol.args=list( pivot=FALSE))
 
 
 lookKrig<- Krig( x,y, cov.function="stationary.cov",
-               theta=10) 
+               aRange=10) 
 
 test.df<-Krig.ftrace(look$lambda,lookKrig$matrices$D)
 
@@ -46,7 +46,7 @@ test.for.zero( look$c, test$c, tag="Krig mKrig c coef")
 
 # test of trace calculation
 
-look<- mKrig( x,y, cov.function="stationary.cov", theta=10, lambda=.3,
+look<- mKrig( x,y, cov.function="stationary.cov", aRange=10, lambda=.3,
          
           find.trA=TRUE, NtrA= 1000, iseed=243)
 
@@ -55,11 +55,11 @@ test.for.zero( look$eff.df, test.df,tol=.01, tag="Monte Carlo eff.df")
 
 # 
 lookKrig<-Krig( x,y, cov.function="stationary.cov",
-               theta=350, Distance="rdist.earth",Covariance="Wendland", 
+               aRange=350, Distance="rdist.earth",Covariance="Wendland", 
                cov.args=list( k=2, dimension=2) ) 
 
 look<- mKrig( x,y, cov.function="stationary.cov", 
-        theta=350, 
+        aRange=350, 
         Distance="rdist.earth",Covariance="Wendland",  
         cov.args=list( k=2, dimension=2),
         lambda=lookKrig$lambda,
@@ -73,13 +73,13 @@ test.for.zero(look$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D)
 # same calculation using sparse matrices.
 
 look4<- mKrig( x,y, cov.function="wendland.cov", 
-        theta=350, 
+        aRange=350, 
         Dist.args=list( method="greatcircle"),  
         cov.args=list( k=2),
         lambda=lookKrig$lambda,
         find.trA=TRUE, NtrA=500, iseed=243)
 
-test.for.zero( look$c, look4$c,tol=8e-7, 
+test.for.zero( look$c.coef, look4$c.coef,tol=8e-7, 
            tag="Test of sparse wendland and great circle")
 test.for.zero(look4$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
                         tol=.01, tag="sparse eff.df")
@@ -87,7 +87,7 @@ test.for.zero(look4$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
 # great circle distance switch has been a  big bug -- test some options
 
 look<- mKrig( x,y, cov.function="wendland.cov", 
- theta=350, Dist.args=list( method="greatcircle"),  
+ aRange=350, Dist.args=list( method="greatcircle"),  
  cov.args=list( k=2),lambda=lookKrig$lambda,
  find.trA=TRUE, NtrA=1000, iseed=243)
 
@@ -95,7 +95,7 @@ test.for.zero(look$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
                    tol=1e-2, tag="exact sparse eff.df")
 
 # compare to fast Tps 
-look3<-  fastTps( x,y,theta=350,lambda=lookKrig$lambda, NtrA=200, iseed=243, 
+look3<-  fastTps( x,y,aRange=350,lambda=lookKrig$lambda, NtrA=200, iseed=243, 
                 lon.lat=TRUE)
 #look3$c<- lookKrig$c
 #look3$d<-  lookKrig$d
@@ -133,11 +133,11 @@ test.for.zero(look3$eff.df, Krig.ftrace( lookKrig$lambda, lookKrig$matrices$D),
 
 lam<-.2
 
-out<- mKrig( x,y, cov.function =Exp.cov, theta=4, lambda=lam)
-out2<- Krig( x,y, cov.function =Exp.cov, theta=4, lambda=lam)
+out<- mKrig( x,y, cov.function =Exp.cov, aRange=4, lambda=lam)
+out2<- Krig( x,y, cov.function =Exp.cov, aRange=4, lambda=lam)
 
             
-Sigma<- Exp.cov( x,x,theta=4)
+Sigma<- Exp.cov( x,x,aRange=4)
 X<-  cbind( rep(1, nrow(x)), x)
 
 Sinv<- solve( Sigma + lam* diag( 1, nrow( x)))
@@ -145,42 +145,42 @@ Sinv<- solve( Sigma + lam* diag( 1, nrow( x)))
 #checks on  likelihoods            
 
 # quadratic form:
-dhat<- c(solve( t(X)%*%Sinv%*%(X) ) %*% t(X) %*%Sinv%*%y)
-test.for.zero( dhat, out$d, tag="initial check on d for likelihood")
-r<- y -X%*%dhat
+betaHat<- c(solve( t(X)%*%Sinv%*%(X) ) %*% t(X) %*%Sinv%*%y)
+test.for.zero( betaHat, out$beta, tag="initial check on d for likelihood")
+r<- y -X%*%betaHat
 N<- nrow(x)
 look<-  t( r)%*%(Sinv)%*%r/N
 
 
 
-test.for.zero( look, out$sigma.MLE, tag="sigma hat from likelihood")
+test.for.zero( look, out$summary["sigma2"], tag="sigma2 hat from likelihood")
 
-test.for.zero( look, out2$sigmahat, tag="sigma hat from likelihood compared to Krig")
+test.for.zero( look, out2$sigma.MLE, tag="sigma2 hat from likelihood compared to Krig")
 
 
 
 # check determinant
 lam<- .2
-Sigma<- Exp.cov( x,x,theta=4)
+Sigma<- Exp.cov( x,x,aRange=4)
 M<- Sigma + lam * diag( 1, nrow(x))
 chol( M)-> Mc
 look2<- sum( log(diag( Mc)))*2
 
-out<-mKrig( x,y,cov.function =Exp.cov, theta=4, lambda=lam)
+out<-mKrig( x,y,cov.function =Exp.cov, aRange=4, lambda=lam)
 
 test.for.zero( out$lnDetCov, look2)
 test.for.zero( out$lnDetCov, determinant(M, log=TRUE)$modulus)
 
 # weighted version 
 lam<- .2
-Sigma<- Exp.cov( x,x,theta=4)
+Sigma<- Exp.cov( x,x,aRange=4)
 set.seed( 123)
 weights<- runif(nrow( x))
 M<- Sigma +  diag(lam/ weights)
 chol( M)-> Mc
 look2<- sum( log(diag( Mc)))*2
 
-out<-mKrig( x,y,weights=weights, cov.function =Exp.cov, theta=4, lambda=lam)
+out<-mKrig( x,y,weights=weights, cov.function =Exp.cov, aRange=4, lambda=lam)
 
 test.for.zero( out$lnDetCov, look2)
 test.for.zero(  look2, determinant(M, log=TRUE)$modulus)
@@ -191,7 +191,7 @@ test.for.zero( out$lnDetCov, determinant(M, log=TRUE)$modulus)
 # check profile likelihood by estimating MLE
 lam.true<- .2
 N<- nrow( x)
-Sigma<- Exp.cov( x,x,theta=4)
+Sigma<- Exp.cov( x,x,aRange=4)
 M<- Sigma + lam.true * diag( 1, nrow(x))
 chol( M)-> Mc
 t(Mc)%*%Mc -> test
@@ -204,12 +204,12 @@ t(Mc)%*%Mc -> test
 ##D hold2<-rep( NA, NSIM)
 ##D temp.fun<- function(lglam){
 ##D             out<-mKrig( x,ytemp,
-##D                         cov.function =Exp.cov, theta=4, lambda=exp(lglam))
+##D                         cov.function =Exp.cov, aRange=4, lambda=exp(lglam))
 ##D             return(-1* out$lnProfileLike)}
 
 ##D hold1<-rep( NA, NSIM)
 ##D yt<- rep( 1, N) 
-##D obj<- Krig( x,yt, theta=4)
+##D obj<- Krig( x,yt, aRange=4)
 
 
 ##D E<- matrix( rnorm( NSIM*N), ncol=NSIM)

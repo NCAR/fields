@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "stationary.cov" <- function(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", 
-                             Dist.args = NULL, theta = 1, V = NULL, C = NA, marginal = FALSE, 
+                             Dist.args = NULL, aRange = 1, V = NULL, C = NA, marginal = FALSE, 
                              derivative = 0, distMat = NA, onlyUpper = FALSE, ...) {
   
   # get covariance function arguments from call
@@ -45,8 +45,8 @@
   # this is done partly to have the use of great circle distance make sense
   # by applying the scaling  _after_ finding the distance.
   #
-  if (length(theta) > 1) {
-    stop("theta as a vector matrix has been depreciated use the V argument")
+  if (length(aRange) > 1) {
+    stop("aRange as a vector matrix has been depreciated use the V argument")
   }
   #
   # following now treats V as a full matrix for scaling and rotation.
@@ -61,8 +61,8 @@
     V<- cov.args$V
   }
   if (!is.null(V)) {
-    if (theta != 1) {
-      stop("can't specify both theta and V!")
+    if (aRange != 1) {
+      stop("can't specify both aRange and V!")
     }
     x1 <- x1 %*% t(solve(V))
     x2 <- x2 %*% t(solve(V))
@@ -78,7 +78,7 @@
     #
     if(is.na(distMat[1])) {
       # distMat not supplied so must compute it along with covariance matrix
-      # note overall scaling by theta (which is just theta under isotropic case)
+      # note overall scaling by aRange (which is just aRange under isotropic case)
       if(is.null(x2))
         distMat <- do.call(Distance, c(list(x1), Dist.args))
       else
@@ -96,14 +96,14 @@
       diagVal = do.call(Covariance, c(list(d=0), cov.args))
       
       if(onlyUpper)
-        return(compactToMat(do.call(Covariance, c(list(d=distMat*(1/theta)), cov.args)), diagVal))
+        return(compactToMat(do.call(Covariance, c(list(d=distMat*(1/aRange)), cov.args)), diagVal))
       else
         # if onlyUpper==FALSE, also set lower triangle of covariance matrix
-        return(compactToMat(do.call(Covariance, c(list(d=distMat*(1/theta)), cov.args)), diagVal, lower.tri=TRUE))
+        return(compactToMat(do.call(Covariance, c(list(d=distMat*(1/aRange)), cov.args)), diagVal, lower.tri=TRUE))
     }
     else {
       # distMat is a full matrix
-      return(do.call(Covariance, c(list(d = distMat/theta), cov.args)))
+      return(do.call(Covariance, c(list(d = distMat/aRange), cov.args)))
     }
   }
   # or multiply cross covariance by C
@@ -120,11 +120,11 @@
       bigD <- do.call(Distance, c(list(x1=x1, x2=x2), Dist.args))
     
     if (derivative == 0) {
-      return(do.call(Covariance, c(list(d = bigD*(1/theta)), cov.args)) %*% C)
+      return(do.call(Covariance, c(list(d = bigD*(1/aRange)), cov.args)) %*% C)
     }
     else {
       # find partial derivatives
-      tempW <- do.call(Covariance, c(list(d = bigD*(1/theta)), 
+      tempW <- do.call(Covariance, c(list(d = bigD*(1/aRange)), 
                                      cov.args, derivative = derivative))
       # loop over dimensions and knock out each partial accumulate these in
       # in temp
@@ -132,7 +132,7 @@
       for (kd in 1:d) {
         # Be careful if the distance (tempD) is close to zero.
         # Note that the x1 and x2 are in transformed ( V inverse) scale
-        sM <- ifelse(bigD == 0, 0, tempW * outer(x1[, kd], x2[, kd], "-")/(theta * bigD))
+        sM <- ifelse(bigD == 0, 0, tempW * outer(x1[, kd], x2[, kd], "-")/(aRange * bigD))
         # accumlate the new partial
         temp[, kd] <- sM %*% C
       }

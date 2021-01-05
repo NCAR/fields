@@ -45,7 +45,7 @@ Type 'q()' to quit R.
 > x0<- expand.grid( c(-8,-4,0,20,30), c(10,8,4,0))
 > 
 > 
-> Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50)-> out
+> Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50)-> out
 > 
 > 
 > # direct calculation
@@ -54,15 +54,15 @@ Type 'q()' to quit R.
 Testing:  Amatrix vs. predict
 PASSED test at tolerance  1e-08
 > 
-> Sigma<- out$rhohat*Exp.cov( ChicagoO3$x, ChicagoO3$x, theta=50)
-> S0<- out$rhohat*c(Exp.cov( x0, x0, theta=50))
-> S1<- out$rhohat*Exp.cov( out$x, x0, theta=50)
+> Sigma<- out$sigmahat*Exp.cov( ChicagoO3$x, ChicagoO3$x, aRange=50)
+> S0<- out$sigmahat*c(Exp.cov( x0, x0, aRange=50))
+> S1<- out$sigmahat*Exp.cov( out$x, x0, aRange=50)
 > 
 > #yhat= Ay
 > #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
 > 
 > look<- S0 - t(S1)%*% t(A) - A%*%S1 +  
-+        A%*% ( Sigma + diag(out$shat.MLE**2/out$weightsM))%*% t(A)
++        A%*% ( Sigma + diag(out$tauHat.MLE**2/out$weightsM))%*% t(A)
 > #
 > #compare to 
 > # diagonal elements
@@ -73,8 +73,9 @@ PASSED test at tolerance  1e-08
 Testing:  Marginal predictSE
 PASSED test at tolerance  1e-08
 > 
-> out2<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50,
+> out2<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50,
 +             lambda=out$lambda)
+HERE
 > 
 > test2<- predictSE( out2, x= x0) 
 > test.for.zero( sqrt(diag(  look)), test2,tag="Marginal predictSE fixed ")
@@ -135,7 +136,7 @@ PASSED test at tolerance  0.02
 > weights<- dtemp$weights[ dtemp$ind]
 > 
 > Krig( x, y, Covariance="Matern", 
-+    theta=1.0, smoothness=1.0, weights=weights) -> out
++    aRange=1.0, smoothness=1.0, weights=weights) -> out
 > 
 > 
 > 
@@ -153,14 +154,14 @@ PASSED test at tolerance  0.02
 Testing:  Amatrix vs. predict
 PASSED test at tolerance  1e-08
 > 
-> Sigma<- out$rhohat*stationary.cov( 
-+ out$xM, out$xM, theta=1.0,smoothness=1.0, Covariance="Matern")
+> Sigma<- out$sigmahat*stationary.cov( 
++ out$xM, out$xM, aRange=1.0,smoothness=1.0, Covariance="Matern")
 > 
-> S0<- out$rhohat*stationary.cov( 
-+ x0, x0, theta=1.0,smoothness=1.0, Covariance="Matern")
+> S0<- out$sigmahat*stationary.cov( 
++ x0, x0, aRange=1.0,smoothness=1.0, Covariance="Matern")
 > 
-> S1<- out$rhohat*stationary.cov(
-+ out$xM, x0, theta=1.0,smoothness=1.0, Covariance="Matern")
+> S1<- out$sigmahat*stationary.cov(
++ out$xM, x0, aRange=1.0,smoothness=1.0, Covariance="Matern")
 > 
 > 
 > 
@@ -168,7 +169,7 @@ PASSED test at tolerance  1e-08
 > #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
 >  
 > look<- S0 - t(S1)%*% t(A) - A%*%S1 +
-+        A%*% ( Sigma + diag(out$shat.MLE**2/out$weightsM) )%*% t(A)
++        A%*% ( Sigma + diag(out$tauHat.MLE**2/out$weightsM) )%*% t(A)
 > 
 > test<- predictSE( out, x0, cov=TRUE)
 > 
@@ -195,7 +196,7 @@ PASSED test at tolerance  1e-08
 > ##D weights<- dtemp$weights[ dtemp$ind]
 > 
 > ##D Krig( xd, y, Covariance="Matern", 
-> ##D    theta=1.0, smoothness=1.0, weights=weights) -> out
+> ##D    aRange=1.0, smoothness=1.0, weights=weights) -> out
 > 
 > 
 > ##D xr<- range( dtemp$x)
@@ -230,4 +231,4 @@ all done testing predictSE
 > 
 > proc.time()
    user  system elapsed 
-  3.950   0.130   4.099 
+  3.752   0.121   3.874 

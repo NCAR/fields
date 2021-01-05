@@ -57,7 +57,7 @@ Krig. The results are formatted and printed using print.summary.Krig.
 Krig, summary, print.summary.Krig, summary.spatialProcess 
 }
 \examples{
-fit<- Krig(ChicagoO3$x, ChicagoO3$y, theta=100)  
+fit<- Krig(ChicagoO3$x, ChicagoO3$y, aRange=100)  
 summary(fit)                            # summary of fit 
 }
 \keyword{spatial}

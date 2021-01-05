@@ -51,30 +51,30 @@ using 'Exp' in place of 'exp' to avoid conflict with the generic exponential
 function (\code{exp(...)})in R.
 }
 \usage{
-Exp.cov(x1, x2=NULL, theta = 1, p=1, distMat = NA, 
+Exp.cov(x1, x2=NULL, aRange = 1, p=1, distMat = NA, 
   C = NA, marginal = FALSE, onlyUpper=FALSE)
 
-Exp.simple.cov(x1, x2, theta =1, C=NA,marginal=FALSE)
+Exp.simple.cov(x1, x2, aRange =1, C=NA,marginal=FALSE)
 
 Rad.cov(x1, x2, p = 1, m=NA, with.log = TRUE, with.constant = TRUE, 
                C=NA,marginal=FALSE, derivative=0)
 
-cubic.cov(x1, x2, theta = 1, C=NA, marginal=FALSE) 
+cubic.cov(x1, x2, aRange = 1, C=NA, marginal=FALSE) 
 
 Rad.simple.cov(x1, x2, p=1, with.log = TRUE, with.constant = TRUE, 
                C = NA, marginal=FALSE)
 
 stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", 
-  Dist.args = NULL, theta = 1, V = NULL, C = NA, marginal = FALSE, 
+  Dist.args = NULL, aRange = 1, V = NULL, C = NA, marginal = FALSE, 
   derivative = 0, distMat = NA, onlyUpper = FALSE, ...)
 
 stationary.taper.cov(x1, x2, Covariance="Exponential", 
            Taper="Wendland", 
            Dist.args=NULL, Taper.args=NULL, 
-           theta=1.0,V=NULL, C=NA, marginal=FALSE,
+           aRange=1.0,V=NULL, C=NA, marginal=FALSE,
            spam.format=TRUE,verbose=FALSE,...)
 
-wendland.cov(x1, x2, theta = 1, V=NULL, k = 2, C = NA, 
+wendland.cov(x1, x2, aRange = 1, V=NULL, k = 2, C = NA, 
              marginal =FALSE,Dist.args = list(method = "euclidean"), 
              spam.format = TRUE, derivative = 0, verbose=FALSE)
 }
@@ -85,18 +85,18 @@ coordinates of a particular point.}
 \item{x2}{ Matrix of second set of locations where each row gives the
 coordinatesof a particular point. If this is missing x1 is used. }
 
-\item{theta}{ Range (or scale) parameter. This should be a scalar (use
+\item{aRange}{ Range (or scale) parameter. This should be a scalar (use
 the V argument for other scaling options). Any distance calculated for
-a covariance function is divided by theta before the covariance function
+a covariance function is divided by aRange before the covariance function
 is evaluated.}
  
 \item{V}{ A matrix that describes the inverse linear transformation of
 the coordinates before distances are found.  In R code this
 transformation is: \code{x1 \%*\% t(solve(V))} Default is NULL, that
 is the transformation is just dividing distance by the scalar value
-\code{theta}. See Details below.  If one has a vector of "theta's"
+\code{aRange}. See Details below.  If one has a vector of "aRange's"
 that are the scaling for each coordinate then just express this as
-\code{V = diag(theta)} in the call to this function.}
+\code{V = diag(aRange)} in the call to this function.}
 
 \item{C}{ A vector with the same length as the number of rows of x2.
 If specified the covariance matrix will be multiplied by this vector.}
@@ -142,7 +142,7 @@ to use. Choices in fields are listed in help(taper).}
 function.}
 
 \item{Taper.args}{ A list of optional arguments to pass to the Taper
-function. \code{theta} should always be the name for the range (or
+function. \code{aRange} should always be the name for the range (or
 scale) paremeter.}
 
 \item{spam.format}{If TRUE returns matrix in sparse matrix format
@@ -208,10 +208,10 @@ A common scaling for stationary covariances: If \code{x1} and
  is the covariance between the locations \code{x1[i,]} and
  \code{x2[j,]}. The exponential covariance function is computed as
  exp( -(D.ij)) where D.ij is a distance between \code{x1[i,]} and
- \code{x2[j,]} but having first been scaled by theta. Specifically if
- \code{theta} is a matrix to represent a linear transformation of the
- coordinates, then let \code{u= x1\%*\% t(solve( theta))} and \code{v=
- x2\%*\% t(solve(theta))}.  Form the mXn distance matrix with
+ \code{x2[j,]} but having first been scaled by aRange. Specifically if
+ \code{aRange} is a matrix to represent a linear transformation of the
+ coordinates, then let \code{u= x1\%*\% t(solve( aRange))} and \code{v=
+ x2\%*\% t(solve(aRange))}.  Form the mXn distance matrix with
  elements:
 
 \code{D[i,j] = sqrt( sum( ( u[i,] - v[j,])**2 ) )}.
@@ -221,9 +221,9 @@ tapered form (ignoring scaling parameters) is a matrix with i,j entry
 \code{exp(-D[i,j])*T(D[i,j])}. With T being a positive definite
 tapering function that is also assumed to be zero beyond 1.
 
-Note that if theta is a scalar then this defines an isotropic
+Note that if aRange is a scalar then this defines an isotropic
 covariance function and the functional form is essentially
-\code{exp(-D/theta)}.
+\code{exp(-D/aRange)}.
 
 Implementation: The function \code{r.dist} is a useful FIELDS function
 that finds the cross Euclidean distance matrix (D defined above) for
@@ -256,16 +256,16 @@ functions in R code.}
 computation is to apply the function Covariance to the distances found
 by the Distance function.  For example
 
-\code{Exp.cov(x1,x2, theta=MyTheta)}
+\code{Exp.cov(x1,x2, aRange=MyTheta)}
 
 and
 
-\code{stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist",
+\code{stationary.cov( x1,x2, aRange=MyTheta, Distance= "rdist",
 Covariance="Exponential")}
 
 are the same. This also the same as
 
-\code{stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist",
+\code{stationary.cov( x1,x2, aRange=MyTheta, Distance= "rdist",
 Covariance="Matern",smoothness=.5)}.  }
 
 \item{Stationary tapered covariance \code{stationary.taper.cov}:}{The
@@ -273,8 +273,8 @@ resulting cross covariance is the direct or Shure product of the
 tapering function and the covariance. In R code given location
 matrices, \code{x1} and \code{x2} and using Euclidean distance.
  
-\code{Covariance(rdist( x1, x2)/theta)*Taper( rdist( x1,
-x2)/Taper.args$theta)}
+\code{Covariance(rdist( x1, x2)/aRange)*Taper( rdist( x1,
+x2)/Taper.args$aRange)}
 
 By convention, the \code{Taper} function is assumed to be identically
 zero outside the interval [0,1]. Some efficiency is introduced within
@@ -305,18 +305,18 @@ Wendland.cov, mKrig}
 \examples{
 # exponential covariance matrix ( marginal variance =1) for the ozone
 #locations 
-out<- Exp.cov( ChicagoO3$x, theta=100)
+out<- Exp.cov( ChicagoO3$x, aRange=100)
 
 # out is a 20X20 matrix
 
-out2<- Exp.cov( ChicagoO3$x[6:20,],ChicagoO3$x[1:2,], theta=100)
+out2<- Exp.cov( ChicagoO3$x[6:20,],ChicagoO3$x[1:2,], aRange=100)
 # out2 is 15X2 matrix 
 
 # Kriging fit where the nugget variance is found by GCV 
 # Matern covariance shape with range of 100.
 # 
 
-fit<- Krig( ChicagoO3$x, ChicagoO3$y, Covariance="Matern", theta=100,smoothness=2)
+fit<- Krig( ChicagoO3$x, ChicagoO3$y, Covariance="Matern", aRange=100,smoothness=2)
 
 data( ozone2)
 x<- ozone2$lon.lat
@@ -331,7 +331,7 @@ y<- y[good]
 # Note that default covariance is exponential and default taper is 
 # Wendland (k=2).
 
-stationary.taper.cov( x[1:3,],x[1:10,] , theta=1.5, Taper.args= list(k=2,theta=2.0,
+stationary.taper.cov( x[1:3,],x[1:10,] , aRange=1.5, Taper.args= list(k=2,aRange=2.0,
                        dimension=2) )-> temp
 # temp is now a tapered 3X10 cross covariance matrix in sparse format. 
 
@@ -340,8 +340,8 @@ stationary.taper.cov( x[1:3,],x[1:10,] , theta=1.5, Taper.args= list(k=2,theta=2
 # should be identical to
 # the direct matrix product
 
- temp2<- Exp.cov( x[1:3,],x[1:10,], theta=1.5) * Wendland(rdist(x[1:3,],x[1:10,]), 
-                      theta= 2.0, k=2, dimension=2)
+ temp2<- Exp.cov( x[1:3,],x[1:10,], aRange=1.5) * Wendland(rdist(x[1:3,],x[1:10,]), 
+                      aRange= 2.0, k=2, dimension=2)
  test.for.zero(  as.matrix(temp), temp2)
 
 # Testing that the "V" option works as advertized ...
@@ -367,13 +367,13 @@ test.for.zero( look, look2)
  
  temp<- stationary.cov( x,x[1:10,], C= Ctest, 
         Covariance= "Wendland", 
-            k=2, dimension=2, theta=1.5 )
+            k=2, dimension=2, aRange=1.5 )
 
 # do multiply explicitly
 
  temp2<- stationary.cov( x,x[1:10,],
         Covariance= "Wendland",
-            k=2, dimension=2, theta=1.5 )\%*\% Ctest
+            k=2, dimension=2, aRange=1.5 )\%*\% Ctest
 
  test.for.zero( temp, temp2)
 
@@ -386,15 +386,15 @@ test.for.zero( look, look2)
 
 \dontrun{
 
-Krig(x,y, cov.function = "stationary.taper.cov", theta=1.5,
-      cov.args= list(Taper.args= list(k=2, dimension=2,theta=2.0) )
+Krig(x,y, cov.function = "stationary.taper.cov", aRange=1.5,
+      cov.args= list(Taper.args= list(k=2, dimension=2,aRange=2.0) )
            ) -> out2 
 # NOTE: Wendland is the default taper here. 
 }
 
 # BTW  this is very similar to 
 \dontrun{
- Krig(x,y, theta= 1.5)-> out
+ Krig(x,y, aRange= 1.5)-> out
 }
 
 

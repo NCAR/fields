@@ -75,7 +75,7 @@ For sreg if multiple lambdas are given plotted are boxplots of the
 residuals for each fit. 
 
 For \code{spatialProcess} object the fourth plot is the profile likelihood for the
-theta parameter. Points are the actual evaluated log likelihoods and the dashed line is
+aRange parameter. Points are the actual evaluated log likelihoods and the dashed line is
 just a spline interpolation to help with visualization. 
 
 }
@@ -87,7 +87,7 @@ Krig, spatialProcess, summary.Krig, Tps, set.panel
 data( ozone2)
 x<- ozone2$lon.lat
 y<- ozone2$y[16,]
-fit1<-Krig(x,y, theta=200)  
+fit1<-Krig(x,y, aRange=200)  
 # fitting a surface to ozone  
 # measurements 
 set.panel( 2,2)

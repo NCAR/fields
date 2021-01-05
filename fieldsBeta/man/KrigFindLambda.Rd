@@ -19,8 +19,8 @@
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
-\name{gcv.Krig}
-\alias{gcv.Krig}
+\name{KrigFindLambda}
+\alias{KrigFindLambda}
 \alias{gcv.sreg}
 
 \title{Finds profile likelihood and GCV estimates of 
@@ -34,7 +34,7 @@ independently with different data sets (the y's) if the covariates ( the
 x's) are the same and thus reduce the computation. 
 }
 \usage{
-gcv.Krig(
+KrigFindLambda(
 out, lambda.grid = NA, cost = 1, nstep.cv = 200, rmse
                  = NA, verbose = FALSE, tol = 1e-05, offset = 0, y =
                  NULL, give.warnings = TRUE)
@@ -115,7 +115,7 @@ and the columns are the estimated values  for lambda, trA, GCV, tauHat.
 Tps( ChicagoO3$x, ChicagoO3$y)-> obj # default is to find lambda by GCV
 summary( obj)
 
-gcv.Krig( obj)-> out
+KrigFindLambda( obj)-> out
 print( out$lambda.est) # results agree with Tps summary
 
 sreg( rat.diet$t, rat.diet$trt)-> out
@@ -139,7 +139,7 @@ for( k in 1:200){
 # new data simulated
    y<- f + rnorm(150)*tau 
 # save GCV estimates
-lambdaTable<- gcv.Krig(obj,  y=y, give.warnings=FALSE)$lambda.est
+lambdaTable<- KrigFindLambda(obj,  y=y, give.warnings=FALSE)$lambda.est
 hold[k,]<-  lambdaTable[1,]
 hold2[k,]<-  lambdaTable[6,]
 }

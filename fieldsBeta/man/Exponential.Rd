@@ -47,15 +47,15 @@ RadialBasis(d,M,dimension, derivative = 0)
   \item{d}{ Vector of distances or for \code{Matern.cor.to.range} just a single distance. }
 
   \item{range}{ Range parameter default is one. Note 
-       that the scale can also be specified  through the "theta" 
+       that the scale can also be specified  through the "aRange" 
            scaling argument  used in fields covariance functions) }
 
   \item{alpha}{1/range }
   
   \item{phi}{This parameter option is added to be compatible with older
   versions of fields and refers to the marginal variance of the process.
-  e.g. \code{phi* exp( -d/theta)} is the exponential covariance for points
-  separated by distance and range theta. Throughout fields this parameter
+  e.g. \code{phi* exp( -d/aRange)} is the exponential covariance for points
+  separated by distance and range aRange. Throughout fields this parameter
   is equivalent to sigma and it recommended that sigma be used. If one is
   simulating random fields. See the help on \code{\link{sim.rf}} for
   more details. } 
@@ -95,10 +95,10 @@ Matern.cor.to.range:
     This function is useful to find  Matern covariance parameters that are 
 comparable for different smoothness parameters. Given a distance \code{d}, 
 smoothness \code{nu},  target correlation \code{cor.target} and
-range \code{theta}, this function determines numerically the value of 
-theta so that
+range \code{aRange}, this function determines numerically the value of 
+aRange so that
 
-\code{Matern( d, range=theta, nu=nu) == cor.target}
+\code{Matern( d, range=aRange, nu=nu) == cor.target}
 
 See the example for how this might be used.
 

@@ -51,23 +51,32 @@ summary.spatialProcess <- function(object, ...) {
     c2 <- c(c2, object$nZ)
   }
   
-  c1 <- c(c1, "MLE nugget variance ( tau^2)")
-  c2 <- c(c2, signif(object$tau.MLE.FULL^2, digits))
+  c1 <- c(c1, "tau  Nugget stan. dev:")
+  c2 <- c(c2, signif(object$MLESummary["tau"], digits))
     
-  c1 <- c(c1, "MLE process variance (sigma)")
-  c2 <- c(c2, signif(object$sigma.MLE.FULL, digits))
+  c1 <- c(c1, "sigma Process variance: ")
+  c2 <- c(c2, signif( sqrt(object$MLESummary["sigma2"]), digits))
   
-  c1 <- c(c1, "Value for lambda = tau^2/sigma")
-  c2 <- c(c2, signif(object$lambdaModel, digits))
+  c1 <- c(c1, "lambda   tau^2/sigma^2: ")
+  c2 <- c(c2, signif(object$MLESummary["lambda"], digits))
   
+  if( !is.na(object$lambda.CI[1])){
+    c1 <- c(c1, paste0( "Approx ", object$confidenceLevel, 
+                        "% CI for lambda:  ") ) 
+    c2<-  c(c2, paste( "[",signif( object$lambda.CI[1], digits), ",",
+                       signif( object$lambda.CI[2], digits), "]"  ) 
+    )
+  }
   
-  c1 <- c(c1, "MLE range parameter (theta, units of distance): ")
-  c2 <- c(c2, signif(object$theta.MLE, digits))
-  
-  c1 <- c(c1, paste0( "Approx ", object$confidenceLevel,  "% CI for theta:  ") ) 
-  c2<-  c(c2, paste( "[",signif( object$theta.CI[1], digits), ",",
-                      signif( object$theta.CI[2], digits), "]"  ) 
+  c1 <- c(c1, "aRange parameter (in units of distance): ")
+  c2 <- c(c2, signif(object$MLESummary["aRange"], digits))
+  if( !is.na(object$aRange.CI[1])){
+ c1 <- c(c1, paste0( "Approx ", object$confidenceLevel, 
+                     "% CI for aRange:  ") ) 
+ c2<-  c(c2, paste( "[",signif( object$aRange.CI[1], digits), ",",
+                      signif( object$aRange.CI[2], digits), "]"  ) 
            )
+  }
   
   if (!is.na(object$eff.df)) {
     c1 <- c(c1, "Approx.  degrees of freedom for curve")
@@ -79,13 +88,12 @@ summary.spatialProcess <- function(object, ...) {
     }
   }
   
-  c1 <- c(c1, "Nonzero entries in covariance")
-  c2 <- c(c2, object$nonzero.entries)
+ 
   
   c1<- c(c1, "log Likelihood: " )
-  c2<- c( c2, object$lnProfileLike.FULL)
+  c2<- c( c2, object$summary["lnProfileLike.FULL"])
   c1<- c(c1, "log Likelihood REML: " )
-  c2<- c( c2, object$lnProfileREML.FULL)
+  c2<- c( c2, object$summary["lnProfileREML.FULL"])
   
   summaryStuff<-  cbind(c1, c2)
   dimnames(summaryStuff) <- list(rep("",
@@ -95,15 +103,22 @@ summary.spatialProcess <- function(object, ...) {
   outObject$summaryTable<- summaryStuff
   outObject$collapseFixedEffect<- object$collapseFixedEffect
 ###########
+  if( !is.null( object$MLEInfo)){
   outObject$MLEpars<-  names( object$MLEInfo$pars.MLE) 
   outObject$MLESummary<- object$summary
+  }
+  else{
+    outObject$MLEpars <- NA
+    outObject$MLESummary<- object$summary
+  }
 ########### information for SE for fixed effects
+  if(!is.null(object$beta) ){
   if( outObject$collapseFixedEffect | (nData==1) ){
     outObject$fixedEffectsCov<- object$fixedEffectsCov
     SE<- sqrt(diag(outObject$fixedEffectsCov))
-    d.coef<-  object$d[,1]
-    pValue<- pnorm(abs(d.coef/SE), lower.tail = FALSE)*2
-    outObject$fixedEffectsTable<- cbind( signif(d.coef, digits), 
+    beta<-  object$beta[,1]
+    pValue<- pnorm(abs(beta/SE), lower.tail = FALSE)*2
+    outObject$fixedEffectsTable<- cbind( signif(beta, digits), 
                                       signif(SE, digits),
                                       signif(pValue, digits)
                                     )
@@ -116,13 +131,19 @@ summary.spatialProcess <- function(object, ...) {
     dimnames( outObject$fixedEffectsTable) <- list( outObject$fixedEffectNames,
                                            c("estimate", "SE", "pValue") )
   }
+  }
+  else{
+    outObject$fixedEffectsTable<- NA
+  }
 #####################
   outObject$nData <- nData
   outObject$call<- object$call
   outObject$cov.function<- object$cov.function
   outObject$args<- object$args
- 
-    class( outObject)<-"spatialProcessSummary"
+  outObject$nonzero.entries<- object$nonzero.entries
+  outObject$MLEInfo<- object$MLEInfo
+  
+  class( outObject)<-"spatialProcessSummary"
     
   return( outObject)
 

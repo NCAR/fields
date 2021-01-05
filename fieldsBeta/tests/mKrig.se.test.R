@@ -27,16 +27,16 @@ test.for.zero.flag<- TRUE
 
 x0<- cbind( 0,4)
 
-Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50,
+Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50,
       lambda=.06, GCV=FALSE)-> out
 
 # direct calculation
 Krig.Amatrix( out, x=x0)-> A
 test.for.zero( A%*%ChicagoO3$y, predict( out, x0),tag="Amatrix vs. predict")
 
-Sigma0<- out$sigmahat*Exp.cov( ChicagoO3$x, ChicagoO3$x, theta=50)
-S0<- out$sigmahat*c(Exp.cov( x0, x0, theta=50))
-S1<- out$sigmahat*Exp.cov( out$x, x0, theta=50)
+Sigma0<- out$sigmahat*Exp.cov( ChicagoO3$x, ChicagoO3$x, aRange=50)
+S0<- out$sigmahat*c(Exp.cov( x0, x0, aRange=50))
+S1<- out$sigmahat*Exp.cov( out$x, x0, aRange=50)
 
 #yhat= Ay
 #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
@@ -55,7 +55,7 @@ test.for.zero( sqrt(diag(  look)), test2,tag="Marginal predictSE")
 # now test shortcut formula that leverages the prediction step for Kriging
 #
 
-Sigma<-  Exp.cov( ChicagoO3$x, ChicagoO3$x, theta=50) +
+Sigma<-  Exp.cov( ChicagoO3$x, ChicagoO3$x, aRange=50) +
           diag(out$lambda/out$weightsM)
 
 #Sigma<-  ( Sigma0 + diag(out$tauHat.MLE**2/out$weightsM))
@@ -84,7 +84,7 @@ M2<- solve( Sigma)%*% ( Id - Tmatrix%*% M1)
 
 x0<- cbind( 0,4)
 
-k0<-  Exp.cov( out$x, x0, theta=50)
+k0<-  Exp.cov( out$x, x0, aRange=50)
 
 #k0<- S1
 
@@ -121,9 +121,9 @@ test.for.zero(SE0, sqrt( MSE4), tag="test of formula with explicit d and c")
 
 # test of new function
 
-Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50,lambda=.06)-> out0
+Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50,lambda=.06)-> out0
 SE0<- predictSE.Krig( out0, x=x0)
-mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)-> out2
+mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50, lambda=.06)-> out2
 SE3<- predictSE.mKrig( out2, xnew=x0)
 
 test.for.zero(SE0, sqrt( MSE), tag="Krig function and direct formula")
@@ -138,8 +138,8 @@ test.for.zero( SE3, SE0,  tag="New se _function_ and old Krig _function_")
 
 
 # receate object
-out0<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)
-out<- mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50, lambda=.06)
+out0<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50, lambda=.06)
+out<- mKrig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50, lambda=.06)
 
 
 x0<-rep( c( -20, -10,10,20),4)
@@ -147,7 +147,7 @@ x0<-rep( c( -20, -10,10,20),4)
 x0 <- cbind( x0 , sort( x0))
 x0<- rbind( c(0,4), x0)
 
-k0<-  Exp.cov(  ChicagoO3$x,x0, theta=50)
+k0<-  Exp.cov(  ChicagoO3$x,x0, aRange=50)
 t0<- t(fields.mkpoly(x0, m=out$m))
 hold<- Krig.coef(out0, y=k0)
 
@@ -157,10 +157,11 @@ MSE5<- (rep( S0,nrow(x0)) +
                    2*out0$sigmahat*colSums(t0*hold$d))
 
 hold<- mKrig.coef(out, y=k0, collapse=FALSE)
-MSE6<- (rep( S0,nrow(x0)) +
-                  out$sigmahat * colSums( t0 *(out$Omega%*%t0))
-                  -out$sigmahat* colSums((k0)*hold$c) -
-                   2*out$sigmahat*colSums(t0*hold$d))
+sigmahat<- out$summary["sigma2"]
+MSE6<- (rep( S0, nrow(x0)) +
+                  sigmahat * colSums( t0 *(out$Omega%*%t0))
+                  -sigmahat* colSums((k0)*hold$c.coef) -
+                  2*sigmahat*colSums(t0*hold$beta))
 
 test.for.zero( predictSE( out0, x0), sqrt(MSE5), 
                    tag="Benchmark of formula")

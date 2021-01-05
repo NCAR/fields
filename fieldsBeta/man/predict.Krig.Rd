@@ -134,7 +134,7 @@ Krig, predictSurface gcv.Krig
 }
 
 \examples{
-  Krig(ChicagoO3$x,ChicagoO3$y, theta=50) ->fit
+  Krig(ChicagoO3$x,ChicagoO3$y, aRange=50) ->fit
   predict( fit) # gives predicted values at data points should agree with fitted.values
                 #  in fit object 
 

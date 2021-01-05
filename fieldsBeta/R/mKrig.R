@@ -22,8 +22,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                   cov.function="stationary.cov", 
                   cov.args = NULL, lambda = 0, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
-                  iseed = 123, llambda = NULL, na.rm=FALSE, 
-                  collapseFixedEffect = TRUE, ...) {
+                  iseed = NA, llambda = NULL, na.rm=FALSE, 
+                  collapseFixedEffect = TRUE, 
+                  tau=NA, sigma2=NA, ...) {
   # pull extra covariance arguments from ...  and overwrite
   # any arguments already named in cov.args
   ind<- match( names( cov.args), names(list(...) ) )
@@ -39,6 +40,9 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   
   if (!is.null(llambda)) {
     lambda <- exp(llambda)
+  }
+  if( !is.na(tau)&!is.na(sigma2)){
+    lambda<- tau^2/sigma2
   }
   # see comments in Krig.engine.fixed for algorithmic commentary
   #
@@ -119,7 +123,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # start linear algebra to find estimates and likelihood
   # Note that all these expressions make sense if y is a matrix
   # of several data sets and one is solving for the coefficients
-  # of all of these at once. In this case d.coef and c.coef are matrices
+  # of all of these at once. In this case beta and c.coef are matrices
   #
   if( !is.null(Tmatrix)){
   # Efficent way to multply inverse of Mc times the Tmatrix  
@@ -127,17 +131,17 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   qr.VT <- qr(VT)
   
   # now do generalized least squares for d
-    d.coef <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
+    beta <- as.matrix(qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
                                                   object$y, upper.tri = TRUE)))
     
     if (collapseFixedEffect) {
       # use a common estimate of fixed effects across all replicates      
-      d.coefMeans <- rowMeans(d.coef)
-      d.coef <- matrix(d.coefMeans, ncol = ncol(d.coef), 
-                       nrow = nrow(d.coef))
+      betaMeans <- rowMeans(beta)
+      beta <- matrix(betaMeans, ncol = ncol(beta), 
+                       nrow = nrow(beta))
     }
     
-    resid<-  object$y - Tmatrix %*% d.coef
+    resid<-  object$y - Tmatrix %*% beta
   # GLS covariance matrix for fixed part.
     Rinv <- solve(qr.R(qr.VT))
     Omega <- Rinv %*% t(Rinv)
@@ -148,12 +152,12 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
 #    for the GLS estimates of
 #  the fixed linear part of the model. 
 #    
-#  SEdcoef = diag( Omega) * sigma.MLE.FULL
+#  SEdcoef = diag( Omega) * sigma2.MLE.FULL
 # 
 # if fixed effects are pooled across replicate fields then
 # adjust the Omega matrix to reflect a mean estimate.
     if (collapseFixedEffect) {
-      Omega <- Omega/ ncol(d.coef)
+      Omega <- Omega/ ncol(beta)
     }
     
     R2diag<-  diag( qr.R(qr.VT) )^2
@@ -166,7 +170,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
     Rinv<- NULL
     Omega<- NULL
     qr.VT<- NULL
-    d.coef<- NULL
+    beta<- NULL
     lnDetOmega <- 0
   }
   # and now find c.
@@ -175,83 +179,99 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # GLS regression.
   c.coef <- as.matrix(forwardsolve(Mc, transpose = TRUE,
                                    resid, upper.tri = TRUE))
-  # save intermediate result this is   t(y- T d.coef)( M^{-1}) ( y- T d.coef)
+  # save intermediate result this is   t(y- T beta)( M^{-1}) ( y- T beta)
   quad.form <- c(colSums(as.matrix(c.coef^2)))
   # find c coefficients
   c.coef <- as.matrix(backsolve(Mc, c.coef))
+  
+  # find the residuals directly from solution
+  # to avoid a call to predict
+  object$residuals <- lambda * c.coef/object$weights
+  object$fitted.values <- object$y - object$residuals
   # MLE estimate of sigma and tau
   #    sigmahat <- c(colSums(as.matrix(c.coef * y)))/(np - nt)
   # NOTE if y is a matrix then each of these are vectors of parameters.
-  sigma.MLE <- quad.form/np
-  sigmahat <- c(colSums(as.matrix(c.coef * object$y)))/np
-  tauHat.MLE <- tau.MLE <- sqrt(lambda * sigma.MLE)
+  sigma2.MLE <- (quad.form/np)
+  #sigma2hat <- c(colSums(as.matrix(c.coef * object$y)))/np
+  tau.MLE <- sqrt(lambda * sigma2.MLE)
   # the  log profile likehood with  sigmahat  and  dhat substituted
   # leaving a profile for just lambda.
   # NOTE if y is a matrix then this is a vector of log profile
   # likelihood values.
   lnProfileLike <- (-np/2 - log(2 * pi) * (np/2) - (np/2) * 
-                      log(sigma.MLE) - (1/2) * lnDetCov)
-  # see section 4.2 handbook of spatial statistics (Zimmermanchapter)
+                      log(sigma2.MLE) - (1/2) * lnDetCov)
+  # see section 4.2 handbook of spatial statistics (Zimmerman Chapter)
+  # for this amazing shortcut to get the REML version 
   lnProfileREML <-  lnProfileLike + (1/2) * lnDetOmega
-  sigma.MLE.FULL <- mean(sigma.MLE)
-  tau.MLE.FULL <- sqrt(lambda * sigma.MLE.FULL)
+  # following FULL means combine the estimates across all replicate fields 
+  # mean is justified as it is assumed locations and weights the same across 
+  # replciates. 
+  sigma2.MLE.FULL <- mean(sigma2.MLE)
+  tau.MLE.FULL <- sqrt(lambda * sigma2.MLE.FULL)
   # if y is a matrix then compute the combined likelihood
   # under the assumption that the columns of y are replicated
   # fields
   lnProfileLike.FULL <- sum((-np/2 - log(2 * pi) * (np/2) - 
-                               (np/2) * log(sigma.MLE.FULL) 
+                               (np/2) * log(sigma2.MLE.FULL) 
                                - (1/2) * lnDetCov)
                             )
   lnProfileREML.FULL <- sum((-np/2 - log(2 * pi) * (np/2) - 
-                               (np/2) * log(sigma.MLE.FULL) 
+                               (np/2) * log(sigma2.MLE.FULL) 
                              - (1/2) * lnDetCov
                              + (1/2) * lnDetOmega  )
                             )
   
   #
-  # return coefficients and   include lambda as a check because
+  # return coefficients and include lambda as a check because
   # results are meaningless for other values of lambda
   # returned list is an 'object' of class mKrig (micro Krig)
   # also save the matrix decompositions so coefficients can be
   # recalculated for new y values.  Make sure onlyUpper and 
   # distMat are unset for compatibility with mKrig S3 functions
-  if(!is.null(cov.args$onlyUpper))
-    cov.args$onlyUpper = FALSE
-  if(!is.null(cov.args$distMat))
-    cov.args$distMat = NA
-  object <- c( object, list( 
-               d = d.coef, c = c.coef, nt = nt, np = np, 
+  #
+   if(!is.null(cov.args$onlyUpper))
+     cov.args$onlyUpper = FALSE
+   if(!is.null(cov.args$distMat))
+     cov.args$distMat = NA
+ # build return object except for effective  degrees of freedom computation
+ # and the summary vector 
+  replicateInfo = list(
+    lnProfileLike = lnProfileLike,
+    lnProfileREML =  lnProfileREML,
+    tau.MLE = tau.MLE, 
+    sigma2.MLE = sigma2.MLE,
+    quad.form = quad.form
+  )
+   object2 <-  
+               list( 
+               beta = beta, c.coef = c.coef, nt = nt, np = np, 
               lambda.fixed = lambda, 
               cov.function.name = cov.function, 
               args = cov.args, m = m, chol.args = chol.args, call = match.call(), 
-              nonzero.entries = nzero, tauHat.MLE = tau.MLE, tau.MLE = tau.MLE, 
-              sigma.MLE = sigma.MLE, sigmahat = sigma.MLE, lnProfileLike = lnProfileLike, 
-              sigma.MLE.FULL = sigma.MLE.FULL, tau.MLE.FULL = tau.MLE.FULL, 
-              lnProfileLike.FULL = lnProfileLike.FULL,
-              lnProfileREML.FULL =  lnProfileREML.FULL,
-              lnProfileREML =  lnProfileREML,
+              nonzero.entries = nzero, 
+              replicateInfo = replicateInfo,
               lnDetCov = lnDetCov, lnDetOmega = lnDetOmega,
-              quad.form = quad.form, Omega = Omega,lnDetOmega=lnDetOmega,
+               Omega = Omega, lnDetOmega=lnDetOmega,
               qr.VT = qr.VT, 
               Mc = Mc,
           Tmatrix = Tmatrix, ind.drift = ind.drift, nZ = nZ,
-          fixedEffectsCov = Omega * sigma.MLE.FULL, 
-         # dcoefSE = sqrt(diag( Omega) * sigma.MLE.FULL),  
+          fixedEffectsCov = Omega * sigma2.MLE.FULL, 
           collapseFixedEffect= collapseFixedEffect)
-  )
+    
+    object<- c( object, object2)
   #
-  # find the residuals directly from solution
-  # to avoid a call to predict
-  object$residuals <- lambda * c.coef/object$weights
-  object$fitted.values <- object$y - object$residuals
+ 
+  #
   # estimate effective degrees of freedom using Monte Carlo trace method.
+  # this is optional because not needed for predictions and likelihood
+  # but necessary for GCV
   if (find.trA) {
-    object2 <- mKrig.trace(object, iseed, NtrA)
-    object$eff.df <- object2$eff.df
-    object$trA.info <- object2$trA.info
-    object$GCV <- (sum(object$residuals^2)/np)/(1 - object2$eff.df/np)^2
+    object3 <- mKrig.trace(object, iseed, NtrA)
+    object$eff.df <- object3$eff.df
+    object$trA.info <- object3$trA.info
+    object$GCV <- (sum(object$residuals^2)/np)/(1 - object3$eff.df/np)^2
     if (NtrA < np) {
-      object$GCV.info <- (sum(object$residuals^2)/np)/(1 - object2$trA.info/np)^2
+      object$GCV.info <- (sum(object$residuals^2)/np)/(1 - object3$trA.info/np)^2
     }
     else {
       object$GCV.info <- NA
@@ -262,6 +282,23 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
     object$trA.info <- NA
     object$GCV <- NA
   }
+  
+  ################### compile summary vector of parameters
+  summaryPars<- rep(NA,8)
+  names( summaryPars) <- c( "lnProfileLike.FULL","lnProfileREML.FULL",
+                            "lambda" ,
+                            "tau","sigma2","aRange","eff.df","GCV")
+  summaryPars["lnProfileLike.FULL"]<- lnProfileLike.FULL
+  summaryPars["lnProfileREML.FULL"]<- lnProfileREML.FULL
+  summaryPars["tau"]  <- tau.MLE.FULL
+  summaryPars["sigma2"]<- sigma2.MLE.FULL
+  summaryPars["lambda"]<- lambda
+  summaryPars["aRange"] <-ifelse( !is.null(cov.args$aRange), 
+                                     cov.args$aRange, NA)
+  summaryPars["eff.df"] <- object$eff.df
+  summaryPars["GCV"] <- object$GCV
+  object$summary<- summaryPars
+  
   class(object) <- "mKrig"
   return(object)
 }

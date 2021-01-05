@@ -26,7 +26,7 @@ wendland.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
     # covariance
     #
     cov.args<-c( cov.args, list(...))
-    delta<- cov.args$theta 
+    delta<- cov.args$aRange 
     if (is.null(cov.obj)) {
         dx <- grid$x[2] - grid$x[1]
         dy <- grid$y[2] - grid$y[1]
@@ -59,7 +59,7 @@ wendland.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
               sqrt(
                 matrix( xGrid^2, M,N, byrow=FALSE) +  matrix( yGrid^2, M,N, byrow=TRUE))              
   #      cat("Wendland", fill=TRUE)                     
-        out<- Wendland( bigDistance / cov.args$theta, dimension=2, k=cov.args$k )
+        out<- Wendland( bigDistance / cov.args$aRange, dimension=2, k=cov.args$k )
         temp <- matrix(0, nrow = M, ncol = N)
         #
         # a simple way to normalize. This could be avoided by

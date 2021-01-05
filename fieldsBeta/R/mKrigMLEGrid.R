@@ -21,12 +21,13 @@
 
 mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                        mKrig.args = NULL,
-                          cov.fun = "stationary.cov", 
+                          cov.function = "stationary.cov", 
                          cov.args = NULL,
                            na.rm = TRUE, 
                          par.grid = NULL, 
                relative.tolerance = 1e-04,
                              REML = FALSE,
+                             GCV  = FALSE,
                        optim.args = NULL,
                  cov.params.start = NULL,
                           verbose = FALSE) {
@@ -39,7 +40,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   }
   #check which optimization options the covariance function supports
   #precompute distance matrix if possible so it only needs to be computed once
-  supportsDistMat = supportsArg(cov.fun, "distMat")
+  supportsDistMat = supportsArg(cov.function, "distMat")
   #precompute distance matrix if possible so it only needs to be computed once
   if(supportsDistMat) {
     #Get distance function and arguments if available
@@ -64,29 +65,36 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   # begin loop over covariance parameters and either evaluate at a grid of  lambda values
   # or use these as start values for optimization.
   for (k in 1:NG) {
+    
     cov.args.temp <- as.list( par.grid[k, ])
     names(cov.args.temp) <- names( par.grid)
     currentCov.args<- c( cov.args.temp, cov.args) 
     if( verbose){
       cat( "grid value: " , k, fill=TRUE)
-      #cat( names(currentCov.args ), fill=TRUE, sep=", ")
+      cat( names(currentCov.args ), fill=TRUE, sep=", ")
     }
-    
-# 
     MLEfit0 <- mKrigMLEJoint(x, y, 
                                   weights = weights, Z=Z, 
-                                  cov.fun = cov.fun,
+                                  cov.function = cov.function,
                                optim.args = optim.args,
                                  cov.args = currentCov.args,
                                     na.rm = na.rm,
                                mKrig.args = mKrig.args,
                                      REML = REML,
+                                     GCV  = GCV,
                          cov.params.start = cov.params.start,
                                   verbose = verbose)
      summary <- rbind( summary, MLEfit0$summary)
   }
   summary<- cbind( summary, par.grid)
+  if( REML){
+    indMax<- which.max( summary[,"lnProfileLike.FULL"]) 
+  } 
+  else{
+    indMax<- which.max( summary[,"lnProfileREML.FULL"]) 
+  }
+  
   return(list(summary = summary, par.grid = par.grid,
-              call = match.call())
+              call = match.call(), indMax= indMax )
          )
 }

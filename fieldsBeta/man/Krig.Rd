@@ -43,16 +43,16 @@ subsequent analysis. Krig also supports a correlation model where the mean
 and marginal variances are supplied. 
 }
 \usage{
-Krig(x, Y, cov.function = "stationary.cov", lambda = NA, df
-                 = NA, GCV = FALSE, Z = NULL, cost = 1, knots = NA,
-                 weights = NULL, m = 2, nstep.cv = 200, scale.type =
-                 "user", x.center = rep(0, ncol(x)), x.scale = rep(1,
-                 ncol(x)), sigma = NA, tau2 = NA, method = "REML",
-                 verbose = FALSE, mean.obj = NA, sd.obj = NA,
+ Krig(x, Y, cov.function = "stationary.cov", lambda = NA, df
+                 = NA, GCV = FALSE, Z = NULL, cost = 1, weights = NULL,
+                 m = 2, nstep.cv = 200, scale.type = "user", x.center =
+                 rep(0, ncol(x)), x.scale = rep(1, ncol(x)), sigma =
+                 NA, tau2 = NA, method = "REML", verbose = FALSE,
                  null.function = "Krig.null.function", wght.function =
                  NULL, offset = 0, na.rm = TRUE, cov.args = NULL,
                  chol.args = NULL, null.args = NULL, wght.args = NULL,
-                 W = NULL, give.warnings = TRUE, ...)
+                 W = NULL, give.warnings = TRUE, mean.obj = NA, sd.obj
+                 = NA, ...)
                  
 \method{fitted}{Krig}(object,...)
 
@@ -110,13 +110,7 @@ If FALSE warnings are not given. Best to leave this TRUE!
 This argument is set ot FALSE if warn is less than zero in the
 top level, R  options function. See options()$warn}
 
-\item{knots}{
-A matrix of locations similar to x. These can define an alternative set of
-basis functions for representing the estimate. One choice may be a
-space-filling subset of the original x locations, thinning out the
-design where locations cluster. The 
-default is to put a "knot" at all unique locations. (See details.)
-}
+
 \item{lambda}{
 Smoothing parameter that is the ratio of the error variance (tau**2) 
 to the scale parameter of the  
@@ -484,7 +478,7 @@ surface.Krig
 # fitting a surface to ozone  
 # measurements. Exponential covariance, range parameter is 20 (in miles) 
 
-fit <- Krig(ChicagoO3$x, ChicagoO3$y, theta=20)  
+fit <- Krig(ChicagoO3$x, ChicagoO3$y, aRange=20)  
  
 summary( fit) # summary of fit 
 set.panel( 2,2) 
@@ -519,19 +513,20 @@ predict( fit, df=7.5)
 # Using another stationary covariance. 
 # smoothness is the shape parameter for the Matern. 
 
-fit <- Krig(ChicagoO3$x, ChicagoO3$y, Covariance="Matern", theta=10, smoothness=1.0)  
+fit <- Krig(ChicagoO3$x, ChicagoO3$y,
+Covariance="Matern", aRange=10, smoothness=1.0)  
 summary( fit)
 
 #
 # Roll your own: creating very simple user defined Gaussian covariance 
 #
 
-test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
+test.cov <- function(x1,x2,aRange,marginal=FALSE,C=NA){
    # return marginal variance
      if( marginal) { return(rep( 1, nrow( x1)))}
 
     # find cross covariance matrix     
-      temp<- exp(-(rdist(x1,x2)/theta)**2)
+      temp<- exp(-(rdist(x1,x2)/aRange)**2)
       if( is.na(C[1])){
           return( temp)}
       else{
@@ -541,7 +536,7 @@ test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
 # use this and put in quadratic polynomial fixed function 
 
 
- fit.flame<- Krig(flame$x, flame$y, cov.function="test.cov", m=3, theta=.5)
+ fit.flame<- Krig(flame$x, flame$y, cov.function="test.cov", m=3, aRange=.5)
 
 #
 # note how range parameter is passed to Krig.   
@@ -570,118 +565,35 @@ test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
 # out  should be identical to  Tps( ChicagoO3$x, ChicagoO3$y)
 # 
 
-# A Knot example
-
- data(ozone2)
- y16<- ozone2$y[16,] 
-
-# there are some missing values -- remove them 
- good<- !is.na( y16)
- y<- y16[good] 
- x<- ozone2$lon.lat[ good,]
-
-#
-# the knots can be arbitrary but just for fun find them with a space 
-# filling design. Here we select  50 from the full set of 147 points
-#
- xknots<- cover.design( x, 50, num.nn= 75)$design  # select 50 knot points
-
- out<- Krig( x, y, knots=xknots,  cov.function="Exp.cov", theta=300)  
- summary( out)
-# note that that trA found by GCV is around 17 so 50>17  knots may be a 
-# reasonable approximation to the full estimator. 
-#
-\dontrun{
-# the plot 
- surface( out, type="C")
- US( add=TRUE)
- points( x, col=2)
- points( xknots, cex=2, pch="O")
-}
-\dontrun{
-## A quick way to deal with too much data if you intend to smooth it anyway
-##  Discretize the locations to a grid, then apply Krig 
-##  to the discretized locations:
-## 
-RM.approx<- as.image(RMprecip$y, x=RMprecip$x, nx=20, ny=20)
-
-# take a look:
-image.plot( RM.approx)
-# discretized data (observations averaged if in the same grid box)
-# 336 locations -- down form the  full 806
-
-# convert the image format to locations, obs and weight vectors
-yd<- RM.approx$z[RM.approx$ind]
-weights<- RM.approx$weights[RM.approx$ind] # takes into account averaging
-xd<- RM.approx$xd
-
-obj<- Krig( xd, yd, weights=weights, theta=4)
-
-# compare to the full fit:
-# Krig( RMprecip$x, RMprecip$y, theta=4) 
-}
-
-\dontrun{
-# A correlation model example
-# fit krig surface using a mean and sd function to standardize 
-# first get stats from 1987 summer Midwest O3 data set 
- data(ozone2)
- stats.o3<- stats( ozone2$y)
- mean.o3<- Tps( ozone2$lon.lat, c( stats.o3[2,]))
- sd.o3<- Tps(  ozone2$lon.lat, c( stats.o3[3,]))
-
-#
-# Now use these to fit particular day ( day 16) 
-# and use great circle distance 
-
-
- fit<- Krig( ozone2$lon.lat, ozone2$y[16,], 
-            theta=350, mean.obj=mean.o3, sd.obj=sd.o3, 
-            Covariance="Matern", Distance="rdist.earth",
-            smoothness=1.0,
-            na.rm=TRUE) #
-
-
-# the finale
- surface( fit, type="I")
- US( add=TRUE)
- points( fit$x)
- title("Estimated ozone surface")
-}
 \dontrun{
 #
 #
-# explore some different values for the range and lambda using REML
-  theta <- seq( 100,500,,40)
-  PLL<- matrix( NA, 40,80)
+# explore some different values for the range and lambda using GCV
+  data(ozone2)
+  aRange <- seq(200,600,,40)
+  GCV<- matrix( NA, 40,80)
 # the loop 
   for( k in 1:40){
 # call to Krig with different ranges
 # also turn off warnings for GCV search 
 # to avoid lots of messages. (not recommended in general!)
-    PLL[k,]<- Krig( ozone2$lon.lat,ozone2$y[16,],
+    obj<-Krig( ozone2$lon.lat,ozone2$y[16,],
              cov.function="stationary.cov", 
-             theta=theta[k], mean.obj=mean.o3, sd.obj=sd.o3, 
-             Covariance="Matern",smoothness=.5, 
+             aRange=aRange[k],
+             Covariance="Matern",smoothness=1.0, 
              Distance="rdist.earth", nstep.cv=80,
-             give.warnings=FALSE, na.rm=TRUE)$gcv.grid[,7]
-#
-# gcv.grid is the grid search output from 
-# the optimization for estimating different estimates for lambda including 
-# REML
-# default grid is equally spaced in eff.df scale ( and should the same across theta)
-#  here 
+             give.warnings=FALSE, na.rm=TRUE)
+    GCV[k,]<-obj$gcv.grid[,3]
   }
 # get lambda grid  from looping 
    k<- 1
    lam<-  Krig( ozone2$lon.lat,ozone2$y[16,],
              cov.function="stationary.cov", 
-             theta=theta[k], mean.obj=mean.o3, sd.obj=sd.o3, 
+             aRange=aRange[k], 
              Covariance="Matern",smoothness=.5, 
              Distance="rdist.earth", nstep.cv=80,
              give.warnings=FALSE, na.rm=TRUE)$gcv.grid[,1]
-# see the 2 column of $gcv.grid to get the effective degress of freedom. 
-  contour( theta,log(lam) , PLL)
+ matplot( log10(lam), t(GCV),type="l",lty=1)
  
 }
 }

@@ -18,7 +18,7 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"gcv.Krig" <- function(out, lambda.grid = NA, cost = 1, 
+"KrigFindLambda" <- function(out, lambda.grid = NA, cost = 1, 
     nstep.cv = 200, rmse = NA, verbose = FALSE, tol = 1e-05, 
     offset = 0, y = NULL, give.warnings = TRUE) {
     nt <- out$nt

@@ -69,14 +69,14 @@ world( add=TRUE)
 # see help( fastTps) for details
 # First smooth using locations and Euclidean distances 
 # note taper is in units of degrees 
-out<-fastTps( CO2$lon.lat, CO2$y, theta=4, lambda=2.0) 
+out<-fastTps( CO2$lon.lat, CO2$y, aRange=4, lambda=2.0) 
 #summary of fit note about 7300 degrees of freedom 
 # associated with fitted surface
  print( out)
 # image plot on a grid  (this takes a while)
 surface( out, type="I", nx=300, ny=150)
 # smooth with respect to great circle distance 
-out2<-fastTps( CO2$lon.lat, CO2$y, lon.lat=TRUE,lambda=1.5, theta=4*68) 
+out2<-fastTps( CO2$lon.lat, CO2$y, lon.lat=TRUE,lambda=1.5, aRange=4*68) 
 print(out2)
 #surface( out2, type="I", nx=300, ny=150)
 

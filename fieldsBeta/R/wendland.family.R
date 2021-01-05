@@ -18,10 +18,10 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-Wendland2.2 <- function(d, theta = 1) {
+Wendland2.2 <- function(d, aRange = 1) {
     # Cari's test function  with explicit form  for d=2 k=2
     # taper range is 1.0
-    d <- d/theta
+    d <- d/aRange
     if (any(d < 0)) 
         stop("d must be nonnegative")
     return(((1 - d)^6 * (35 * d^2 + 18 * d + 3))/3 * (d < 1))
@@ -29,7 +29,7 @@ Wendland2.2 <- function(d, theta = 1) {
 #
 # the monster
 #
-"wendland.cov" <- function(x1, x2=NULL, theta = 1, V = NULL, 
+"wendland.cov" <- function(x1, x2=NULL, aRange = 1, V = NULL, 
     k = 2, C = NA, marginal = FALSE, Dist.args = list(method = "euclidean"), 
     spam.format = TRUE, derivative = 0,  verbose = FALSE) {
     #
@@ -59,17 +59,17 @@ Wendland2.2 <- function(d, theta = 1) {
     if (Dist.args$method != "euclidean" & derivative > 0) {
         stop("derivatives not supported for this distance metric")
     }
-    # catch bad theta format
-    if (length(theta) > 1) {
-        stop("theta as a matrix or vector has been depreciated")
+    # catch bad aRange format
+    if (length(aRange) > 1) {
+        stop("aRange as a matrix or vector has been depreciated")
     }
     # catch using V with great circle
     if (!is.null(V) & great.circle) {
         stop("V is not implemented with great circle distance")
     }
     if (!is.null(V)) {
-        if (theta != 1) {
-            stop("can't specify both theta and V!")
+        if (aRange != 1) {
+            stop("can't specify both aRange and V!")
         }
         x1 <- x1 %*% t(solve(V))
         x2 <- x2 %*% t(solve(V))
@@ -78,10 +78,10 @@ Wendland2.2 <- function(d, theta = 1) {
     # also figure out if scale is in miles or kilometers
     if (great.circle) {
         miles <- ifelse(is.null(Dist.args$miles), TRUE, Dist.args$miles)
-        delta <- (180/pi) * theta/ifelse(miles, 3963.34, 6378.388)
+        delta <- (180/pi) * aRange/ifelse(miles, 3963.34, 6378.388)
     }
     else {
-        delta <- theta
+        delta <- aRange
     }
     if (verbose) {
         print(delta)
@@ -98,13 +98,13 @@ Wendland2.2 <- function(d, theta = 1) {
     #
     sM <- do.call("nearest.dist", c(list(x1, x2, delta = delta, 
         upper = NULL), Dist.args))
-    # scale distances by theta
-    # note: if V is passed then theta==1 and all the scaling should be done with the V matrix.
+    # scale distances by aRange
+    # note: if V is passed then aRange==1 and all the scaling should be done with the V matrix.
     # there are two possible actions listed below:
     # find  Wendland cross covariance matrix
     # return either in sparse or matrix format
     if (is.na(C[1])) {
-        sM@entries <- Wendland(sM@entries/theta, k = k, dimension = d)
+        sM@entries <- Wendland(sM@entries/aRange, k = k, dimension = d)
         if (!spam.format) {
             return(as.matrix(sM))
         }
@@ -119,7 +119,7 @@ Wendland2.2 <- function(d, theta = 1) {
         #  note multiply happens in spam format
         #
         if (derivative == 0) {
-            sM@entries <- Wendland(sM@entries/theta, k = k, dimension = d)
+            sM@entries <- Wendland(sM@entries/aRange, k = k, dimension = d)
             return(sM %*% C)
         }
         else {
@@ -134,7 +134,7 @@ Wendland2.2 <- function(d, theta = 1) {
             L <- length(coef)
             #         loop over dimensions and accumulate partial derivative matrix.
             tempD <- sM@entries
-            tempW <- Wendland(tempD/theta, k = k, dimension = d, 
+            tempW <- Wendland(tempD/aRange, k = k, dimension = d, 
                 derivative = derivative)
             # loop over dimensions and knock out each partial accumulate these in
             # in temp
@@ -148,7 +148,7 @@ Wendland2.2 <- function(d, theta = 1) {
                 #
                 #
                 sM@entries <- ifelse(tempD == 0, 0, (tempW * 
-                  (x1[sMrowindices, kd] - x2[sM@colindices, kd])/(theta * 
+                  (x1[sMrowindices, kd] - x2[sM@colindices, kd])/(aRange * 
                   tempD)))
                 #
                 # accumlate the new partial
@@ -166,10 +166,10 @@ Wendland2.2 <- function(d, theta = 1) {
 #
 #
 #
-Wendland2.2 <- function(d, theta = 1) {
+Wendland2.2 <- function(d, aRange = 1) {
     # Cari Kaufman's test case with explicit form  for d=2 k=2
     # taper range is 1.0
-    d <- d/theta
+    d <- d/aRange
     if (any(d < 0)) 
         stop("d must be nonnegative")
     return(((1 - d)^6 * (35 * d^2 + 18 * d + 3))/3 * (d < 1))
@@ -185,7 +185,7 @@ Wendland2.2 <- function(d, theta = 1) {
 #  functions of minimal degree. AICM 4(1995), pp 389-396.
 #########################################
 ## top level function:
-Wendland = function(d, theta = 1, dimension, k, derivative = 0, 
+Wendland = function(d, aRange = 1, dimension, k, derivative = 0, 
     phi = NA) {
     if (!is.na(phi)) {
         stop("phi argument has been depreciated")
@@ -195,13 +195,13 @@ Wendland = function(d, theta = 1, dimension, k, derivative = 0,
     }
     # find scaling so that function at zero is 1.
     scale.constant <- wendland.eval(0, n = dimension, k, derivative = 0)
-    # adjust by theta
+    # adjust by aRange
     if (derivative > 0) {
-        scale.constant <- scale.constant * (theta^(derivative))
+        scale.constant <- scale.constant * (aRange^(derivative))
     }
-    # scale distances by theta.
-    if( theta!=1){
-         d <- d/theta}
+    # scale distances by aRange.
+    if( aRange!=1){
+         d <- d/aRange}
     # at this point d the distances shouls be scaled so that
     # covariance is zero beyond 1
     if( (k==2)& (dimension==2) & (derivative==0)){

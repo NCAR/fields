@@ -41,10 +41,9 @@ covariance paramters.
 mKrig(x, y, weights = rep(1, nrow(x)), Z = NULL,
                  cov.function = "stationary.cov", cov.args = NULL,
                  lambda = 0, m = 2, chol.args = NULL, find.trA = TRUE,
-                 NtrA = 20, iseed = 123, llambda = NULL, na.rm = FALSE,
-                  collapseFixedEffect = TRUE,
+                 NtrA = 20, iseed = NA, llambda = NULL, na.rm = FALSE,
+                 collapseFixedEffect = TRUE, tau = NA, sigma2 = NA,
                  ...)
-  
 \method{predict}{mKrig}( object, xnew=NULL,ynew=NULL, grid.list = NULL,
 derivative=0,
 Z=NULL,drop.Z=FALSE,just.fixed=FALSE,
@@ -100,7 +99,7 @@ If TRUE will estimate the effective degrees of freedom using
   arbitrary locations.}
 
 \item{iseed}{Random seed ( using \code{set.seed(iseed)}) used to generate 
-  iid normals for Monte Carlo estimate of the trace.}
+  iid normals for Monte Carlo estimate of the trace. Set this to an integer to insure the same random draws are used to compute the approximate trace and be consistent across different values of the covariance parameters. }
 
 \item{just.fixed}{If TRUE only the predictions for the fixed part of
   the model will be evaluted.}
@@ -120,6 +119,10 @@ If TRUE will estimate the effective degrees of freedom using
 
 \item{object}{Object returned by mKrig. (Same as "x"
   in the print function.)}
+  
+\item{sigma2}{Value of the process variance.}  
+
+\item{tau}{ Value of the measurment error standard deviation.}
   
 \item{weights}{Precision ( 1/variance) of each observation}
 
@@ -150,21 +153,26 @@ that will be passed to the covariance function.}
 
 }
 \details{
- This function is an abridged version of Krig. The m stand for micro
-and this function focuses on the computations in Krig.engine.fixed
-done for a fixed lambda parameter, for unique spatial locations and
-for data without missing values.
+ This function is an abridged version of Krig and uses a more direct
+ computation for the linear algebra that faciliates compactly supported
+ covariance functions. The m stand for micro
+and 
+done for a fixed lambda parameter and other covariance parameters (e.g. aRange) and for unique spatial locations. 
+This is also the basic computational element of the top level \code{\link{spatialProcess} } function for finding MLEs. 
+See the source code for a commented version that described the computation.
+
 
 These restrictions simplify the code for reading. Note that also
 little checking is done and the spatial locations are not transformed
 before the estimation.  Because most of the operations are linear
 algebra this code has been written to handle multiple data
-sets. Specifically if the spatial model is the same except for
+sets. Specifically, if the spatial model is the same except for
 different observed values (the y's), one can pass \code{y} as a matrix
-and the computations are done efficiently for each set.  Note that
-this is not a multivariate spatial model just an efficient computation
-over several data vectors without explicit looping.A big difference in
-the computations is that an exact expression for thetrace of the
+and the computations are done efficiently for each set.
+The likelihood across all replicates is combined and denoted with  \code{FULL} at the end. Also not the \code{collapseFixedEffects} switch to determine if the regression part is found seperately for each replicate or combined into a single model. Note that
+this is not a multivariate spatial model  -- just an efficient computation
+over several data vectors without explicit looping. A big difference in
+the computations is that an exact expression for the trace of the
 smoothing matrix is (trace A(lambda)) is computationally expensive and
 a Monte Carlo approximation is supplied instead.
 
@@ -224,16 +232,20 @@ finding the trace exactly based on applying A to \code{np} unit
 vectors.
 }
 \value{
-  \item{d}{Coefficients of the polynomial fixed part and if present
+
+  \item{summary}{A named array with the values of  covariance parameters
+ and log likelihoods.}
+
+  \item{beta}{Coefficients of the polynomial fixed part and if present
   the covariates (Z).To determine which is which the logical vector
   ind.drift also part of this object is TRUE for the polynomial
   part. }
 
-  \item{c}{ Coefficients of the nonparametric part.}
+  \item{c.coef}{ Coefficients of the nonparametric part.}
 
   \item{nt}{ Dimension of fixed part.}
 
-  \item{np}{ Dimension of c.}
+  \item{np}{ Dimension of c.coef.}
 
   \item{nZ}{Number of columns of Z covariate matrix (can be zero).}
 
@@ -263,15 +275,7 @@ vectors.
  \item{non.zero.entries}{ Number of nonzero entries in the covariance
 matrix for the process at the observation locations.}
 
- \item{tauHat.MLE}{MLE of tau.}
-
- \item{sigma.MLE}{MLE or sigma.}
-
- \item{sigmahat}{Estimate for sigma adjusted for fixed model degrees of
- freedom (ala REML).}
-
- \item{lnProfileLike}{log Profile likelihood for lambda}
-
+ 
  \item{lnDetCov}{Log determinant of the covariance matrix for the
   observations having factored out sigma.}
 
@@ -309,12 +313,12 @@ to \code{np} then these are the diagonal elements of A(lamdba).}
   x<- ozone2$lon.lat[good,]
 # nearly interpolate using defaults (Exponential covariance range = 2.0)
 # see also mKrigMLEGrid to choose lambda by maxmimum likelihood
-  out<- mKrig( x,y, theta = 2.0, lambda=.01)
+  out<- mKrig( x,y, aRange = 2.0, lambda=.01)
   out.p<- predictSurface( out)
   surface( out.p)
 #
 # NOTE this should be identical to 
-# Krig( x,y, theta=2.0, lambda=.01) 
+# Krig( x,y, aRange=2.0, lambda=.01) 
 
 ##############################################################################
 # an example using a "Z" covariate and the Matern family
@@ -326,7 +330,7 @@ yCO<-yCO[good]
 xCO<- CO.loc[good,]
 Z<- CO.elev[good]
 out<- mKrig( xCO,yCO, Z=Z, cov.function="stationary.cov", Covariance="Matern",
-                    theta=4.0, smoothness=1.0, lambda=.1)
+                    aRange=4.0, smoothness=1.0, lambda=.1)
 set.panel(2,1)
 # quilt.plot with elevations
 quilt.plot( xCO, predict(out))
@@ -334,69 +338,6 @@ quilt.plot( xCO, predict(out))
 surface( out)
 set.panel()
 
-#########################################################################
-# Interpolate using tapered version of the exponential, 
-# the taper scale is set to 1.5 default taper covariance is the Wendland.
-# Tapering will done at a scale of 1.5 relative to the scaling 
-# done through the theta  passed to the covariance function.
-data( ozone2)
-  y<- ozone2$y[16,]
-  good<- !is.na( y)
-  y<-y[good]
-  x<- ozone2$lon.lat[good,]
-  mKrig( x,y,cov.function="stationary.taper.cov",
-       theta = 2.0, lambda=.01, 
-       Taper="Wendland",  Taper.args=list(theta = 1.5, k=2, dimension=2)
-           ) -> out2
-
-# Try out GCV on a grid of lambda's.
-# For this small data set 
-# one should really just use Krig or Tps but this is an example of
-# approximate GCV that will work for much larger data sets using sparse 
-# covariances and the Monte Carlo trace estimate
-#
-# a grid of lambdas:
-  lgrid<- 10**seq(-1,1,,15) 
-  GCV<- matrix( NA, 15,20)
-  trA<-  matrix( NA, 15,20)
-  GCV.est<- rep( NA, 15)
-  eff.df<- rep( NA, 15)
-  logPL<- rep( NA, 15) 
-# loop over lambda's
-  for(  k in 1:15){
-      out<- mKrig( x,y,cov.function="stationary.taper.cov",
-                    theta = 2.0, lambda=lgrid[k],
-          Taper="Wendland",  Taper.args=list(theta = 1.5, k=2, dimension=2)  ) 
-      GCV[k,]<- out$GCV.info
-      trA[k,]<- out$trA.info
-      eff.df[k]<- out$eff.df
-      GCV.est[k]<- out$GCV
-      logPL[k]<- out$lnProfileLike
-  }
-#
-# plot the results different curves are for individual estimates  
-# the two lines are whether one averages first the traces or the GCV criterion.
-#
-  par( mar=c(5,4,4,6))
-  matplot( trA, GCV, type="l", col=1, lty=2,
-            xlab="effective degrees of freedom", ylab="GCV")
-  lines( eff.df, GCV.est, lwd=2, col=2)
-  lines( eff.df, rowMeans(GCV), lwd=2)
-# add exact GCV computed by Krig 
-  out0<-  Krig( x,y,cov.function="stationary.taper.cov",
-              theta = 2.0, 
-              Taper="Wendland", Taper.args=list(theta = 1.5, k=2, dimension=2),
-              spam.format=FALSE)  
-  lines( out0$gcv.grid[,2:3], lwd=4, col="darkgreen")
-
-# add profile likelihood 
-  utemp<- par()$usr
-  utemp[3:4] <- range( -logPL)
-  par( usr=utemp)
-  lines( eff.df, -logPL, lwd=2, col="blue", lty=2)
-  axis( 4)
-  mtext( side=4,line=3, "-ln profile likelihood", col="blue")
-  title( "GCV ( green = exact) and  -ln profile likelihood", cex=2)
 
 #########################################################################
 # here is a series of examples with bigger datasets  
@@ -407,27 +348,27 @@ N<- 1000
 x<- matrix( 2*(runif(2*N)-.5),ncol=2)
 y<- sin( 1.8*pi*x[,1])*sin( 2.5*pi*x[,2]) + rnorm( 1000)*.1
   
-look2<-mKrig( x,y, cov.function="wendland.cov",k=2, theta=.2, 
+look2<-mKrig( x,y, cov.function="wendland.cov",k=2, aRange=.2, 
             lambda=.1)
 
 # take a look at fitted surface
 predictSurface(look2)-> out.p
 surface( out.p)
 
-# this works because the number of nonzero elements within distance theta
+# this works because the number of nonzero elements within distance aRange
 # are less than the default maximum allocated size of the 
 # sparse covariance matrix. 
 #  see  options() for the default values. The names follow the convention
 # spam.arg where arg is the name of the spam component 
 #   e.g. spam.nearestdistnnz
 
-# The following will give a warning for theta=.9 because 
+# The following will give a warning for aRange=.9 because 
 # allocation for the  covariance matirx storage is too small. 
-# Here theta controls the support of the covariance and so 
+# Here aRange controls the support of the covariance and so 
 # indirectly the  number of nonzero elements in the sparse matrix
 
 \dontrun{
- look2<- mKrig( x,y, cov.function="wendland.cov",k=2, theta=.9, lambda=.1)
+ look2<- mKrig( x,y, cov.function="wendland.cov",k=2, aRange=.9, lambda=.1)
 }
 
 # The warning resets the memory allocation  for the covariance matrix
@@ -439,7 +380,7 @@ surface( out.p)
 
 options( spam.nearestdistnnz=c(416052,400))
   look2<- mKrig( x,y, cov.function="wendland.cov",k=2,
-                    theta=.9, lambda=1e-2)
+                    aRange=.9, lambda=1e-2)
 # as a check notice that 
 #   print( look2)
 # reports the number of nonzero elements consistent with the specifc allocation
@@ -458,11 +399,11 @@ options( spam.nearestdistnnz=c(416052,400))
 # the allocation is increased by 25% in this example
 #
  look2<- mKrig( x,y, 
-            cov.function="wendland.cov",k=2, theta=.1, lambda=1e2  )
+            cov.function="wendland.cov",k=2, aRange=.1, lambda=1e2  )
 }
 # to avoid the warning 
  look2<-mKrig( x,y, 
-            cov.function="wendland.cov", k=2, theta=.1, 
+            cov.function="wendland.cov", k=2, aRange=.1, 
             lambda=1e2, chol.args=list(pivot=TRUE, memory=list(nnzR= 450000)))
 
 ###############################################################################
@@ -472,14 +413,15 @@ options( spam.nearestdistnnz=c(416052,400))
   y1<- sin( 1.8*pi*x[,1])*sin( 2.5*pi*x[,2]) + rnorm( N)*.01
   y2<- sin( 1.8*pi*x[,1])*sin( 2.5*pi*x[,2]) + rnorm( N)*.01
   Y<- cbind(y1,y2)
-  look3<- mKrig( x,Y,cov.function="wendland.cov",k=2, theta=.1, 
+  look3<- mKrig( x,Y,cov.function="wendland.cov",k=2, aRange=.1, 
             lambda=1e2  )
 # note slight difference in summary because two data sets have been fit.
   print( look3)
 #}
 
+\dontrun{
 ##################################################################
-# finding a good choice for theta as a taper 
+# finding a good choice for aRange as a taper 
 
 # Suppose the target is a spatial prediction using roughly 50 nearest neighbors
 # (tapering covariances is effective for roughly 20 or more in the situation of 
@@ -505,8 +447,8 @@ options( spam.nearestdistnnz=c(416052,400))
 # see  table( hold3) for the distribution 
 # now the following will use no less than 43 - 1  nearest neighbors 
 # due to the tapering. 
-\dontrun{
-  mKrig( x,y, cov.function="wendland.cov",k=2, theta=dguess, 
+
+  mKrig( x,y, cov.function="wendland.cov",k=2, aRange=dguess, 
             lambda=1e2) ->  look2
 }
 
@@ -519,11 +461,11 @@ options( spam.nearestdistnnz=c(416052,400))
   Y<- cbind(y1,y2)
   #precompute distance matrix in compact form
   distMat = rdist(x, compact=TRUE)
-  look3<- mKrig( x,Y,cov.function="stationary.cov", theta=.1, 
+  look3<- mKrig( x,Y,cov.function="stationary.cov", aRange=.1, 
             lambda=1e2, distMat=distMat )
   #precompute distance matrix in standard form
   distMat = rdist(x)
-  look3<- mKrig( x,Y,cov.function="stationary.cov", theta=.1, 
+  look3<- mKrig( x,Y,cov.function="stationary.cov", aRange=.1, 
             lambda=1e2, distMat=distMat )
 }
 }

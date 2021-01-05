@@ -98,6 +98,7 @@ summary.spatialProcess <- function(object, ...) {
   outObject$MLEpars<-  names( object$MLEInfo$pars.MLE) 
   outObject$MLESummary<- object$summary
 ########### information for SE for fixed effects
+  if(!is.null(outObject$d.coef ) ){
   if( outObject$collapseFixedEffect | (nData==1) ){
     outObject$fixedEffectsCov<- object$fixedEffectsCov
     SE<- sqrt(diag(outObject$fixedEffectsCov))
@@ -115,6 +116,10 @@ summary.spatialProcess <- function(object, ...) {
     }
     dimnames( outObject$fixedEffectsTable) <- list( outObject$fixedEffectNames,
                                            c("estimate", "SE", "pValue") )
+  }
+  }
+  else{
+    outObject$fixedEffectsTable<- NA
   }
 #####################
   outObject$nData <- nData

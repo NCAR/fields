@@ -56,7 +56,7 @@ minima bound.}
 Default is \code{stationary.cov} and general function that takes advantage of some efficiency
 in finding distances.}
 
-\item{cov.args}{A list of arguments to include with the covariance function, Eg. theta and 
+\item{cov.args}{A list of arguments to include with the covariance function, Eg. aRange and 
 smoothness for the Matern.}
 
 \item{\dots}{For convenience any other arguments to pass to the covariance function. }
@@ -150,7 +150,7 @@ algortihms and theory.
 #range parameter = 2.0 and the domain is  [0,5]X [0,5] evaluating the 
 #field at a 100X100 grid.  
   grid<- list( x= seq( 0,5,,100), y= seq(0,5,,100)) 
-  obj<- circulantEmbeddingSetup( grid, Covariance="Exponential", theta=.5)
+  obj<- circulantEmbeddingSetup( grid, Covariance="Exponential", aRange=.5)
   set.seed( 223)
   look<-  circulantEmbedding( obj)
 # Now simulate another ... 
@@ -172,9 +172,9 @@ look3<- sqrt( 10)*circulantEmbedding( obj)
 grid<- list(  1:40,  1:40, 1:16  )
 
 obj<- circulantEmbeddingSetup( grid,
-                         cov.args=list( Covariance="Matern", theta=2, smoothness=1.0)
+                         cov.args=list( Covariance="Matern", aRange=2, smoothness=1.0)
                          )
-# NOTE: choice of theta is close to giving a negative weight array
+# NOTE: choice of aRange is close to giving a negative weight array
 set.seed( 122)
 look<- circulantEmbedding( obj )
 # look at slices in the 3rd dimension 
@@ -193,7 +193,7 @@ image( grid[[1]], grid[[2]], look[,,k], zlim= zr, col=tim.colors(256),
 # same as first example using the older sim.rf
 
 grid<- list( x= seq( 0,10,length.out=100) , y= seq( 0,10,length.out=100) )
-obj<-Exp.image.cov( grid=grid, theta=.75, setup=TRUE)
+obj<-Exp.image.cov( grid=grid, aRange=.75, setup=TRUE)
 set.seed( 223)
 look<- sim.rf( obj)
 # Now simulate another ... 

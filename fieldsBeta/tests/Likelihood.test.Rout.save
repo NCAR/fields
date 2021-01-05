@@ -44,8 +44,6 @@ Type 'q()' to quit R.
 > options( echo=FALSE)
 Testing:  check ccoef
 PASSED test at tolerance  1e-08
-Testing:  llike full verses rhohat
-PASSED test at tolerance  1e-08
 Testing:  llike profile from mKrig
 PASSED test at tolerance  1e-08
 Testing:  ccoefs
@@ -59,13 +57,9 @@ Testing:  det
 PASSED test at tolerance  1e-08
 Testing:  REML using matrices
 PASSED test at tolerance  1e-08
-Testing:  REML profile flplike
-PASSED test at tolerance  1e-08
-Testing:  REML profile flplike
-PASSED test at tolerance  1e-08
 all done with likelihood  tests
 >       
 > 
 > proc.time()
    user  system elapsed 
-  0.766   0.101   0.845 
+  0.924   0.102   1.011 

@@ -39,7 +39,7 @@ x0<- cbind( c(.1,.2,.6,.65,.8), c(.05,.5,.73,.9,.95))
 
 
 temp.wght<- function(x, alpha=.3){
-  Exp.cov( x, theta=.1) }
+  Exp.cov( x, aRange=.1) }
 
 Krig( x,y, cov.function=Exp.cov,weights=weights,
      wght.function= "temp.wght")-> out

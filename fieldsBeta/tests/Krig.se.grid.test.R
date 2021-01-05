@@ -36,7 +36,7 @@ y<- dtemp$z[ dtemp$ind]
 weights<- dtemp$weights[ dtemp$ind]
 
 Krig( x, y, Covariance="Matern", 
-   theta=1.0, smoothness=1.0, weights=weights) -> out
+   aRange=1.0, smoothness=1.0, weights=weights) -> out
 
 
 if(long.test.flag){

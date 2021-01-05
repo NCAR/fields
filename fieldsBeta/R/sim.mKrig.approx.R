@@ -37,13 +37,13 @@
     }
     nxSimulation <- length(simulationGridList$x)
     nySimulation <- length(simulationGridList$y)
-    tau <- mKrigObject$tau.MLE
-    sigma <- mKrigObject$sigma.MLE
+    tau <- mKrigObject$summary["tau"]
+    sigma2 <- mKrigObject$summary["sigma2"]
     #
     # set up various sizes of arrays
     nObs <- nrow(mKrigObject$x)
     if (verbose) {       
-        cat("nObs, tau, sigma", nObs, tau, sigma, fill = TRUE)
+        cat("nObs, tau, sigma2", nObs, tau, sigma2, fill = TRUE)
         cat("simulationGridList)", fill=TRUE)
         print( t( stats( simulationGridList)))
     }
@@ -74,7 +74,7 @@
         if (verbose) {
             cat(k, " ")
         }
-        hTrue$z <- sqrt(sigma) * sim.rf(covarianceObject)
+        hTrue$z <- sqrt(sigma2) * sim.rf(covarianceObject)
         #
         # NOTE: fixed part of model (null space) need not be simulated
         # because the  estimator is unbiased for this part.

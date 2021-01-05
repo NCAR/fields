@@ -17,355 +17,7 @@
 # You should have received a copy of the GNU General Public License
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-# or see http://www.r-project.org/Licenses/GPL-2    
-"Krig" <- function(x, Y, cov.function = "stationary.cov", 
-    lambda = NA, df = NA, GCV = FALSE, Z = NULL, cost = 1, knots = NA, 
-    weights = NULL, m = 2, nstep.cv = 200, scale.type = "user", 
-    x.center = rep(0, ncol(x)), x.scale = rep(1, ncol(x)), sigma = NA, 
-    tau2 = NA, method = "REML", verbose = FALSE, mean.obj = NA, 
-    sd.obj = NA, null.function = "Krig.null.function", wght.function = NULL, 
-    offset = 0,  na.rm = TRUE, cov.args = NULL, 
-    chol.args = NULL, null.args = NULL, wght.args = NULL, W = NULL, 
-                   give.warnings = TRUE, ...)
-# the verbose switch prints many intermediate steps as an aid in debugging.
-#
-{ 
-    #
-    # create output list
-    out <- list()
-    ###########################################################
-    #  First series of steps simply store pieces of the passed
-    #    information to the output list (i.e. the Krig object)
-    ##########################################################
-        out$call <- match.call()
-    #   turn off warning based on options
-        if( options()$warn < 0 ){
-        	give.warnings<- FALSE
-        }
-    #
-    # save covariance function as its name
-    #
-    if( !is.character( cov.function)){
-    out$cov.function.name <- as.character(substitute(cov.function))
-    }
-    else{ 
-    	out$cov.function.name<-cov.function
-    	} 
-    #
-    # save null space function as its name
-    #
-    out$null.function.name <- as.character(substitute(null.function))
-    #
-    # save weight  function as its name if it is not a NULL
-    #
-    if (is.null(wght.function)) {
-        out$wght.function.name <- NULL
-    }
-    else {
-        out$wght.function.name <- as.character(substitute(wght.function))
-    }
-    out$W <- W
-    if (verbose) {
-        print(out$cov.function.name)
-        print(out$null.function.name)
-        print(out$wght.function.name)
-    }
-    #
-    # logical to indicate if the 'C' argument is present in cov.function
-    # -- a bit of esoteric R code!
-    C.arg.missing <- all(names(formals(get(out$cov.function.name))) != 
-        "C")
-    if (C.arg.missing) 
-        stop("Need to have C argument in covariance function\nsee Exp.cov.simple as an example")
-    #
-    # save parameters values possibly passed to the covariance function
-    # also those added to call are assumed to be covariance arguments.
-    if (!is.null(cov.args)) 
-        out$args <- c(cov.args, list(...))
-    else out$args <- list(...)
-    #
-    # default values for null space function
-    out$null.args <- null.args
-    #
-    #       set degree of polynomial null space if this is default
-    #       mkpoly is used so often is it helpful to include m argument
-    #       by default in Krig call.
-    if (out$null.function.name == "Krig.null.function") {
-        out$null.args <- list(m = m)
-        out$m <- m
-    }
-    #
-    # default values for Cholesky decomposition, these are important
-    # for sparse matrix decompositions used in Krig.engine.fixed.
-    if (is.null(chol.args)) {
-        out$chol.args <- list(pivot = FALSE)
-    }
-    else {
-        out$chol.args <- chol.args
-    }
-    # additional arguments for weight matrix.
-    out$wght.args <- wght.args
-    #
-    # the offset is the effective number of parameters used in the GCV
-    # calculations -- unless this is part of an additive model this
-    # is likely zero
-    out$offset <- offset
-    #
-    # the cost is the multiplier applied to the GCV eff.df
-    # 
-    # lambda and df are two ways of parameterizing the smoothness
-    # and are related by a monotonic function that unfortunately
-    # depends on the locations of the data.
-    # lambda can be used directly in the linear algebra, df
-    # must be transformed to lambda numerically using the monotonic trransformation
-    # tau2 is the error variance and sigma the multiplier for the covariance
-    # method is how to determine lambda
-    # the GCV logical forces the code to do the more elaborate decompositions
-    # that faclitate estimating lambda -- even if a specific lambda value is
-    # given.
-    out$cost <- cost
-    out$lambda <- lambda
-    out$eff.df <- df
-    out$tau2 <- tau2
-    out$sigma <- sigma
-    out$method <- method
-    out$GCV <- GCV
-    #
-    # correlation model information
-    #
-    out$mean.obj <- mean.obj
-    out$sd.obj <- sd.obj
-    out$correlation.model <- !(is.na(mean.obj[1]) & is.na(sd.obj[1]))
-    #
-    # transformation info
-    out$scale.type <- scale.type
-    out$x.center <- x.center
-    out$x.scale <- x.scale
-    #
-    # verbose block
-    if (verbose) {
-        cat("  Cov function arguments in call  ", fill = TRUE)
-        print(out$args)
-        cat(" covariance function used is : ", fill = TRUE)
-        print(out$cov.function.name)
-    }
-    ###############################################################
-    # Begin modifications and transformations of input information
-    # note that many of these manipulations follow a strategy
-    # of passing the Krig object (out) to a function and
-    # then appending the information from this function to
-    # the Krig object (usually also called "out").
-    #In this way the Krig object  is built up
-    # in steps and the process is easier to follow.
-    ###############################################################
-    # various checks on x and  Y including removal of NAs in Y
-    # Here is an instance of adding to the Krig object
-    # in this case also some onerous bookkeeping making sure arguments are consistent
-    out2 <- Krig.check.xY(x, Y, Z, weights, na.rm, verbose = verbose)
-    out <- c(out, out2)
-    # transform to correlation model (if appropriate)
-    # find replicates and collapse to means and pool variances.
-    # Transform unique x locations and knots.
-    if (out$correlation.model) {
-        out$y <- Krig.cor.Y(out, verbose = verbose)
-    }
-    out2 <- Krig.transform.xY(out, knots, verbose = verbose)
-    out <- c(out, out2)
-    # NOTE: knots have been transformed after this step
-    #############################################################
-    #  Figure out what to do
-    #############################################################
-    #
-    # this functions works through the logic of
-    # what has been supplied for lambda
-    out2 <- Krig.which.lambda(out)
-    out[names(out2)] <- out2  
-    # Make weight matrix for observations
-    #    ( this is proportional to the inverse square root of obs covariance)
-    #     if a weight function or W has not been passed then this is
-    #     diag( out$weightsM) for W
-    #     The checks represent a limitation of this model to
-    #     the  WBW type decoposition and no replicate observations.
-    out$nondiag.W <- (!is.null(wght.function)) | (!is.null(W))
-    # Do not continue if there there is a nondiagonal weight matrix
-    # and replicate observations.
-    if (out$nondiag.W) {
-        if (out$knot.model | out$fixed.model) {
-            stop("Non diagonal weight matrix for observations
-                    not supported\nwith knots or fixed lambda.")
-        }
-        if (!is.na(out$tauHat.pure.error)) {
-            stop("Non diagonal weight matrix not implemented
-                    with replicate locations")
-        }
-    }
-    #  make weight matrix and its square root having passed checks
-    out <- c(out, Krig.make.W(out, verbose = verbose))
-    ########################################################
-    #  You have reached the Engines where the actual computing happens!
-    ########################################################
-    #   Do the intensive linear algebra to find the solutions
-    #   this is where all the heavy lifting happens.
-    #
-    #   Note that all the information is passed as a list
-    #   including arguments to the cholesky decomposition
-    #   used within Krig.engine.fixed
-    #
-    # The results are saved in the component matrices
-    #
-    # if method=='user' then just evaluate at single lambda
-    #  fixed here means a fixed lambda
-    #
-    # For fixed lambda the decompositions with and without knots
-    # are surprisingly similar and so are in one engine.
-    ###########################################################
-    if (out$fixed.model) {
-        out$matrices <- Krig.engine.fixed(out, verbose = verbose)
-    #  The trace of A matrix in fixed lambda case is not easily computed
-    #  so set this to NA.
-        out$eff.df <- NA
-    }
-    #
-    # alternative are
-    # matrix decompositions suitable for
-    # evaluation at many lambdas to facilitate GCV/REML estimates  etc.
-    #
-    if (!out$fixed.model) {
-        if (out$knot.model) {
-            # the knot model engine
-            if( verbose){
-              cat("called Krig.engine.knots: ", fill=TRUE)
-            }
-            out$matrices <- Krig.engine.knots(out, verbose = verbose)
-            out$pure.ss <- out$matrices$pure.ss
-        }
-        else {
-            # standard engine following the basic computations for thin plate splines
-            out$matrices <- Krig.engine.default(out, verbose = verbose)
-        }
-    }
-    #
-    # store basic information about decompositions
-    out$nt <- out$matrices$nt
-    out$np <- out$matrices$np
-    out$decomp <- out$matrices$decomp
-    #
-    # Now determine a logical vector to indicate coefficients tied to  the
-    # the 'spatial drift' i.e. the fixed part of the model
-    # that is not due to the Z covariates.
-    # NOTE that the spatial drift coefficients must be the first columns of the
-    # M matrix
-    if (is.null(out$Z)) {
-        out$ind.drift <- rep(TRUE, out$nt)
-    }
-    else {
-        
-        mZ <- ncol(out$ZM)
-        out$ind.drift <- c(rep(TRUE, out$nt - mZ), rep(FALSE, 
-            mZ))
-    }
-    if (verbose) {
-        cat("null df: ", out$nt, "drift df: ", sum(out$ind.drift), 
-            fill = TRUE)
-    }
-    #########################
-    # End of engine block
-    #########################
-    #################################################
-    # Do GCV and REML search over lambda if not fixed or if GCV variable is TRUE
-    # gcv.Krig is not named well,  also does a search over likelihood for lambda.
-    #################################################
-    if (!out$fixed.model | out$GCV) {
-        if (verbose) {
-            cat("call to gcv.Krig", fill = TRUE)
-        }
-        gcv.out <- gcv.Krig(out, nstep.cv = nstep.cv, verbose = verbose, 
-            cost = out$cost, offset = out$offset, give.warnings=FALSE)
-        out$gcv.grid <- gcv.out$gcv.grid
-        #   save a handy summary table of the search results
-        out$lambda.est <- gcv.out$lambda.est
-        out$warningTable<- gcv.out$warningTable
-        if( verbose){
-        	cat("summaries from grid search/optimization", fill=TRUE)
-        	print(out$lambda.est)
-        	print(out$warningTable)
-        }
-        if( give.warnings){
-        	#NOTE: only print out grid search warning forthe method of interest.
-        	printGCVWarnings( gcv.out$warningTable, method=method)
-        }
-          # assign the preferred lambda either from GCV/REML/MSE or the user value
-        # NOTE: gcv/reml can be done but the estimate is
-        # still evaluted at the passed user values of lambda (or df)
-        # If df is passed need to calculate the implied lambda value
-        if (out$method != "user") {
-            out$lambda <- gcv.out$lambda.est[out$method, 1]
-            out$eff.df <- out$lambda.est[out$method, 2]
-        }
-        else {
-            if (!is.na(out$eff.df)) {
-                out$lambda <- Krig.df.to.lambda(out$eff.df, out$matrices$D)
-            }
-            else {
-                out$eff.df <- Krig.ftrace(out$lambda, out$matrices$D)
-            }
-        }
-    }
-    ##########################
-    # end GCV/REML block
-    ##########################
-    #
-    # Now we clean up what has happened and stuff 
-    # information into output object.
-    #
-    ##########################################
-    # find coefficients at prefered lambda
-    # and evaluate the solution at observations
-    ##########################################
-    #   pass replicate group means -- no need to recalculate these.
-    out2 <- Krig.coef(out, yM = out$yM, verbose = verbose)
-    out <- c(out, out2)
-    #######################################################################
-    # fitted values and residuals and predicted values for full model and
-    # also on the null space (fixed
-    # effects). But be sure to do this at the nonmissing x's.
-    ##################################################################
-    out$fitted.values <- predict.Krig(out, x = out$x, Z = out$Z, 
-        eval.correlation.model = FALSE)
-    out$residuals <- out$y - out$fitted.values
-    #
-    # this is just M%*%d  note use of do.call using function name
-    Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
-        list(x = out$x, Z = out$Z)))
-    out$fitted.values.null <- as.matrix(Tmatrix) %*% out$d
-    #
-    # verbose block
-    if (verbose) {
-        cat("residuals", out$residuals, fill = TRUE)
-    }
-    #
-    # find various estimates of tau and sigma
-    out2 <- Krig.parameters(out)
-    out <- c(out, out2)
-    ################################################
-    # assign the 'best' model as a default choice
-    # either use the user supplied values or the results from
-    # optimization
-    ################################################
-    passed.tau2 <- (!is.na(out$tau2))
-    if (out$method == "user" & passed.tau2) {
-        out$best.model <- c(out$lambda, out$tau2, out$sigma)
-    }
-    else {
-        # in this case lambda is from opt. or supplied by user
-        out$best.model <- c(out$lambda, out$tauHat.MLE^2, out$sigmahat)
-    }
-    # Note: values in best.model are used in subsquent functions as the choice
-    # for these parameters!
-    # set class
-    class(out) <- c("Krig")
-    return(out)
-}
+# or see http://www.r-project.org/Licenses/GPL-2  
 
 Krig.check.xY <- function(x, Y, Z, weights, na.rm, 
     verbose = FALSE) {
@@ -508,29 +160,7 @@ Krig.check.xY <- function(x, Y, Z, weights, na.rm,
         temp <- out$W2 %d*% temp
         temp.d <- qr.coef(out$matrices$qr.T, temp)
     }
-    #
-    # case with knots
-    # any lambda
-    #
-    if (out$decomp == "DR") {
-        # X is the monster matrix ...  X = [ M | K]
-        X <- cbind(do.call(out$null.function.name, c(out$null.args, 
-            list(x = out$xM, Z = out$ZM))), do.call(call.name, 
-            c(out$args, list(x1 = out$xM, x2 = out$knots))))
-        u <- t(out$matrices$G) %*% t(X) %*% (out$weightsM %d*% 
-            temp.yM)
-        beta <- out$matrices$G %*% ((1/(1 + lambda * out$matrices$D)) %d*% 
-            u)
-        temp.d <- beta[1:nt, ]
-        temp.c <- beta[(nt + 1):np, ]
-        temp <- X %*% out$matrices$G %*% u
-        temp <- sum(out$weightsM * (temp.yM - temp)^2)
-        #### ????
-        out2$pure.ss <- temp + out2$pure.ss
-    }
-    #
-    # fixed lambda knots == unique x's
-    #
+    
     if (out$decomp == "cholesky") {
         if (lambda != out$matrices$lambda) {
             stop("New lambda can not be used with cholesky decomposition")
@@ -543,48 +173,9 @@ Krig.check.xY <- function(x, Y, Z, weights, na.rm,
             temp.yM - Tmatrix %*% temp.d, upper.tri = TRUE)
         temp.c <- backsolve(out$matrices$Mc, temp.c)
     }
-    #
-    # fixed lambda with knots
-    #
-    if (out$decomp == "cholesky.knots") {
-        if (lambda != out$matrices$lambda) {
-            stop("New lambda can not be used with cholesky decomposition")
-        }
-        # form K matrix
-        K <- do.call(call.name, c(out$args, list(x1 = out$xM, 
-            x2 = out$knots)))
-        Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
-            list(x = out$xM, Z = out$ZM)))
-        wY <- out$weightsM * temp.yM
-        temp0 <- t(K) %*% (out$weightsM * Tmatrix)
-        temp1 <- forwardsolve(out$matrices$Mc, temp0, transpose = TRUE, 
-            upper.tri = TRUE)
-        qr.Treg <- qr(t(Tmatrix) %*% (out$weightsM * Tmatrix) - 
-            t(temp1) %*% temp1)
-        temp0 <- t(K) %*% wY
-        temp3 <- t(Tmatrix) %*% wY - t(temp1) %*% forwardsolve(out$matrices$Mc, 
-            temp0, transpose = TRUE, upper.tri = TRUE)
-        temp.d <- qr.coef(qr.Treg, temp3)
-        temp1 <- t(K) %*% (wY - out$weightsM * (Tmatrix) %*% 
-            temp.d)
-        temp.c <- forwardsolve(out$matrices$Mc, transpose = TRUE, 
-            temp1, upper.tri = TRUE)
-        temp.c <- backsolve(out$matrices$Mc, temp.c)
-    }
+    
     return(list(c = temp.c, d = temp.d, tauHat.rep = out2$tauHat.rep, 
         tauHat.pure.error = out2$tauHat.pure.error, pure.ss = out2$pure.ss))
-}
-
-Krig.cor.Y <- function(obj, verbose = FALSE) {
-    # subtract mean
-    if (!is.na(obj$mean.obj[1])) {
-        Y <- obj$y - predict(obj$mean.obj, obj$x)
-    }
-    # divide by sd
-    if (!is.na(obj$sd.obj[1])) {
-        Y <- Y/predict(obj$sd.obj, obj$x)
-    }
-    Y
 }
 
 Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL, 
@@ -646,114 +237,14 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
 }
 
 "Krig.engine.default" <- function(out, verbose = FALSE) {
-    #
-    # matrix decompositions for computing estimate
-    #
-    # Computational outline:( '.' is used for subscript)
-    #
-    # The form of the estimate is
-    #    fhat(x) = sum phi.j(x) d.j  + sum psi.k(x) c.k
-    #
-    # the {phi.j} are the fixed part of the model usually low order polynomials
-    # and is also referred to as spatial drift.
-    #
-    # the {psi.k} are the covariance functions evaluated at the unique observation
-    # locations or 'knots'.  If xM.k is the kth unique location psi.k(x)= k(x, xM.k)
-    # xM is also out$knots in the code below.
-    #
-    # the goal is find decompositions that facilitate rapid solution for
-    # the vectors d and c. The eigen approach below was identified by
-    # Wahba, Bates Wendelberger and is stable even for near colinear covariance
-    # matrices.
-    # This function does the main computations leading to the matrix decompositions.
-    # With these decompositions the coefficients of the solution are found in
-    # Krig.coef and the GCV and REML functions in Krig.gcv.
-    #
-    #  First is an outline calculations with equal weights
-    #  T the fixed effects regression matrix  T.ij = phi.j(xM.i)
-    #  K the covariance matrix for the unique locations
-    # From the spline literature the solution solves the well known system
-    # of two eqautions:
-    #    -K( yM - Td - Kc) + lambda *Kc = 0
-    #                 -T^t ( yM-Td -Kc) = 0
-    #
-    # Mulitple through by K inverse and substitute, these are equivalent to
-    #
-    #  -1-   -( yM- Td - Kc) + lambda c = 0
-    #  -2-                        T^t c = 0
-    #
-    #
-    #  A QR decomposition is done for   T= (Q.1,Q.2)R
-    #   by definition  Q.2^T T =0
-    #
-    #  equation  -2- can be thought of as a constraint
-    # with  c= Q.2 beta2
-    # substitute in  -1-  and multiply through by Q.2^T
-    #
-    #      -Q.2^T yM  + Q.2^T K Q.2 beta2  + lambda beta2 = 0
-    #
-    #   Solving
-    #   beta2 = {Q.2^T K Q.2 + lambda I )^ {-1} Q.2^T yM
-    #
-    # and so one solves this linear system for beta2 and then uses
-    #     c= Q.2 beta2
-    #   to determine c.
-    #
-    #  eigenvalues and eigenvectors are found for M= Q.2^T K Q.2
-    #     M = V diag(eta) V^T
-    #  and these facilitate solving this system efficiently for
-    #  many different values of lambda.
-    #  create eigenvectors, D = (0, 1/eta)
-    #  and G= ( 0,0) %*% diag(D)
-    #         ( 0,V)
-    # so that
-    #
-    #          beta2 = G%*% ( 1/( 1+ lambda D)) %*% u
-    # with
-    #
-    #          u = (0, V Q.2^T W2 yM)
-    #
-    # Throughout keep in mind that M has smaller dimension than G due to
-    # handling the null space.
-    #
-    # Now solve for d.
-    #
-    # From -1-  Td = yM - Kc - lambda c
-    #      (Q.1^T) Td =  (Q.1^T) ( yM- Kc)
-    #
-    #   ( lambda c is zero by -2-)
-    #
-    #   so Rd = (Q.1^T) ( yM- Kc)
-    # use qr functions to solve triangular system in R to find d.
-    #
-    #----------------------------------------------------------------------
-    # What about errors with a general precision matrix, W?
-    #
-    # This is an important case because with replicated observations the
-    # problem will simplify into a smoothing problem with the replicate group
-    # means and unequal measurement error variances.
-    #
-    # the equations to solve are
-    #     -KW( yM - Td - Kc) + lambda *Kc = 0
-    #     -T^t W( yM-Td -Kc) =0
-    #
-    # Multiple through by K inverse and substitute, these are equivalent to
-    #
-    #  -1b-      -W( yM- Td - Kc) + lambda c = 0
-    #  -2b-      (WT)^t c = 0
-    #
-    # Let W2 be the symmetric square root of W,  W= W2%*% W2
-    # and W2.i be the inverse of W2.
-    #
-    #  -1c-      -(  W2 yM - W2 T d - (W2 K W2) W2.ic) + lambda W2.i c = 0
-    #  -2c-      (W2T)^t  W2c = 0
+    
     Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
         list(x = out$xM, Z = out$ZM)))
     if (verbose) {
         cat(" Model Matrix: spatial drift and Z", fill = TRUE)
         print(Tmatrix)
     }
-    # Tmatrix premultiplied by sqrt of wieghts
+    # Tmatrix premultiplied by sqrt of weights
     Tmatrix <- out$W2 %d*% Tmatrix
     qr.T <- qr(Tmatrix)
     if( qr.T$rank < ncol( Tmatrix)){
@@ -807,45 +298,10 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
 
 "Krig.engine.fixed" <- function(out, verbose = FALSE, 
     lambda = NA) {
-    #
-    # Model:
-    #     Y_k=  f_k + e_k
-    #  var( e_k) = tau^2/W_k
-    #
-    #   f= Td + h
-    #    T is often a low order polynomial
-    #   E(h)=0    cov( h)= sigma *K
-    #
-    # let M = (lambda W^{-1} + K)
-    # the surface estimate  depends on coefficient vectors d and c
-    #    The implementation in Krig/fields is that K are the
-    #    cross covariances among the observation locations and the knot locations
-    #    H is the covariance among the knot locations.
-    #    Thus if knot locs == obs locs we have the obvious collapse to
-    #    the simpler form for M above.
-    #
-    #   With M in hand ...
-    #
-    #   set
-    #   d =  [(T)^t M^{-1} (T)]^{-1} (T)^t M^{-1} Y
-    #  this is just the generalized LS estimate for d
-    #
-    #   lambda= tau**2/sigma
-    #  the estimate for c is
-    #   c=  M^{-1}(y - Td)
-    #
-    # This particular numerical strategy takes advantage of
-    # fast Cholesky factorizations for positive definite matrices
-    # and also provides a seamless framework for sparse matrix implementations
-    #
     if (is.na(lambda)) 
         lambda <- out$lambda
     call.name <- out$cov.function.name
-    if (!out$knot.model) {
-        ####################################################
-        # case of knot locs == obs locs  out$knots == out$xM
-        ####################################################
-        # create T matrix
+   
         Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
             list(x = out$knots, Z = out$ZM)))
         if (verbose) {
@@ -874,140 +330,20 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
         #
         # now do generalized least squares for d
         # and then find c.
-        d.coef <- qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
+        beta <- qr.coef(qr.VT, forwardsolve(Mc, transpose = TRUE, 
             out$yM, upper.tri = TRUE))
         if (verbose) {
-            print(d.coef)
+          cat("beta fixed coefficients", fill=TRUE)
+            print(beta)
         }
         c.coef <- forwardsolve(Mc, transpose = TRUE, out$yM - 
-            Tmatrix %*% d.coef, upper.tri = TRUE)
+            Tmatrix %*% beta, upper.tri = TRUE)
         c.coef <- backsolve(Mc, c.coef)
         # return all the goodies,  include lambda as a check because
         # results are meaningless for other values of lambda
-        return(list(qr.VT = qr.VT, d = c(d.coef), c = c(c.coef), 
+        return(list(qr.VT = qr.VT, d = c(beta), c = c(c.coef), 
             Mc = Mc, decomp = "cholesky", nt = nt, np = np, lambda.fixed = lambda, 
             Omega = Omega))
-    }
-    else {
-        ####################################################
-        # case of knot locs != obs locs
-        ####################################################
-        # create weighted T matrix
-        Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
-            list(x = out$xM, Z = out$ZM)))
-        nt <- ncol(Tmatrix)
-        np <- nrow(out$knots) + nt
-        # form H
-        H <- do.call(call.name, c(out$args, list(x1 = out$knots, 
-            x2 = out$knots)))
-        # form K matrix
-        K <- do.call(call.name, c(out$args, list(x1 = out$xM, 
-            x2 = out$knots)))
-        #
-        Mc <- do.call("chol", c(list(x = t(K) %*% (out$weightsM * 
-            K) + lambda * H), out$chol.args))
-        # weighted Y
-        wY <- out$weightsM * out$yM
-        temp0 <- t(K) %*% (out$weightsM * Tmatrix)
-        temp1 <- forwardsolve(Mc, temp0, transpose = TRUE, upper.tri = TRUE)
-        qr.Treg <- qr(t(Tmatrix) %*% (out$weightsM * Tmatrix) - 
-            t(temp1) %*% temp1)
-        temp0 <- t(K) %*% wY
-        temp3 <- t(Tmatrix) %*% wY - t(temp1) %*% forwardsolve(Mc, 
-            temp0, transpose = TRUE, upper.tri = TRUE)
-        d.coef <- qr.coef(qr.Treg, temp3)
-        temp1 <- t(K) %*% (wY - out$weightsM * (Tmatrix) %*% 
-            d.coef)
-        c.coef <- forwardsolve(Mc, transpose = TRUE, temp1, upper.tri = TRUE)
-        c.coef <- backsolve(Mc, c.coef)
-        list(qr.Treg = qr.Treg, d = c(d.coef), c = c(c.coef), 
-            Mc = Mc, decomp = "cholesky.knots", nt = nt, np = np, 
-            lambda.fixed = lambda, Omega = NA)
-    }
-    #
-    # should not get here.
-    #
-}
-
-"Krig.engine.knots" <- function(out, verbose = FALSE) {
-    #
-    # matrix decompostions for computing estimate when
-    # knots are present
-    # QR decomposition of null space regression matrix
-    Tmatrix <- do.call(out$null.function.name, c(out$null.args, 
-        list(x = out$xM, Z = out$ZM)))
-    qr.T <- qr(c(sqrt(out$weightsM)) * Tmatrix)
-    nt <- ncol(Tmatrix)
-    np <- nrow(out$knots) + nt
-    if (verbose) {
-        cat(nt, np, fill = TRUE)
-    }
-    # H is the penalty matrix in the ridge regression format
-    # first part is zero because no penalty on part of estimator
-    # spanned by T matrix
-    H <- matrix(0, ncol = np, nrow = np)
-    H[(nt + 1):np, (nt + 1):np] <- do.call(out$cov.function.name, 
-        c(out$args, list(x1 = out$knots, x2 = out$knots)))
-    # X is the monster ...
-    if( verbose){
-      print( out$cov.function.name)
-      print( out$args)
-    }
-    X <- cbind(do.call(out$null.function.name, c(out$null.args, 
-        list(x = out$xM, Z = out$ZM))), do.call(out$cov.function.name, 
-        c(out$args, list(x1 = out$xM, x2 = out$knots))))
-    if (verbose) {
-        cat("first lines of X", fill = TRUE)
-        print(X[1:5, ])
-    }
-    #    sqrt(weightsM) * X
-    XTwX <- t(X * out$weightsM) %*% X
-    #
-    # then  B= G(I-D)G^T
-    # New version of diagonalize may be more stable
-    out2 <- fields.diagonalize2((XTwX), H)
-    D <- out2$D
-    if (verbose) {
-        cat("D;", fill = TRUE)
-        cat(out2$D, fill = TRUE)
-    }
-    #
-    #  G should satisfy:
-    #     t(G) %*% XTwX %*%G = I and  t(G)%*%H%*%G = D
-    #
-    #     and
-    #      solve( XtwX + lambda H) =  G%*%diag( 1/(1+ lambda*D))%*%t(G)
-    #
-    
-    #  save XG to avoid an extra multiplication.
-    XG <- X %*% out2$G
-    
-    u <- t(XG) %*% (out$weightsM * out$yM)
-    #
-    # adjust pure sum of squares to be that due to replicates
-    # plus that due to fitting all the basis functions without
-    # any smoothing. This will be the part of the RSS that does not
-    # change as lambda is varied ( see e.g. gcv.Krig)
-    #
-    pure.ss <- sum(out$weightsM * (out$yM - XG %*% u)^2) + out$pure.ss
-    if (verbose) {
-        cat("total pure.ss from reps, reps + knots ", fill = TRUE)
-        print(out$pure.ss)
-        print(pure.ss)
-    }
-    
-    #
-    # in this form  the solution is (d,c)= G( I + lambda D)^-1 u
-    # fitted.values = X ( d,c)
-    #
-    # output list
-    # last D eigenvalues are zero due to null space of penalty
-    # OLD code:    D[(np - nt + 1):np] <- 0
-    # this should be enforced to machine precision from diagonalization.
-    
-    
-    list(u = u, D = D, G = out2$G, qr.T = qr.T, decomp = "DR", 
-        nt = nt, np = np, pure.ss = pure.ss)
 }
 
 "Krig.fdf" <- function(llam, info) {
@@ -1174,24 +510,9 @@ Krig.Amatrix <- function(object, x0 = object$x, lambda = NULL,
     #   case when knots= unqiue x's
     # any lambda
     #
-    if (out$decomp == "WBW") {
-        # pad u with zeroes that corresond to null space basis functions
-        # this makes it compatible with the DR decomposition.
         u <- rbind(matrix(0, nrow = out$nt, ncol = ndata), t(out$matrices$V) %*% 
             qr.q2ty(out$matrices$qr.T, out$W2 %d*% temp.yM))
-    }
-    #
-    # case with knots
-    # any lambda
-    #
-    if (out$decomp == "DR") {
-        # X is the monster matrix ...  X = [ M | K]
-        X <- cbind(do.call(out$null.function.name, c(out$null.args, 
-            list(x = out$xM, Z = out$ZM))), do.call(call.name, 
-            c(out$args, list(x1 = out$xM, x2 = out$knots))))
-        u <- t(out$matrices$G) %*% t(X) %*% (out$weightsM %d*% 
-            temp.yM)
-    }
+    
     return(list(u = u, tauHat.rep = out2$tauHat.rep, tauHat.pure.error = out2$tauHat.pure.error, 
         pure.ss = out2$pure.ss))
 }
@@ -1302,7 +623,7 @@ Krig.parameters <- function(obj, mle.calc = obj$mle.calc) {
         pure.ss = pure.ss, rep.info = rep.info))
 }
 
-Krig.transform.xY <- function(obj, knots, verbose = FALSE) {
+Krig.transform.xY <- function(obj, knots=NA,  verbose = FALSE) {
     # find all replcates and  collapse to unique locations and mean response
     # and pooled variances and weights.
     out <- Krig.replicates(obj, verbose = verbose)
@@ -1312,16 +633,9 @@ Krig.transform.xY <- function(obj, knots, verbose = FALSE) {
     }
     #
     # save information about knots.
-    if (is.na(knots[1])) {
         out$knots <- out$xM
         out$mle.calc <- TRUE
         out$knot.model <- FALSE
-    }
-    else {
-        out$mle.calc <- FALSE
-        out$knot.model <- TRUE
-        out$knots <- knots
-    }
     #
     # scale x, knot locations and  save transformation info
     #
@@ -1347,28 +661,8 @@ Krig.transform.xY <- function(obj, knots, verbose = FALSE) {
 
 "Krig.updateY" <- function(out, Y, verbose = FALSE, 
     yM = NA) {
-    #given new Y values but keeping everything else the same finds the
-    #new u vector and pure error SS associated with the Kriging estimate
-    # the steps are
-    # 1) standardize if neccesary
-    # 2) find means, in the case of replicates
-    # 3) based on the decomposition, multiply a weighted version of yM
-    #    with a large matrix extracted from teh Krig object out.
     #
-    # The out object may be large. This function is written so that out is # #not changed with the hope that it is not copied locally  in this  #function .
-    # All of the output is accumulated in the list out2
-    #STEP 1
     #
-    # transform Y by mean and sd if needed
-    #
-    if (out$correlation.model) {
-        Y <- (Y - predict(out$mean.obj, out$x))/predict(out$sd.obj, 
-            out$x)
-        if (verbose) 
-            print(Y)
-    }
-    #
-    #STEP 2
     if (is.na(yM[1])) {
         out2 <- Krig.ynew(out, Y)
     }
@@ -1380,36 +674,11 @@ Krig.transform.xY <- function(obj, knots, verbose = FALSE) {
         print(out2)
     }
     #
-    #STEP3
-    #
     # Note how matrices are grabbed from the Krig object
     #
-    if (verbose) 
+    if (verbose){ 
         cat("Type of decomposition", out$decomp, fill = TRUE)
-    if (out$decomp == "DR") {
-        #
-        #
-        u <- t(out$matrices$G) %*% t(out$matrices$X) %*% (out$weightsM * 
-            out2$yM)
-        #
-        # find the pure error sums of sqaures.
-        #
-        temp <- out$matrices$X %*% out$matrices$G %*% u
-        temp <- sum((out$W2 %d*% (out2$yM - temp))^2)
-        out2$pure.ss <- temp + out2$pure.ss
-        if (verbose) {
-            cat("pure.ss", fill = TRUE)
-            print(temp)
-            print(out2$pure.ss)
-        }
-    }
-    #####
-    ##### end DR decomposition block
-    #####
-    ####
-    #### begin WBW decomposition block
-    ####
-    if (out$decomp == "WBW") {
+     }
         #### decomposition of Q2TKQ2
         u <- c(rep(0, out$nt), t(out$matrices$V) %*% qr.q2ty(out$matrices$qr.T, 
             out$W2 %d*% out2$yM))
@@ -1422,10 +691,7 @@ Krig.transform.xY <- function(obj, knots, verbose = FALSE) {
             cat("pure.ss", fill = TRUE)
             print(out2$pure.ss)
         }
-    }
-    #####
-    ##### end WBW block
-    #####
+
     out2$u <- u
     out2
 }
@@ -1523,7 +789,7 @@ Krig.which.lambda <- function(out) {
     #
     if (length(unique(out$rep.info)) < out$N) {
         #
-        # calculate means by pooling Replicated obseravations but use the
+        # calculate means by pooling Replicated observations but use the
         # the right weighting.
         #
         rep.info.aov <- fast.1way(out$rep.info, y, out$weights)[c("means", 

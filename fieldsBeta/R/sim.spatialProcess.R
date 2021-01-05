@@ -21,8 +21,8 @@
 sim.spatialProcess<- function(object, xp,  M = 1, 
     verbose = FALSE, ...) {
     # important variance parameters estimated from the data  
-        tau2 <- (object$tau.MLE.FULL)^2
-        sigma <- object$sigma.MLE.FULL
+        tau2 <- (object$summary["tau"])^2
+        sigma2 <- (object$summary["sigma2"])
         xp<- as.matrix( xp)
     #
     # check for unique rows of  data locations
@@ -79,7 +79,7 @@ sim.spatialProcess<- function(object, xp,  M = 1,
     # Sigma is full covariance at the data locations and at prediction points.
     # not to be confused with the lowercase tau that is the nugget variance
     # 
-    Sigma <- sigma * do.call(object$cov.function.name, c(object$args, 
+    Sigma <- sigma2 * do.call(object$cov.function.name, c(object$args, 
         list(x1 = xUnique, x2 = xUnique)))
     #
     # square root of Sigma for simulating field

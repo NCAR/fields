@@ -18,7 +18,7 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"Exp.cov" <- function(x1, x2=NULL, theta = 1, p=1, 
+"Exp.cov" <- function(x1, x2=NULL, aRange = 1, p=1, 
                       distMat = NA, C = NA, marginal = FALSE, onlyUpper=FALSE) {
   
   if (!is.matrix(x1)) 
@@ -27,17 +27,17 @@
     x2 <- x1
   if (!is.matrix(x2)) 
     x2 <- as.matrix(x2)
-  if (length(theta) > 1)
-    stop("Non-scalar theta as input to Exp.cov is depracated.  Use the V argument in stationary.cov or scale
+  if (length(aRange) > 1)
+    stop("Non-scalar aRange as input to Exp.cov is depracated.  Use the V argument in stationary.cov or scale
          the input locations beforehand.")
   d <- ncol(x1)
   n1 <- nrow(x1)
   n2 <- nrow(x2)
-  # scale the coordinates by theta if distance matrix isn't precomputed
+  # scale the coordinates by aRange if distance matrix isn't precomputed
   # a more general scaling by a matrix is done in stationary.cov
   if(is.na(distMat[1]) || !is.na(C[1])) {
-    x1 <- x1*(1/theta)
-    x2 <- x2*(1/theta)
+    x1 <- x1*(1/aRange)
+    x2 <- x2*(1/aRange)
   }
   #
   # there are three main possible actions listed below:
@@ -49,7 +49,7 @@
     if(is.na(distMat[1]))
       distMat = rdist(x1, x2, compact=TRUE)
     else
-      distMat = distMat*(1/theta)
+      distMat = distMat*(1/aRange)
     
     #only exponentiate by p if p != 1
     if(p != 1)

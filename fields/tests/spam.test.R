@@ -42,8 +42,8 @@ test.for.zero( temp, temp2)
 # and also versions of Wendland function
 # default taper is wendland k=2.
 DD<- rdist( x1,x2)
-temp<- Wendland2.2(DD, theta=.8)
-temp2<- Wendland( DD, theta=.8, dimension=2, k=2)
+temp<- Wendland2.2(DD, aRange=.8)
+temp2<- Wendland( DD, aRange=.8, dimension=2, k=2)
 
 test.for.zero( temp, temp2)
 
@@ -51,24 +51,24 @@ test.for.zero( temp, temp2)
 
 
 stationary.taper.cov( x1,x2, Taper="Wendland2.2", 
-           Taper.args= list( theta=.8), spam.format=FALSE )-> look
+           Taper.args= list( aRange=.8), spam.format=FALSE )-> look
 temp0<- look
 
 stationary.taper.cov( x1,x2, Taper="Wendland2.2",
-           Taper.args= list( theta=.8), spam.format=TRUE )-> look
+           Taper.args= list( aRange=.8), spam.format=TRUE )-> look
 temp1<-  spam2full( look)
 
 test.for.zero( temp1, temp0)
 
 stationary.taper.cov( x1,x2, Taper="Wendland",
-           Taper.args= list( theta=.8, k=2, dimension=2),
+           Taper.args= list( aRange=.8, k=2, dimension=2),
                      spam.format=TRUE )-> look
 temp1b<-  spam2full( look)
 
 
-temp2<-  Wendland2.2(DD, theta=.8) * Exponential(DD)
-temp3<-  wendland.cov(x1,x2, k=2, theta=.8) * Exponential(DD)
-temp4<-  Wendland(DD, k=2, dimension=2, theta=.8)* Exponential(DD)
+temp2<-  Wendland2.2(DD, aRange=.8) * Exponential(DD)
+temp3<-  wendland.cov(x1,x2, k=2, aRange=.8) * Exponential(DD)
+temp4<-  Wendland(DD, k=2, dimension=2, aRange=.8)* Exponential(DD)
 
 
 test.for.zero( temp1, temp0, rel=FALSE)
@@ -142,14 +142,14 @@ x<- ozone2$lon.lat
 y<- ozone2$y[16,]
 
 
-Krig(x,y, cov.function = "stationary.taper.cov", theta=1.5,
+Krig(x,y, cov.function = "stationary.taper.cov", aRange=1.5,
       give.warnings=FALSE, 
       cov.args= list( spam.format=FALSE, 
-           Taper.args= list( dimension=2, theta=2.0,k=3) )    ) -> out1
+           Taper.args= list( dimension=2, aRange=2.0,k=3) )    ) -> out1
 
-Krig(x,y, cov.function = "stationary.taper.cov", lambda=2.0, theta=1.5,
+Krig(x,y, cov.function = "stationary.taper.cov", lambda=2.0, aRange=1.5,
       cov.args= list( spam.format=TRUE,
-        Taper.args= list( theta=2.0,k=3, dimension=2)  )
+        Taper.args= list( aRange=2.0,k=3, dimension=2)  )
            ) -> out2
 
 temp1<- predict( out1,lambda=2.0)

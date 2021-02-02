@@ -44,10 +44,10 @@ gcv.sreg( out, tol=1e-12)$lambda.est -> look0
 test.for.zero( out$lambda.est[1,2], look0[1,2], tol=5e-4)
 
 Tps( x,y)-> out2
-gcv.Krig( out2, tol=1e-12)$lambda.est[1,2]-> look2
+KrigFindLambda( out2, tol=1e-6)$lambda.est[1,2]-> look2
 gcv.sreg( out, tol=1e-12)$lambda.est[1,2] -> look
 
-test.for.zero( look, look2, tol=2.1e-6, tag="GCV sreg/Tps")
+test.for.zero( look, look2, tol=2e-3, tag="GCV sreg/Tps")
 
 #### replications
 set.seed( 123)
@@ -55,10 +55,10 @@ x<-  rep(rat.diet$t,3)
 y<- rep( rat.diet$trt,3) + rnorm(39*3)*5
 
 sreg( x,y)-> out
-gcv.sreg( out, tol=1e-12)$lambda.est -> look
+gcv.sreg( out, tol=1e-8)$lambda.est -> look
 
 Tps( x,y, scale="unscaled")-> out2
-gcv.Krig( out2, tol=1e-12)$lambda.est-> look2
+KrigFindLambda( out2, tol=1e-5)$lambda.est-> look2
 look2[,1]<- look2[,1]/length( out$xM)
 
 test.for.zero( look[1:3,3], look2[1:3,3],  

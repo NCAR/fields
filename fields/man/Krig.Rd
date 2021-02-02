@@ -43,16 +43,16 @@ subsequent analysis. Krig also supports a correlation model where the mean
 and marginal variances are supplied. 
 }
 \usage{
-Krig(x, Y, cov.function = "stationary.cov", lambda = NA, df
-                 = NA, GCV = FALSE, Z = NULL, cost = 1, knots = NA,
-                 weights = NULL, m = 2, nstep.cv = 200, scale.type =
-                 "user", x.center = rep(0, ncol(x)), x.scale = rep(1,
-                 ncol(x)), rho = NA, sigma2 = NA, method = "REML",
-                 verbose = FALSE, mean.obj = NA, sd.obj = NA,
+ Krig(x, Y, cov.function = "stationary.cov", lambda = NA, df
+                 = NA, GCV = FALSE, Z = NULL, cost = 1, weights = NULL,
+                 m = 2, nstep.cv = 200, scale.type = "user", x.center =
+                 rep(0, ncol(x)), x.scale = rep(1, ncol(x)), sigma =
+                 NA, tau2 = NA, method = "REML", verbose = FALSE,
                  null.function = "Krig.null.function", wght.function =
                  NULL, offset = 0, na.rm = TRUE, cov.args = NULL,
                  chol.args = NULL, null.args = NULL, wght.args = NULL,
-                 W = NULL, give.warnings = TRUE, ...)
+                 W = NULL, give.warnings = TRUE, mean.obj = NA, sd.obj
+                 = NA, ...)
                  
 \method{fitted}{Krig}(object,...)
 
@@ -110,17 +110,11 @@ If FALSE warnings are not given. Best to leave this TRUE!
 This argument is set ot FALSE if warn is less than zero in the
 top level, R  options function. See options()$warn}
 
-\item{knots}{
-A matrix of locations similar to x. These can define an alternative set of
-basis functions for representing the estimate. One choice may be a
-space-filling subset of the original x locations, thinning out the
-design where locations cluster. The 
-default is to put a "knot" at all unique locations. (See details.)
-}
+
 \item{lambda}{
-Smoothing parameter that is the ratio of the error variance (sigma**2) 
+Smoothing parameter that is the ratio of the error variance (tau**2) 
 to the scale parameter of the  
-covariance function (rho). If omitted this is estimated by GCV ( see
+covariance function (sigma). If omitted this is estimated by GCV ( see
 method below). 
 }
 
@@ -184,7 +178,7 @@ regression matrix with all terms up to degree m-1. (See Details)
 the offset is other model degrees of freedom from other regression
 components.  }
 
-\item{rho}{
+\item{sigma}{
 Scale factor for covariance. 
 }
 \item{scale.type}{
@@ -202,10 +196,10 @@ type of "unscaled" does not scale the data.
 Object to predict the marginal standard deviation of the spatial process. 
 }
 
-\item{sigma2}{
+\item{tau2}{
 Variance of the errors, often called the nugget variance. If weights are
-specified then the error variance is sigma2 divided by weights. 
-Note that lambda is defined as the ratio  sigma2/rho.
+specified then the error variance is tau2 divided by weights. 
+Note that lambda is defined as the ratio  tau2/sigma.
 }
 
 \item{verbose}{
@@ -304,12 +298,12 @@ List of matrices from the decompositions (D, G, u, X, qr.T).
 Matrix of values from the GCV grid search. The first column 
 is the grid of lambda values used in the search, the second column  
 is the trace of the A matrix, the third column is the GCV values and 
-the fourth column is the estimated value of sigma conditional on the vlaue
+the fourth column is the estimated value of tau conditional on the vlaue
 of lambda.  
 }
 \item{lambda.est}{
 A table of estimated smoothing parameters with corresponding degrees 
-of freedom and estimates of sigma found by different methods.  
+of freedom and estimates of tau found by different methods.  
 }
 \item{cost}{
 Cost value used in GCV criterion. 
@@ -330,7 +324,7 @@ Residuals from the fit.
 }
 \item{lambda}{
 Value of the smoothing parameter used in the fit. 
-Lambda is defined as sigma**2/rho. See discussion in details.
+Lambda is defined as tau**2/sigma. See discussion in details.
 }
 \item{yname}{
 Name of the response. 
@@ -362,19 +356,19 @@ Same as the beta vector.
 Logical describing if the data has been interpolated using the basis  
 functions.  
 }
-\item{shat}{
+\item{tauHat}{
 Estimated standard deviation of the measurement error (nugget effect). 
 }
-\item{sigma2}{
-Estimated variance of the measurement error (shat**2). 
+\item{tau2}{
+Estimated variance of the measurement error (tauHat**2). 
 }
-\item{rho}{
-Scale factor for covariance.  COV(h(x),h(x\code{)) = rho*cov.function(x,x}) 
+\item{sigma}{
+Scale factor for covariance.  COV(h(x),h(x\code{)) = sigma*cov.function(x,x}) 
 If the covariance is actually a 
-correlation function then rho is also the "sill". 
+correlation function then sigma is also the "sill". 
 }
 \item{mean.var}{
-Normalization of the covariance function used to find rho. 
+Normalization of the covariance function used to find sigma. 
 }
 \item{best.model}{
 Vector containing the value of lambda, the estimated variance of the  
@@ -394,16 +388,16 @@ at location x.k, P is a low order polynomial, Z is a mean zero, Gaussian
 field with covariance function K and e is assumed to be independent 
 normal errors. The estimated surface is the best linear unbiased 
 estimate (BLUE) of f(x)= P(x) + Z(x) given the observed data. For this 
-estimate K, is taken to be rho*cov.function and the errors have variance 
-sigma**2. In more conventional geostatistical terms rho is the "sill" if 
-the covariance function is actually a correlation function and sigma**2 
+estimate K, is taken to be sigma*cov.function and the errors have variance 
+tau**2. In more conventional geostatistical terms sigma is the "sill" if 
+the covariance function is actually a correlation function and tau**2 
 is the nugget variance or measure error variance (the two are confounded 
 in this model.)  If the weights are given then the variance of e.k is 
-sigma**2/ weights.k . In the case that the weights are specified as a 
+tau**2/ weights.k . In the case that the weights are specified as a 
 matrix, W, using the wght.function option then the assumed covariance 
-matrix for the errors is sigma**2 Wi, where Wi is the inverse of W. It 
-is straightforward to show that the estimate of f only depends on sigma 
-and rho through the ratio lambda = sigma**2/ rho. This parameter, termed 
+matrix for the errors is tau**2 Wi, where Wi is the inverse of W. It 
+is straightforward to show that the estimate of f only depends on tau 
+and sigma through the ratio lambda = tau**2/ sigma. This parameter, termed 
 the smoothing parameter plays a central role in the statistical 
 computations within \code{Krig}. See also the help for thin plate 
 splines, (\code{Tps}) to get another perspective on the smoothing 
@@ -416,16 +410,16 @@ covariates and b a fixed parameter vector, F the vector of function values at
 the observations and E a vector of errors. The The \code{Z} argument in 
 the function is the way to specify this additional component.
 
-If the parameters rho and sigma2 are omitted in the call, then they are
-estimated in the following way. If lambda is given, then sigma2 is
+If the parameters sigma and tau2 are omitted in the call, then they are
+estimated in the following way. If lambda is given, then tau2 is
 estimated from the residual sum of squares divided by the degrees of
 freedom associated with the residuals.  Rho is found as the difference
 between the sums of squares of the predicted values having subtracted off
-the polynomial part and sigma2. These estimates are the MLE's under Gaussian 
+the polynomial part and tau2. These estimates are the MLE's under Gaussian 
 assumptions on the process and errors. 
  If lambda is also omitted is it estimated
-from the data using a variety of approaches and then the values for sigma
-and rho are found in the same way from the estimated lambda. 
+from the data using a variety of approaches and then the values for tau
+and sigma are found in the same way from the estimated lambda. 
 
 A useful extension of a stationary correlation to a nonstationary
 covariance is what we term a correlation model. 
@@ -447,9 +441,9 @@ this one.)
 GCV.one: Really leave-one-out GCV even if there are replicate
 points.  This what the old tps function used in FUNFITS.
  
-rmse: Match the estimate of sigma**2 to a external value ( called rmse)  
+rmse: Match the estimate of tau**2 to a external value ( called rmse)  
 
-pure error: Match the estimate of sigma**2 to the estimate based on
+pure error: Match the estimate of tau**2 to the estimate based on
 replicated data (pure error estimate in ANOVA language).  
 
 GCV.model:
@@ -484,7 +478,7 @@ surface.Krig
 # fitting a surface to ozone  
 # measurements. Exponential covariance, range parameter is 20 (in miles) 
 
-fit <- Krig(ChicagoO3$x, ChicagoO3$y, theta=20)  
+fit <- Krig(ChicagoO3$x, ChicagoO3$y, aRange=20)  
  
 summary( fit) # summary of fit 
 set.panel( 2,2) 
@@ -519,19 +513,20 @@ predict( fit, df=7.5)
 # Using another stationary covariance. 
 # smoothness is the shape parameter for the Matern. 
 
-fit <- Krig(ChicagoO3$x, ChicagoO3$y, Covariance="Matern", theta=10, smoothness=1.0)  
+fit <- Krig(ChicagoO3$x, ChicagoO3$y,
+Covariance="Matern", aRange=10, smoothness=1.0)  
 summary( fit)
 
 #
 # Roll your own: creating very simple user defined Gaussian covariance 
 #
 
-test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
+test.cov <- function(x1,x2,aRange,marginal=FALSE,C=NA){
    # return marginal variance
      if( marginal) { return(rep( 1, nrow( x1)))}
 
     # find cross covariance matrix     
-      temp<- exp(-(rdist(x1,x2)/theta)**2)
+      temp<- exp(-(rdist(x1,x2)/aRange)**2)
       if( is.na(C[1])){
           return( temp)}
       else{
@@ -541,7 +536,7 @@ test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
 # use this and put in quadratic polynomial fixed function 
 
 
- fit.flame<- Krig(flame$x, flame$y, cov.function="test.cov", m=3, theta=.5)
+ fit.flame<- Krig(flame$x, flame$y, cov.function="test.cov", m=3, aRange=.5)
 
 #
 # note how range parameter is passed to Krig.   
@@ -570,118 +565,35 @@ test.cov <- function(x1,x2,theta,marginal=FALSE,C=NA){
 # out  should be identical to  Tps( ChicagoO3$x, ChicagoO3$y)
 # 
 
-# A Knot example
-
- data(ozone2)
- y16<- ozone2$y[16,] 
-
-# there are some missing values -- remove them 
- good<- !is.na( y16)
- y<- y16[good] 
- x<- ozone2$lon.lat[ good,]
-
-#
-# the knots can be arbitrary but just for fun find them with a space 
-# filling design. Here we select  50 from the full set of 147 points
-#
- xknots<- cover.design( x, 50, num.nn= 75)$design  # select 50 knot points
-
- out<- Krig( x, y, knots=xknots,  cov.function="Exp.cov", theta=300)  
- summary( out)
-# note that that trA found by GCV is around 17 so 50>17  knots may be a 
-# reasonable approximation to the full estimator. 
-#
-\dontrun{
-# the plot 
- surface( out, type="C")
- US( add=TRUE)
- points( x, col=2)
- points( xknots, cex=2, pch="O")
-}
-\dontrun{
-## A quick way to deal with too much data if you intend to smooth it anyway
-##  Discretize the locations to a grid, then apply Krig 
-##  to the discretized locations:
-## 
-RM.approx<- as.image(RMprecip$y, x=RMprecip$x, nx=20, ny=20)
-
-# take a look:
-image.plot( RM.approx)
-# discretized data (observations averaged if in the same grid box)
-# 336 locations -- down form the  full 806
-
-# convert the image format to locations, obs and weight vectors
-yd<- RM.approx$z[RM.approx$ind]
-weights<- RM.approx$weights[RM.approx$ind] # takes into account averaging
-xd<- RM.approx$xd
-
-obj<- Krig( xd, yd, weights=weights, theta=4)
-
-# compare to the full fit:
-# Krig( RMprecip$x, RMprecip$y, theta=4) 
-}
-
-\dontrun{
-# A correlation model example
-# fit krig surface using a mean and sd function to standardize 
-# first get stats from 1987 summer Midwest O3 data set 
- data(ozone2)
- stats.o3<- stats( ozone2$y)
- mean.o3<- Tps( ozone2$lon.lat, c( stats.o3[2,]))
- sd.o3<- Tps(  ozone2$lon.lat, c( stats.o3[3,]))
-
-#
-# Now use these to fit particular day ( day 16) 
-# and use great circle distance 
-
-
- fit<- Krig( ozone2$lon.lat, ozone2$y[16,], 
-            theta=350, mean.obj=mean.o3, sd.obj=sd.o3, 
-            Covariance="Matern", Distance="rdist.earth",
-            smoothness=1.0,
-            na.rm=TRUE) #
-
-
-# the finale
- surface( fit, type="I")
- US( add=TRUE)
- points( fit$x)
- title("Estimated ozone surface")
-}
 \dontrun{
 #
 #
-# explore some different values for the range and lambda using REML
-  theta <- seq( 100,500,,40)
-  PLL<- matrix( NA, 40,80)
+# explore some different values for the range and lambda using GCV
+  data(ozone2)
+  aRange <- seq(200,600,,40)
+  GCV<- matrix( NA, 40,80)
 # the loop 
   for( k in 1:40){
 # call to Krig with different ranges
 # also turn off warnings for GCV search 
 # to avoid lots of messages. (not recommended in general!)
-    PLL[k,]<- Krig( ozone2$lon.lat,ozone2$y[16,],
+    obj<-Krig( ozone2$lon.lat,ozone2$y[16,],
              cov.function="stationary.cov", 
-             theta=theta[k], mean.obj=mean.o3, sd.obj=sd.o3, 
-             Covariance="Matern",smoothness=.5, 
+             aRange=aRange[k],
+             Covariance="Matern",smoothness=1.0, 
              Distance="rdist.earth", nstep.cv=80,
-             give.warnings=FALSE, na.rm=TRUE)$gcv.grid[,7]
-#
-# gcv.grid is the grid search output from 
-# the optimization for estimating different estimates for lambda including 
-# REML
-# default grid is equally spaced in eff.df scale ( and should the same across theta)
-#  here 
+             give.warnings=FALSE, na.rm=TRUE)
+    GCV[k,]<-obj$gcv.grid[,3]
   }
 # get lambda grid  from looping 
    k<- 1
    lam<-  Krig( ozone2$lon.lat,ozone2$y[16,],
              cov.function="stationary.cov", 
-             theta=theta[k], mean.obj=mean.o3, sd.obj=sd.o3, 
+             aRange=aRange[k], 
              Covariance="Matern",smoothness=.5, 
              Distance="rdist.earth", nstep.cv=80,
              give.warnings=FALSE, na.rm=TRUE)$gcv.grid[,1]
-# see the 2 column of $gcv.grid to get the effective degress of freedom. 
-  contour( theta,log(lam) , PLL)
+ matplot( log10(lam), t(GCV),type="l",lty=1)
  
 }
 }

@@ -26,10 +26,10 @@ y<-y[good]
 x<- CO.loc[good,]
 Z<- CO.elev[good]
 out<- mKrig( x,y, Z=Z,  cov.function="stationary.cov", Covariance="Matern",
-                    theta=4.0, smoothness=1.0, lambda=.1)
+                    aRange=4.0, smoothness=1.0, lambda=.1)
 
 out2<- Krig( x,y, Z=Z,  cov.function="stationary.cov", Covariance="Matern",
-                    theta=4.0, smoothness=1.0, lambda=.1, GCV=TRUE)
+                    aRange=4.0, smoothness=1.0, lambda=.1, GCV=TRUE)
 
 test.for.zero( predict( out), predict(out2), tag="Full prediction")
 test.for.zero( predict( out, drop.Z=TRUE), predict(out2, drop.Z=TRUE), tag=" prediction dropping Z")

@@ -26,7 +26,7 @@
     # GeoR parameters map to kappa==smoothness and phi == range
     # to make old code from Fuentes and also the package SEHmodel
     # phi is accepted as the marginal variance of the process (see below)
-    # within fields this parameter is "rho"
+    # within fields this parameter is "sigma"
 
                                         #
     # check for negative distances

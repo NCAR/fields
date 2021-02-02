@@ -28,22 +28,22 @@ test.for.zero.flag<- 1
 x0<- expand.grid( c(-8,-4,0,20,30), c(10,8,4,0))
 
 
-Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50)-> out
+Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50)-> out
 
 
 # direct calculation
 Krig.Amatrix( out, x=x0)-> A
 test.for.zero( A%*%ChicagoO3$y, predict( out, x0),tag="Amatrix vs. predict")
 
-Sigma<- out$rhohat*Exp.cov( ChicagoO3$x, ChicagoO3$x, theta=50)
-S0<- out$rhohat*c(Exp.cov( x0, x0, theta=50))
-S1<- out$rhohat*Exp.cov( out$x, x0, theta=50)
+Sigma<- out$sigmahat*Exp.cov( ChicagoO3$x, ChicagoO3$x, aRange=50)
+S0<- out$sigmahat*c(Exp.cov( x0, x0, aRange=50))
+S1<- out$sigmahat*Exp.cov( out$x, x0, aRange=50)
 
 #yhat= Ay
 #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
 
 look<- S0 - t(S1)%*% t(A) - A%*%S1 +  
-       A%*% ( Sigma + diag(out$shat.MLE**2/out$weightsM))%*% t(A)
+       A%*% ( Sigma + diag(out$tauHat.MLE**2/out$weightsM))%*% t(A)
 #
 #compare to 
 # diagonal elements
@@ -52,7 +52,7 @@ look<- S0 - t(S1)%*% t(A) - A%*%S1 +
 test2<- predictSE( out, x= x0) 
 test.for.zero( sqrt(diag(  look)), test2,tag="Marginal predictSE")
 
-out2<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", theta=50,
+out2<- Krig( ChicagoO3$x, ChicagoO3$y, cov.function = "Exp.cov", aRange=50,
             lambda=out$lambda)
 
 test2<- predictSE( out2, x= x0) 
@@ -106,7 +106,7 @@ y<- dtemp$z[ dtemp$ind]
 weights<- dtemp$weights[ dtemp$ind]
 
 Krig( x, y, Covariance="Matern", 
-   theta=1.0, smoothness=1.0, weights=weights) -> out
+   aRange=1.0, smoothness=1.0, weights=weights) -> out
 
 
 
@@ -122,14 +122,14 @@ Krig( x, y, Covariance="Matern",
 Krig.Amatrix( out, x=x0)-> A
 test.for.zero( A%*%out$yM, predict( out, x0),tag="Amatrix vs. predict")
 
-Sigma<- out$rhohat*stationary.cov( 
-out$xM, out$xM, theta=1.0,smoothness=1.0, Covariance="Matern")
+Sigma<- out$sigmahat*stationary.cov( 
+out$xM, out$xM, aRange=1.0,smoothness=1.0, Covariance="Matern")
 
-S0<- out$rhohat*stationary.cov( 
-x0, x0, theta=1.0,smoothness=1.0, Covariance="Matern")
+S0<- out$sigmahat*stationary.cov( 
+x0, x0, aRange=1.0,smoothness=1.0, Covariance="Matern")
 
-S1<- out$rhohat*stationary.cov(
-out$xM, x0, theta=1.0,smoothness=1.0, Covariance="Matern")
+S1<- out$sigmahat*stationary.cov(
+out$xM, x0, aRange=1.0,smoothness=1.0, Covariance="Matern")
 
 
 
@@ -137,7 +137,7 @@ out$xM, x0, theta=1.0,smoothness=1.0, Covariance="Matern")
 #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
  
 look<- S0 - t(S1)%*% t(A) - A%*%S1 +
-       A%*% ( Sigma + diag(out$shat.MLE**2/out$weightsM) )%*% t(A)
+       A%*% ( Sigma + diag(out$tauHat.MLE**2/out$weightsM) )%*% t(A)
 
 test<- predictSE( out, x0, cov=TRUE)
 
@@ -161,7 +161,7 @@ cov", tol=1e-8)
 ##D weights<- dtemp$weights[ dtemp$ind]
 
 ##D Krig( xd, y, Covariance="Matern", 
-##D    theta=1.0, smoothness=1.0, weights=weights) -> out
+##D    aRange=1.0, smoothness=1.0, weights=weights) -> out
 
 
 ##D xr<- range( dtemp$x)

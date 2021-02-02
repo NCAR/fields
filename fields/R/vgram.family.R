@@ -50,8 +50,8 @@
   # normalize columns to create correlogram, if necessary
   #
   if(type == "correlogram") {
-    sigma = apply(y, 2, sd, na.rm=TRUE)
-    y = sweep(y, 2, (1/sigma), FUN="*")
+    tau = apply(y, 2, sd, na.rm=TRUE)
+    y = sweep(y, 2, (1/tau), FUN="*")
   }
   
   # center the columns by their mean and get row means if y is a matrix
@@ -130,10 +130,10 @@ crossCoVGram = function(loc1, loc2, y1, y2, id = NULL, d = NULL, lon.lat = FALSE
   # normalize to create cross-correlogram, if necessary
   #
   if(type == "cross-correlogram") {
-    sigma1 = apply(y1Cntr, 2, sd, na.rm=TRUE)
-    sigma2 = apply(y2Cntr, 2, sd, na.rm=TRUE)
-    y1Cntr = sweep(y1Cntr, 2, 1/sigma1, FUN="*")
-    y2Cntr = sweep(y2Cntr, 2, 1/sigma2, FUN="*")
+    tau1 = apply(y1Cntr, 2, sd, na.rm=TRUE)
+    tau2 = apply(y2Cntr, 2, sd, na.rm=TRUE)
+    y1Cntr = sweep(y1Cntr, 2, 1/tau1, FUN="*")
+    y2Cntr = sweep(y2Cntr, 2, 1/tau2, FUN="*")
   }
   #
   # calculate covariance for the given points

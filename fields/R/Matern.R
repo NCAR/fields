@@ -22,25 +22,34 @@
     smoothness = 0.5, nu = smoothness, phi = 1.0) {
     #
     # Matern covariance function transcribed from Stein's book page 31
-    # nu==smoothness, alpha ==  1/range
+    # nu==smoothness, alpha ==  1/range == aRange 
     #
     # GeoR parameters map to kappa==smoothness and phi == range
     # check for negative distances
     # phi is accepted as the marginal variance of the process (see below)
-    # within fields, however, this parameter is "rho" and we recommend
+    # within fields, however, this parameter is sigma^2 and we recommend
     # not using phi.
-
     if (any(d < 0)) 
         stop("distance argument must be nonnegative")
+    # rescale distances
     d <- d * alpha
+    # call some special cases for half fractions of nu
+    if( nu ==.5){
+        return( phi*exp( -d) )
+    }
+     if( nu ==1.5){
+         return( phi*(1+d)*exp( -d) )
+     }
+     if( nu ==2.5){
+         return( phi*(1+d+d^2/3)*exp( -d) )
+     }
+    # otherwise .....
+    # call to  Bessel function from R base package                                  #
     # avoid sending exact zeroes to besselK
     d[d == 0] <- 1e-10
     #
     # the hairy constant ...
     con <- (2^(nu - 1)) * gamma(nu)
     con <- 1/con
-    #
-    # call to  Bessel function from R base package
-    #
     return(phi * con * (d^nu) * besselK(d, nu))
 }

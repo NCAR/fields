@@ -21,8 +21,8 @@
 sim.spatialProcess<- function(object, xp,  M = 1, 
     verbose = FALSE, ...) {
     # important variance parameters estimated from the data  
-        sigma2 <- (object$sigma.MLE.FULL)^2
-        rho <- object$rho.MLE.FULL
+        tau2 <- (object$summary["tau"])^2
+        sigma2 <- (object$summary["sigma2"])
         xp<- as.matrix( xp)
     #
     # check for unique rows of  data locations
@@ -77,9 +77,9 @@ sim.spatialProcess<- function(object, xp,  M = 1,
     }
     #
     # Sigma is full covariance at the data locations and at prediction points.
-    # not to be confused with the lowercase sigma that is the nugget variance
+    # not to be confused with the lowercase tau that is the nugget variance
     # 
-    Sigma <- rho * do.call(object$cov.function.name, c(object$args, 
+    Sigma <- sigma2 * do.call(object$cov.function.name, c(object$args, 
         list(x1 = xUnique, x2 = xUnique)))
     #
     # square root of Sigma for simulating field
@@ -112,7 +112,7 @@ sim.spatialProcess<- function(object, xp,  M = 1,
         # value of simulated field at observations
         h.data <- h[1:n]
         #
-        y.synthetic <- h.data + sqrt(sigma2/object$weights)*rnorm(n)
+        y.synthetic <- h.data + sqrt(tau2/object$weights)*rnorm(n)
         # predict at xp using these data
         # and subtract from 'true' value, 
         # note that true values of field have to be expanded in the

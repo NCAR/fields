@@ -63,7 +63,7 @@ If true ( the default) will multiply the predicted function by marginal
 sd's
 and add the mean function. This usually what one wants. If false will
 return predicted surface in the standardized scale. The main use of this
-option is a call from Krig to find MLE's of rho and sigma2     
+option is a call from Krig to find MLE's of sigma and tau2     
 }
 
 \item{grid.list}{A \code{grid.list} specfiying a grid of locations to
@@ -134,7 +134,7 @@ Krig, predictSurface gcv.Krig
 }
 
 \examples{
-  Krig(ChicagoO3$x,ChicagoO3$y, theta=50) ->fit
+  Krig(ChicagoO3$x,ChicagoO3$y, aRange=50) ->fit
   predict( fit) # gives predicted values at data points should agree with fitted.values
                 #  in fit object 
 

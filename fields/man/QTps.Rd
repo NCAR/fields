@@ -108,9 +108,9 @@ cross-validation function for the psuedo-data as a robust version to select a sm
 is different from the weighted least squared algorithm used in the \code{qsreg} function. Also \code{qsreg} is only
 designed to work with 1-d cubic smoothing splines.   
 
-The  "rho" function indicating the departure from a pure quadratic loss function  has the definition
+The  "sigma" function indicating the departure from a pure quadratic loss function  has the definition
 \preformatted{
-qsreg.rho<-function(r, alpha = 0.5, C = 1) 
+qsreg.sigma<-function(r, alpha = 0.5, C = 1) 
      temp<- ifelse( r< 0, ((1 - alpha) * r^2)/C ,  (alpha * r^2)/C)
      temp<- ifelse( r >C,   2 * alpha * r - alpha * C, temp)
      temp<- ifelse( r < -C, -2 * (1 - alpha) * r - (1 - alpha) * C, temp)

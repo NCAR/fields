@@ -31,7 +31,7 @@ x1<- x[1:20,]
 x2<- x[1:10,]
 
 look<- exp(-1*rdist(x1,x2)/4)
-look2<- stationary.cov( x1,x2, theta=4)
+look2<- stationary.cov( x1,x2, aRange=4)
 test.for.zero( look, look2)
 
 V<- matrix( c(2,1,0,4), 2,2)
@@ -63,10 +63,11 @@ u2<- x2
 
 look1a<- exp(-1*rdist(u1,u2))
 look1b<-  Wendland(rdist(u1,u2),
-                   k=3, dimension=2, theta= 1)
+                   k=3, dimension=2, aRange= 1)
 look1<- look1a*look1b
-look2<- stationary.taper.cov( x1,x2, theta=1,
-                              Taper.args=list( theta=1,k=3, dimension=2), verbose=FALSE)
+look2<- stationary.taper.cov( x1,x2, aRange=1,
+        Taper.args=list( aRange=1,k=3, dimension=2), 
+        verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
@@ -76,10 +77,11 @@ u2<- t(Vi%*% t(x2))
 
 look1a<- exp(-1*rdist(u1,u2))
 look1b<-  Wendland(rdist(u1,u2),
-                   k=3, dimension=2, theta= 1.5)
+                   k=3, dimension=2, aRange= 1.5)
 look1<- look1a*look1b
 look2<- stationary.taper.cov( x1,x2,V=V,
-                              Taper.args=list( theta=1.5,k=3, dimension=2), verbose=FALSE)
+                    Taper.args=list( aRange=1.5,k=3, dimension=2),
+                    verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
@@ -89,18 +91,18 @@ u2<- t(Vi%*% t(x2))
 
 look1a<- Matern(rdist(u1,u2), smoothness=1.5)
 look1b<-  Wendland(rdist(u1,u2),
-                   k=3, dimension=2, theta= 1.5)
+                   k=3, dimension=2, aRange= 1.5)
 look1<- look1a*look1b
 look2<- stationary.taper.cov( x1,x2,V=V,Covariance=Matern, smoothness=1.5,
-                              Taper.args=list( theta=1.5,k=3, dimension=2), verbose=FALSE)
+                        Taper.args=list( aRange=1.5,k=3, dimension=2), verbose=FALSE)
 test.for.zero( look1, as.matrix(look2))
 
 
 # some tests of great circle distance
 
 
-stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args= 
-                        list(k=2,theta=300, dimension=2),
+stationary.taper.cov( x[1:3,],x[1:10,] , aRange=200, Taper.args= 
+                        list(k=2,aRange=300, dimension=2),
                       Dist.args=list( method="greatcircle") )-> temp
 
 # temp is now a tapered 3X10 cross covariance matrix in sparse format. 
@@ -109,7 +111,7 @@ stationary.taper.cov( x[1:3,],x[1:10,] , theta=200, Taper.args=
 
 temp2<- Exponential( rdist.earth(x[1:3,],x[1:10,]), range=200) * 
   Wendland(rdist.earth(x[1:3,],x[1:10,]),
-            theta= 300, k=2, dimension=2)
+            aRange= 300, k=2, dimension=2)
 
 test.for.zero(  as.matrix(temp), temp2, tol=2e-6,
                  tag="taper with great circle")
@@ -118,20 +120,20 @@ test.for.zero(  as.matrix(temp), temp2, tol=2e-6,
 # Note that default covariance is exponential and default taper is 
 # Wendland (k=2).
 
-stationary.taper.cov( x[1:3,],x[1:10,] , theta=1.5, Taper.args= 
-                        list(k=2,theta=2.0, dimension=2) )-> temp
+stationary.taper.cov( x[1:3,],x[1:10,] , aRange=1.5, Taper.args= 
+                        list(k=2,aRange=2.0, dimension=2) )-> temp
 # temp is now a tapered 5X10 cross covariance matrix in sparse format. 
 # should be identical to
 # the direct matrix product
 
-temp2<- Exp.cov( x[1:3,],x[1:10,], theta=1.5) * 
+temp2<- Exp.cov( x[1:3,],x[1:10,], aRange=1.5) * 
   Wendland(rdist(x[1:3,],x[1:10,]),
-           theta= 2.0, k=2, dimension=2)
+           aRange= 2.0, k=2, dimension=2)
 
 test.for.zero(  as.matrix(temp), temp2, tag= "high level test of taper cov")
 
 stationary.taper.cov( x[1:3,],x[1:10,] , range=1.5,
-                      Taper.args= list(k=2,theta=2.0,
+                      Taper.args= list(k=2,aRange=2.0,
                                        dimension=2) )-> temp
 
 test.for.zero(  as.matrix(temp), temp2,
@@ -160,9 +162,9 @@ y<- y[good]
 x1<- x[1:20,]
 compactDistMat = rdist(x1, compact=TRUE)
 distMat = rdist(x1)
-look<- stationary.cov(x1, theta=4)
-look2 <- stationary.cov(x1, theta=4, distMat = compactDistMat)
-look3 <- stationary.cov(x1, theta=4, distMat = distMat)
+look<- stationary.cov(x1, aRange=4)
+look2 <- stationary.cov(x1, aRange=4, distMat = compactDistMat)
+look3 <- stationary.cov(x1, aRange=4, distMat = distMat)
 test.for.zero( look, look2, tag="stationary.cov versus stationary.cov compact distMat")
 test.for.zero( look, look3, tag="stationary.cov versus stationary.cov matrix distMat")
 
@@ -170,8 +172,8 @@ test.for.zero( look, look3, tag="stationary.cov versus stationary.cov matrix dis
 
 x2=x[1:10,]
 distMat = rdist(x1, x2)
-look<- stationary.cov(x1, x2, theta=4)
-look2 <- stationary.cov(x1, x2, theta=4, distMat = distMat)
+look<- stationary.cov(x1, x2, aRange=4)
+look2 <- stationary.cov(x1, x2, aRange=4, distMat = distMat)
 test.for.zero( look, look2, tag="stationary.cov versus stationary.cov asymmetric distMat")
 
 #####test that stationary.cov returns the same result when passed distance matrix:
@@ -180,9 +182,9 @@ test.for.zero( look, look2, tag="stationary.cov versus stationary.cov asymmetric
 distMat = rdist(x1, x1)
 compactDistMat = rdist(x1, compact=TRUE)
 
-look<- Exp.cov(x1, theta=4)
-look2 <- Exp.cov(x1, theta=4, distMat = compactDistMat)
-look3 <- Exp.cov(x1, theta=4, distMat = distMat)
+look<- Exp.cov(x1, aRange=4)
+look2 <- Exp.cov(x1, aRange=4, distMat = compactDistMat)
+look3 <- Exp.cov(x1, aRange=4, distMat = distMat)
 test.for.zero( look, look2, tag="Exp.cov versus Exp.cov compact distMat")
 test.for.zero( look, look3, tag="Exp.cov versus Exp.cov matrix distMat")
 
@@ -191,8 +193,8 @@ test.for.zero( look, look3, tag="Exp.cov versus Exp.cov matrix distMat")
 x1<- x[1:20,]
 x2=x[1:10,]
 distMat = rdist(x1, x2)
-look<- Exp.cov(x1, x2, theta=4)
-look2 <- Exp.cov(x1, x2, theta=4, distMat = distMat)
+look<- Exp.cov(x1, x2, aRange=4)
+look2 <- Exp.cov(x1, x2, aRange=4, distMat = distMat)
 test.for.zero( look, look2, tag="Exp.cov versus Exp.cov asymmetric distMat")
 
 ##### test for correct value when using C argument:
@@ -205,13 +207,13 @@ x1 = x[1:10,]
 compactDistMat = rdist(x1, compact=TRUE)
 distMat = rdist(x1, x1)
 
-temp1<- stationary.cov( x1, C= Ctest, theta=4 )
-temp2 = stationary.cov( x1, C= Ctest, theta=4, distMat=compactDistMat )
-temp3 = stationary.cov( x1, C= Ctest, theta=4, distMat=distMat )
+temp1<- stationary.cov( x1, C= Ctest, aRange=4 )
+temp2 = stationary.cov( x1, C= Ctest, aRange=4, distMat=compactDistMat )
+temp3 = stationary.cov( x1, C= Ctest, aRange=4, distMat=distMat )
 
-exp1<- Exp.cov( x1, C= Ctest, theta=4 )
-exp2 = Exp.cov( x1, C= Ctest, theta=4, distMat=compactDistMat )
-exp3 = Exp.cov( x1, C= Ctest, theta=4, distMat=distMat )
+exp1<- Exp.cov( x1, C= Ctest, aRange=4 )
+exp2 = Exp.cov( x1, C= Ctest, aRange=4, distMat=compactDistMat )
+exp3 = Exp.cov( x1, C= Ctest, aRange=4, distMat=distMat )
 
 test.for.zero(temp1, temp2, tag="stationary.cov vs stationary.cov with C set, compact distMat")
 test.for.zero(temp1, temp3, tag="stationary.cov vs stationary.cov with C set, matrix distMat")
@@ -226,10 +228,10 @@ x2 = x[1:10,]
 
 distMat = rdist(x1, x1)
 
-temp1<- stationary.cov( x1, x2, C= Ctest, theta=4 )
-temp2 = stationary.cov( x1, x2, C= Ctest, theta=4, distMat=distMat )
-exp1 <- Exp.cov( x1, x2, C= Ctest, theta=4 )
-exp2 = Exp.cov( x1, x2, C= Ctest, theta=4, distMat=distMat )
+temp1<- stationary.cov( x1, x2, C= Ctest, aRange=4 )
+temp2 = stationary.cov( x1, x2, C= Ctest, aRange=4, distMat=distMat )
+exp1 <- Exp.cov( x1, x2, C= Ctest, aRange=4 )
+exp2 = Exp.cov( x1, x2, C= Ctest, aRange=4, distMat=distMat )
 
 test.for.zero(temp1, temp2, tag="stationary.cov vs stationary.cov with C set and asymmetric distMat given")
 test.for.zero(exp1, exp2, tag="Exp.cov vs Exp.cov with C set and asymmetric distMat given")
@@ -269,21 +271,21 @@ test.for.zero(exp1^(rdist(x1, x1)^(p2 - p1)), exp2, tag="Testing p=1 v 2")
 test.for.zero(exp2^(rdist(x1, x1)^(p3 - p2)), exp3, tag="Testing p=2 v 3")
 test.for.zero(exp2, exp2Dist, tag="Testing p=2 v 2 with distMat")
 
-##### test Exp.cov functions for correct use of theta
+##### test Exp.cov functions for correct use of aRange
 #
 
-theta1 = 1
-theta2 = 2
-theta3 = 3
+aRange1 = 1
+aRange2 = 2
+aRange3 = 3
 distMat = rdist(x1, x1)
 
-exp1 = Exp.cov(x1, theta=theta1)
-exp2 = Exp.cov(x1, thet=theta2)
-exp2Dist = Exp.cov(x1, theta=theta2, distMat = distMat)
-exp3 = Exp.cov(x1, theta=theta3)
-test.for.zero(exp1^(theta1/theta2), exp2, tag="Testing theta=1 v 2")
-test.for.zero(exp2^(theta2/theta3), exp3, tag="Testing theta=2 v 3")
-test.for.zero(exp2, exp2Dist, tag="Testing theta=2 v 2 with distMat")
+exp1 = Exp.cov(x1, aRange=aRange1)
+exp2 = Exp.cov(x1, aRange=aRange2)
+exp2Dist = Exp.cov(x1, aRange=aRange2, distMat = distMat)
+exp3 = Exp.cov(x1, aRange=aRange3)
+test.for.zero(exp1^(aRange1/aRange2), exp2, tag="Testing aRange=1 v 2")
+test.for.zero(exp2^(aRange2/aRange3), exp3, tag="Testing aRange=2 v 3")
+test.for.zero(exp2, exp2Dist, tag="Testing aRange=2 v 2 with distMat")
 
 
 

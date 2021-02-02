@@ -116,10 +116,13 @@ title("Recorded MAM max (red) and min (blue) temperatures 1997")
 
 #Fitting a spatial model:
 obj<- Tps(CO.loc,CO.tmax.MAM.climate,  Z= CO.elev )
-good<- !is.na(CO.tmax.MAM.climate )
-out<- MLE.Matern(CO.loc[good,],CO.tmax.MAM.climate[good], 
-          smoothness=1.0, Z= CO.elev[good] )
-#MLE search on range suggests Tps model           
+\dontrun{
+out<- spatialProcess(CO.loc,CO.tmax.MAM.climate, 
+          smoothness=1.0, Z= CO.elev)
+surface( out)
+	  }
+	  
+         
 
 
 }

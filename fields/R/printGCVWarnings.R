@@ -41,8 +41,8 @@ printGCVWarnings<- function( Table, method="all"){
  "(GCV) Generalized Cross-Validation ",
  "(GCV.model) Generalized Cross-Validation on replicate means ",
  "(GCV.one) Generalized Cross-Validation on individual observations ",
- "(RMSE) Matching estimate of sigma to supplied rmse ",
- "Matching estimate of sigma to that from replicated observations",
+ "(RMSE) Matching estimate of tau to supplied rmse ",
+ "Matching estimate of tau to that from replicated observations",
  "(REML) Restricted maximum likelihood ",
  "user supplied lambda"
   )

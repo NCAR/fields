@@ -39,7 +39,7 @@ x0<- cbind( c(.1,.2,.6,.65,.8), c(.05,.5,.73,.9,.95))
 
 
 temp.wght<- function(x, alpha=.3){
-  Exp.cov( x, theta=.1) }
+  Exp.cov( x, aRange=.1) }
 
 Krig( x,y, cov.function=Exp.cov,weights=weights,
      wght.function= "temp.wght")-> out
@@ -57,15 +57,15 @@ test.for.zero( A%*%y, predict( out, x0),tag="Amatrix vs. predict")
 W2<-out$W2
 W<- out$W
 
-Sigma<- out$rhohat*Exp.cov( out$x,out$x)
-temp0<- out$rhohat*(Exp.cov( x0, x0))
-S1<- out$rhohat*Exp.cov( out$x, x0)
+Sigma<- out$sigmahat*Exp.cov( out$x,out$x)
+temp0<- out$sigmahat*(Exp.cov( x0, x0))
+S1<- out$sigmahat*Exp.cov( out$x, x0)
 
 #yhat= Ay
 #var( f0 - yhat)=    var( f0) - 2 cov( f0,yhat)+  cov( yhat)
 
 Sigma.obs<-  Krig.make.Wi( out)$Wi
-Sigma.obs <- Sigma.obs* (out$shat.MLE**2) 
+Sigma.obs <- Sigma.obs* (out$tauHat.MLE**2) 
 
 temp1<-  A%*%S1
 temp2<- A%*% ( Sigma.obs+ Sigma)%*% t(A)

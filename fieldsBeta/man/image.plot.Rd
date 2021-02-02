@@ -21,6 +21,8 @@
 
 \name{image.plot}
 \alias{image.plot}
+\alias{setupLegend}
+\alias{addLegend}
 \title{
   Draws an image plot with a legend strip for the color scale based on either
 a regular grid or a grid of quadrilaterals.  
@@ -31,7 +33,9 @@ placement of a legend. This is done by splitting the plotting region
 into two parts. Putting the image in one and the legend in the other. After the
 legend is added the plot region is reset to the image plot.
 This function also allows for plotting quadrilateral cells in the image format that
-often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic to the ggplot package. 
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic to the ggplot package.
+Two additional functions are provided to add color scale to other kinds
+of figures. 
 
 }
 \usage{
@@ -45,6 +49,20 @@ often arise from regular grids transformed with a map projection or a scaling an
     legend.only = FALSE,  lab.breaks = NULL, 
     axis.args = NULL, legend.args = NULL, legend.cex=1.0, midpoint = FALSE, border = NA, 
     lwd = 1,verbose = FALSE )
+
+setupLegend( horizontal = FALSE,
+                        legend.shrink = 0.9, 
+                        legend.width = 1.2, 
+                        legend.mar = ifelse(horizontal, 3.1, 5.1)
+			)
+addLegend( legend.lab = NULL,
+           legend.line= 2, 
+           axis.args = NULL,
+           legend.args = NULL,
+           legend.cex=1.0, 
+           col=NULL,
+           zlim=NULL
+           )			
 }
 
 \arguments{ 
@@ -275,8 +293,13 @@ Note that to add just the legend strip all the numerical information one
 needs is the \code{zlim} argument and the color table! See examples for tricks in positioning.
 
 \strong{About color tables:}
-We like \code{tim.colors}
-as a default color scale and so if this what you use this can be omitted. Unfortunately this is not the default for the \code{image} function. Another important color scale is \code{ viridis() } from the viridis package. It seems that by and large everyone seems to react postively to viridis -- guess that is the point!
+We like \code{tim.colors} 
+as a default color scale and so if this what you use this can be omitted.
+Unfortunately this is not the default for the \code{image} function. Another
+important color scale is \code{ viridis() } from the viridis package.
+It seems that by
+and large everyone seems to react postively to viridis -- guess that is the
+point!
 
 The
 topographic color scale (\code{topo.colors}) is
@@ -284,10 +307,12 @@ also a close second showing our geophysical bias.
 Users may find \code{larry.colors} useful for coding distinct regions
 in the style of a cloropleith map.   See also
 \code{terrain.colors} for a subset of the topo ones and \code{designer.colors} to "roll
-your own" color table. One nice option in this last function is to fix color transitions at
+your own" color table. One nice option in this last function is to fix
+color transitions at
 particular quantiles of the data rather than at equally spaced
 intervals. For color choices see how the \code{nlevels} argument figures
-into the legend and main plot number of colors. Also see the \code{colors} function
+into the legend and main plot number of colors. Also see the \code{colors}
+function
 for a listing of all the colors that come with the R base environment. 
 
 \strong{The details of placing the legend and 
@@ -317,7 +342,30 @@ is that one can no longer add additional graphics elements to the
 image 
 plot. Note that filled.contour always resets the graphics but provides 
 another mechanism to pass through plotting commands. Apparently 
-\code{filled.contour}, while very pretty, does not work for multiple plots. 
+\code{filled.contour}, while very pretty, does not work for multiple plots.
+
+\strong{About setup and add legend functions} These came about to create a
+scatterplot in Base R Graphics where the points are colored with a color scale
+and the scale can be plotted as part of the figure
+See \code{ \link{bubblePlot} } for a version of this kind of figure.  The
+function \code{setupLegend} should be used first to create enough space
+to add a color scale later. After plotting then \code{addLegend} will add the
+color scale. Note that if the color scale has been created by the \code{color.scale} function the last call to this function will use the color scale and limits created in \code{color.scale}.
+
+In summary here is an example of using these functions:
+
+\preformatted{
+  setupLegend()
+  colTab<- rainbow(10)
+  plot( 1:10, 1:10, col=colTab, pch=16)
+  addLegend(col=colTab, zlim = c(1,10))
+}
+
+More complete graphics specifications, such as ggplot,  do not need such
+functions because the
+entire graphics segment is parsed to create the complete figure. In this way
+room for color scale can be created automatically. The functions proposed here
+are a simple work around to create these figures using base R graphics. 
 
 \strong{Other packages}
 \code{levelplot} that is part of the lattice package has a very 
@@ -507,7 +555,14 @@ image.plot( zlim=c(0,25), nlevel=64,legend.only=TRUE, horizontal=TRUE,
 col=topo.colors(64))
 }
 #
-# 
+
+# adding a legend by  automatically making room. 
+  setupLegend()
+  colTab<- rainbow(10)
+  plot( 1:10, 1:10, col=colTab, pch=16)
+  addLegend(col=colTab, zlim = c(1,10))
+#
+
 #######################################################
 ##### Comparison to ggplot
 #######################################################

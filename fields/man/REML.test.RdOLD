@@ -37,7 +37,7 @@ different ways of estimating and testing restricted and profile
 likehiloods for the Martern covariance parameters. \code{MLE.Matern}
 is a simple function that finds the restricted maximum likelihood
 (REML) estimates of the sill, nugget and range parameters (\code{rho,
-sigma2 and theta}) of the Matern covariance functions.  The remaining
+tau2 and theta}) of the Matern covariance functions.  The remaining
 functions are primarily for testing.
 }
 \usage{
@@ -56,7 +56,7 @@ MaternGLS.test(x, y, smoothness = 1.5, init = log(c(1, 0.2, 0.1)))
 MaternQR.test (x, y, smoothness = 1.5, init = log(c(1, 0.2, 0.1))) 
 MaternQRProfile.test (x, y, smoothness = 1.5, init = log(c(1))) 
 
-REML.test(x, y, rho, sigma2, theta, nu = 1.5)
+REML.test(x, y, rho, tau2, theta, nu = 1.5)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -82,7 +82,7 @@ REML.test(x, y, rho, sigma2, theta, nu = 1.5)
    \item{ngrid}{Number of points in grid search.}
 
 \item{init}{Initial values of the parameters for optimization. For the
-first three functions these are in the order rho, theta sigma2 and in
+first three functions these are in the order rho, theta tau2 and in
 a log scale. For MaternQRProfile.test initial value is just
 log(theta). }
 
@@ -90,7 +90,7 @@ log(theta). }
 
 \item{rho}{ Marginal variance of Matern process (the "sill") }
 
-\item{sigma2}{Variance of measurement error (the "nugget")}
+\item{tau2}{Variance of measurement error (the "nugget")}
 
 \item{theta}{Scale parameter (the "range")}
 
@@ -123,7 +123,7 @@ in evaluating the profile likelihood.}
 estimates of using the restricted and profiled likeilihood that is
 intrinsic to the ccomputations in \code{Krig}. The idea is that the
 likelihood is concentrated to the parameters lambda and theta. (where
-lambda = sigma2/rho). For fixed theta then this is maximized over
+lambda = tau2/rho). For fixed theta then this is maximized over
 lambda using \code{Krig} and thus concetrates the likelihood on
 theta. The final maximization over theta is implemented as a golden
 section search and assumes a convex function. All that is needed is
@@ -146,7 +146,7 @@ For MLE.Matern (and MLE.Matern.fast)
 
 \item{smoothness}{Value of the smoothness function}
 
-\item{pars}{MLE for rho, theta and sigma}
+\item{pars}{MLE for rho, theta and tau}
 
 \item{REML}{Value of minus the log restricted Profile likelihood at
 the maxmimum}
@@ -156,6 +156,10 @@ on the MLE parameters.}
 
 \item{REML.grid}{Matrix with values of theta and the log likelihood
 from the initial grid search.}
+
+
+Below are some comparisions for exploring and checking the versions of finding MLEs for covariance parameters.
+
 
 }
 \author{
@@ -169,28 +173,25 @@ see how these functions are used to check the likelihood expressions.
 # Just look at one day from the ozone2 
 data(ozone2)
 
-out<- MLE.Matern( ozone2$lon.lat,ozone2$y[16,],1.5, ngrid=8)
+out<- MLE.Matern( ozone2$lon.lat,ozone2$y[16,], 1.5, ngrid=25)
 plot( out$REML.grid)
-points( out$pars[2], out$REML, cex=2)
+points( out$pars[2], out$REML, pch=16)
 xline( out$pars[2], col="blue", lwd=2)
-\dontrun{
-# to get a finer grid on initial search:
-out<- MLE.Matern( ozone2$lon.lat,ozone2$y[16,],1.5,
-                      theta.grid=c(.3,2), ngrid=40) 
 
+\dontrun{
 # simulated data  200 points uniformly distributed
 set.seed( 123)
 x<- matrix( runif( 2*200), ncol=2)
 n<- nrow(x)
 rho= 2.0
-sigma= .05
+tau= .05
 theta=.5
 
 Cov.mat<-  rho* Matern( rdist(x,x), smoothness=1.0, range=theta)
 A<- chol( Cov.mat)
 gtrue<- t(A) \%*\% rnorm(n)
 gtrue<- c( gtrue)
-err<-  rnorm(n)*sigma
+err<-  rnorm(n)*tau
 y<- gtrue + err
 out0<- MLE.Matern( x,y,smoothness=1.0) # the bullet proof version
 # the MLEs and -log likelihood at maximum
@@ -201,7 +202,6 @@ out<- MLE.Matern.fast( x,y, smoothness=1.0) # for the impatient
 # the MLEs:
 print( out$pars) 
 print( out$REML)
-
 
 # MLE for fixed theta (actually the MLE from out0) 
 # that uses MLE.objective.fn directly
@@ -218,33 +218,10 @@ print( out2$pars)
   out<- MLE.Matern.fast( ozone2$lon.lat,ozone2$y[16,],1.5)
 #use these parameters to fit surface ....
   lambda.MLE<- out$pars[3]/out$pars[1]
-  out2<- Krig( ozone2$lon.lat,ozone2$y[16,] , Covariance="Matern",
-              theta=out$pars[2], smoothness=1.5, lambda= lambda.MLE)
+  out2<- mKrig( ozone2$lon.lat,ozone2$y[16,] , Covariance="Matern",
+              theta=out$pars[2], smoothness=1.5, lambda= lambda.MLE,
+	      na.rm=TRUE)
   surface( out2) # uses default lambda -- which is the right one.
-
-# here is another way to do this where the new lambda is given in 
-# the predict step
-  out2<- Krig( ozone2$lon.lat,ozone2$y[16,] , Covariance="Matern",
-               theta=out$pars[2], smoothness=1.5)
-# The default lambda is that found by GCV
-# predict on a grid but use the MLE value for lambda:
-  out.p<- predictSurface(out2, lambda= lambda.MLE)
-  surface(out.p) # same surface!
-}
-
-# One could also use mKrig with a fixed lambda to compute the surface. 
-
-\dontrun{
-# looping  through all the days of the ozone data set.
-  data( ozone2)
-  x<- ozone2$lon.lat
-  y<- ozone2$y
-  out.pars<- matrix( NA, ncol=3, nrow=89)
-
-  for ( k in 1:89){
-    hold<- MLE.Matern.fast( x,c(y[k,]), 1.5)$pars
-    cat( "day", k," :", hold, fill=TRUE)
-    out.pars[k,]<- hold }
 }
 
 }

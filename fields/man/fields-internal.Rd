@@ -55,7 +55,7 @@
 \alias{krig.image.parameters}
 
 \alias{makeSimulationGrid}
-\alias{makeSimulationGrid2}
+%\alias{makeSimulationGrid2}
 \alias{makePredictionPoints}
 \alias{multWendlandGrid}
 
@@ -83,9 +83,9 @@
 \alias{print.qsreg}
 \alias{qsreg.fit}
 \alias{qsreg.psi}
-\alias{qsreg.rho}
+\alias{qsreg.sigma}
 \alias{qsreg.psi.OLD}
-\alias{qsreg.rho.OLD}
+\alias{qsreg.sigma.OLD}
 \alias{qsreg.trace}
 \alias{quickPrint}
 \alias{summary.qsreg}
@@ -112,7 +112,6 @@
 \alias{world.dat}
 \alias{compactTOMatOLD}
 
-\alias{MLESpatialProcess.fast}
 
 \title{
   Fields internal and secondary functions 
@@ -155,7 +154,7 @@ double.exp(x)
 dyadic.2check( m,n,cut.p=2)
 dyadic.check( n,cut.p=2) 
 
-Exp.earth.cov (x1, x2, theta = 1) 
+Exp.earth.cov (x1, x2, aRange = 1) 
  
 fast.1way  (lev, y, w = rep(1, length(y))) 
  
@@ -168,6 +167,8 @@ gauss.cov (...)
 golden.section.search (ax, bx, cx, f, niter = 25, f.extra = NA, 
      tol = 1e-05, gridx=NA) 
  
+%fastTps.MLE(...)
+
 imagePlotInfo (...,breaks, nlevel) 
 imageplot.info(...)
 imageplot.setup(x, add=FALSE,  legend.shrink = 0.9, legend.width = 1, 
@@ -176,8 +177,9 @@ horizontal = FALSE, legend.mar=NULL, bigplot = NULL, smallplot = NULL,...)
 
 makeSimulationGrid(mKrigObject, predictionPoints, nx, ny, nxSimulation,
                  nySimulation, gridRefinement, gridExpansion)
-makeSimulationGrid2 (fastTpsObject, predictionPointsList,
-                               gridRefinement, gridExpansion)
+                 
+%makeSimulationGrid2 (fastTpsObject, predictionPointsList,
+%                               gridRefinement, gridExpansion)
 
 
   
@@ -214,11 +216,11 @@ qsreg.fit (x, y, lam, maxit = 50, maxit.cv = 10,
            tol = 1e-04, offset = 0, sc = sqrt(var(y)) * 1e-07, alpha = 0.5, 
            wt = rep(1, length(x)), cost = 1)
 qsreg.psi( r,alpha=.5,C=1) 
-qsreg.rho( r,alpha=.5,C=1)
+qsreg.sigma( r,alpha=.5,C=1)
 qsreg.trace(x, y, lam, maxit = 50, maxit.cv = 10, tol = 1e-04, 
              offset = 0, sc = sqrt(var(y)) * 1e-07, alpha = 0.5, 
              wt = rep(1, length(x)), cost = 1)
-qsreg.rho.OLD(r, alpha = 0.5, C = 1)
+qsreg.sigma.OLD(r, alpha = 0.5, C = 1)
 qsreg.psi.OLD(r, alpha = 0.5, C = 1)
 
 quickPrint(obj, max.values = 10)
@@ -246,15 +248,10 @@ summaryGCV.sreg (object, lambda, cost = 1, nstep.cv = 20,
 \method{summary}{sreg} (object, digits = 4, ...) 
 
 surface(object , ...) 
-\method{surface}{default} (object, ...) 
-
+\method{surface}{default}(object, col = viridis(256), ...)
 
 unscale (x, x.center, x.scale) 
 
-MLESpatialProcess.fast(x, y, lambda.start=.5, theta.start = NULL, 
-  cov.function = "stationary.cov", 
-  cov.args = list(Covariance = "Matern", smoothness = 1), 
-  Distance = "rdist", verbose=FALSE, optim.args=NULL, ...)
 
 }
 \keyword{internal}

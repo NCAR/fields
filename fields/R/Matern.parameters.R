@@ -22,8 +22,8 @@ Matern.cor.to.range <- function(d, nu, cor.target = 0.5,
     guess = NULL, ...) {
     # define local function for root finding
     #
-    ftemp <- function(theta, f.extra) {
-        Matern(f.extra$d/theta, nu = f.extra$nu) - f.extra$cor.target
+    ftemp <- function(aRange, f.extra) {
+        Matern(f.extra$d/aRange, nu = f.extra$nu) - f.extra$cor.target
     }
     # inital guess is exponential
     if (is.null(guess)) {

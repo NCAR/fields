@@ -96,7 +96,7 @@
         #
         # save  GCV estimate if that is what is needed
         lam <- a$lambda.est[method, "lambda"]
-        out$shat.GCV <- a$lambda.est[method, "shat"]
+        out$tauHat.GCV <- a$lambda.est[method, "tauHat"]
     }
     #
     # now evaluate spline at lambda either from specified grid or GCV value.
@@ -227,11 +227,11 @@
     else {
         offset <- obj$offset
     }
-    if (is.null(obj$shat.pure.error)) {
-        shat.pure.error <- 0
+    if (is.null(obj$tauHat.pure.error)) {
+        tauHat.pure.error <- 0
     }
     else {
-        shat.pure.error <- obj$shat.pure.error
+        tauHat.pure.error <- obj$tauHat.pure.error
     }
     if (is.null(obj$pure.ss)) {
         pure.ss <- 0
@@ -259,18 +259,18 @@
     # If the denominator is negative then flag this as a bogus case
     # by making the GCV function 'infinity'
     #
-    shat <- sqrt((rss + pure.ss)/(N - trA))
+    tauHat <- sqrt((rss + pure.ss)/(N - trA))
     GCV <- ifelse(den > 0, MSE/den^2, NA)
     gcv.model <- ifelse((den > 0) & ((N - np) > 0), pure.ss/(N - 
         np) + (rss/np)/(den^2), NA)
     gcv.one <- ifelse(den > 0, ((pure.ss + rss)/N)/(den1^2), 
         NA)
-    list(trace = trA, gcv = GCV, rss = rss, shat = shat, gcv.model = gcv.model, 
+    list(trace = trA, gcv = GCV, rss = rss, tauHat = tauHat, gcv.model = gcv.model, 
         gcv.one = gcv.one)
 }
 
 "sreg.fs2hat" <- function(lam, obj) {
-    sreg.fit(lam, obj)$shat^2
+    sreg.fit(lam, obj)$tauHat^2
 }
 
 "sreg.trace" <- function(h, info) {

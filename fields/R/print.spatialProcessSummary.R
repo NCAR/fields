@@ -15,7 +15,6 @@
 # GNU General Public License for more details.
 #
 print.spatialProcessSummary <- function(x, digits = 4, ...) {
-  
   cat("CALL:\n")
   dput(x$call)
   cat("\n")
@@ -50,20 +49,24 @@ print.spatialProcessSummary <- function(x, digits = 4, ...) {
       }
     }
   }
+  cat( "Nonzero entries in covariance matrix ", x$nonzero.entries, fill=TRUE)
+  
   cat("\n")
   cat(" SUMMARY FROM ML ESTIMATION:", fill=TRUE)
-  if( !is.null( x$MLEpars)){
-    cat("  parameters found from optim: ", x$MLEpars, fill=TRUE )
-    cat(" sigma and rho found analytically", fill=TRUE)
+  
+  if( !is.null( x$MLEInfo) ){
+    cat("  parameters found from optim: ", fill=TRUE )
+    print( x$MLESummary[x$MLEpars] )
+    cat(" tau and sigma found analytically", fill=TRUE)
     cat("\n")
-    print( x$MLESummary)
   }
   else{
-    cat(" lambda is fixed: ", fill=TRUE)
-    cat(" sigma and rho  analytically  derived from lambda", fill=TRUE)
+    cat(" lambda and range are supplied : ", fill=TRUE)
+    cat(" tau and sigma  analytically  derived from lambda", fill=TRUE)
     cat("\n")
-    print( x$MLESummary)
   }
+  cat("Summary from estimation:", fill=TRUE)
+  print( x$MLESummary)
  
   invisible(x)
 }

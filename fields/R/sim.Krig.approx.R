@@ -39,9 +39,9 @@
     # coerce grid list to have x and y components
     #
     glist <- list(x = temp$x, y = temp$y)
-    # figure out what sigma and rho should be
-        sigma2 <- object$best.model[2]
-        rho <- object$best.model[3]
+    # figure out what tau and sigma should be
+        tau2 <- object$best.model[2]
+        sigma <- object$best.model[3]
     #
     # set up various sizes of arrays
     m <- nx * ny
@@ -90,7 +90,7 @@
     ###
     for (k in 1:M) {
         # simulate full field
-        h.true$z <- sqrt(object$rhohat) * sim.rf(cov.obj)
+        h.true$z <- sqrt(object$sigmahat) * sim.rf(cov.obj)
         if (verbose) {
             cat("mean predicted field", fill = TRUE)
             image.plot(h.true)
@@ -111,7 +111,7 @@
         # create synthetic data
         # NOTE:these are actually the 'yM's  the y's
         # having been collapsed to replicate means.
-        y.synthetic <- h.data + sqrt(sigma2) * W2i %d*% rnorm(N)
+        y.synthetic <- h.data + sqrt(tau2) * W2i %d*% rnorm(N)
         if (verbose) {
             cat("synthetic data", y.synthetic, fill = TRUE)
         }

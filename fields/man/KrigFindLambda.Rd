@@ -19,8 +19,8 @@
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
-\name{gcv.Krig}
-\alias{gcv.Krig}
+\name{KrigFindLambda}
+\alias{KrigFindLambda}
 \alias{gcv.sreg}
 
 \title{Finds profile likelihood and GCV estimates of 
@@ -34,7 +34,7 @@ independently with different data sets (the y's) if the covariates ( the
 x's) are the same and thus reduce the computation. 
 }
 \usage{
-gcv.Krig(
+KrigFindLambda(
 out, lambda.grid = NA, cost = 1, nstep.cv = 200, rmse
                  = NA, verbose = FALSE, tol = 1e-05, offset = 0, y =
                  NULL, give.warnings = TRUE)
@@ -52,7 +52,7 @@ equally spaced on effective degree of freedom scale. }
   \item{cost}{ Cost used in GCV denominator }
   \item{nstep.cv}{ Number of grid points in coarse search. }
   \item{rmse}{ Target root mean squared error to match with 
-                  the estimate of sigma**2 }
+                  the estimate of tau**2 }
   \item{verbose}{ If true prints intermediate results.  }
   \item{tol}{ Tolerance in delcaring convergence of golden section search or bisection search. }
   \item{offset}{ Additional degrees of freedom to be added into the GCV denominator.
@@ -94,13 +94,13 @@ trA=effective degrees of freedom,
 GCV=Usual GCV criterion, 
 GCV.one=GCV criterion leave-one-out, 
 GCV.model= GCV based on average response in the case of replicates, 
-shat= Implied estimate of sigma ,
+tauHat= Implied estimate of tau ,
 -Log Profile= negative log of profiel likelihood for the lambda. 
 }
   \item{lambda.est}{Summary table of all estimates
 Rows index different types of estimates: 
 GCV, GCV.model, GCV.one, RMSE, pure error, -Log Profile
-and the columns are the estimated values  for lambda, trA, GCV, shat.
+and the columns are the estimated values  for lambda, trA, GCV, tauHat.
 }
 }
 \author{Doug Nychka}
@@ -115,7 +115,7 @@ and the columns are the estimated values  for lambda, trA, GCV, shat.
 Tps( ChicagoO3$x, ChicagoO3$y)-> obj # default is to find lambda by GCV
 summary( obj)
 
-gcv.Krig( obj)-> out
+KrigFindLambda( obj)-> out
 print( out$lambda.est) # results agree with Tps summary
 
 sreg( rat.diet$t, rat.diet$trt)-> out
@@ -127,8 +127,8 @@ f<-  x**2*( 1-x)
 f<- f/sqrt( var( f))
 
 set.seed(123) # let's all use the same seed
-sigma<- .1
-y<- f + rnorm( 150)*sigma
+tau<- .1
+y<- f + rnorm( 150)*tau
 
 Tps( x,y)-> obj # create Krig object
 
@@ -137,15 +137,15 @@ hold<- hold2<- matrix( NA, ncol=6, nrow=200)
 for( k in 1:200){
 # look at GCV estimates of lambda
 # new data simulated
-   y<- f + rnorm(150)*sigma 
+   y<- f + rnorm(150)*tau 
 # save GCV estimates
-lambdaTable<- gcv.Krig(obj,  y=y, give.warnings=FALSE)$lambda.est
+lambdaTable<- KrigFindLambda(obj,  y=y, give.warnings=FALSE)$lambda.est
 hold[k,]<-  lambdaTable[1,]
 hold2[k,]<-  lambdaTable[6,]
 }
 matplot( cbind(hold[,2], hold2[,2]),cbind( hold[,4],hold2[,4]),
- xlab="estimated eff. df", ylab="sigma hat", pch=16, col=c("orange3", "green2"), type="p")
-yline( sigma, col="grey", lwd=2)
+ xlab="estimated eff. df", ylab="tau hat", pch=16, col=c("orange3", "green2"), type="p")
+yline( tau, col="grey", lwd=2)
 
 }
 }

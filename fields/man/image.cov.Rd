@@ -44,7 +44,7 @@ Exp.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)
 Rad.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)
 
 matern.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid,
-M=NULL,N=NULL,theta= 1.0, smoothness=.5)
+M=NULL,N=NULL,aRange= 1.0, smoothness=.5)
 
 wendland.image.cov(ind1, ind2, Y, cov.obj = NULL, 
     setup = FALSE, grid, M = NULL, N = NULL, cov.args=NULL, ...)
@@ -76,7 +76,7 @@ If true do not do the multiplication but just return the covariance object
 required by this function. 
 }
 \item{delta}{A distance that indicates the range of the covariance when it has compact support.
-For example this is the theta parameter in the Wendland covariance.}
+For example this is the aRange parameter in the Wendland covariance.}
 \item{grid}{
 A grid list giving the X and Y grids for the image. (See example below.)
 This is only required if setup is true. 
@@ -91,7 +91,7 @@ result but  smaller values of M will yield an approximate, faster result.
 }
 
 \item{N}{Size of y-grid used to compute multiplication by the FFT.}
-\item{theta}{Scale parameter for Matern.}
+\item{aRange}{Scale parameter for Matern.}
 \item{smoothness}{Smoothness parameter for Matern (.5=Exponential)}
 \item{\dots}{
 Any arguments to pass to the covariance function in setting up the
@@ -124,13 +124,13 @@ with ind1!
 Functional Form: Following the same form as Exp.cov stationary.cov for 
 irregular locations, the covariance is defined as phi( D.ij) where D.ij is
 the Euclidean distance between x1[i,] and x2[j,] but having first been
-scaled by theta. Specifically,
+scaled by aRange. Specifically,
 
-D.ij = sqrt(  sum.k (( x1[i,k] - x2[j,k]) /theta[k])**2 ).
+D.ij = sqrt(  sum.k (( x1[i,k] - x2[j,k]) /aRange[k])**2 ).
 
 See \code{Matern} for the version of phi for the Matern family. 
  
-Note that if theta is a scalar then this defines an isotropic covariance
+Note that if aRange is a scalar then this defines an isotropic covariance
 function.  
 
 Implementation: This function does the multiplication on the full
@@ -166,12 +166,12 @@ this distinction.
   smooth.2d, as.image, krig.image, stationary.cov 
 }
 \examples{
-# multiply 2-d isotropic exponential with theta=4 by a random vector 
+# multiply 2-d isotropic exponential with aRange=4 by a random vector 
 
 junk<- matrix(rnorm(100*100), 100,100)
 
 cov.obj<- stationary.image.cov( setup=TRUE, 
-             grid=list(x=1:100,y=1:100),theta=8) 
+             grid=list(x=1:100,y=1:100),aRange=8) 
 result<-  stationary.image.cov(Y=junk,cov.obj=cov.obj)
 
 image( matrix( result, 100,100)) # NOTE that is also a smoother!
@@ -194,16 +194,16 @@ image( matrix( result, 100,100)) # NOTE that is also a smoother!
 
 # setup to create cov.obj for exponential covariance with range= 1.25
 
- cov.obj<- stationary.image.cov( setup=TRUE, grid=grid, theta=1.25) 
+ cov.obj<- stationary.image.cov( setup=TRUE, grid=grid, aRange=1.25) 
 
 # multiply covariance matrix by an arbitrary vector
  junk<-  rnorm(nrow( ind1))
  result<- stationary.image.cov( ind1, ind1, Y= junk,cov.obj=cov.obj)
 
 # The brute force way would be  
-#   result<- stationary.cov( xd, xd, theta=1.25, C=junk)
+#   result<- stationary.cov( xd, xd, aRange=1.25, C=junk)
 # or 
-#   result<- stationary.cov( xd, xd, theta=1.25) %*% junk
+#   result<- stationary.cov( xd, xd, aRange=1.25) %*% junk
 # both of these take much longer 
 
 
@@ -221,7 +221,7 @@ image( matrix( result, 100,100)) # NOTE that is also a smoother!
 # check out the Matern
  grid<- list( x= seq(-105,-99,,64), y= seq( 40,45,,64)) 
  cov.obj<- matern.image.cov( 
-             setup=TRUE, grid=grid, theta=.55, smoothness=1.0)
+             setup=TRUE, grid=grid, aRange=.55, smoothness=1.0)
  Y<- matrix(0,64,64)
  Y[16,16]<- 1
 

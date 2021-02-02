@@ -118,8 +118,8 @@ A<- rbind(
 
  hold<-solve( A, c( y, rep(0,3)))
  c.coef<- hold[1:N]
- betaHat<- hold[ (1:3)+N]
- zhat<-  R%*%c.coef + Tmatrix%*% betaHat
+ d.coef<- hold[ (1:3)+N]
+ zhat<-  R%*%c.coef + Tmatrix%*% d.coef
   test.for.zero( zhat, obj$fitted.values, tag="Tps 2-d m=2 sanity check")
 # out of sample prediction
 xnew<- rbind( c( 0,0),
@@ -128,7 +128,7 @@ xnew<- rbind( c( 0,0),
 T1<- cbind( rep( 1,nrow(xnew)), xnew)
 D<- rdist( xnew,x)
 R1<- ifelse( D==0, 0, D**2 * log(D))
-z1<-  R1%*%c.coef + T1%*% betaHat
+z1<-  R1%*%c.coef + T1%*% d.coef
   test.for.zero( z1, predict( obj, x=xnew), tag="Tps 2-d m=2 sanity predict")
 
 #### test Tps verses Krig note scaling must be the same

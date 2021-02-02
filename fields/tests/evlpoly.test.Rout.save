@@ -41,4 +41,4 @@ PASSED test at tolerance  1e-08
 Done testing polynomial evaluation
 > proc.time()
    user  system elapsed 
-  0.567   0.051   0.609 
+  0.830   0.082   0.908 

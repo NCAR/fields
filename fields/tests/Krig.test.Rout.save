@@ -44,6 +44,7 @@ Testing:  Compare d coef
 PASSED test at tolerance  1e-08
 Testing:  Compare c coef
 PASSED test at tolerance  1e-08
+HERE
 Testing:  Compare d coef fixed lambda
 PASSED test at tolerance  1e-08
 Testing:  Compare c coef fixed lambda
@@ -74,70 +75,35 @@ Testing:  Tps with fixed lam
 PASSED test at tolerance  1e-08
 Testing:  Tps with fixed df
 PASSED test at tolerance  1e-08
-Testing:  Krig with fixed lam argument
-PASSED test at tolerance  1e-08
+HERE
 Testing:  Krig with fixed lam argument
 PASSED test at tolerance  1e-08
 Warning: 
 Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
   (REML) Restricted maximum likelihood 
-   minimum at  right endpoint  lambda  =  2983.87 (eff. df= 3.001004 )
+   minimum at  right endpoint  lambda  =  0.003053154 (eff. df= 14.25 )
+HERE
 Testing:   d coef
 PASSED test at tolerance  1e-08
 Testing:  c coef
-PASSED test at tolerance  1e-08
-Testing:  d new y Krig.coef
-PASSED test at tolerance  1e-08
-Testing:  c new y Krig.coef
 PASSED test at tolerance  1e-08
 Testing:  d fixed case
 PASSED test at tolerance  1e-08
 Testing:   c fixed case
 PASSED test at tolerance  1e-08
-Warning: 
-Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-  (REML) Restricted maximum likelihood 
-   minimum at  right endpoint  lambda  =  2983.87 (eff. df= 3.001004 )
+HERE
 Testing:   d new y
 PASSED test at tolerance  1e-08
 Testing:  c new y
 PASSED test at tolerance  1e-08
-Testing:  d new y fixed
+Testing:  testing A matrix
 PASSED test at tolerance  1e-08
-Testing:  c new y fixed
+Testing:  testing A matrix new y
 PASSED test at tolerance  1e-08
-Warning: 
-Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-  (REML) Restricted maximum likelihood 
-   minimum at  right endpoint  lambda  =  42494.84 (eff. df= 3.00092 )
-Testing:   d reps
+Testing:  checking trace
 PASSED test at tolerance  1e-08
-Testing:  c reps
-PASSED test at tolerance  1e-08
-Warning: 
-Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-  (REML) Restricted maximum likelihood 
-   minimum at  right endpoint  lambda  =  42494.84 (eff. df= 3.00092 )
-Testing:   pure sums of squares
-PASSED test at tolerance  1e-08
-Warning: 
-Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
-  (REML) Restricted maximum likelihood 
-   minimum at  right endpoint  lambda  =  42494.84 (eff. df= 3.00092 )
-Testing:  Amatrix prediction
-PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
-Testing:   trace from A matrix
-PASSED test at tolerance  1e-08
-PASSED test at tolerance  1e-08
-Testing:  A matrix predict with new y
-PASSED test at tolerance  1e-08
-Testing:  A matrix predict compared to collapsed yM
-PASSED test at tolerance  1e-08
-Testing:  pure sums of squares
-PASSED test at tolerance  1e-08
-Testing:   check trace
+Testing:  GCV
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  0.813   0.070   0.879 
+  0.970   0.080   1.046 

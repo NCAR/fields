@@ -28,11 +28,11 @@
     c2 <- c(c2, format(round(x$enp, 1)))
     c1 <- c(c1, "Residual degrees of freedom:")
     c2 <- c(c2, format(round(x$num.observation - x$enp, 1)))
-    c1 <- c(c1, "GCV est. sigma ")
-    c2 <- c(c2, format(signif(x$shat.GCV, digits)))
-    if (!is.na(x$shat.pure.error)) {
-        c1 <- c(c1, "Pure error sigma")
-        c2 <- c(c2, format(signif(x$shat.pure.error, digits)))
+    c1 <- c(c1, "GCV est. tau ")
+    c2 <- c(c2, format(signif(x$tauHat.GCV, digits)))
+    if (!is.na(x$tauHat.pure.error)) {
+        c1 <- c(c1, "Pure error tau")
+        c2 <- c(c2, format(signif(x$tauHat.pure.error, digits)))
     }
     c1 <- c(c1, "lambda ")
     c2 <- c(c2, signif(x$lambda, digits))

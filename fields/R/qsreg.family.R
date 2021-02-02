@@ -128,7 +128,7 @@
             b$diag)
         trace.ps[k] <- b$trace
         residuals.cv[, k] <- (y - f.cv)
-        cv.ps[k] <- mean(qsreg.rho(y - f.cv, alpha = alpha, C = sc))
+        cv.ps[k] <- mean(qsreg.sigma(y - f.cv, alpha = alpha, C = sc))
     }
     #
     #
@@ -184,7 +184,7 @@ qsreg.psi <- function(r, alpha = 0.5, C = 1) {
     temp
 }
 
-qsreg.rho <- function(r, alpha = 0.5, C = 1) {
+qsreg.sigma <- function(r, alpha = 0.5, C = 1) {
     temp <- ifelse(r < 0, ((1 - alpha) * r^2)/C, (alpha * r^2)/C)
     temp <- ifelse(r > C, 2 * alpha * r - alpha * C, temp)
     temp <- ifelse(r < -C, -2 * (1 - alpha) * r - (1 - alpha) * 
@@ -206,7 +206,7 @@ qsreg.rho <- function(r, alpha = 0.5, C = 1) {
     temp[ind] <- 2 * (1 - alpha) * r[ind]
     temp
 }
-"qsreg.rho.OLD" <- function(r, alpha = 0.5, C = 1) {
+"qsreg.sigma.OLD" <- function(r, alpha = 0.5, C = 1) {
     temp <- rep(NA, length(r))
     ind <- r > C
     temp[ind] <- 2 * alpha * r[ind] - alpha * C

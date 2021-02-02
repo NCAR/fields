@@ -20,7 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "stationary.taper.cov" <- function(x1, x2=NULL, Covariance = "Exponential", 
     Taper = "Wendland", Dist.args = NULL, Taper.args = NULL, 
-    theta = 1, V = NULL, C = NA, marginal = FALSE, spam.format = TRUE, 
+    aRange = 1, V = NULL, C = NA, marginal = FALSE, spam.format = TRUE, 
     verbose = FALSE, ...) {
     # get covariance function arguments from call
     Cov.args <- list(...)
@@ -42,7 +42,7 @@
     # Make sure dimension argument is added.
     if (Taper == "Wendland") {
         if (is.null(Taper.args)) {
-            Taper.args <- list(theta = 1, k = 2, dimension = ncol(x1))
+            Taper.args <- list(aRange = 1, k = 2, dimension = ncol(x1))
         }
         if (is.null(Taper.args$dimension)) {
             Taper.args$dimension <- ncol(x1)
@@ -50,9 +50,9 @@
     }
     #
     # Add in general defaults for taper arguments if not Wendland
-    #  theta = 1.0 is the default range for the taper.
+    #  aRange = 1.0 is the default range for the taper.
     if (is.null(Taper.args)) {
-        Taper.args <- list(theta = 1)
+        Taper.args <- list(aRange = 1)
     }
     #
     # separate out a single scalar transformation and a
@@ -63,9 +63,9 @@
     # flag for great circle distance
     great.circle <- ifelse(is.null(Dist.args$method), FALSE, 
         Dist.args$method == "greatcircle")
-    # check form of theta
-    if (length(theta) > 1) {
-        stop("theta as a matrix has been depreciated,  use the V argument")
+    # check form of aRange
+    if (length(aRange) > 1) {
+        stop("aRange as a matrix has been depreciated,  use the V argument")
     }
     #
     # following now treats V as a full matrix for scaling and rotation.
@@ -73,11 +73,11 @@
     if (!is.null(V)) {
         # try to catch error of mixing great circle distance with a
         # linear scaling of coordinates.
-        if (theta != 1) {
-            stop("can't specify both theta and V!")
+        if (aRange != 1) {
+            stop("can't specify both aRange and V!")
         }
         if (great.circle) {
-            stop("Can not mix great circle distance\nwith general scaling (V argument or vecotr of theta's)")
+            stop("Can not mix great circle distance\nwith general scaling (V argument or vecotr of aRange's)")
         }
         x1 <- x1 %*% t(solve(V))
         x2 <- x2 %*% t(solve(V))
@@ -89,11 +89,11 @@
         # set the delta cutoff to be in scale of angular latitude.
         # figure out if scale is in miles or kilometers
         miles <- ifelse(is.null(Dist.args$miles), TRUE, Dist.args$miles)
-        delta <- (180/pi) * Taper.args$theta/ifelse(miles, 3963.34, 
+        delta <- (180/pi) * Taper.args$aRange/ifelse(miles, 3963.34, 
             6378.388)
     }
     else {
-        delta <- Taper.args$theta
+        delta <- Taper.args$aRange
     }
     if (length(delta) > 1) {
         stop("taper range must be a scalar")
@@ -104,19 +104,19 @@
     if (!marginal) {
         # find nearest neighbor distances based on taper threshhold.
         # This is hardwired to 'nearest.dist' function from spam.
-        # note that delta is taken from the taper range not theta or V
+        # note that delta is taken from the taper range not aRange or V
         sM <- do.call("nearest.dist", c(list(x1, x2, delta = delta, 
             upper = NULL), Dist.args))
         # sM@entries are the pairwise distances up to distance taper.range.
         # apply covariance and taper to these.
-        # note rescaling by theta and taper ranges.
-        sM@entries <- do.call(Covariance, c(list(d = sM@entries/theta), 
+        # note rescaling by aRange and taper ranges.
+        sM@entries <- do.call(Covariance, c(list(d = sM@entries/aRange), 
             Cov.args)) * do.call(Taper, c(list(d = sM@entries), 
             Taper.args))
         # if verbose print out each component separately
         if (verbose) {
-            print(sM@entries/theta)
-            print(do.call(Covariance, c(list(d = sM@entries/theta), 
+            print(sM@entries/aRange)
+            print(do.call(Covariance, c(list(d = sM@entries/aRange), 
                 Cov.args)))
             print(do.call(Taper, c(list(d = sM@entries), Taper.args)))
         }
@@ -136,9 +136,9 @@
     }
     else {
         # find marginal variance and return  a vector.
-        sigma2 <- do.call(Covariance, c(list(d = 0), Cov.args)) * 
+        tau2 <- do.call(Covariance, c(list(d = 0), Cov.args)) * 
             do.call(Taper, c(list(d = 0), Taper.args))
-        return(rep(sigma2, nrow(x1)))
+        return(rep(tau2, nrow(x1)))
     }
     # should not get here!
 }

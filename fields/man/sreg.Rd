@@ -156,17 +156,17 @@ Method used to find the smoothing parameter.}
 \item{pure.ss}{
 Pure error sum of squares from replicate groups. }
 
-\item{shat.pure.error}{
-Estimate of sigma from replicate groups.}
+\item{tauHat.pure.error}{
+Estimate of tau from replicate groups.}
 
-\item{shat.GCV}{
-Estimate of sigma using estimated lambda from GCV minimization }
+\item{tauHat.GCV}{
+Estimate of tau using estimated lambda from GCV minimization }
 
 \item{trace}{
 Effective degrees of freedom for the spline estimate(s)}
 
 \item{gcv.grid}{
-Values of trace, GCV, shat. etc. for a grid of smoothing parameters.
+Values of trace, GCV, tauHat. etc. for a grid of smoothing parameters.
 If lambda ( or df) is specified those values are used. }
 
 \item{lambda.est}{
@@ -202,7 +202,7 @@ unique x locations. }
 \details{
 MODEL: The assumed model is Y.k=f(x.k) +e.k where e.k should be
 approximately
-normal and independent errors with variances sigma**2/w.k
+normal and independent errors with variances tau**2/w.k
 
 ESTIMATE: A smoothing spline is a locally weighted average of the y's
 based 
@@ -247,7 +247,7 @@ value of lambda is
 
 Usually offset =0 and cost =1. Variations on GCV with replicate points are
 described in the documentation help file for Krig.  With an appropriate
-choice for the smoothing parameter, the estimate of sigma**2 is found by
+choice for the smoothing parameter, the estimate of tau**2 is found by
 (Residual sum of squares)/tr(A).
 
 COMPUTATIONS: The computations for 1-d splines exploit the banded
@@ -305,10 +305,10 @@ set.panel() # reset panel to 1 plot
 
 # finding approximate standard errors at observations
 
-SE<- fit$shat.GCV*sqrt(fit$diagA)
+SE<- fit$tauHat.GCV*sqrt(fit$diagA)
 
 # compare to predictSE( fit.tps) differences are due to 
-# slightly different lambda values and using shat.MLE instad of shat.GCV
+# slightly different lambda values and using tauHat.MLE instad of tauHat.GCV
 #
 
 # 95% pointwise prediction intervals
@@ -324,18 +324,24 @@ lowerB<- fit$fitted.values - ZBvalue* SE
 #
 # take a look
 
-plot( fit$x, fit$y)
-lines( fit$predicted, lwd=2)
-matlines( fit$x, 
-cbind( lower, upper, lowerB, upperB), type="l", col=c( 2,2,4,4), lty=1)
+plot( fit$x, fit$y, type="n")
+envelopePlot(fit$x, lowerB,fit$x, upperB, col = "grey90",
+             lineCol="grey")
+envelopePlot(fit$x, lower,fit$x, upper, lineCol="grey")
+lines( fit$predicted, col="red",lwd=2)
+points( fit$x, fit$y,pch=16)
+
 title( "95 pct pointwise  and simultaneous intervals")
-# or try the more visually  honest:
-plot( fit$x, fit$y)
-lines( fit$predicted, lwd=2)
-segments(  fit$x, lowerB, fit$x, upperB, col=4)
-segments(  fit$x, lower, fit$x, upper, col=2, lwd=2)
+
+# or try the more visually  honest not connecting points
+plot( fit$x, fit$y, type="n")
+segments(  fit$x, lowerB, fit$x, upperB, col="grey",lwd=3)
+segments(  fit$x, lower, fit$x, upper, col="thistle3", lwd=6)
+lines( fit$predicted, lwd=2,col="red")
+points( fit$x, fit$y,pch=16)
 title( "95 pct pointwise  and simultaneous intervals")
 
 set.panel( 1,1)
+
 }
 \keyword{smooth}

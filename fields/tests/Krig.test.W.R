@@ -64,7 +64,7 @@ test.for.zero( temp.c, out2$c, tag="c coef  diag W " )
 # the full monty
 
 temp.wght<- function(x, alpha=.1){
-  Exp.cov( x, theta=alpha) }
+  Exp.cov( x, aRange=alpha) }
 
 Krig( x,y,
      cov.function=Exp.cov,weights=weights, wght.function= temp.wght,

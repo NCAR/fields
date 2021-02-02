@@ -20,8 +20,6 @@
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
 \name{fields-stuff}
-\alias{fields.diagonalize2}
-\alias{fields.diagonalize}
 \alias{fields.duplicated.matrix}
 \alias{fields.mkpoly}
 \alias{fields.derivative.poly}
@@ -35,8 +33,7 @@ methods. Variants of these might be found in the R base but these
 have been written for cleaner code or efficiency.
 }
 \usage{
-fields.diagonalize2(A,B, verbose=FALSE)
-fields.diagonalize(A,B)
+
 fields.duplicated.matrix(mat, digits = 8) 
 
 fields.mkpoly(x, m = 2, tag = "term")
@@ -46,45 +43,34 @@ fields.derivative.poly(x, m,dcoef)
 fields.evlpoly( x, coef)
 
 fields.evlpoly2( x, coef, ptab)
-
 }
-%- maybe also 'usage' for other objects documented here.
+
 \arguments{
-\item{A}{
-A positive definite matrix}
-\item{B}{
-A positive definite matrix}
-\item{mat}{
-Arbitrary matrix for examining rows}
+\item{mat}{Arbitrary matrix for examining rows}
+
 \item{digits}{Number of significant digits to use for comparing
 elements to determine duplciate values. }
 
-\item{x}{
-Arbitrary matrix where rows are components of a multidimensional
-vector}
+\item{x}{Arbitrary matrix where rows are components of a
+multidimensional vector}
+
 \item{m}{ The null space degree  -- results in a polynomial of degree
 (m-1) }
+
 \item{dcoef}{ Coefficients of a multidimensional polynomial}
 
 \item{coef}{Polynomial coefficients.}
+
 \item{ptab}{Table of powers of different polnomial terms.}
-\item{tag}{\code{mkpoly} fills in as columns names the higher order terms of the polynomial terms. The tag is the  text string prefix for thes column names and the powers of the individual variables arer appended. Default is just "terms".
-}
-\item{verbose}{If TRUE prints condition number of A+B}
+
+\item{tag}{ \code{mkpoly} fills in as columns names the higher order
+terms of the polynomial terms. The tag is the  text string prefix for
+thes column names and the powers of the individual variables are
+appended. Default is just "terms".}
+
 }
 
 \details{
-Given two matrices A (positive definite) and B (nonnegative definite)
- \code{fields.diagonalize} and \code{fields.diagonalize2} finds the 
-matrix transformation G that will convert A to a identity matrix and B 
-to a diagonal matrix:
-
- G\^T A G= I       G\^T B G= D. 
-
-
-\code{fields.diagonalize2} is not as easy to follow as \code{fields.diagonalize} but may be more stable
- and is the version used in 
-the Krig engine. 
 
 \code{fields.duplicated} finds duplicate rows in a matrix.  The digits
 arguments is the number of digits that are considered in the
@@ -142,10 +128,7 @@ evaluating univariate polynomials and multivariate polynomials.  The
 table of powers (ptab) needed for evlpoly2 is the same format as that
 returned my the fields.mkpoly function. 
 
-
 }
 \author{Doug Nychka}
-\seealso{Krig, Tps, as.image, predict.Krig, predict.mKrig, 
-Krig.engine.default, Wendland}
 \keyword{spatial}
-% at least one, from doc/KEYWORDS
+

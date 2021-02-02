@@ -60,7 +60,7 @@ A list with components:
 This is found as a combination of the original weights at each location.}
 \item{ZM}{Values of the covariates at the unique lcoations.}
 \item{uniquerows}{Index for unique rows of \code{x}.}
-\item{shat.rep, shat.pure.error}{Standard deviation of pure error estimate based on replicate groups
+\item{tauHat.rep, tauHat.pure.error}{Standard deviation of pure error estimate based on replicate groups
  (and adjusting for possibly different weights.)}
 \item{rep.info}{Integer tags indicating replicate groups.}
 

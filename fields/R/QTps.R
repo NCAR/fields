@@ -90,7 +90,7 @@ QTps <- function(x, Y, ..., f.start = NULL, psi.scale = NULL,
     f.cv <- obj$fitted.values/(1 - diag.A) - diag.A * Y.psuedo/(1 - 
         diag.A)
     # leave-one-out estimate of f.hat
-    CV.psuedo <- mean(qsreg.rho(Y - f.cv, alpha = alpha, C = psi.scale))
+    CV.psuedo <- mean(qsreg.sigma(Y - f.cv, alpha = alpha, C = psi.scale))
     # add extra stuff to the Krig object.
     Qinfo <- list(yraw = Y, conv.info = conv.info, conv.flag = conv.flag, 
         CV.psuedo = CV.psuedo, psi.scale = psi.scale, alpha = alpha)

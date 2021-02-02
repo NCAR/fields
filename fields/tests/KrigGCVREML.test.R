@@ -82,7 +82,7 @@ test<- Krig.fgcv.model( lam=out.new$lambda, out.new)
 y0<- out.new$yM
 n0<- length(y0)
 # compare to 
-test2<- (1/n0)*sum(  (y0 - c(Alam0%*% y0))**2 *out.new$weightsM) / (1- sum(diag( Alam0))/n0)**2 + out.new$shat.pure.error**2
+test2<- (1/n0)*sum(  (y0 - c(Alam0%*% y0))**2 *out.new$weightsM) / (1- sum(diag( Alam0))/n0)**2 + out.new$tauHat.pure.error**2
 test.for.zero( test,test2,tag="GCV model")
 
 
@@ -94,7 +94,7 @@ data( ozone2)
 x<- ozone2$lon.lat
 y<- ozone2$y[16,]
 Tps( x,y)-> out
-gcv.Krig( out, tol=1e-10)-> out2
+KrigFindLambda( out, tol=1e-10)-> out2
 
 test.for.zero(out$lambda.est[1,-6], 
        out2$lambda.est[1,-6],tol=5e-4, tag="Tps/gcv for ozone2")
@@ -102,7 +102,7 @@ test.for.zero(out$lambda.est[1,-6],
 # try with "new" data (linear transform should give identical 
 # results for GCV eff df
 
-gcv.Krig( out, y=(11*out$y + 5), tol=1e-10 )-> out3
+KrigFindLambda( out, y=(11*out$y + 5), tol=1e-10 )-> out3
 
 test.for.zero(out2$lambda.est[1,2], 
        out3$lambda.est[1,2],tol=1e-6, tag="Tps/gcv for ozone2 new data")

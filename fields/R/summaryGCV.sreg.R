@@ -21,7 +21,7 @@
 "summaryGCV.sreg" <- function(object, lambda, cost = 1, 
     nstep.cv = 20, offset = 0, verbose = TRUE, ...) {
     out <- object
-    shat.pure.error <- out$shat.pure.error
+    tauHat.pure.error <- out$tauHat.pure.error
     pure.ss <- out$pure.ss
     nt <- 2
     np <- out$np
@@ -30,7 +30,7 @@
     out$offset <- offset
     lambda.est <- rep(NA, 6)
     names(lambda.est) <- c("lambda", "trA", "GCV", "GCV.one", 
-        "GCV.model", "shat")
+        "GCV.model", "tauHat")
     #
     # fill in stuff for this  lambda
     lambda.est[1] <- lambda
@@ -38,9 +38,9 @@
     lambda.est[2] <- temp$trace
     lambda.est[3] <- temp$gcv
     lambda.est[4] <- temp$gcv.one
-    if (!is.na(shat.pure.error)) {
+    if (!is.na(tauHat.pure.error)) {
         lambda.est[5] <- temp$gcv.model
     }
-    lambda.est[6] <- temp$shat
+    lambda.est[6] <- temp$tauHat
     lambda.est
 }

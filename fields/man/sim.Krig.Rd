@@ -25,7 +25,7 @@
 \alias{sim.spatialProcess}
 \alias{sim.Krig.approx}
 \alias{sim.mKrig.approx}
-\alias{sim.fastTps.approx}
+
 
 \title{Conditional simulation of a spatial process}
 \description{
@@ -52,12 +52,7 @@ sim.mKrig.approx(mKrigObject, predictionPoints = NULL,
                  = 1, nx = 40, ny = 40, nxSimulation = NULL,
                  nySimulation = NULL, delta = NULL, verbose = FALSE,...)
  
-sim.fastTps.approx(fastTpsObject, 
-                 predictionPointsList, simulationGridList =
-                 NULL, gridRefinement = 5, gridExpansion = 1 + 1e-07, M
-                 = 1,  delta = NULL, verbose=FALSE,...)
-                 
-                 
+                              
 
 } 
 %- maybe also 'usage' for other objects documented here. 
@@ -65,13 +60,12 @@ sim.fastTps.approx(fastTpsObject,
  
  \item{delta}{If the covariance has compact support the simulation method can 
 take advantage of this. This is the amount of buffer added for the simulation domain in the circulant embedding method. 
-A minimum size would be \code{theta} for the Wendland but a multiple of this maybe needed to obtain a positive definite 
+A minimum size would be \code{aRange} for the Wendland but a multiple of this maybe needed to obtain a positive definite 
 circulant covariance function.  }
 
   \item{extrap}{ If FALSE conditional process is not evaluated outside 
      the convex hull of observations. }
 
-  \item{fastTpsObject}{The output object returned by fastTps}
 
   \item{grid.list}{Grid information for evaluating the conditional 
          surface as a grid.list.}
@@ -203,9 +197,7 @@ known to fail if the domain is small relative to the correlation
 range. The argument \code{gridExpansion} can be used to increase the
 size of the domain to make the algorithm work.
 
-\code{sim.fastTps.approx} Is optimized for the approximate thin plate
-spline estimator in two dimensions and \code{k=2}. For efficiency the
-ensemble prediction locations must be on a grid.
+
 
 }
 \value{
@@ -233,7 +225,6 @@ e.g. if \code{simOut} is the output object then to plot the 3rd draw:
      image.plot( imageObject)
 }
 
-\code{sim.fastTps.approx} is  a wrapper function that calls \code{sim.mKrig.approx}. 
 
 }
 
@@ -262,7 +253,7 @@ for(  k in 1:M){
 # see mKrigMLEJoint for a more efficient strategy
   newSummary<- spatialProcess(obj$x,ySynthetic[,k],
                     cov.params.start= list(
-			                   theta = obj$theta.MLE,
+			                   aRange = obj$aRange.MLE,
 			                  lambda = obj$lambda.MLE
 					  )
                                )$summary
@@ -314,9 +305,9 @@ data( ozone2)
 set.seed( 399)
 # fit to day 16 from Midwest ozone data set.
   out<- Krig( ozone2$lon.lat, ozone2$y[16,], Covariance="Matern", 
-            theta=1.0,smoothness=1.0, na.rm=TRUE)
+            aRange=1.0,smoothness=1.0, na.rm=TRUE)
 
-# NOTE theta =1.0 is not the best choice but 
+# NOTE aRange =1.0 is not the best choice but 
 # allows the sim.rf circulant embedding algorithm to 
 # work without increasing the domain.
 
@@ -356,7 +347,7 @@ y<- ozone2$y[16,]
 good<- !is.na( y)
 y<-y[good]
 x<- ozone2$lon.lat[good,]
-O3.fit<- mKrig( x,y, Covariance="Matern", theta=.5,smoothness=1.0, lambda= .01 )
+O3.fit<- mKrig( x,y, Covariance="Matern", aRange=.5,smoothness=1.0, lambda= .01 )
 set.seed(122)
 O3.sim<- sim.mKrig.approx( O3.fit, nx=100, ny=100, gridRefinement=3, M=5 )
 set.panel(3,2)
@@ -376,24 +367,18 @@ O3.sim2<- sim.mKrig.approx( O3.fit, xMissing, nx=80, ny=80,
   good<- !is.na( y)
   y<-y[good]
   x<- ozone2$lon.lat[good,]
-  O3FitMLE<- fastTpsMLE( x,y, theta=1.5 )
-  O3Obj<- fastTps( x,y, theta=1.5, lambda=O3FitMLE$lambda.MLE)
+  O3Obj<- fastTps( x,y, aRange=1.5 )
 # creating a quick grid list based on ranges of locations
   grid.list<- fields.x.to.grid( O3Obj$x, nx=100, ny=100)
-  O3Sim<- sim.fastTps.approx( O3Obj,predictionPointsList=grid.list,M=5)
 # controlling the grids
   xR<- range( x[,1], na.rm=TRUE)
   yR<- range( x[,2], na.rm=TRUE)
-  simulationGridList<- list( x= seq(xR[1],xR[2],,400), y= seq( yR[1],yR[2], ,400))
+  simulationGridList<- list( x= seq(xR[1],xR[2],,400),
+         y= seq( yR[1],yR[2], ,400))
 # very fine localized prediction grid
     O3GridList<- list( x= seq( -90.5,-88.5,,200), y= seq( 38,40,,200))
-    O3Sim<- sim.fastTps.approx( O3Obj, M=5, predictionPointsList=O3GridList,
+    O3Sim<- sim.mKrig.approx( O3Obj, M=5, predictionPointsList=O3GridList,
                   simulationGridList = simulationGridList)
-# check 
- plot( O3Obj$x)
- US( add=TRUE)
- image.plot( as.surface( O3GridList,O3Sim$Ensemble[,1] ), add=TRUE)
- points( O3Obj$x, pch=16, col="magenta")
 }
 }
 \keyword{spatial}

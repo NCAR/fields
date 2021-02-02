@@ -20,6 +20,7 @@
 %# or see http://www.r-project.org/Licenses/GPL-2    
 \name{spatialProcess}
 \alias{spatialProcess}
+\alias{spatialProcessSetDefaults}
 \alias{plot.spatialProcess}
 \alias{print.spatialProcess}
 \alias{print.spatialProcessSummary}
@@ -30,31 +31,30 @@
 %%  ~~function to do ... ~~
 }
 \description{
-	For a given covariance function estimates the nugget (sigma^2) and process variance (rho)  and the
-	range parameter (theta) by restricted maximum likelihood and then computes the 
+	For a given covariance function estimates the nugget (tau^2) and process variance (sigma)  and the
+	range parameter (aRange) by restricted maximum likelihood and then computes the 
 	spatial model with these estimated parameters.
 	Other parameters of the covariance 
 	are kept fixed and need to be specified.  
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
-                  mKrig.args = list( m=2),
-                cov.function = NULL, 
-                  	cov.args = NULL,
-                   gridTheta = NULL, 
-                      abstol = 1e-4,
-                       na.rm = TRUE,
-                  	 verbose = FALSE,
-                        REML = FALSE, 
-             confidenceLevel = .95,
-            cov.params.start = NULL,
-	               gridN = 10,
-                           ...)   
+spatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
+                 = NULL, cov.function = NULL, cov.args = NULL,
+                 gridARange = NULL, gridLambda = NULL, abstol = 1e-04,
+                 na.rm = TRUE, verbose = FALSE, REML = FALSE,
+                 confidenceLevel = 0.95, cov.params.start = NULL, gridN
+                 = 15, profileLambda = FALSE, profileARange = FALSE,
+                 ...)
 \method{summary}{spatialProcess}(object,  ...)
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{print}{spatialProcessSummary}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
+
+spatialProcessSetDefaults(cov.function, cov.args, cov.params.start,
+     mKrig.args,
+    extraArgs = NULL, profileLambda, profileARange, gridARange, 
+    gridLambda, verbose = FALSE) 
 
 }
 
@@ -88,18 +88,22 @@ as additional
 argument when calling spatialProcess it is added internally to this list with the starting
 value .5.}
  
- \item{gridTheta}{A grid for searching over theta (range parameter). If omitted, default is
- based on quantiles of the location pairwise distances.}
+ \item{gridARange}{A grid for searching over the range parameter. If omitted, default is  based on quantiles of pairwise distances of locations.
+}
 
+ \item{gridLambda}{A grid for searching over lambda . If omitted, default is ranges relative to the MLE.
+}
+
+ 
  \item{na.rm}{If TRUE NAs are removed from the data. }
 
  \item{gridN}{Number of grid points for evaluating profile likelihood over
- theta and also over lambda.}
+ aRange and also over lambda.}
 
 \item{object}{A spatialProcess object returned from the spatialProcess function.}
  
  %\item{optim.args}{Arguements to be used  in optim for finding joint
- %MLEs for theta
+ %MLEs for aRange
  %and lambda. }
  
  \item{REML}{ If TRUE the parameters are found by restricted maximum likelihood.}
@@ -118,8 +122,17 @@ value .5.}
   
   \item{digits}{Number of significant digits in printed summary}
   
-  \item{which}{The vector 1:4 or any subset of 1:4, giving the plots to draw.
+  \item{which}{The vector 1:4 or any subset of 1:4, giving the plots to
+  draw.
                  See the description ofthese plots below.}
+                 
+\item{extraArgs}{Extra arguments passed using the \dots device in R.}
+
+\item{profileLambda}{If TRUE profile likelihood on lambda. This takes
+extra time and is not necessary so the defualt is FALSE. }
+
+\item{profileARange}{If TRUE profile likelihood on aRange. Default is
+TRUE if aRange is omitted.}
 
 }
 \details{
@@ -133,32 +146,32 @@ where ".k" means subscripted by k, Y.k is the dependent variable
 observed at location x.k. P is a low degree polynomial (default is a
 linear function in the spatial coordinates) and Z is a matrix of covariates (optional) that
 enter as a linear model the fixed part. g is a mean zero,
-Gaussian stochastic process with a marginal variance of rho and a
-scale (or range) parameter, theta. The measurement errors, e.k, are
+Gaussian stochastic process with a marginal variance of sigma and a
+scale (or range) parameter, aRange. The measurement errors, e.k, are
 assumed to be uncorrelated, normally distributed with mean zero and
-standard deviation sigma. If weights are supplied then the variance of e is assumed to be
-\code{sigma^2/ weights}.
+standard deviation tau. If weights are supplied then the variance of e is assumed to be
+\code{tau^2/ weights}.
 
 
 Perhaps the most important aspect of this  function is that
- 	the range (theta), nugget (sigma**2) and process variance (rho) parameters
+ 	the range (aRange), nugget (tau**2) and process variance (sigma) parameters
  	for the covariance are estimated by restricted maximum
  	likelihood and this is the model that is then  used for spatial
- 	prediction. Geostatistics usaually refers to sigma**2 + rho as the 
+ 	prediction. Geostatistics usaually refers to tau**2 + sigma as the 
  	"sill" and often these parameters are estimated by variogram fitting rather
  	than maximum likelihood. To be consistent with spline models and to focus
- 	on the key part of model we reparametrize as lambda= sigma**2/
- 	rho and rho. Thinking about h as the spatial signal and e as the noise lambda
+ 	on the key part of model we reparametrize as lambda= tau**2/
+ 	sigma and sigma. Thinking about h as the spatial signal and e as the noise lambda
  	can be interpreted  as the noise to signal variance ratio in this spatial
  	context.(See the comparision with fitting the geoR model in the
 examples section.)
  	
  	The likelihood and the cross valdiation function
- 	can be concentrated to only depend on lambda and theta and so
+ 	can be concentrated to only depend on lambda and aRange and so
  	in reported the optimiztation of these two criterion we focus
- 	on this form of the parameters.  Once lambda and theta are
- 	found, the MLE for rho has a closed form and of course then
- 	sigma is then determined from lambda and rho. 
+ 	on this form of the parameters.  Once lambda and aRange are
+ 	found, the MLE for sigma has a closed form and of course then
+ 	tau is then determined from lambda and sigma. 
  	
  	Often the lambda
  	parameter is difficult to interpret when covariates and a
@@ -191,7 +204,7 @@ examples section.)
  	output object that is returned by this function. The estimate
  	is a version of maximum likelihood where the observations are
  	transfromed to remove the fixed linear part of the model.  If
- 	the user just wants to fix the range parameter theta then
+ 	the user just wants to fix the range parameter aRange then
  	\code{Krig} can be used.
  	
  	NOTE: The defaults for the \code{optim} function used in MLESpatialProcess are:
@@ -222,26 +235,49 @@ With replacated fields there is an option to estimate different linear parameter
 there is more than one estimate. See (\code{Omega} and \code{fixedEffectsCov}) in the
 \code{mKrig} object to build the standard errors.
 
-\strong{plot} method  provides a panel of 4 diagnositic plots of the fit. 
-Use \code{set.panel(2,2)} to see all 4 at once. The third plot gives the likelihood and
-GCV functions as a function of lambda evaluated at the global MLE for theta.
-This is based on the gird evaluations in the component MLEInfo$MLEProfileLambda.
+\strong{plot} method  provides potentially  four diagnositic plots of the fit.Use the \code{which}
+to pick and choose among them 
+or use \code{set.panel} to see  them all.
+The third and fourth plots, however, are only available if the profile computations been done. 
+If lambda is profiled (\code{lambdaProfile} is not
+\code{NULL} ) the third plot is the profile log
+likelihood for lambda and with the GCV function on a
+second verical scale.
+This is based on the grid evaluations in the component 
+\code{ lambdaProfile\$MLEProfileLambda} .
 The fourth
-plot is a profile likelihood trace for theta  having maximized over lambda and is based on
-the component MLEInfo$MLEGrid. 
+plot is a profile log likelihood trace for aRange
+based on \code{ aRangeProfile\$MLEProfileLambda}.
+
 
 \strong{print} method prints the  \code{spatialProcessSummary} object of the fit, adding
 some details and explanations.
 
+\strong{spatialProcessSetDefaults} This is a useful way to fill in defaults for the function in one place. The main choices are choosing the Matern family, smoothness and a default fixed model (aka spatial drift)
+
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-	An object of classes \code{mKrig} and  \code{SpatialProcess}. The main difference
-	from mKrig is an extra component, \code{MLEInfo} that has the results of the
-	profile likelihood grid
-	evaluation over theta ( having maximizing lamdba), joint maximization over
-	theta and lambda,
-	and a grid evaluation over lambda with theta fixed at its MLE. 
+	An object of classes \code{mKrig} and  \code{SpatialProcess}. The difference
+	from mKrig are some extra  components:
+	
+	\strong{CASE} An integer 1 to 4  based on what
+	covariance parameters are being estimated or 
+	fixed. This is mainly for debugging.
+	
+  \strong{MLESummary} A named array that has the fixed and estimated parameters along with likelihood values and some optim info.     
+  
+  \strong{aRangeProfile} The output list from 
+  mKrigMLEGrid for searching over  (log) aRange.
+  
+  \strong{aRange.CI} If \code{aRangeProfile} the approximate confidence interval based on chi squared large sample log likelihood approximation.
+  See  \code{ \link{profileCI} } for the computation.
+        	
+  \strong{lambdaProfile} The output list from 
+  mKrigMLEGrid for searching over (log) lambda.
+ 
+  \strong{lambda.CI} Approximate confidence interval for lambda.
+        	
 }
 
 \author{
@@ -249,7 +285,7 @@ Doug Nychka%%  ~~who you are~~
 }
 
 \seealso{
-\link{Tps}, \link{MLESpatialProcess},  \link{mKrigMLEGrid},
+\link{Tps},   \link{mKrigMLEGrid},
 \link{mKrigMLEJoint},  \link{plot.Krig},  \link{predict.mKrig},
 \link{predictSE.mKrig} 
 }
@@ -267,8 +303,12 @@ data( ozone2)
   
 # lots of default choices  made here -- see gridN to increase 
 # the number of points in grid searches for MLEs
+# without specifying  lambda or aRange both are found in a robust 
+# way uses grid searches 
+# profiling over lambda is not reuqired but completes the full 
+# example.  Omit this for a faster computation.
 
-  obj<- spatialProcess( x, y)
+  obj<- spatialProcess( x, y, profileLambda=TRUE)
   
 # summary of model
   summary( obj)
@@ -279,13 +319,14 @@ data( ozone2)
 # plot 1 data vs. predicted values
 # plot 2 residuals vs. predicted
 # plot 3 criteria to select the smoothing
-#        parameter lambda = sigma^2 / rho
+#        parameter lambda = tau^2 / sigma
 #        the x axis has log10 lambda
 #        Note that here the GCV function is minimized
 #        while the log profile likelihood  is maximzed. 
 # plot 4 the log profile likelihood used to 
-#        determine range parameter theta. 
+#        determine range parameter aRange. 
 #
+
 set.panel()
 # predictions on a grid 
 surface( obj, xlab="longitude", ylab="latitude")
@@ -300,6 +341,17 @@ surface( look, xlab="longitude", ylab="latitude")
 points( x, col="magenta")
 title("prediction standard errors (PPB)")
 
+# here  is a sanity check -- call spatialProcess with the MLEs found
+# above, better get the same predictions!
+
+objTest<- spatialProcess( x, y,
+                          lambda=obj$MLESummary["lambda"],
+                          aRange=obj$MLESummary["aRange"]
+                          )
+                          
+test.for.zero(objTest$fitted.values, obj$fitted.values, 
+            tag="sanity check" )
+
 \dontrun{
 # working with covariates and filling in missing station data
 # using an ensemble method
@@ -308,7 +360,7 @@ title("prediction standard errors (PPB)")
 # covariates. 
 data(COmonthlyMet)
   fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev, 
-                               gridTheta= seq(.25, 2.0, length.out=10)
+                               gridARange= seq(.25, 2.0, length.out=10)
 			       )
   set.panel( 2,2)                             
   plot( fit1E)
@@ -323,7 +375,7 @@ data(COmonthlyMet)
 # interpretation is that these infilled values are all equally plausible 
 # given the observations and also given the estimated covariance model
 #  
-# EXTRA CREDIT:  standardized the infilled values to have
+# EXTRA CREDIT:  standardize the infilled values to have
 # conditional mean and variance from the exact computations
 #  e.g. predict( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])
 #  and  predictSE(fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])  
@@ -332,7 +384,7 @@ data(COmonthlyMet)
 # multivariate prediction.
 # conditional simulation on a grid but not using the covariate of elevation
  fit2<- spatialProcess(CO.loc,CO.tmin.MAM.climate,
-                        gridTheta= seq(.25, 2.0, length.out=10)
+                        gridARange= seq(.25, 2.0, length.out=10)
                        )
 # note larger range parameter
 # create 2500 grid points using a handy fields function
@@ -414,23 +466,26 @@ set.panel(1,1)
 
 \dontrun{
 ### comparison with GeoR
-  data(ozone2)
-  x<- ozone2$lon.lat
-  y<- ozone2$y[16,]
-  good<-!is.na(y)
-  x1<- x[good,]
-  y1<- y[good]
-  obj<- spatialProcess( x1, y1,
-                        mKrig.args= list(m=1),
-			cov.params.start= list( lambda=.01, theta=3),
-			smoothness = .5)
-  
-  library( geoR)
-  ml.n <- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
-  # compare to 
-  stuffFields<- obj$MLEInfo$summary[c(1,3,4,5)]
-  stuffGeoR<- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),ml.n$sigmasq) 
-  test.for.zero(  max(stuffFields/stuffGeoR), 1, tol=.004)    
+data(ozone2)
+    x<- ozone2$lon.lat
+    y<- ozone2$y[16,]
+    good<-!is.na(y)
+    x1<- x[good,]
+    y1<- y[good]
+    
+# spatialProcess takes longer because of grid search on aRange.    
+    obj<- spatialProcess( x1, y1,
+                          mKrig.args = list(m=1),
+  			                  smoothness = .5)
+    library( geoR)
+    ml.n <- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
+    # compare to 
+    stuffFields<- obj$MLESummary[c("lnProfileLike.FULL",
+                                   "aRange","tau","sigma2")]
+    stuffGeoR<- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),
+                   ml.n$sigmasq) 
+    test.for.zero(  max(stuffFields/stuffGeoR), 1, tol=.004)
+   
 }
 }
 \keyword{ spatial}

@@ -53,4 +53,4 @@ PASSED test at tolerance  1e-08
 end tests of V argument in covariances
 > proc.time()
    user  system elapsed 
-  0.560   0.053   0.604 
+  0.825   0.083   0.903 

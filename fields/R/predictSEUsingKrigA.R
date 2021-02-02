@@ -50,8 +50,8 @@
     }
     # Default is to use parameters in best.model
     lambda <- object$best.model[1]
-    rho <- object$best.model[3]
-    sigma2 <- object$best.model[2]
+    sigma <- object$best.model[3]
+    tau2 <- object$best.model[2]
     nx <- nrow(xM)
     wght.vec <- t(Krig.Amatrix(object, xraw, lambda, ...))
     if (verbose) {
@@ -68,14 +68,14 @@
     Wi <- Krig.make.Wi(object)$Wi
     # find covariance of data
     if (object$nondiag.W) {
-        Cov.y <- rho * do.call(call.name, c(object$args, list(x1 = xM, 
-            x2 = xM))) + sigma2 * Wi
+        Cov.y <- sigma * do.call(call.name, c(object$args, list(x1 = xM, 
+            x2 = xM))) + tau2 * Wi
     }
     else {
         #     this is one case where keeping diagonal
         #     matrix as a vector will not work.
-        Cov.y <- rho * do.call(call.name, c(object$args, list(x1 = xM, 
-            x2 = xM))) + sigma2 * diag(Wi)
+        Cov.y <- sigma * do.call(call.name, c(object$args, list(x1 = xM, 
+            x2 = xM))) + tau2 * diag(Wi)
     }
     if (!cov) {
         # find diagonal elements of covariance matrix
@@ -84,7 +84,7 @@
         # diagonal elements of the full
         #  prediction covariance matrix.
         #
-        temp1 <- rho * colSums(wght.vec * do.call(call.name, 
+        temp1 <- sigma * colSums(wght.vec * do.call(call.name, 
             c(object$args, list(x1 = xM, x2 = x))))
         temp2 <- colSums(wght.vec * (Cov.y %*% wght.vec))
         #
@@ -93,7 +93,7 @@
         # as radial basis functions (RBFs) temp0 should be zero.
         # Positivity results from the generalized divided difference
         # properties of RBFs.
-        temp0 <- rho * do.call(call.name, c(object$args, list(x1 = x, 
+        temp0 <- sigma * do.call(call.name, c(object$args, list(x1 = x, 
             marginal = TRUE)))
         #
         temp <- temp0 - 2 * temp1 + temp2
@@ -104,12 +104,12 @@
         #
         # find full covariance matrix
         #
-        temp1 <- rho * t(wght.vec) %*% do.call(call.name, c(object$args, 
+        temp1 <- sigma * t(wght.vec) %*% do.call(call.name, c(object$args, 
             list(x1 = xM, x2 = x)))
         #
         temp2 <- t(wght.vec) %*% Cov.y %*% wght.vec
         #
-        temp0 <- rho * do.call(call.name, c(object$args, list(x1 = x, 
+        temp0 <- sigma * do.call(call.name, c(object$args, list(x1 = x, 
             x2 = x)))
         #
         temp <- temp0 - t(temp1) - temp1 + temp2

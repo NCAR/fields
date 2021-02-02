@@ -40,4 +40,4 @@ Type 'q()' to quit R.
 PASSED test at tolerance  0.05
 > proc.time()
    user  system elapsed 
-  0.910   0.140   0.974 
+  1.213   0.160   1.291 

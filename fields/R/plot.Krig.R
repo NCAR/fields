@@ -28,7 +28,7 @@
         which <- 1
     }
     fitted.values <- predict(out)
-    std.residuals <- (out$residuals * sqrt(out$weights))/out$shat.GCV
+    std.residuals <- (out$residuals * sqrt(out$weights))/out$tauHat.GCV
     if (any(which == 1)) {
         temp <- summary(out)
         plot(fitted.values, out$y, ylab = "Y", xlab = " predicted values", 

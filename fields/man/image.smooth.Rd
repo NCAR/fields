@@ -32,12 +32,12 @@ are handled using the Nadaraya/Watson normalization of the kernel.
 \usage{
 \method{image}{smooth}(x, wght = NULL, dx = 1, dy = 1,
     kernel.function = double.exp,
-    theta = 1, grid = NULL, tol = 1e-08, xwidth = NULL, ywidth = NULL,
+    aRange = 1, grid = NULL, tol = 1e-08, xwidth = NULL, ywidth = NULL,
     weights = NULL,...)
 
 setup.image.smooth(nrow = 64, ncol = 64, dx = 1, dy = 1,
                    kernel.function = double.exp,
-                   theta = 1, xwidth = nrow * dx, ywidth = ncol * dx, lambda=NULL, ...)}
+                   aRange = 1, xwidth = nrow * dx, ywidth = ncol * dx, lambda=NULL, ...)}
 \arguments{
 \item{x}{
 A matrix image. Missing values can be indicated by NAs. }
@@ -54,7 +54,7 @@ Grid spacing in x direction }
  An R function that takes as its argument the \emph{squared} distance 
 between two points divided by the bandwidth. The default is exp(
 -abs(x)) yielding a normal kernel}
-\item{theta}{the bandwidth or scale parameter.}
+\item{aRange}{the bandwidth or scale parameter.}
 \item{xwidth}{
  Amount of zero padding in horizontal dimension in units of the grid spacing.
 If NULL the default value is equal to the width of the image the most 
@@ -109,7 +109,7 @@ dy<-  out$y[2] - out$y[1]
 #  
 # grid scale in degrees and choose kernel bandwidth to be .25 degrees. 
 
-look<- image.smooth( out, theta= .25)
+look<- image.smooth( out, aRange= .25)
 
 # pass in a tophat kernel
 topHat<- function( dd, h ){ ifelse( dd <= h^2, 1, 0)} 
@@ -123,7 +123,7 @@ US( add=TRUE, col="grey", lwd=2)
 # to save on computation, decrease the padding with zeroes 
 # only pad 32 grid points around the margins ofthe image. 
 
-look<- image.smooth(out$z, dx=dx, dy=dy, theta= .25, xwidth=32*dx,ywidth=32*dy) 
+look<- image.smooth(out$z, dx=dx, dy=dy, aRange= .25, xwidth=32*dx,ywidth=32*dy) 
 
 # the range of these data is ~ 10 degrees  and so 
 # with a padding of 32 grid points  32*( 10/128) =  2.5 
@@ -144,14 +144,14 @@ dx<- .1
 dy<- .8
 
 wght<- setup.image.smooth( nrow=128, ncol=128,  dx=dx, dy=dy,
-             theta=.25, xwidth=2.5, ywidth=2.5)
+             aRange=.25, xwidth=2.5, ywidth=2.5)
 #
 look<- image.smooth( test.image, dx=dx, dy=dy, wght)
 
 # NOTE:   this is the same as using 
 #
 #     image.smooth( test.image , 128,128), xwidth=2.5,
-#                        ywidth=2.5, dx=dx,dy=dy, theta=.25)
+#                        ywidth=2.5, dx=dx,dy=dy, aRange=.25)
 #
 #   but the call to image.smooth is faster because the fft of kernel
 #   has been precomputed.
@@ -161,9 +161,9 @@ look<- image.smooth( test.image, dx=dx, dy=dy, wght)
 # periodic smoothing in the horizontal dimension
 
 look<- image.smooth( test.image , xwidth=1.5,
-                        ywidth=2.5, dx=dx,dy=dy, theta=1.5)
+                        ywidth=2.5, dx=dx,dy=dy, aRange=1.5)
 look2<- image.smooth( test.image , xwidth=0,
-                        ywidth=2.5, dx=dx,dy=dy, theta=1.5)
+                        ywidth=2.5, dx=dx,dy=dy, aRange=1.5)
 # compare these two
 set.panel( 1,2)
 image.plot( look, legend.mar=7.1)

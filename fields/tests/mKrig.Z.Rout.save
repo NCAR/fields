@@ -49,4 +49,4 @@ all done with mKrig Z tests
 > 
 > proc.time()
    user  system elapsed 
-  0.873   0.092   0.955 
+  1.199   0.123   1.327 

@@ -19,17 +19,17 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "setup.image.smooth" <- function(nrow = 64, ncol = 64, 
-    dx = 1, dy = 1, kernel.function = double.exp, theta = 1, 
+    dx = 1, dy = 1, kernel.function = double.exp, aRange = 1, 
     xwidth = nrow * dx, ywidth = ncol * dx, lambda = NULL, ...) {
     M2 <- round((nrow + xwidth/dx)/2)
     N2 <- round((ncol + ywidth/dy)/2)
     M <- 2 * M2
     N <- 2 * N2
     xi <- seq(-(M2 - 1), M2, 1) * dx
-    xi <- xi/theta
+    xi <- xi/aRange
     
     yi <- seq(-(N2 - 1), (N2), 1) * dy
-    yi <- yi/theta
+    yi <- yi/aRange
     dd <- ((matrix(xi, M, N)^2 + matrix(yi, M, N, byrow = TRUE)^2))
     out <- matrix(kernel.function(dd, ...), nrow = M, ncol = N)
     out2 <- matrix(0, M, N)

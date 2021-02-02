@@ -20,8 +20,8 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "sim.Krig" <- function(object, xp, M = 1, 
     verbose = FALSE, ...) {
-        sigma2 <- object$best.model[2]
-        rho <- object$best.model[3]
+        tau2 <- object$best.model[2]
+        sigma <- object$best.model[3]
     #
     # check for unique rows of xp
     if (any(duplicated(xp))) {
@@ -75,7 +75,7 @@
     #
     # Sigma is full covariance at the data locations and at prediction points.
     #
-    Sigma <- rho * do.call(object$cov.function.name, c(object$args, 
+    Sigma <- sigma * do.call(object$cov.function.name, c(object$args, 
         list(x1 = x, x2 = x)))
     #
     # square root of Sigma for simulating field
@@ -123,7 +123,7 @@
         # expand the values according to the replicate pattern
         h.data <- h.data[object$rep.info]
         # create synthetic data
-        y.synthetic <- h.data + sqrt(sigma2) * W2i %d*% rnorm(N)
+        y.synthetic <- h.data + sqrt(tau2) * W2i %d*% rnorm(N)
         # predict at xp using these data
         # and subtract from 'true' value
         # note that true values of field have to be expanded in the

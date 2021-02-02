@@ -22,7 +22,7 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
     nstep.cv = 80, rmse = NA, offset = 0, trmin = NA, trmax = NA, 
     verbose = FALSE, tol = 1e-05,
     give.warnings=TRUE) {
-    shat.pure.error <- out$shat.pure.error
+    tauHat.pure.error <- out$tauHat.pure.error
     pure.ss <- out$pure.ss
     nt <- 2
     np <- out$np
@@ -60,10 +60,10 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
     }
     # adjustments to columns of gcv.grid
     RSS <- RSS.model + pure.ss
-    shat <- sqrt(RSS/(N - trA))
-    gcv.grid <- cbind(lambda.grid, trA, V, V.one, V.model, shat)
+    tauHat <- sqrt(RSS/(N - trA))
+    gcv.grid <- cbind(lambda.grid, trA, V, V.one, V.model, tauHat)
     dimnames(gcv.grid) <- list(NULL, c("lambda", "trA", "GCV", 
-        "GCV.one", "GCV.model", "shat"))
+        "GCV.one", "GCV.model", "tauHat"))
         gcv.grid<- as.data.frame( gcv.grid)
     if (verbose) {
         cat("Results of coarse grid search", fill = TRUE)
@@ -72,26 +72,26 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
     lambda.est <- matrix(NA, ncol = 5, nrow = 5,
            dimnames = list(
            c("GCV","GCV.model", "GCV.one", "RMSE", "pure error"),
-           c("lambda","trA", "GCV", "shat", "converge")))
+           c("lambda","trA", "GCV", "tauHat", "converge")))
     # now do various refinements for different flavors of finding
     # a good value for lambda the smoothing parameter
     ##### traditional leave-one-out
     IMIN<- rep( NA, 5)
     IMIN[1]<- which.min(    gcv.grid$GCV ) 
-    IMIN[2]<- ifelse( is.na(shat.pure.error), NA,
+    IMIN[2]<- ifelse( is.na(tauHat.pure.error), NA,
                  which.min(gcv.grid$GCV.model) )
     IMIN[3]<- which.min(    gcv.grid$GCV.one)
     if( is.na( rmse)){
     	IMIN[4] <- NA
     }
     else{
-       rangeShat<-  range( gcv.grid$shat) 
-       IUpcross<- max( (1:nl)[gcv.grid$shat< rmse] )
+       rangeShat<-  range( gcv.grid$tauHat) 
+       IUpcross<- max( (1:nl)[gcv.grid$tauHat< rmse] )
       IMIN[4]<- ifelse( (rangeShat[1]<= rmse)&(rangeShat[2] >=rmse),
                                         IUpcross, NA)
     }
-    IMIN[5]<- ifelse( is.na(shat.pure.error), NA,
-                       which.min(abs(gcv.grid$shat-shat.pure.error)) ) 
+    IMIN[5]<- ifelse( is.na(tauHat.pure.error), NA,
+                       which.min(abs(gcv.grid$tauHat-tauHat.pure.error)) ) 
     # NOTE IMIN indexes from smallest lambda to largest lambda in grid.        
     warningTable<- data.frame(
                     IMIN, IMIN == nl, IMIN==1,
@@ -122,8 +122,8 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
     #  2- GCV where data fitting is collapsed to the mean for
     #     each location and each location is omitted 
     #  3- True leave-one-out even with replicated observations
-    #  4- Match estimate of sigma to external value supplied (RMSE)
-    #  5- Match estimate of sigma from the estimate based the 
+    #  4- Match estimate of tau to external value supplied (RMSE)
+    #  5- Match estimate of tau from the estimate based the 
     #     pure error sum of squares obtained by the observations
     #     replicated at the same locations
     #test<- sreg.fit(.1, out)
@@ -159,8 +159,8 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
          if (  indRefine[5] ) { 	    
             guess <- gcv.grid$lambda[IMIN[5]]     
             lambda.pure.error <- find.upcross(sreg.fs2hat, out, 
-                    upcross.level = shat.pure.error^2, guess = guess, 
-                    tol = tol * shat.pure.error^2)
+                    upcross.level = tauHat.pure.error^2, guess = guess, 
+                    tol = tol * tauHat.pure.error^2)
             lambda.est[5, 1] <- lambda.pure.error
     }
    if (verbose) {
@@ -181,7 +181,7 @@ gcv.sreg<- function(out, lambda.grid = NA, cost = 1,
             if (k == 3) {
                 lambda.est[k, 3] <- temp$gcv.one
             }
-            lambda.est[k, 4] <- temp$shat
+            lambda.est[k, 4] <- temp$tauHat
         }
     }
     if( give.warnings & any(warningTable$Warning)){

@@ -21,11 +21,9 @@
 
 \name{The Engines:}
 \alias{Krig.engine.default}
-\alias{Krig.engine.knots}
 \alias{Krig.engine.fixed}
 \alias{Krig.coef}
 \alias{Krig.check.xY}
-\alias{Krig.cor.Y}
 \alias{Krig.transform.xY}
 \alias{Krig.make.u}
 \alias{Krig.make.W}
@@ -42,13 +40,11 @@ used directly if passed a Krig object list.
 }
 \usage{
 Krig.engine.default(out, verbose = FALSE)
-Krig.engine.knots(out, verbose = FALSE)
 Krig.engine.fixed( out, verbose=FALSE, lambda=NA)
 
 Krig.coef(out, lambda = out$lambda, y = NULL, yM = NULL, verbose = FALSE) 
 Krig.make.u(out, y = NULL, yM = NULL, verbose = FALSE) 
 Krig.check.xY(x, Y,Z, weights, na.rm, verbose = FALSE) 
-Krig.cor.Y(obj, verbose = FALSE) 
 Krig.transform.xY(obj, knots, verbose = FALSE)
 
 Krig.make.W( out, verbose=FALSE)
@@ -106,7 +102,7 @@ adjusted accordingly. All information needed for the decomposition are
 components in the Krig object passed to these functions. 
 
  \code{Krig.engine.default} finds the decompositions for a Universal
-Kriging estimator. by simultaneously diagonalizing the linear system
+Kriging estimator  by simultaneously diagonalizing the linear system
 system for the coefficients of the estimator. The main advantage of this
 form is that it is fairly stable numerically, even with ill-conditioned
 covariance matrices with lambda > 0. (i.e.  provided there is a "nugget"
@@ -115,18 +111,13 @@ rapid evaluation of the likelihood, GCV and coefficients for new data
 vectors under different values of the smoothing parameter, lambda. 
 
 
- \code{Krig.engine.knots} finds the decompositions in the case that the
+ \code{Krig.engine.knots} 
+ This code has been omitted from verisions  >=  12.0. See 11.6 too recover this functionality. 
+ 
+\strong{Finds the decompositions in the case that the
 covariance is evaluated at arbitrary locations possibly different than
 the data locations (called knots). The intent of these decompositions is
-to facilitate the evaluation at different values for lambda.  There will
-be computational savings when the number of knots is less than the
-number of unique locations. (But the knots are as densely distributed as
-the structure in the underlying spatial process.) This function call
-fields.diagonalize, a function that computes the matrix and eigenvalues
-that simultaneous diagonalize a nonnegative definite and a positive
-definite matrix. These decompositions also facilitate multiple
-evaluations of the likelihood and GCV functions in estimating a
-smoothing parameter and also multiple solutions for different y vectors. 
+to facilitate the evaluation at different values for lambda.  }
 
  \code{Krig.engine.fixed} are specific decomposition based on the Cholesky 
 factorization assuming that the smoothing parameter is fixed. This 
@@ -155,27 +146,27 @@ function returns NA for the u component in the list.
 
 \code{Krig.check.xY} Checks for removes missing values (NAs).
 
-\code{Krig.cor.Y} Standardizes the data vector Y based on a correlation model. 
+\code{Krig.cor.Y} This code has been omitted from verisions  >=  12.0.
+See 11.6 too recover this functionality.
 
  \code{Krig.transform.xY} Finds all replicates and collapse to unique
 locations and mean response and pooled variances and weights. These are
 the xM, yM and weightsM used in the engines. Also scales the x locations
 and the knots according to the transformation. 
 
-
  \code{Krig.make.W} and \code{Krig.make.Wi} These functions create an
 off-diagonal weight matrix and its symmetric square root or the inverse
 of the weight matrix based on the information passed to Krig.  If
-\code{out$nondiag} is TRUE W is constructed based on a call to the passed
-function wght.function along with additional arguments.  If this flag is
-FALSE then W is just \code{diag(out$weightsM)} and the square root and inverse
-are computed directly. 
-
+\code{out$nondiag} is TRUE W is constructed based on a call to the
+passed
+function wght.function along with additional arguments.  If this flag
+is FALSE then W is just \code{diag(out$weightsM)} and the square root
+and inverse are computed directly. 
 
 \code{\%d*\%} Is a simple way to implement efficient diagonal
 multiplications.  x\%d*\%y is interpreted to mean diag(x)\%*\% y
-if x is a vector. If x is a matrix then this becomes the same as the usual 
-matrix multiplication. 
+if x is a vector. If x is a matrix then this becomes the same as the
+usual matrix multiplication. 
 }
 
 \section{Returned Values}{
@@ -202,18 +193,7 @@ Common to all engines:
 \item{V}{The eigenvectors}
 }
 
-\code{Krig.engine.knots}:
 
-\describe{
-  \item{u}{A transformed vector that is based on the data vector.}
-  \item{D}{Eigenvalues of decomposition}
-  \item{G}{Matrix from diagonalization}
-  \item{qr.T}{QR decomposition of the matrix for the fixed component. 
- i.e. sqrt( Wm)\%*\%T}
-   \item{pure.ss}{pure error sums of squares including both the
-    variance from replicates and also the sums of squared residuals
-    from fitting the full knot model with lambda=0 to the replicate means. }
-}
 
 \code{Krig.engine.fixed}:
 
@@ -243,8 +223,8 @@ OTHER FUNCTIONS:
 \code{Krig.coef}
 \describe{
 \item{yM}{Y values as replicate group means}
-\item{shat.rep}{Sample standard deviation of replicates}
-\item{shat.pure.error}{Same as shat.rep}
+\item{tauHat.rep}{Sample standard deviation of replicates}
+\item{tauHat.pure.error}{Same as tauHat.rep}
 \item{pure.ss}{Pure error sums of squares based on replicates}
 \item{c}{The "c" basis coefficients associated with the covariance
 or radial basis functions.}
@@ -273,7 +253,7 @@ at different values of the smoothing parameter.}
 \seealso{  \code{\link{Krig}}, \code{\link{Tps}} }
 \examples{
 
-Krig( ChicagoO3$x, ChicagoO3$y, theta=100)-> out
+Krig( ChicagoO3$x, ChicagoO3$y, aRange=100)-> out
 
 Krig.engine.default( out)-> stuff
 

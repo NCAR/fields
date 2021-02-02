@@ -65,10 +65,7 @@
         if ((df < 2) | (df > n)) {
             stop("df out of range")
         }
-      print( x)
-      print(wt)
         lam <- sreg.df.to.lambda(df, x, wt)
-        print( lam)
     }
     # use lambda is it is passed
     if (!is.null(lambda)) {
@@ -79,8 +76,7 @@
     if( !is.null(nx)){
       xgrid<- seq( min( x), max(x),,nx)
     }
-  
-           ygrid<- .Fortran("css",PACKAGE="fields",
+    ygrid<- .Fortran("css",PACKAGE="fields",
                      h = as.double(ifelse(igcv == 2, 1, log(lam))),
                      as.integer(n),
                      as.double(x),

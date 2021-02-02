@@ -75,6 +75,9 @@ PASSED test at tolerance  1e-08
 HERE
 Testing:  predict Wendland  mKrig vs Krig
 PASSED test at tolerance  1e-08
+Warning message:
+In fastTps(xdat, ydat, aRange = 0.3) :
+  fastTps will interpolate observations
 Testing:  fastTps interp1
 PASSED test at tolerance  1e-08
 Testing:  fastTps interp2
@@ -100,4 +103,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  1.398   0.208   1.580 
+  1.328   0.185   1.495 

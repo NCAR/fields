@@ -25,10 +25,10 @@
     }
     summary <- list(call = x$call, num.observation = length(x$residuals), 
         enp = x$trace, nt = x$nt, res.quantile = quantile(x$residuals, 
-            seq(0, 1, 0.25)), shat.GCV = x$shat.GCV, m = x$m, 
+            seq(0, 1, 0.25)), tauHat.GCV = x$tauHat.GCV, m = x$m, 
         lambda = x$lambda, cost = x$cost, num.uniq = length(x$y), 
         np = x$np, method = x$method, lambda.est = x$lambda.est[!is.na(x$lambda.est[, 
-            1]), ], shat.pure.error = x$shat.pure.error)
+            1]), ], tauHat.pure.error = x$tauHat.pure.error)
     class(summary) <- "summary.sreg"
     summary$covariance <- cor(x$fitted.values * sqrt(x$weights), 
         (x$y) * sqrt(x$weights))^2

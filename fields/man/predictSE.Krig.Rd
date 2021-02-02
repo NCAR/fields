@@ -112,7 +112,7 @@ Krig, predict.Krig, predictSurfaceSE
 # Note: in these examples predictSE will default to predictSE.Krig using 
 # a Krig object  
 
-  fit<- Krig(ChicagoO3$x,ChicagoO3$y,cov.function="Exp.cov", theta=10)    # Krig fit 
+  fit<- Krig(ChicagoO3$x,ChicagoO3$y,cov.function="Exp.cov", aRange=10)    # Krig fit 
   predictSE.Krig(fit)      # std errors of predictions at obs.
 
 # make a  grid of X's  

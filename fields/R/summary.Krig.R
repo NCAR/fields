@@ -30,10 +30,10 @@
     summary <- list(call = x$call, num.observation = length(x$residuals), 
         enp = x$eff.df, nt = x$nt, df.drift = sum(x$ind.drift), 
         res.quantile = quantile(x$residuals, seq(0, 1, 0.25)), 
-        shat.MLE = x$shat.MLE, shat.GCV = x$shat.GCV, rhohat = x$rhohat, 
-        m = x$m, lambda = x$lambda, cost = x$cost, rho = x$rho, 
-        sigma2 = x$sigma2, num.uniq = length(x$yM), knot.model = x$knot.model, 
-        np = x$np, method = x$method, lambda.est = l.est, shat.pure.error = x$shat.pure.error, 
+        tauHat.MLE = x$tauHat.MLE, tauHat.GCV = x$tauHat.GCV, sigmahat = x$sigmahat, 
+        m = x$m, lambda = x$lambda, cost = x$cost, sigma = x$sigma, 
+        tau2 = x$tau2, num.uniq = length(x$yM), knot.model = x$knot.model, 
+        np = x$np, method = x$method, lambda.est = l.est, tauHat.pure.error = x$tauHat.pure.error, 
         args = x$args)
     class(summary) <- "summary.Krig"
     summary$covariance <- cor(x$fitted.values * sqrt(x$weights), 

@@ -38,7 +38,7 @@ The distance matrix to evaluate the covariance over.
 }
   \item{range}{
 Range parameter default is one. Note that the scale can also
-  be specified through the "theta" scaling argument used in
+  be specified through the "aRange" scaling argument used in
   fields covariance functions)
 }
   \item{alpha}{

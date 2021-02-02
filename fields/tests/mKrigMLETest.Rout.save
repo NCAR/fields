@@ -40,7 +40,7 @@ Testing:  Likelihood Values summary and optim
 PASSED test at tolerance  1e-08
 Testing:  Likelihood Values summary and direct mKrig call
 PASSED test at tolerance  1e-08
-Testing:  ... and rho.MLE
+Testing:  ... and sigma^2.MLE
 PASSED test at tolerance  1e-08
 Testing:  consistency of Likelihood values
 PASSED test at tolerance  1e-08
@@ -48,51 +48,28 @@ Testing:  grid search with and w/o profile
 PASSED test at tolerance  1e-08
 Testing:  crude test of maxmimum
 PASSED test at tolerance  1e-08
-Testing:  Testing MLESpatialProcess 
-PASSED test at tolerance  0.004
+Testing:  Testing MLE from spatialProcess 
+PASSED test at tolerance  0.002
 Testing:  spatialProcess finding MLE 
 PASSED test at tolerance  1e-08
 Testing:  spatialProcess given MLE 
 PASSED test at tolerance  5e-08
 Testing mKrigMLEJoint against true values
-PASSED test at tolerance  0.02
-PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
+PASSED test at tolerance  5e-04
+PASSED test at tolerance  5e-04
 Testing mKrigMLEJoint  with REML against true values
-PASSED test at tolerance  0.02
-PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
+PASSED test at tolerance  0.002
+PASSED test at tolerance  0.001
 Testing mKrigMLEJoint  with REML FALSE  against true values
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.02
 PASSED test at tolerance  0.002
-lnProfileLike.FULL              theta             lambda           sigmaMLE 
-        -32.240000           0.099427           0.099137           0.314600 
-            rhoMLE            funEval           gradEval             eff.df 
-          0.998380          12.000000          11.000000          19.453000 
-               GCV 
-       3531.500000 
-lnProfileREML.FULL              theta             lambda           sigmaMLE 
-        -32.240000           0.099427           0.099137           0.314600 
-            rhoMLE            funEval           gradEval             eff.df 
-          0.998380          12.000000          11.000000          19.453000 
-               GCV 
-       3531.500000 
-lnProfileLike.FULL              theta             lambda           sigmaMLE 
-        -32.240000           0.099420           0.099134           0.314590 
-            rhoMLE            funEval           gradEval             eff.df 
-          0.998320          12.000000          11.000000          19.658000 
-               GCV 
-       3807.500000 
-1  2   
-Testing:  Monte Carlo theta
-PASSED test at tolerance  0.006
-Testing:  Monte Carlo lambda
-PASSED test at tolerance  0.05
 all done with mKrigMLEGrid tests
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
-  7.392   1.392   7.766 
+ 84.962  32.053  72.851 

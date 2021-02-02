@@ -40,6 +40,7 @@ Type 'q()' to quit R.
 > #
 > 
 > options( echo=FALSE)
+HERE
 Testing:   d coef
 PASSED test at tolerance  1e-08
 Testing:  c coef
@@ -56,30 +57,6 @@ Testing:  predict for null spatial
 PASSED test at tolerance  1e-08
 Testing:  predict for null drift 
 PASSED test at tolerance  1e-08
-Testing:   knots/weights fixed/default d coef
-PASSED test at tolerance  1e-08
-Testing:  knots/weights fixed/default c coef
-PASSED test at tolerance  1e-08
-Testing:   knots d coef
-PASSED test at tolerance  1e-08
-Testing:  knots c coef
-PASSED test at tolerance  1e-08
-Testing:  knots predict for null
-PASSED test at tolerance  1e-08
-Testing:  knots predict for null
-PASSED test at tolerance  1e-08
-Testing:  knots predict w/o Z
-PASSED test at tolerance  1e-08
-Testing:  knots predict for drift
-PASSED test at tolerance  1e-08
-Testing:  predict for null
-PASSED test at tolerance  1e-08
-Testing:  predict for null
-PASSED test at tolerance  1e-08
-Testing:  predict for null
-PASSED test at tolerance  1e-08
-Testing:  predict for null
-PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
 Testing:  SE w/o covariate
 PASSED test at tolerance  1e-08
@@ -91,4 +68,4 @@ All done with Z tests and Krig/Tps including predict and predictSE !
 > 
 > proc.time()
    user  system elapsed 
-  0.824   0.081   0.915 
+  1.330   0.110   1.431 

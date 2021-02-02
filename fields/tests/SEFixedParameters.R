@@ -24,11 +24,11 @@ options( echo=FALSE)
 test.for.zero.flag<- TRUE
 X<- ChicagoO3$x
 n<- nrow( X)
-sigma2<- .1
-rho<- 2.0
-processCov<-  rho*Exp.cov( X,X,theta=50)
+tau2<- .1
+sigma<- 2.0
+processCov<-  sigma*Exp.cov( X,X,aRange=50)
 
-cholCov<- chol( processCov + diag( sigma2 , n ) )
+cholCov<- chol( processCov + diag( tau2 , n ) )
 
 nreps<- 1e5
 
@@ -39,12 +39,12 @@ Z<- matrix( rnorm(n),n)
 E<- matrix( rnorm(n*nreps),n,nreps)
 # NOTE: all fixed effects set to zero
 Y<- t( cholCov)%*%E 
-out<- mKrig( X,Y, theta=50, Z=Z,
+out<- mKrig( X,Y, aRange=50, Z=Z,
              collapseFixedEffect = FALSE,
               lambda=.1/2.0)
-testCov<- var( t(out$d) )
+testCov<- var( t(out$beta) )
 
-test.for.zero(testCov, rho*out$Omega, tol=.05  )
+test.for.zero(testCov, sigma*out$Omega, tol=.05  )
 
 
 

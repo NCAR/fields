@@ -43,18 +43,18 @@ sparse covariance matrices.
 }
 
 \usage{
-Wendland(d, theta = 1, dimension, k,derivative=0, phi=NA)
+Wendland(d, aRange = 1, dimension, k,derivative=0, phi=NA)
 
-Wendland2.2(d, theta=1)
+Wendland2.2(d, aRange=1)
 Wendland.beta(n,k)
 wendland.eval(r, n, k, derivative = 0)
 fields.pochup(q, k)
 fields.pochdown(q, k)
 fields.D(f,name,order = 1)
 
-%Wendland.father(x, theta = 1, dimension = 1, k=3) 
-%Wendland.mother(x, theta = 1, dimension = 1, k=3) 
-%wendland.basis(x1, x2, theta = 1, V=NULL,
+%Wendland.father(x, aRange = 1, dimension = 1, k=3) 
+%Wendland.mother(x, aRange = 1, dimension = 1, k=3) 
+%wendland.basis(x1, x2, aRange = 1, V=NULL,
 %    k = 3, C = NA, Dist.args = list(method = "euclidean"), 
 %    spam.format = TRUE, verbose = FALSE, flavor=0)
 
@@ -63,7 +63,7 @@ fields.D(f,name,order = 1)
 \arguments{
 \item{d}{Distances between locations. Or for wendland.coef the dimension of
 the locations.}
-\item{theta}{Scale for distances. This is the same as the
+\item{aRange}{Scale for distances. This is the same as the
 range parameter.}
 \item{dimension}{Dimension of the locations}
 \item{n}{Dimension for computing Wendland polynomial coefficients}
@@ -100,7 +100,7 @@ The proofs and construction of the Wendland family of positive definite function
 ( H. Wendland. Piecewise polynomial , positive definite and compactly supported radial functions of minimal degree. AICM 4(1995), pp 389-396.)
 
 The Wendland covariance function is a positive 
-polynomial on [0,theta] and zero beyond theta. It is further normalized in these fields functions to be 1 at 0. The parameter \code{k} detemines the smoothness of the covariance at zero. The additional parameter \code{n} or \code{dimension} is needed because the property of 
+polynomial on [0,aRange] and zero beyond aRange. It is further normalized in these fields functions to be 1 at 0. The parameter \code{k} detemines the smoothness of the covariance at zero. The additional parameter \code{n} or \code{dimension} is needed because the property of 
 positive definitness for radial functions depends on the dimension being considered.  
 
 The polynomial terms of the Wenland function.
@@ -151,7 +151,7 @@ bigD<- rdist( make.surface.grid( gl), matrix( c(.25,.25), nrow=1))
 RBF<- matrix(Wendland( bigD, k=2, dimension=2), 60,60)
 
 # perspective with some useful settings for shading.
-persp( gl$x, gl$y, RBF, theta=30, phi=20, shade=.3, border=NA, col="grey90")
+persp( gl$x, gl$y, RBF, theta =30, phi=20, shade=.3, border=NA, col="grey90")
 
 
 }

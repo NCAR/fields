@@ -45,7 +45,7 @@ x<- matrix( runif(nc*2), nc,2)
 
 y<- rnorm( nc)
 delta<- .2
-obj<- fastTps( x,y, theta=delta, lambda=.1)
+obj<- fastTps( x,y, aRange=delta, lambda=.1)
 
 grid.list<- list( x= seq(0,1,,3), y=seq( 0,1,,4))
 xg<- make.surface.grid( grid.list)
@@ -60,7 +60,7 @@ set.seed(123)
  ynew<- rnorm( nc)
  look0<- c(predict( obj, xg, ynew=ynew))
  look1<- predictSurface( obj, grid.list, ynew=ynew, extrap=TRUE)
- look2<- c(predict(fastTps( x,ynew, theta=delta, lambda=.1) , xg, ynew=ynew))
+ look2<- c(predict(fastTps( x,ynew, aRange=delta, lambda=.1) , xg, ynew=ynew))
  test.for.zero( look0, look2,tag="predict with ynew")
  test.for.zero( look0, c(look1$z), tag="predictSurface with ynew")
 options( echo=TRUE)

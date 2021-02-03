@@ -21,6 +21,7 @@
 
 \name{quilt.plot}
 \alias{quilt.plot}
+\alias{bubblePlot}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{Useful plots for visualizing irregular spatial data. }
 \description{
@@ -34,14 +35,19 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            col = tim.colors(nlevel),
            nrow=NULL, ncol=NULL,FUN =
                  NULL, plot=TRUE, na.rm=FALSE, ...)
-		 
-bubblePlot= function( x, y, z, col=viridis(256),
+bubblePlot( x, y, z, 
+                      col = tim.colors(256),
                       horizontal = FALSE,
+                      legend.cex = 1.0,
+                      legend.lab = NULL,
+                      legend.line= 2, 
                       legend.shrink = 0.9, 
                       legend.width = 1.2, 
                       legend.mar = ifelse(horizontal, 3.1, 5.1),
-                      size=1.0, add=FALSE,
-                      ...)
+                      axis.args = NULL, legend.args = NULL,
+                      size=1.0,
+                      add=FALSE,
+                      ...)		 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,11 +68,53 @@ in x the z vector  }
     a pleasing spectrum for quilt.plot and the  modern and versitle
      viridis for bubblePlot }
     \item{plot}{If FALSE just returns the image object instead of plotting it.}
-    \item{FUN}{The function to apply to values that are common to a grid box. The default is to find the mean. (see \code{as.image}).}
+    \item{FUN}{The function to apply to values that are common to a grid
+    box. The default is to find the mean. (see \code{as.image}).}
     \item{na.rm}{If FALSE NAs are not removed from zand so a grid box
     even one of these values may be an NA. (See details below.)}
-  \item{\dots}{ for quilt.plot  arguments to be passed to the image.plot function and for bubblePlot arguments to be passed to the plot function.
+  \item{\dots}{ for quilt.plot  arguments to be passed to the \code{image.plot}
+  function. For bubblePlot arguments to be passed to the \code{plot}
+  function if \code{add=FALSE}, the default and to the \code{points}
+  function if \code{add=TRUE}.
   }
+  
+\item{horizontal}{
+If false (default) legend will be a vertical strip on the right side. If
+true the legend strip will be along the bottom.  
+}
+
+\item{legend.cex}{Character expansion to change size of the legend
+label.}
+
+\item{legend.lab}{ Label for the axis of the color legend. Default is no
+label as this is usual evident from the plot title.}
+
+\item{legend.line}{Distance in units of character height 
+(same as in \code{mtext})
+ of the legend label from the 
+color bar. Make this larger if the label collides with the color axis labels.}
+
+\item{legend.mar}{
+Width in characters of legend margin that has the axis. Default is 5.1 
+for a vertical legend and 3.1 for a horizontal legend.}
+
+\item{legend.shrink}{
+ Amount to shrink the size of legend relative to the full height or width
+of the plot.  
+}
+
+\item{legend.width}{
+Width in characters of the legend strip. Default is 1.2, a little bigger
+that the width of a character. }
+
+\item{axis.args}{A list giving additional arguments for the \code{axis} function used to 
+create the legend axis. (See examples in \code{\link{image.plot}}.)}
+
+\item{legend.args}{The nuclear option: arguments for a complete specification of the 
+legend label, e.g. if you need to the rotate text or other details.  This is in the form of a list and is just passed to the 
+mtext function and you will need to give both the side and line arguments for positioning.  This usually will not be needed. 
+(See examples in \code{\link{image.plot}} .)}
+
 }
 \details{
 
@@ -122,12 +170,13 @@ data( ozone2)
 quilt.plot( ozone2$lon.lat, ozone2$y[16,])
 US( add=TRUE, col="grey", lwd=2)
 
-bubblePlot( ozone2$lon.lat, ozone2$y[16,])
+bubblePlot( ozone2$lon.lat, ozone2$y[16,]
+)
 US( add=TRUE, col="grey", lwd=2)
 
 
-
 ### adding a common legend strip "by hand"
+## to a panel of plots 
 ## and a custom color table
 
 coltab<- two.colors( 256, middle="grey50" )
@@ -145,4 +194,5 @@ par( oma=c(0,0,0,1))
 image.plot(zlim=zr,legend.only=TRUE, col=coltab)
 # may have to adjust number of spaces in oma to make this work.
   }
+  
 \keyword{hplot}% at least one, from doc/KEYWORDS

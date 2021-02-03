@@ -1,12 +1,12 @@
-addLegend<- function( legend.lab = NULL,
-           legend.line= 2, 
-           axis.args = NULL,
-           legend.args = NULL,
-           legend.cex=1.0, 
-           col=NULL,
-           zlim=NULL
+addLegend<- function(
+                col = NULL,
+               zlim = NULL,
+          axis.args = NULL,
+        legend.args = NULL,
+         legend.cex = 1.0, 
+         legend.lab = NULL,
+        legend.line = 2 
            ){
-    
     if( !exists( ".legendInfo")) {
         stop("setupLegend has not been called")
     }
@@ -18,7 +18,7 @@ addLegend<- function( legend.lab = NULL,
       }  
     col<- .colorMapInfo$col
     zlim<- .colorMapInfo$zlim
-  }
+    }
   image.plot( legend.only=TRUE,
               add=TRUE,
               smallplot = .legendInfo$smallplot,
@@ -26,7 +26,8 @@ addLegend<- function( legend.lab = NULL,
               zlim = zlim,
               legend.lab = legend.lab,
               legend.line= legend.line, 
-              axis.args = axis.args,
+                axis.args = axis.args,
               legend.args = legend.args,
-              legend.cex=legend.cex)
+              legend.cex = legend.cex
+              )
 }

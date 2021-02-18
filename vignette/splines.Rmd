@@ -234,12 +234,13 @@ ZBvalue<- qnorm(1- .025/fit$N)
 upperB<- fit.tps$fitted.values + ZBvalue* SE
 lowerB<- fit.tps$fitted.values - ZBvalue* SE
 
-plot( fit.tps$x, fit.tps$y)
-lines( fit.tps$predicted, lwd=2)
+plot( fit.tps$x, fit.tps$y, xlab = "Days", ylab = "Median Food Intake" )
+lines(fit.tps$x, fit.tps$fitted.values, lwd=2)
 matlines( fit.tps$x,
           cbind( lower, upper, lowerB, upperB), type="l", 
-          col=c( 2,2,4,4), lty=1)
-title( "95 pct pointwise and simultaneous intervals")
+          col=c( 2,2,4,4), lty=2)
+legend("bottomright", legend = c("95 Pct Pointwise", "Simultaneous Bonferroni"), col = c(2,4), lty = 2, cex = 0.8)
+title( "95 Pct Pointwise and Simultaneous Intervals")
 ```
 
 ```{r, eval=FALSE}
@@ -274,18 +275,21 @@ lines(fit.tps$x, true, lwd=2)
 
 Using the `WorldBankCO2` data, we show a small example using `fastTps`. We plot the data, the mean prediction line, and some approximate confidence intervals in dashed red.
 
-```{r}
+```{r, warning = FALSE}
 x <- WorldBankCO2[,'Pop.urb']
 y <- log10(WorldBankCO2[,'CO2.cap'])
 out.fast <- fastTps(x,y,lambda=2, theta=20)
-plot(x,y)
-xgrid<- seq(  min(x), max(x),,300)
+
+plot(x,y, xlab = "Urban Percent of Population", ylab = "CO2 Emissions Per Capita")
+
+xgrid<- seq(  min(x), max(x), length.out = 300)
 fhat.fast <- predict( out.fast,xgrid)
-#se.fast <- predictSE( out.fast) 
+se.fast <- predictSE( out.fast, x = xgrid) 
+
 lines( xgrid, fhat.fast)
-#lines( xgrid, fhat.fast+1.96*se.fast, col=2, lty=2)
-#lines( xgrid, fhat.fast-1.96*se.fast, col=2, lty=2)
-title('fastTps fit')
+lines( xgrid, fhat.fast+1.96*se.fast, col=2, lty=2)
+lines( xgrid, fhat.fast-1.96*se.fast, col=2, lty=2)
+title('`fastTps` Fit With 95% Confidence Interval')
 ```
 
 

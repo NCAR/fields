@@ -1,8 +1,10 @@
 ---
 title: '`fields` vignette'
-author: "Ashton Wiens and Mitchell Krock"
+author: "Ashton Wiens, Mitchell Krock, and Emma Lilly"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
+  pdf_document:
+    toc: yes
   html_document:
     number_sections: yes
     toc: yes
@@ -10,7 +12,7 @@ output:
 
 ```{r set-options, echo=FALSE, eval=FALSE}
 options(width = 400)
-knitr::opts_chunk$set(fig.show = 'hide')   #only if you want no figures
+#knitr::opts_chunk$set(fig.show = 'hide')   #only if you want no figures
 ```
 <style type="text/css">
 

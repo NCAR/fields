@@ -5,6 +5,7 @@ knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
 library(fields)
 library(colorRamps)
 library(RColorBrewer)
+library(spam)
 ```
 
 The `mKrig` function is both a Kriging/linear algebra engine and also user-level function for fitting spatial models. The `mKrig` engine is a simple and fast version of `Krig`. The "m" stands for micro, being a succinct (and we hope readable) function. The function focuses on the same computations as in `Krig.engine.fixed` done for a fixed `lambda` parameter, for unique spatial locations and for data without missing values. `mKrig` is optimized for large data sets, sparse linear algebra, and a clear exposition of the computations. The underlying code in `mKrig` is more readable and straightforward, but it does fewer checks on the data than `Krig`. One savings in computation is that Monte Carlo simulations are used to compute the trace of the smoothing matrix $\operatorname{tr}(A(\lambda))$, which can be used for the effective degrees of freedom of the model.
@@ -340,7 +341,7 @@ look2<- mKrig(x,y, cov.function="wendland.cov",k=2, theta=.9, lambda=.1)
 The warning resets the memory allocation for the covariance matrix according the to values `spam.options(nearestdistnnz=c(416052,400))`. This is inefficient because the preliminary pass failed. The following call completes the computation in "one pass" without a warning and without having to reallocate more memory.
 
 ```{r}
-spam.options(nearestdistnnz=c(4.2E5,400))
+options(spam.nearestdistnnz=c(4.2E5,400))
 look2<- mKrig( x,y, cov.function="wendland.cov",k=2, theta=.9, lambda=1e-2)
 ```
 

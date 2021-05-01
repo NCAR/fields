@@ -3,13 +3,11 @@ spatialProcessSetDefaults<- function( cov.function,
                                       cov.params.start,
                                       mKrig.args,
                                       extraArgs=NULL,
-                                      profileLambda,
-                                      profileARange,
-                                      gridARange,
-                                      gridLambda,
+                                      parGrid,
+                                      gridN,
+                                      doGridSearch,
                                       verbose=FALSE)
 {
-  
   
   ## convenient defaults for GP fitting.
   ## and also sort what starting parameter values are provided
@@ -30,7 +28,7 @@ spatialProcessSetDefaults<- function( cov.function,
     }
   } 
   
-  # overwrite the default choices is some are passed as ...
+  # overwrite the default choices if some are passed as ...
   #  (some R arcania!)
   
   if( !is.null( extraArgs)){
@@ -43,50 +41,37 @@ spatialProcessSetDefaults<- function( cov.function,
     }
   }
  
- 
+  if( verbose){
+    cat("update and passed cov.args", fill=TRUE)
+    print( cov.args)
+  }
   
-  #CASE 0 is to evaluate at fixed lambda and aRange
-  if( !is.null( cov.args$lambda) & !is.null( cov.args$aRange)){
+  # CASE 0 is to evaluate at fixed lambda and aRange
+  # and there are no other parameters to optimize over.
+  
+  if( !is.null( cov.args$lambda) & 
+      !is.null( cov.args$aRange) &
+       is.null( cov.params.start) 
+       ){
     CASE<- 0
   }
   
-  if( is.null( cov.args$lambda) & is.null(cov.params.start$lambda) ){
-    cov.params.start$lambda <- .5
-  }
+  #CASE 1 is to find MLEs using starting values provided a grid has not been 
+  # supplied for an initial grid search.
   
-  #CASE 1 is to find MLE for  lambda but aRange is fixed
-  # some lambda info
-  if( !is.null(cov.params.start$lambda)& !is.null( cov.args$aRange) ){
-    
+  if( !is.null(cov.params.start) & is.null(parGrid) ){
     CASE<- 1
   }
-  
-  # CASE 2 is to find MLEs for both lambda and aRange
-  # a grid search is done in place of a single starting value for aRange
-  
-  if( is.null( cov.args$aRange) & !is.null(cov.params.start$aRange) ){
+ 
+  if( !is.null(parGrid) ){
     CASE<- 2
   }
   
-  # CASE 3 is to find MLEs for both lambda and aRange
-  # a grid search is done in place of a single starting value for aRange
-  # the nuclear option ...
-  noARange<- is.null( cov.args$aRange) & is.null(cov.params.start$aRange) 
-  if( noARange | profileARange ){
-    cov.params.start$aRange <- NA
-    CASE<- 3
-  }
-  
-  # CASE 5 is to find MLEs for both lambda and aRange
-  # a grid search is done in place of a single starting value for aRange
-  # and profiling is done on lambda using grid serach on aRange. 
-  if( CASE ==3 & (profileLambda | !is.null(gridLambda) )  ){
-    CASE<- 5
-  }
-  
- # CASE 4 has fixed aRange but profiling/ grid search on lambda 
-  if( CASE==1 & (profileLambda | !is.null(gridLambda) )  ){
-    CASE<- 4
+  noLambda<- is.null( cov.args$lambda) & is.null(cov.params.start$lambda)
+  noARange<- is.null( cov.args$aRange) & is.null(cov.params.start$aRange)
+ 
+  if( noLambda |  noARange ){
+  print( "create parGrid")
   }
   
 # linear fixed model if not specified. 
@@ -107,20 +92,12 @@ spatialProcessSetDefaults<- function( cov.function,
   #
   # tuck in starting value for lambda if missing
   # 
-  if( is.null(cov.params.start)){
-    cov.params.start<- list( lambda =  .5) 
-  }
-  
-  if( is.null(cov.params.start$lambda) ) {
-    cov.params.start$lambda <-  .5 
-  }
-  
+ 
   
   out<- 
     list(  
         cov.function = cov.function,
             cov.args = cov.args,
-    cov.params.start = cov.params.start,
           mKrig.args = mKrig.args, 
                 CASE = CASE
         )

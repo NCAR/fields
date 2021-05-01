@@ -30,6 +30,7 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
                           parTransform = NULL,
                                   REML = FALSE, 
                                   GCV  = FALSE,
+                               hessian = FALSE, 
                                verbose = FALSE) {
   # overwrite basic data to remove NAs this has be done in case distance 
   # matrices are precomputed (see below)
@@ -112,12 +113,13 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
     if(is.null(optim.args)){
       # number of step sizes either include lambda as a parameter or not.   
       ndeps<- rep(log(1.1), length( parNames) ) 
-      optim.args = list(method = "BFGS", 
+      optim.args = list(method = "BFGS", hessian = hessian,
                         control=list(fnscale = -1,
                                      ndeps = ndeps, 
                                      abstol = abstol,
                                      maxit = 20)
       )
+      print( optim.args)
     }
     if( is.null(parTransform)){
       # parTransform: log/exp

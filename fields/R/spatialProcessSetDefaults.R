@@ -1,10 +1,10 @@
-spatialProcessSetDefaults<- function( cov.function,
+spatialProcessSetDefaults<- function( x, cov.function,
                                       cov.args,
                                       cov.params.start,
                                       mKrig.args,
                                       extraArgs=NULL,
                                       parGrid,
-                                      gridN,
+                                      gridN=5,
                                       doGridSearch,
                                       verbose=FALSE)
 {
@@ -46,6 +46,43 @@ spatialProcessSetDefaults<- function( cov.function,
     print( cov.args)
   }
   
+  noLambda<- is.null( cov.args$lambda) & is.null(cov.params.start$lambda)
+  noARange<- is.null( cov.args$aRange) & is.null(cov.params.start$aRange)
+  makeDefaultGrid<- (noLambda | noARange) & is.null(parGrid)
+# easy default search grid if lambda and/or aRange ahave not been specified
+  if( makeDefaultGrid ){
+  if( noLambda){
+    lGrid<- 10**seq( -4, .5, length.out= gridN)
+  }
+  if( noARange){
+      minX<- apply( x, 2, min)
+      maxX<- apply( x, 2, max)
+      xCorners<- rbind( minX,
+                        maxX)
+      if( is.null( cov.args$Distance)){
+        dMax<-rdist( rbind(xCorners[1,]), rbind(xCorners[2,]))
+        
+      }
+      else{
+        dMax<- do.call(cov.args$Distance, 
+                         x1= rbind(xCorners[1,]),
+                         x2= rbind(xCorners[2,]))
+      }
+      dMax<- c( dMax)
+        aGrid<- seq( .1*dMax, .7*dMax, length.out= gridN)
+  }
+ # now create parGrid   
+      if( noLambda & !noARange){
+        parGrid<- data.frame( lambda= lGrid)
+      }
+      if( noLambda & noARange){
+        parGrid<- expand.grid( lambda= lGrid, aRange = aGrid)
+      }
+      if( !noLambda & noARange){
+        parGrid<- data.frame( aRange= aGrid)
+      }
+  }
+    
   # CASE 0 is to evaluate at fixed lambda and aRange
   # and there are no other parameters to optimize over.
   
@@ -67,12 +104,7 @@ spatialProcessSetDefaults<- function( cov.function,
     CASE<- 2
   }
   
-  noLambda<- is.null( cov.args$lambda) & is.null(cov.params.start$lambda)
-  noARange<- is.null( cov.args$aRange) & is.null(cov.params.start$aRange)
- 
-  if( noLambda |  noARange ){
-  print( "create parGrid")
-  }
+  
   
 # linear fixed model if not specified. 
   if( is.null(mKrig.args)){
@@ -92,14 +124,13 @@ spatialProcessSetDefaults<- function( cov.function,
   #
   # tuck in starting value for lambda if missing
   # 
- 
-  
   out<- 
     list(  
         cov.function = cov.function,
             cov.args = cov.args,
           mKrig.args = mKrig.args, 
-                CASE = CASE
+                CASE = CASE,
+             parGrid = parGrid
         )
   
  

@@ -52,12 +52,16 @@ print.spatialProcessSummary <- function(x, digits = 4, ...) {
   cat( "Nonzero entries in covariance matrix ", x$nonzero.entries, fill=TRUE)
   
   cat("\n")
-  cat(" SUMMARY FROM ML ESTIMATION:", fill=TRUE)
+  cat("SUMMARY FROM Max. Likelihood ESTIMATION:", fill=TRUE)
   
   if( !is.null( x$MLEInfo) ){
-    cat("  parameters found from optim: ", fill=TRUE )
+    cat("Parameters found from optim: ", fill=TRUE )
     print( x$MLESummary[x$MLEpars] )
-    cat(" tau and sigma found analytically", fill=TRUE)
+    cat("Approx. confidence intervals for MLE(s) ", fill=TRUE )
+    print( x$CITable)
+    
+    cat("\n")
+    cat(" Note: MLEs for  tau and sigma found analytically from lambda", fill=TRUE)
     cat("\n")
   }
   else{

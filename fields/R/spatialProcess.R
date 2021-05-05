@@ -22,21 +22,30 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                   mKrig.args = NULL,
                 cov.function = NULL, 
                   	cov.args = NULL,
-                   gridARange = NULL,
-                   gridLambda = NULL,
+                      parGrid = NULL, 
                       abstol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
                         REML = FALSE, 
              confidenceLevel = .95,
             cov.params.start = NULL,
-                       gridN = 15,
+                       gridN = 5,
                profileLambda = FALSE,
                profileARange = FALSE,
+               profileGridN  = 15, 
+                  gridARange = NULL,
+                  gridLambda = NULL,
+                doGridSearch = TRUE,
+                 CILevel= .95,
                            ...) {
  
+#  THE RULES: 
+# Being in the cov.params.start list means a parameter will be optimized
+# by maximum likelhood. 
+# If a  parameter is in the cov.args list it will be fixed in its value
+#  
   
-# NOTE all ... information is assumed to be for the cov.args list
+# NOTE all the  ... extra arguents are assumed to be for the cov.args list
   GCV<- FALSE # top level placeholder to add GCV search capability once
 # algorithm is stable 
 # this default choice is used in the next level functions.
@@ -48,121 +57,67 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
    if( REML&GCV){
      stop("Cannot optimize for both REML and GCV!")
    }
-    
-   obj<- spatialProcessSetDefaults(cov.function=cov.function, 
+   
+   obj<- spatialProcessSetDefaults(x, 
+                                   cov.function=cov.function, 
                                    cov.args=cov.args,
                                    cov.params.start=cov.params.start,
                                    mKrig.args = mKrig.args,
                                    extraArgs = extraArgs,
-                                   profileLambda=profileLambda,
-                                   profileARange=profileARange,
-                                   gridARange=gridARange,
-                                   gridLambda=gridLambda)
+                                   parGrid=parGrid,
+                                   gridN = gridN,
+                                   doGridSearch=doGridSearch,
+                                   verbose=verbose)
    #
    # obj$CASE 
    # 0 evaluate on passed cov parameters but MLEs for sigma, tau found from
    #   lambda
    #
-   # 1 optimize loglikelihood over parameter lambda or  lambda and theta if
-   #   not specified 
-   #
-   # 2 optimize loglikelihood over any parameters speficied in 
+   # 1 optimize loglikelihood over any parameters specified in 
    #   cov.params.start but not in cov.args
    #
-   # 3 grid search/profile over  a grid of aRange or use 
-   #   gridARange as the grid
+   # 2  grid search over parameters using parGrid and generating starting values for 
+   #   for the MLEs 
    #
-   # 4 grid search/profile over  a grid of lambda
-   #
-   # 5 profile over aRange followed by profile over lambda.
-   #
-# Being in the cov.params.start list means a parameter will be optimized
-# by maximum likelhood. If a  parameter is in the cov.args list it will be fixed in its value
-# 
+   # 3 profile over lambda and/or aRange 
+   # this is fairly computationally demanding. 
+   
   if( verbose){
     cat(" The CASE:", obj$CASE, fill=TRUE)
     cat("Complete list of components in cov.args: ", "\n",
         names(obj$cov.args),fill=TRUE )
   }
-
+   
+   
 ####################################################################  
-# CASE 3 and part I of CASE 5
+# CASE 2 grid search for starting values 
 ####################################################################  
    
-  if( (obj$CASE == 3) | (obj$CASE == 5) ){
+  if( (obj$CASE == 2 )  ){
+    InitialGridSearch<- mKrigMLEGrid(x, y,  
+                             weights = weights,
+                                   Z = Z, 
+                          mKrig.args = mKrig.args,
+                        cov.function = obj$cov.function, 
+                           cov.args  = obj$cov.args,
+                            par.grid = obj$parGrid, 
+                               na.rm = na.rm,
+                             # verbose = verbose,
+                                REML = REML,
+                                 GCV = GCV,
+                    cov.params.start = cov.params.start)
+  # use grid search to set starting values
     
-    if( is.null( gridARange) ){
-      if( is.null( obj$cov.args$Distance)){
-        pairwiseD<- dist(x)
-      }
-      else{
-        pairwiseD<- do.call(obj$cov.args$Distance, list(x))
-        pairwiseD<- pairwiseD[col(pairwiseD) > row( pairwiseD) ]
-      }
-      aRange.range<- quantile( pairwiseD, c(.02,.97))
-      gridARange  <- 10**seq( log10(aRange.range[1]), log10(aRange.range[2]), length.out=gridN )
+    parNames<- names( obj$parGrid)
+    if( is.null( cov.params.start)){
+      cov.params.start<- obj$parGrid[InitialGridSearch$indMax,]
+      names(cov.params.start )<- parNames
     }
-    cov.params.startTemp <-  obj$cov.params.start 
-    cov.params.startTemp$aRange<- NULL
-    
-    
-    aRangeProfile<- mKrigMLEGrid(x, y,  
-                                 weights = weights, Z= Z, 
-                                 mKrig.args = mKrig.args,
-                                 cov.function = obj$cov.function, 
-                                 cov.args  = obj$cov.args,
-                                 par.grid = list( aRange = gridARange), 
-                                 na.rm = na.rm,
-                                 verbose = verbose,
-                                 REML = REML,
-                                  GCV = GCV,
-                     cov.params.start = cov.params.startTemp)
-    indMax<- aRangeProfile$indMax
-    aRangeMLEGrid<- aRangeProfile$summary[indMax,"aRange"]
-    # refine starting values based on the grid search over aRange
-    obj$cov.params.start$aRange<- aRangeMLEGrid
-    lambdaMLE<- aRangeProfile$summary[indMax,"lambda"]
-    if( verbose){
-      print( aRangeProfile$summary )
+    else{
+    cov.params.start[parNames] <- 
+       obj$parGrid[InitialGridSearch$indMax, parNames]
     }
-  }
-   
-####################################################################  
-# profile/ grid search on lambda and PART II CASE 5
-#################################################################### 
-   
-   if(  profileLambda | obj$CASE==4){
-     lambdaCenter<- obj$cov.params.start$lambda
-     if( is.null( gridLambda)){
-       gridLambda = 10**( seq( -2,2, length.out=gridN))*lambdaCenter
-     }
-     cov.params.startTemp<- obj$cov.params.start
-     cov.params.startTemp$lambda<- NULL
-     if(verbose){
-       cat("call to profile grid cov.args")
-       print( obj$cov.args)
-     }
-     lambdaProfile<- mKrigMLEGrid(x, y,  
-                                weights = weights, Z= Z, 
-                             mKrig.args = mKrig.args,
-                                cov.function = obj$cov.function, 
-                              cov.args  = obj$cov.args,
-                               par.grid = list( lambda = gridLambda), 
-                                  na.rm = na.rm,
-                                verbose = verbose,
-                                   REML = REML,
-                                    GCV = GCV,
-                       cov.params.start = cov.params.startTemp
-                       )
-     indMax<- lambdaProfile$indMax
-     lambdaMLEGrid<- lambdaProfile$summary[indMax,"lambda"]
-     # refine starting values based on the grid search over aRange
-     obj$cov.params.start$lambda<- lambdaMLEGrid
-     if(verbose){
-       cat("profile summary", fill=TRUE)
-       print( lambdaProfile$summary)
-     }
-   } 
+ }
    
 ####################################################################  
 # CASES 1 , 2 , 3, 4
@@ -171,15 +126,17 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
      # optimze over all parameters 
      # where starting values are given or if
      # values in cov.args are omitted. 
+     obj$cov.params.start<- cov.params.start
      MLEInfo <-mKrigMLEJoint(x, y,  weights = weights, Z= Z, 
                              mKrig.args = obj$mKrig.args,
                              cov.function = obj$cov.function, 
                              cov.args  = obj$cov.args,
                              na.rm = na.rm,
                              verbose = verbose,
-                             cov.params.start = obj$cov.params.start,
+                             cov.params.start = cov.params.start,
                              REML = REML,
-                             GCV = GCV) 
+                             GCV = GCV,
+                             hessian = TRUE) 
    }
    
 ################################################################################
@@ -204,7 +161,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
    }
   if( verbose){
     cat( "Names cov.args:","\n", names( obj$cov.args), fill=TRUE)
-    cat( "Names cov.params.start:","\n", names( obj$cov.params.start),fill=TRUE)
+    cat( "Names cov.params.start:","\n", names(cov.params.start), fill=TRUE)
     cat( "Names argsFull:","\n", names( obj$cov.argsFull),fill=TRUE  )
   }
   mKrigObj <- do.call( "mKrig", 
@@ -218,56 +175,75 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 	                  obj$cov.argsFull 
 	            	)
              	)
+
 ####################################################################
 # sort out output object based on the different cases
+# also copy some information from the call and within function
+# the output list, obj
 ####################################################################
+  obj$GCV    <- GCV
+  obj$REML   <- REML
+  obj$CILevel<- CILevel
+  
   if( obj$CASE==0){
-    MLEInfo <- NULL
-    aRange.CI<- NA
-    lambda.CI<- NA
-    aRangeProfile<- NULL
-    lambdaProfile<- NULL
-    MLESummary <- mKrigObj$summary
+    obj$MLEInfo <- NULL
+    obj$MLESummary <- mKrigObj$summary
+    obj$InitialGridSearch<- NULL
+    obj$parameterCovariance<- NULL
+    
   }
   
-  if( obj$CASE==1 | obj$CASE==2){
-    aRangeProfile<- NULL
-    lambdaProfile<- NULL
-    aRange.CI<- NA
-    lambda.CI<- NA
-    MLESummary <- MLEInfo$summary
+  if( obj$CASE==1){
+    obj$InitialGridSearch<- NULL
   }
-  if( obj$CASE==3){
-   aRange.CI<- profileCI( aRangeProfile, "aRange", confidenceLevel)
-   lambdaProfile<- NULL
-   lambda.CI<- NA
-   MLESummary <- MLEInfo$summary
+  
+####################################################################
+#  Fill in all info related to finding MLE
+####################################################################
+  if( obj$CASE!=0){
+    obj$MLEInfo<- MLEInfo
+    obj$MLESummary <- MLEInfo$summary
+    # NOTE: covariance for lambda and ARange based on log(lambda) and log(ARange)
+    obj$parameterCovariance<- solve(
+            -1*MLEInfo$optimResults$hessian)
+####################################################################
+# Approximate large sample confidence intervals on the transformed scale following by
+#	then transform back to original scale (see MLEInfo$par.transform)
+####################################################################	
+      obj$CITable<- confidenceIntervalMLE(obj, CILevel)
   }
-  if( obj$CASE==4){
-    aRangeProfile<- NULL
-    aRange.CI<- NA
-    lambda.CI<- profileCI( lambdaProfile, "lambda", confidenceLevel)
-    MLESummary <- MLEInfo$summary
-  }
-  if( obj$CASE==5){
-    aRange.CI<- profileCI( aRangeProfile, "aRange", confidenceLevel)
-    lambda.CI<- profileCI( lambdaProfile, "lambda", confidenceLevel)
-    MLESummary <- MLEInfo$summary
-  }
-# combine everything into the output list  
-	obj <- c(obj, mKrigObj, 
-	                 list(MLESummary=MLESummary,
-	                      MLEInfo = MLEInfo,
-	                      aRangeProfile = aRangeProfile, 
-	                      lambdaProfile = lambdaProfile,
-	                      lambda.CI =  lambda.CI,
-	                      aRange.CI =  aRange.CI
-	                      )
-	        )
+  
+# combine everything into the output list, mKrig components first. 
+	obj <- c( mKrigObj,obj)
 # replace call in mKrig  object with the top level one
 # from spatialProcess
   obj$call<- match.call()	
 	class(obj) <- c( "spatialProcess","mKrig")
+	
+####################################################################
+# Profiling depends on complete spatial process obj 
+# which is why this is last
+####################################################################	
+	
+	  if( profileLambda){
+	    obj$profileSummaryLambda<- profileMLE( obj, "lambda",
+	                                           parGrid=gridLambda,
+	                                           gridN=profileGridN)$summary
+	  }
+  	else{
+	  obj$profileSummaryLambda<- NULL
+   	}
+  	if( profileARange){
+	    obj$profileSummaryLambda<- profileMLE( obj, "aRange",
+	                                           parGrid=gridARange,
+	                                           gridN=profileGridN)$summary
+  	}
+	  else{
+	    obj$profileSummaryLambda<- NULL
+	  }
+	  
+
+	
  
 	return(obj)
 }

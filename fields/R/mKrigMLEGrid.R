@@ -25,7 +25,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                          cov.args = NULL,
                            na.rm = TRUE, 
                          par.grid = NULL, 
-               relative.tolerance = 1e-04,
+                           reltol = 1e-06,
                              REML = FALSE,
                              GCV  = FALSE,
                        optim.args = NULL,
@@ -47,6 +47,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
     #If user left all distance settings NULL, use rdist with compact option.
     #Use rdist function by default in general.
     #
+   
     if(is.null(cov.args$Distance)) {
       cov.args$Distance  <-  "rdist"
       cov.args$Dist.args <- list(compact=TRUE)
@@ -65,14 +66,24 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   # begin loop over covariance parameters and either evaluate at a grid of  lambda values
   # or use these as start values for optimization.
   for (k in 1:NG) {
-    
     cov.args.temp <- as.list( par.grid[k, ])
     names(cov.args.temp) <- names( par.grid)
     currentCov.args<- c( cov.args.temp, cov.args) 
     if( verbose){
-      cat( "grid value: " , k, fill=TRUE)
-      cat( names(currentCov.args ), fill=TRUE, sep=", ")
+      
+      cat( "********grid value: " , k, fill=TRUE)
+      cat( "Cov args", names(currentCov.args ), fill=TRUE, sep=", ")
+      cat("value  aRange", fill=TRUE)
+      print( currentCov.args$aRange)
+      cat("value  lambda", fill=TRUE)
+      print( currentCov.args$lambda)
+      
+      cat("start values", fill=TRUE)
+      print( cov.params.start)
+      cat("optim.args", fill=TRUE)
+      print( optim.args)
     }
+  
     MLEfit0 <- mKrigMLEJoint(x, y, 
                                   weights = weights, Z=Z, 
                                   cov.function = cov.function,
@@ -82,6 +93,7 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
                                mKrig.args = mKrig.args,
                                      REML = REML,
                                      GCV  = GCV,
+                                   reltol = reltol,
                          cov.params.start = cov.params.start,
                                   verbose = verbose)
      summary <- rbind( summary, MLEfit0$summary)

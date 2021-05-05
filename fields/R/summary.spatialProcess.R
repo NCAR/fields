@@ -60,23 +60,8 @@ summary.spatialProcess <- function(object, ...) {
   c1 <- c(c1, "lambda   tau^2/sigma^2: ")
   c2 <- c(c2, signif(object$MLESummary["lambda"], digits))
   
-  if( !is.na(object$lambda.CI[1])){
-    c1 <- c(c1, paste0( "Approx ", object$confidenceLevel, 
-                        "% CI for lambda:  ") ) 
-    c2<-  c(c2, paste( "[",signif( object$lambda.CI[1], digits), ",",
-                       signif( object$lambda.CI[2], digits), "]"  ) 
-    )
-  }
-  
   c1 <- c(c1, "aRange parameter (in units of distance): ")
   c2 <- c(c2, signif(object$MLESummary["aRange"], digits))
-  if( !is.na(object$aRange.CI[1])){
- c1 <- c(c1, paste0( "Approx ", object$confidenceLevel, 
-                     "% CI for aRange:  ") ) 
- c2<-  c(c2, paste( "[",signif( object$aRange.CI[1], digits), ",",
-                      signif( object$aRange.CI[2], digits), "]"  ) 
-           )
-  }
   
   if (!is.na(object$eff.df)) {
     c1 <- c(c1, "Approx.  degrees of freedom for curve")
@@ -87,8 +72,6 @@ summary.spatialProcess <- function(object, ...) {
                          digits))
     }
   }
-  
- 
   
   c1<- c(c1, "log Likelihood: " )
   c2<- c( c2, object$summary["lnProfileLike.FULL"])
@@ -102,6 +85,7 @@ summary.spatialProcess <- function(object, ...) {
 ###########  
   outObject$summaryTable<- summaryStuff
   outObject$collapseFixedEffect<- object$collapseFixedEffect
+  outObject$CITable<- object$CITable
 ###########
   if( !is.null( object$MLEInfo)){
   outObject$MLEpars<-  names( object$MLEInfo$pars.MLE) 

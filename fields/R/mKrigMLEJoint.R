@@ -26,7 +26,7 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
                               cov.args = NULL, 
                       cov.params.start = NULL,
                             optim.args = NULL,
-                                abstol = 1e-4,
+                                reltol = 1e-6,
                           parTransform = NULL,
                                   REML = FALSE, 
                                   GCV  = FALSE,
@@ -116,10 +116,10 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
       optim.args = list(method = "BFGS", hessian = hessian,
                         control=list(fnscale = -1,
                                      ndeps = ndeps, 
-                                     abstol = abstol,
+                                     reltol = reltol,
                                      maxit = 20)
+                        
       )
-      print( optim.args)
     }
     if( is.null(parTransform)){
       # parTransform: log/exp
@@ -137,13 +137,13 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
 # call to optim with initial start (default is log scaling )
 # 
   init.start <- parTransform( unlist(c(cov.params.start)), inv=FALSE)
+  
   if( verbose){
   cat("Transformed starting values ","\n", init.start, fill=TRUE)
   }
 # and now the heavy lifting ...
 # optimize over (some) covariance parameters and possibly lambda
- 
-  optimResults <- do.call(optim, c(    list(par=init.start),
+  optimResults <- do.call(optim, c(list(par=init.start),
                             list(mKrigJointTemp.fn),
                                          optim.args,
                            list(  parNames = parNames,
@@ -161,9 +161,9 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
     cat("Captured  evaluations from optim: ", fill=TRUE)
     print(lnLikeEvaluations)
   }
-  ind<- which(  lnLikeEvaluations[ , nameCriterion]
-                           ==  optimResults$value )
-  ind<- max( ind)
+  #ind<- which(lnLikeEvaluations[ , nameCriterion]
+  #                         ==  optimResults$value )
+  #ind<- max(ind)
   optim.counts <- optimResults$counts
   parOptimum<-    parTransform(optimResults$par, inv=TRUE)
   names( parOptimum)<- parNames

@@ -42,16 +42,16 @@
         yline(0)
     }
 ################### plot 3 profile over lambda 
-    profileLambda<- !is.null( out$lambdaProfile)
-    
+    profileLambda<- !is.null( out$profileSummaryLambda)
+    print( profileLambda)
     if (any(which == 3)& profileLambda ) {
-      summary<- out$lambdaProfile$summary
+      summary<- out$profileSummaryLambda
     	mar.old<- par()$mar
     
     	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
             plot(summary$lambda, summary$lnProfileLike.FULL,  xlab = "lambda", 
-                ylab ="log Profile Likelihood(lambda)",
+                ylab ="log Profile Likelihood(lambda)", 
                 type = "p", log="x", pch=16,cex=.5,
                  ...)
             
@@ -75,9 +75,9 @@
     }
     
 #################### plot 4 profile over aRange (range)
-    profileARange<- !is.null(out$aRangeProfile)
+    profileARange<- !is.null(out$profileSummaryARange)
     if ( any(which == 4) & profileARange ) {
-      summary<- out$aRangeProfile$summary
+      summary<- out$profileSummaryARange
     	plot(summary$aRange, summary$lnProfileLike.FULL, pch=16, xlab="aRange (range parameter)", ylab="log Profile Likelihood (aRange)")
     	title("Profile likelihood for aRange \n (range parameter)")
     	xline( out$aRange.MLE, lwd=2, col="grey40")

@@ -7,21 +7,23 @@ addLegend<- function(
          legend.lab = NULL,
         legend.line = 2 
            ){
-    if( !exists( ".legendInfo")) {
+  
+  if( !exists( ".legendInfo")) {
         stop("setupLegend has not been called")
-    }
-    
-    if( is.null(col)){
-      if( !exists(  ".colorMap")){
+   }
+   legendInfo<-  get(".legendInfo")
+   if( is.null(col)){
+     if( !exists(  ".colorMap")){
         stop("the argument col  has not been specifed and
                 color.scale has not been called to specify one.")
-      }  
-    col<- .colorMapInfo$col
-    zlim<- .colorMapInfo$zlim
+     }  
+     colorMapInfo<- get(".colorMapInfo")
+     col<- colorMapInfo$col
+     zlim<-colorMapInfo$zlim
     }
-  image.plot( legend.only=TRUE,
+   image.plot( legend.only=TRUE,
               add=TRUE,
-              smallplot = .legendInfo$smallplot,
+              smallplot = legendInfo$smallplot,
               col= col,
               zlim = zlim,
               legend.lab = legend.lab,

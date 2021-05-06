@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -74,12 +74,9 @@ Testing:  mKrig vs. Krig for ozone2
 PASSED test at tolerance  1e-08
 HERE
 Testing:  predict Wendland  mKrig vs Krig
-PASSED test at tolerance  1e-08
-Warning message:
-In fastTps(xdat, ydat, aRange = 0.3) :
-  fastTps will interpolate observations
+PASSED test at tolerance  1e-07
 Testing:  fastTps interp1
-PASSED test at tolerance  1e-08
+PASSED test at tolerance  5e-07
 Testing:  fastTps interp2
 PASSED test at tolerance  0.02
 [1] "testing using distance matrix"
@@ -103,4 +100,4 @@ all done with mKrig tests
 > 
 > proc.time()
    user  system elapsed 
-  1.328   0.185   1.495 
+  1.939   0.274   2.208 

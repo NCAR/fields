@@ -1,6 +1,6 @@
 profileMLE<- function (obj, parName, parGrid=NULL, gridN=15,
                        cov.params.start=NULL, GCV=FALSE, REML=FALSE,
-                       verbose=FALSE){
+                       verbose=FALSE ){
   if( class(obj)[1]!= "spatialProcess"){
     stop("only implemented tfor spatialProcess objects")
   }
@@ -25,9 +25,14 @@ profileMLE<- function (obj, parName, parGrid=NULL, gridN=15,
     cov.params.startTmp<-cov.params.start
   }
   
-# remove the covariance parameter that is to be profiled  
-  #cov.argsTemp<- obj$cov.args
-  #cov.argsTemp[parName]<- NULL
+# just evaluate other parameters at MLEs and don't optimze. 
+# E.g. just use  MLE lambda hat for all choice in in parGrid. 
+# if( fast){
+#    cov.params.startTmp<-NULL
+#    
+#  }
+#  cov.argsTemp<- obj$cov.argsFull
+#  cov.argsTemp[parName]<-  NULL
   
   profileInfo<-  mKrigMLEGrid(obj$x, obj$y,  
                weights = obj$weights,

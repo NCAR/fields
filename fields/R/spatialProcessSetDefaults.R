@@ -5,7 +5,6 @@ spatialProcessSetDefaults<- function( x, cov.function,
                                       extraArgs=NULL,
                                       parGrid,
                                       gridN=5,
-                                      doGridSearch,
                                       verbose=FALSE)
 {
   
@@ -64,9 +63,10 @@ spatialProcessSetDefaults<- function( x, cov.function,
         
       }
       else{
-        dMax<- do.call(cov.args$Distance, 
+        dMax<- do.call(cov.args$Distance, list(
                          x1= rbind(xCorners[1,]),
                          x2= rbind(xCorners[2,]))
+                       )
       }
       dMax<- c( dMax)
         aGrid<- seq( .1*dMax, .7*dMax, length.out= gridN)

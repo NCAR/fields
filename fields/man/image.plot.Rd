@@ -56,14 +56,16 @@ setupLegend( horizontal = FALSE,
                         legend.width = 1.2, 
                         legend.mar = ifelse(horizontal, 3.1, 5.1)
 			)
-addLegend( legend.lab = NULL,
-           legend.line= 2, 
-           axis.args = NULL,
-           legend.args = NULL,
-           legend.cex=1.0, 
-           col=NULL,
-           zlim=NULL
-           )			
+			
+	addLegend(
+                col = NULL,
+               zlim = NULL,
+          axis.args = NULL,
+        legend.args = NULL,
+         legend.cex = 1.0, 
+         legend.lab = NULL,
+        legend.line = 2)
+			
 }
 
 \arguments{ 

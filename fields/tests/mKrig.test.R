@@ -197,7 +197,7 @@ mKrig( x,y,
 temp<- predict( out)
 temp2<- predict( out2)
 
-test.for.zero( temp, temp2, tag="predict Wendland  mKrig vs Krig")
+test.for.zero( temp, temp2, tol=1e-7, tag="predict Wendland  mKrig vs Krig")
 
 
 
@@ -218,7 +218,7 @@ ydat <- ztrue[ind]
 out<- fastTps(xdat, ydat, aRange=.3)
 out.p<-predictSurface( out, grid=gl, extrap=TRUE)
 # perfect agreement at data
-test.for.zero( ydat, c( out.p$z)[ind], tag="fastTps interp1")
+test.for.zero( ydat, c( out.p$z)[ind],tol=5e-7, tag="fastTps interp1")
 #image.plot(x,y,matrix( ztrue, nx,ny)- out.p$z) 
 rmse<- sqrt(mean( (ztrue- c( out.p$z))^2)/ mean( (ztrue)^2))
 test.for.zero( rmse,0,tol=.02, relative=FALSE,tag="fastTps interp2")

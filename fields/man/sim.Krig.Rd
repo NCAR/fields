@@ -239,35 +239,40 @@ e.g. if \code{simOut} is the output object then to plot the 3rd draw:
 
 data( ozone2)
 obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
-
+aHat<- obj$summary["aRange"]
+lambdaHat<- obj$summary["lambda"]
 ######### boot strap 
 set.seed(123)
-M<- 20
+M<- 100
 # create M indepedent copies of the observation vector
 ySynthetic<- simSpatialData( obj, M)
 
 bootSummary<- NULL
 
 for(  k in 1:M){
+cat( k, " ")
 # here the MLEs are found using the easy top level level wrapper
 # see mKrigMLEJoint for a more efficient strategy
   newSummary<- spatialProcess(obj$x,ySynthetic[,k],
                     cov.params.start= list(
-			                   aRange = obj$aRange.MLE,
-			                  lambda = obj$lambda.MLE
-					  )
+			                   aRange = aHat,
+			                  lambda = lambdaHat)
                                )$summary
   bootSummary<- rbind( bootSummary, newSummary)
   }
+cat( fill= TRUE)
 # the results and 95% confidence interval  
   stats( bootSummary )
 
   obj$summary
-  confidenceInterval <- apply(bootSummary[,2:5],2,
+  tmpBoot<- bootSummary[,c("lambda", "aRange") ]
+  confidenceInterval <- apply(tmpBoot, 2,
                                quantile, probs=c(0.025,0.975) )
 # compare to estimates used as the "true" parameters			       
   obj$summary[2:5] 
-  print( confidenceInterval)
+  print( t(confidenceInterval) )
+# compare to confidence interval using large sample theory  
+  print( obj$CITable)
 }
 
 \dontrun{

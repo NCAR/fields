@@ -23,11 +23,10 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                 cov.function = NULL, 
                   	cov.args = NULL,
                       parGrid = NULL, 
-                      abstol = 1e-4,
+                      reltol = 1e-4,
                        na.rm = TRUE,
                   	 verbose = FALSE,
                         REML = FALSE, 
-             confidenceLevel = .95,
             cov.params.start = NULL,
                        gridN = 5,
                profileLambda = FALSE,
@@ -35,7 +34,6 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                profileGridN  = 15, 
                   gridARange = NULL,
                   gridLambda = NULL,
-                doGridSearch = TRUE,
                  CILevel= .95,
                            ...) {
  
@@ -66,7 +64,6 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                                    extraArgs = extraArgs,
                                    parGrid=parGrid,
                                    gridN = gridN,
-                                   doGridSearch=doGridSearch,
                                    verbose=verbose)
    #
    # obj$CASE 
@@ -101,6 +98,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                         cov.function = obj$cov.function, 
                            cov.args  = obj$cov.args,
                             par.grid = obj$parGrid, 
+                              reltol = reltol,
                                na.rm = na.rm,
                              # verbose = verbose,
                                 REML = REML,
@@ -132,11 +130,12 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                              cov.function = obj$cov.function, 
                              cov.args  = obj$cov.args,
                              na.rm = na.rm,
-                             verbose = verbose,
+                             reltol=reltol,
                              cov.params.start = cov.params.start,
                              REML = REML,
                              GCV = GCV,
-                             hessian = TRUE) 
+                             hessian = TRUE,
+                             verbose = verbose) 
    }
    
 ################################################################################
@@ -201,6 +200,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 #  Fill in all info related to finding MLE
 ####################################################################
   if( obj$CASE!=0){
+    obj$InitialGridSearch<- InitialGridSearch
     obj$MLEInfo<- MLEInfo
     obj$MLESummary <- MLEInfo$summary
     # NOTE: covariance for lambda and ARange based on log(lambda) and log(ARange)
@@ -213,37 +213,38 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
       obj$CITable<- confidenceIntervalMLE(obj, CILevel)
   }
   
-# combine everything into the output list, mKrig components first. 
-	obj <- c( mKrigObj,obj)
-# replace call in mKrig  object with the top level one
-# from spatialProcess
+  # combine everything into the output list, mKrig components first. 
+  obj <- c( mKrigObj,obj)
+  # replace call in mKrig  object with the top level one
+  # from spatialProcess
   obj$call<- match.call()	
-	class(obj) <- c( "spatialProcess","mKrig")
-	
+  
+  class(obj) <- c( "spatialProcess","mKrig")
+  
 ####################################################################
 # Profiling depends on complete spatial process obj 
 # which is why this is last
 ####################################################################	
-	
-	  if( profileLambda){
-	    obj$profileSummaryLambda<- profileMLE( obj, "lambda",
-	                                           parGrid=gridLambda,
-	                                           gridN=profileGridN)$summary
-	  }
-  	else{
-	  obj$profileSummaryLambda<- NULL
-   	}
-  	if( profileARange){
-	    obj$profileSummaryLambda<- profileMLE( obj, "aRange",
-	                                           parGrid=gridARange,
-	                                           gridN=profileGridN)$summary
-  	}
-	  else{
-	    obj$profileSummaryLambda<- NULL
-	  }
-	  
+  
+  if (profileLambda) {
+    obj$profileSummaryLambda <- profileMLE(obj, "lambda",
+                                           parGrid = gridLambda,
+                                           gridN = profileGridN
+                                           )$summary
+  }
+  else{
+    obj$profileSummaryLambda <- NULL
+  }
+  if (profileARange) {
+    obj$profileSummaryARange <- profileMLE(obj, "aRange",
+                                           parGrid = gridARange,
+                                           gridN = profileGridN,
+                                           )$summary
+  }
+  else{
+    obj$profileSummaryARange <- NULL
+  }
+  
 
-	
- 
 	return(obj)
 }

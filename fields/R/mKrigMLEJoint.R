@@ -31,6 +31,7 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
                                   REML = FALSE, 
                                   GCV  = FALSE,
                                hessian = FALSE, 
+                                iseed  =  233,
                                verbose = FALSE) {
   # overwrite basic data to remove NAs this has be done in case distance 
   # matrices are precomputed (see below)
@@ -193,7 +194,7 @@ else{
   cov.args.final<- c( cov.args, cov.params.final)
 # mKrig.args$find.trA <- TRUE
   fastObject   <- do.call("mKrig",
-                          c(mKrig.args, 
+                          c(mKrig.args, iseed= iseed,
                           cov.args.final) )$summary
   
 ######################################################### 

@@ -20,10 +20,14 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 color.scale <- function(z, col = tim.colors(256), 
     zlim = NULL, transparent.color = "white", eps = 1e-08) {
-    #
-    # converts real values to a color scale of NC values.
-    # role of eps is to prevent values exactly at the end of the range from being
-    # missed
+#
+# converts real values to a color scale of NC values.
+# role of eps is to prevent values exactly at the end of the range from being
+# missed
+#    
+# bind session variable locally to avboid errors when R package checks
+# are run
+    .colorMap<- NULL
     if (is.null(zlim)) {
         zlim <- range(z, na.rm = TRUE)
     }

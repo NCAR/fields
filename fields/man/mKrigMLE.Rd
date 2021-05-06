@@ -35,20 +35,25 @@ different covariance parameters with the option of maximizing over
 tau and sigma. They used the \code{mKrig} base are designed for computational efficiency.
 }
 \usage{
-mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL, 
-                 mKrig.args = NULL, cov.function = "stationary.cov",
-                 cov.args = NULL, na.rm = TRUE, par.grid = NULL,
-                 relative.tolerance = 1e-04,
-                 REML = FALSE, GCV=FALSE,
-                 optim.args = NULL, 
-                 cov.params.start = NULL, verbose = FALSE)
+mKrigMLEGrid(x, y, weights = rep(1, nrow(x)), Z = NULL,
+                       mKrig.args = NULL,
+                          cov.function = "stationary.cov", 
+                         cov.args = NULL,
+                           na.rm = TRUE, 
+                         par.grid = NULL, 
+                           reltol = 1e-06,
+                             REML = FALSE,
+                             GCV  = FALSE,
+                       optim.args = NULL,
+                 cov.params.start = NULL,
+                          verbose = FALSE)
+                          
 
 mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
                  = NULL, na.rm = TRUE, cov.function = "stationary.cov",
                  cov.args = NULL, cov.params.start = NULL, optim.args =
-                 NULL, abstol = 1e-04, parTransform = NULL, 
-                 REML = FALSE, GCV=FALSE,
-                 verbose = FALSE)
+                 NULL, reltol = 1e-06, parTransform = NULL, REML =
+                 FALSE, GCV = FALSE, hessian = FALSE, iseed = 233, verbose = FALSE)
 
 profileCI(obj, parName, CIlevel = 0.95, REML = FALSE) 
 
@@ -59,8 +64,6 @@ mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
- \item{abstol}{Absolute convergence tolerance used in optim.}
- 
  \item{capture.env}{For the ML obective function the frame to save the results of the evaluation. This should be the environment of the function calling optim.}
  
 \item{CIlevel}{ Confidence level.}
@@ -85,6 +88,12 @@ A list of initial starts for covariance parameters  to perform likelihood maximi
   \code{lambda = .5} is added to this list. 
 }
  
+\item{hessian}{If TRUE return the BFGS approximation to the hessian 
+matrix at convergence.} 
+
+\item{iseed}{ Sets the random seed in finding the approximate 
+Monte Carlo based GCV function and the effective degrees of freedom. }
+
 \item{mKrig.args}{A list of additional parameters to supply to the \code{mKrig} function. E.g.\code{ mKrig.args= list( m=1) }to set the regression function to be a constant function.
 
 \code{mKrig} function that are distinct from the covariance model. 
@@ -132,12 +141,7 @@ for optimization or
 effects the inverse map from the transformed scale into the original values. See below for more details. 
 }
 
-
-
-\item{relative.tolerance}{
-Tolerance used to declare convergence when
-  maximizing likelihood over lambda.
-}
+\item{reltol}{Optim BFGS comvergence criterion.}
 
 \item{REML}{If TRUE use REML instead of the full log likelihood.}
 

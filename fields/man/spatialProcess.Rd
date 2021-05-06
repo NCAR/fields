@@ -25,36 +25,59 @@
 \alias{print.spatialProcess}
 \alias{print.spatialProcessSummary}
 \alias{summary.spatialProcess}
+\alias{profileMLE}
+\alias{confidenceIntervalMLE}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 	Estimates a spatial process model. 
 %%  ~~function to do ... ~~
 }
 \description{
-	For a given covariance function estimates the nugget (tau^2) and process variance (sigma)  and the
-	range parameter (aRange) by restricted maximum likelihood and then computes the 
-	spatial model with these estimated parameters.
-	Other parameters of the covariance 
-	are kept fixed and need to be specified.  
+	For a given covariance function  estimates the covariance parameters by maximum  maximum likelihood and then evaluates the 
+	spatial model with these estimated parameters. The returned objet can be used for spatial prediction, conditional simulation, and profiling the likelihood function. 
+	 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-spatialProcess(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
-                 = NULL, cov.function = NULL, cov.args = NULL,
-                 gridARange = NULL, gridLambda = NULL, abstol = 1e-04,
-                 na.rm = TRUE, verbose = FALSE, REML = FALSE,
-                 confidenceLevel = 0.95, cov.params.start = NULL, gridN
-                 = 15, profileLambda = FALSE, profileARange = FALSE,
-                 ...)
+spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
+                  mKrig.args = NULL,
+                cov.function = NULL, 
+                    cov.args = NULL,
+                     parGrid = NULL, 
+                      reltol = 1e-4,
+                       na.rm = TRUE,
+                     verbose = FALSE,
+                        REML = FALSE, 
+            cov.params.start = NULL,
+                       gridN = 5,
+               profileLambda = FALSE,
+               profileARange = FALSE,
+               profileGridN  = 15, 
+                  gridARange = NULL,
+                  gridLambda = NULL,
+                 CILevel= .95,
+                           ...)
 \method{summary}{spatialProcess}(object,  ...)
 \method{print}{spatialProcess}(x, digits = 4, ...)
 \method{print}{spatialProcessSummary}(x, digits = 4, ...)
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
 
-spatialProcessSetDefaults(cov.function, cov.args, cov.params.start,
-     mKrig.args,
-    extraArgs = NULL, profileLambda, profileARange, gridARange, 
-    gridLambda, verbose = FALSE) 
+                           
+spatialProcessSetDefaults( x, cov.function,
+                                      cov.args,
+                                      cov.params.start,
+                                      mKrig.args,
+                                      extraArgs=NULL,
+                                      parGrid,
+                                      gridN=5,
+                                      verbose=FALSE)
+    
+confidenceIntervalMLE( obj, CILevel, verbose=FALSE)
+
+profileMLE (obj, parName, parGrid=NULL, gridN=15,
+                       cov.params.start=NULL, GCV=FALSE, REML=FALSE,
+                       verbose=FALSE)
+
 
 }
 
@@ -63,48 +86,81 @@ spatialProcessSetDefaults(cov.function, cov.args, cov.params.start,
 
 \item{y}{Observation values}
 
-\item{weights}{Weights for the error term (nugget) in units of reciprocal variance.}
+\item{weights}{Weights for the error term (nugget) in units of
+reciprocal variance.}
 
-\item{Z}{A matrix of extra covariates for the fixed part of spatial model.
+\item{Z}{A matrix of extra covariates for the fixed part of spatial
+model.
 E.g. elevation for fitting climate data over space. }
 
-\item{mKrig.args}{Arguments passed to the mKrig function.}
+\item{CILevel}{Confidence level for intervals for the estimated
+parameters.}
 
-\item{confidenceLevel}{Confidence level for intervals for the estimated parameters.}
-
- \item{cov.args}{ A list specifying parameters and other components of the
+ \item{cov.args}{ A list specifying parameters and other components 
+ of the
  covariance function. Default is not extra arguments required.]
  (But see the next item.). }
  
-\item{cov.function}{A character string giving the name of the  covariance function
+\item{cov.function}{A character string giving the name of the 
+covariance function
   	 for the spatial component.
-  	 If NULL, the default,  this is  filled in as \code{stationary .cov} and then
+  	 If NULL, the default,  this is  filled in as 
+  	 \code{stationary.cov} and then
   	 if \code{cov.args} is also NULL this is filled in as 
-  	 \code{ list(Covariance = "Matern", smoothness = 1.0)}
+  	 \code{ list(Covariance = "Matern", smoothness = 1.0)} by the spatialProcessSetDefaults 
+  	 function. 
   	 }
   	 
-\item{cov.params.start}{ A list where the names are  parameter names that appear in the covariance function. The values of each component are assumed to be the starting values when optimizing to find MLEs. If lambda does not appear
+\item{cov.params.start}{ A list where the names are  parameter names
+that appear in the covariance function. The values of each component
+are assumed to be the starting values when optimizing to find MLEs. If
+lambda does not appear
 as additional
-argument when calling spatialProcess it is added internally to this list with the starting
-value .5.}
+argument when calling spatialProcess it is added internally to this
+list with the starting value .5.}
+
+ \item{digits}{Number of significant digits in printed summary}
+
+\item{extraArgs}{Extra arguments passed using the \dots device in R.
+Typically these are extra covariance parameters specified in
+\code{spatialProcess} and then passed to
+\code{spatialProcessSetDefaults} }
  
- \item{gridARange}{A grid for searching over the range parameter. If omitted, default is  based on quantiles of pairwise distances of locations.
+\item{GCV}{A future argument not currently implemented. If TRUE will
+find parameters by minimizing an approximate generalized 
+cross-validation function. }
+ 
+ \item{gridARange}{A grid for profiling  over the range parameter. If
+ omitted, default is  based on a grid of profileGridN points centered at the
+ MLE. 
 }
+\item{gridLambda}{A grid for profiling over lambda. }
 
- \item{gridLambda}{A grid for searching over lambda . If omitted, default is ranges relative to the MLE.
-}
-
+ \item{gridN}{Number of grid points for intital fgrid search to find starting values. }
  
- \item{na.rm}{If TRUE NAs are removed from the data. }
+  	
+\item{na.rm}{If TRUE NAs are removed from the data.}
 
- \item{gridN}{Number of grid points for evaluating profile likelihood over
- aRange and also over lambda.}
+\item{mKrig.args}{Arguments passed to the mKrig function.}
 
-\item{object}{A spatialProcess object returned from the spatialProcess function.}
+\item{obj}{A spatialProcess object returned from the spatialProcess function.}
+\item{object}{ See \code{obj}.}
+
+\item{parGrid}{ A data frame with the values of covariance parameters
+to use as an initial grid search for starting values.}
+
+\item{parName}{Text string that is the name of the parameter to 
+ profile .}
  
- %\item{optim.args}{Arguements to be used  in optim for finding joint
- %MLEs for aRange
- %and lambda. }
+ \item{profileARange}{If TRUE profile likelihood on aRange. Default is
+TRUE if aRange is omitted.}
+
+\item{profileGridN}{Number of grid points to use for profiling.}
+
+\item{profileLambda}{If TRUE profile likelihood on lambda. This takes
+extra time and is not necessary so the default is FALSE. }
+
+ \item{reltol}{ Relative tolerance used in optim for convergence.}
  
  \item{REML}{ If TRUE the parameters are found by restricted maximum likelihood.}
  
@@ -112,27 +168,12 @@ value .5.}
 
   \item{\dots}{
   	Any other arguments that will be passed to the \code{mKrig} function and interpreted
-  	as additional arguments to the covariance function. E.g. \code{lambda} for a fixed
-	value of lambda or  \code{smoothness} for the
-  	Matern covariance.
-  	}
-  	
-  \item{abstol}{The absolute tolerance bound used to judge convergence. This is applied
-  to the difference in log likelihood values. }	
+  	as additional arguments to the covariance function.  This is a lazy way of specifying these. 
+  	E.g. \code{aRange =.1} will set the covariance argument aRagne to .1. 
+  }
   
-  \item{digits}{Number of significant digits in printed summary}
-  
-  \item{which}{The vector 1:4 or any subset of 1:4, giving the plots to
-  draw.
-                 See the description ofthese plots below.}
-                 
-\item{extraArgs}{Extra arguments passed using the \dots device in R.}
-
-\item{profileLambda}{If TRUE profile likelihood on lambda. This takes
-extra time and is not necessary so the defualt is FALSE. }
-
-\item{profileARange}{If TRUE profile likelihood on aRange. Default is
-TRUE if aRange is omitted.}
+  \item{which}{The vector 1:4 or any subset of 1:4, giving the plots
+  to draw. See the description ofthese plots below.}
 
 }
 \details{
@@ -212,8 +253,8 @@ examples section.)
   \preformatted{
   list(method = "BFGS", 
        control=list(fnscale = -1,
-                      ndeps = rep(log(1.1),length(cov.params.start)+1), 
-                     abstol = abstol,
+                      ndeps = rep(log(1.1),length(cov.params.start)+1),
+                     reltol = reltol,
                       maxit = 20))
 }
                                      
@@ -227,7 +268,7 @@ some help in how to do this easily in fields. Also see quilt.plot to
 get an quick plot of a spatial field  to discern obvious spatial paterns.
 
 
-\strong{summary} method forms a list with class \code{spatialProcessSummary} that has a
+\strong{summary} method forms a list of class \code{spatialProcessSummary} that has a
 subset of information from the output object and also creates a table of the estimates
 of the linear parameters in the fixed part of the model.
 With replacated fields there is an option to estimate different linear parameters for each field
@@ -253,30 +294,25 @@ based on \code{ aRangeProfile\$MLEProfileLambda}.
 \strong{print} method prints the  \code{spatialProcessSummary} object of the fit, adding
 some details and explanations.
 
-\strong{spatialProcessSetDefaults} This is a useful way to fill in defaults for the function in one place. The main choices are choosing the Matern family, smoothness and a default fixed model (aka spatial drift)
+\strong{spatialProcessSetDefaults} This is a useful way to fill in defaults for the function in one place. The main choices are choosing the Matern family, smoothness and a default fixed model (aka spatial drift). The grids for profiling are also created if they have not been supplied. 
 
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
 	An object of classes \code{mKrig} and  \code{SpatialProcess}. The difference
-	from mKrig are some extra  components:
+	from mKrig are some extra  components. The more useful ones are listed belo
 	
-	\strong{CASE} An integer 1 to 4  based on what
-	covariance parameters are being estimated or 
-	fixed. This is mainly for debugging.
 	
   \strong{MLESummary} A named array that has the fixed and estimated parameters along with likelihood values and some optim info.     
   
-  \strong{aRangeProfile} The output list from 
-  mKrigMLEGrid for searching over  (log) aRange.
+  \strong{profileSummaryLambda and profileSummaryARange} The output list from 
+  mKrigMLEGrid for searching over over a grid of lambda and aRange. 
   
-  \strong{aRange.CI} If \code{aRangeProfile} the approximate confidence interval based on chi squared large sample log likelihood approximation.
-  See  \code{ \link{profileCI} } for the computation.
-        	
-  \strong{lambdaProfile} The output list from 
-  mKrigMLEGrid for searching over (log) lambda.
- 
-  \strong{lambda.CI} Approximate confidence interval for lambda.
+  \strong{CITable} Approximate confidence intervals based on the inverse hessian of the log likelihood function. 
+  
+  \strong{MLEInfo} A list that has a full documentation of the maximization including all parameters  and likelihood values that were tried by the optim function. 
+  
+   \strong{InitialGridSearch} Results from initial grid search to get good starting values for lambda and/or aRange.
         	
 }
 
@@ -305,10 +341,10 @@ data( ozone2)
 # the number of points in grid searches for MLEs
 # without specifying  lambda or aRange both are found in a robust 
 # way uses grid searches 
-# profiling over lambda is not reuqired but completes the full 
+# profiling over lambda and aRange  is not reuqired but completes the full 
 # example.  Omit this for a faster computation.
 
-  obj<- spatialProcess( x, y, profileLambda=TRUE)
+  obj<- spatialProcess( x, y, profileLambda=TRUE, profileARange=TRUE)
   
 # summary of model
   summary( obj)
@@ -316,6 +352,7 @@ data( ozone2)
 # diagnostic plots
   set.panel(2,2)
   plot(obj)
+  
 # plot 1 data vs. predicted values
 # plot 2 residuals vs. predicted
 # plot 3 criteria to select the smoothing
@@ -332,10 +369,11 @@ set.panel()
 surface( obj, xlab="longitude", ylab="latitude")
 US( add=TRUE, col="grey", lwd=2)
 title("Predicted ozone (in PPB)  June 18, 1987 ")  
-#(see also predictSurface for more control on evaluation grid
-# and plotting)
+#(see also predictSurface for more control on evaluation grid, predicting
+# outside convex hull of the data. and plotting)
 
-# prediction standard errors, note two steps now to generate and then plot surface
+# prediction standard errors, note two steps now to generate
+# and then plot surface
 look<- predictSurfaceSE( obj)
 surface( look, xlab="longitude", ylab="latitude")
 points( x, col="magenta")

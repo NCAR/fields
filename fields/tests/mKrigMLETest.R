@@ -16,7 +16,7 @@
   # GNU General Public License for more details.
 
 suppressMessages(library( fields ))
-options( echo=FALSE)
+#options( echo=FALSE)
 
 #
 ##### generate test data
@@ -154,8 +154,8 @@ MLEfit3<- spatialProcess( x,y,
                    cov.params.start = list( lambda =.2)
                                                       )
 
-test.for.zero(MLEfit0$summary[1:5]/ 
-              (MLEfit3$summary[1:5]), 1, tol=2e-3,
+test.for.zero(MLEfit0$summary[1:2]/ 
+              (MLEfit3$summary[1:2]), 1, tol=1e-5,
                tag="Testing MLE from spatialProcess ")
 
 ######### making sure spatialProcess uses parameter information correctly
@@ -173,7 +173,7 @@ test.for.zero(MLEfit0$summary[1],
               tag="spatialProcess finding MLE " )
 
 test.for.zero(MLEfit0$summary[1], 
-              obj1$summary["lnProfileLike.FULL"], tol=5e-8,
+              obj1$summary["lnProfileLike.FULL"], tol=1e-5,
               tag="spatialProcess given MLE " 
               )
 
@@ -225,12 +225,13 @@ MLEfitA <- mKrigMLEJoint(x, y,
                          cov.args = list(Covariance = "Matern",
                                          smoothness=1.0),
                          na.rm=TRUE,
-                         abstol = 1e-7,
+                         reltol = 1e-7,
                          mKrig.args = list( m=0),
                          verbose=FALSE)
 
 cat("Testing mKrigMLEJoint against true values",
     fill=TRUE)
+
 test.for.zero( MLEfitA$summary["lambda"],.1, tol=.002)
 test.for.zero( MLEfitA$summary["aRange"],.1, tol=.0005)
 test.for.zero( MLEfitA$summary["sigma2"], 1.0, tol=.0005)

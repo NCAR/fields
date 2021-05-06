@@ -462,19 +462,24 @@ set.panel( 1,3)
 ### fast Tps
 # m=2   p= 2m-d= 2
 #
-# Note: aRange =3 degrees is a very generous taper range. 
+# Note: aRange = 3 degrees is a very generous taper range. 
 # Use some trial aRange value with rdist.nearest to determine a
 # a useful taper. Some empirical studies suggest that in the 
 # interpolation case in 2 d the taper should be large enough to 
 # about 20 non zero nearest neighbors for every location.
 
   out2<- fastTps( RMprecip$x,RMprecip$y,m=2, aRange=3.0, 
-                      profileLambda=TRUE)
+                      profileLambda=FALSE)
 
-# note that fastTps produces an mKrig object so one can use all the 
-# the overloaded functions that are defined for the mKrig class. 
+# note that fastTps produces a object of classes  spatialProcess and mKrig
+# so one can use all the 
+# the overloaded functions that are defined for these classes.
+# predict, predictSE, plot, sim.spatialProcess 
 # summary of what happened note estimate of effective degrees of 
 # freedom
+# profiling on lambda has been turned off to make this run quickly
+# but it is suggested that one examines the the profile likelihood over lambda
+  
   print( out2)
 
 \dontrun{

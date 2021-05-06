@@ -72,6 +72,7 @@ in x the z vector  }
     box. The default is to find the mean. (see \code{as.image}).}
     \item{na.rm}{If FALSE NAs are not removed from zand so a grid box
     even one of these values may be an NA. (See details below.)}
+  \item{size}{Size of bubble dots in cex units. Can be a vector to procduce different size points in the scatterplot.}
   \item{\dots}{ for quilt.plot  arguments to be passed to the \code{image.plot}
   function. For bubblePlot arguments to be passed to the \code{plot}
   function if \code{add=FALSE}, the default and to the \code{points}

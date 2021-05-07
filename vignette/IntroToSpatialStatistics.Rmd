@@ -57,13 +57,13 @@ for some function $C: \mathbb{R}
 
 The most common covariance functions are the exponential and Matern. These parameterized covariances are functions of distance, and return a covariance corresponding to that distance based on the response. Each is isotropic, meaning that $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x'))$ *only* depends on the distance $r := \| \mathbf x - \mathbf x'\|$. The exact formulas are provided below.
 
-* Exponential. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) =\rho e^{- r/\theta} + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$.
+* Exponential. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) =\rho e^{- r/a } + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$.
 
-* Matern. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) = \rho \left( \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{ r}{\theta} \right)^\nu K_\nu \left( \frac{r}{\theta} \right) \right) + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$, where $K_{\nu}$ is a modified Bessel function of the second kind, of order $\nu$. 
+* Matern. $\operatorname{Cov}(Y(\mathbf x), Y(\mathbf x')) = C(r) = \rho \left( \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{ r}{a} \right)^\nu K_\nu \left( \frac{r}{a} \right) \right) + \sigma^2 \mathbf{1}_{ \mathbf x = \mathbf x'}$, where $K_{\nu}$ is a modified Bessel function of the second kind, of order $\nu$. 
 
-Note that the Matern covariance function depends on parameters  $(\rho,\theta,\nu,\sigma^2)$, and the Exponential covariance depends on parameters $(\rho,\theta,\sigma^2)$. The parameters $\rho,\theta,\sigma^2$ and $\nu$ respectively denote the marginal variance (or sill), range, nugget effect, and smoothness of our process. 
+Note that the Matern covariance function depends on parameters  $(\rho,a,\nu,\sigma^2)$, and the Exponential covariance depends on parameters $(\rho,a,\sigma^2)$. The parameters $\rho,a,\sigma^2$ and $\nu$ respectively denote the marginal variance (or sill), range, nugget effect, and smoothness of our process. 
 
-The range $\theta$ of the process is the distance at which observations become uncorrelated. The sill $\rho$ is the marginal variance of the spatial process. The nugget effect $\sigma^2$ corresponds to small-scale variation such as measurement error. The smoothness $\nu$ corresponds to how "smooth" our spatial process appears. An illustration in the `vgram` section shows the visual interpretation of these parameters.
+The range $a$ of the process is the distance at which observations become uncorrelated. The sill $\rho$ is the marginal variance of the spatial process. The nugget effect $\sigma^2$ corresponds to small-scale variation such as measurement error. The smoothness $\nu$ corresponds to how "smooth" our spatial process appears. An illustration in the `vgram` section shows the visual interpretation of these parameters.
 
 
 For such isotropic covariances, the `fields` packages uses relies on the function `rdist`, which is used to  calculate the distance between two sets of locations.
@@ -136,7 +136,7 @@ rdist.earth(three.locations)  #i,j entry is the distance between location i and 
 
 ### `Exponential` and `Matern` covariances
 
-The `Exponential` and `Matern` functions produce these isotropic covariances in R. The inputs are a matrix of distances `d`, either the range parameter `range` (this is $\theta$ in our notation) or `alpha = 1/range`, and finally the marginal variance `phi` (which is $\rho$ in our notation), and the smoothness `nu` for the Matern covariance. Note that the exponential covariance is identical to the Matern covariance with smoothnes `nu = 0.5`.
+The `Exponential` and `Matern` functions produce these isotropic covariances in R. The inputs are a matrix of distances `d`, either the range parameter `range` (this is $a$ in our notation) or `alpha = 1/range`, and finally the marginal variance `phi` (which is $\rho$ in our notation), and the smoothness `nu` for the Matern covariance. Note that the exponential covariance is identical to the Matern covariance with smoothnes `nu = 0.5`.
 
 There are other (generalized) covariances in `fields`, such as `RadialBasis` and `Wendland`, that will be discussed later. To set the nugget variance $\sigma^2$, we use the `sigma2` argument in the functions `Krig` or `mKrig` that we also discuss later.
 
@@ -165,13 +165,13 @@ d <- seq(0,10,,200) #Will visualize a 1D set of images
 e <- Exponential(d, range = 1) #alpha = 1/range, phi=1.0
 m <- Matern(d , range = 1.5, smoothness = 1.5) #alpha=1/range, nu=smoothness, phi=1.0)
 rbf <- RadialBasis(d,M=2,dimension=2, derivative = 0)
-w <- Wendland(d, theta=1, dimension=1, k=2)
-w2 <- Wendland(d, theta=5, dimension=1, k=5)
+w <- Wendland(d, aRange=1, dimension=1, k=2)
+w2 <- Wendland(d, aRange=5, dimension=1, k=5)
 dat <- cbind(e,m,rbf,w,w2)
 matplot(d, dat, type = c("l"), lwd=2, ylim=c(0,1), xlab="Distance",
         ylab="Correlation",col = c("blue","red", "green", "orange", "purple"))
 title("Correlation (covariance) functions")
-legend(x=6, y=0.9, legend=c("Exp", "Matern", "RBF", "Wendland (Theta=1, k=2)", "Wendland (Theta=5, k=5)"),
+legend(x=6, y=0.9, legend=c("Exp", "Matern", "RBF", "Wendland (aRange=1, k=2)", "Wendland (aRange=5, k=5)"),
        col=c("blue", "red", "green", "orange", "purple"), pch=15,cex=0.5)
 ```
 
@@ -193,7 +193,7 @@ ${\large{\mathbf{Basic \> Usage}}}$
 
 ${\large{\mathbf{Value}}}$
 
-The result is the range value `theta` at which `Matern( d, range=theta, nu=nu) == cor.target`.
+The result is the range value `aRange` at which `Matern( d, range=aRange, nu=nu) == cor.target`.
 
 ***
 
@@ -223,7 +223,7 @@ legend( x=6, y=0.9, legend=c("Range = r1", "Range = r2", "Range = r3"),col=c("bl
 
 The functions `Exp.cov` and `stationary.cov` are similar to the previous covariance functions mentioned, but they take two sets of locations as inputs rather than a precomputed distance matrix. This form is what is required for the spatial methods in `fields`.
 
-Notation is largely the same as with `Matern` and `Exponential`; of course, `theta` controls the range of the covariance model, while `smoothness` can be used only with the Matern. The `Exp.cov` function includes an additional argument `p`, where `p=1` corresponds to the typical exponential covariance and `p=2` corresponds to the Gaussian covariance. Both `Exp.cov` and `stationary.cov` have the input `C`. If `C` is specified, then the resulting covariance matrix is multiplied by `C`. This feature offers the potential for more efficient memory because the entire covariance matrix need not be created at once to accomplish the matrix multiplication.
+Notation is largely the same as with `Matern` and `Exponential`; of course, `aRange` controls the range of the covariance model, while `smoothness` can be used only with the Matern. The `Exp.cov` function includes an additional argument `p`, where `p=1` corresponds to the typical exponential covariance and `p=2` corresponds to the Gaussian covariance. Both `Exp.cov` and `stationary.cov` have the input `C`. If `C` is specified, then the resulting covariance matrix is multiplied by `C`. This feature offers the potential for more efficient memory because the entire covariance matrix need not be created at once to accomplish the matrix multiplication.
 
 `stationary.cov` is essentially a wrapper function. One can input `Matern` or `Exponential` in the `Covariance=` argument, as well an argument `Distance`, which takes character strings `rdist` or `rdist.earth`. 
 
@@ -235,8 +235,8 @@ These functions can take advantage of sparsity in the covariance matrix and are 
 
 ${\large{\mathbf{Basic \> Usage}}}$
 
-> Exp.cov(x1, x2=NULL, theta = 1, p=1)  
-> stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", theta = 1)  
+> Exp.cov(x1, x2=NULL, aRange = 1, p=1)  
+> stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", aRange = 1)  
 
 ${\large{\mathbf{Value}}}$
 
@@ -251,11 +251,11 @@ In the following example we demonstrate that we can specify a particular covaria
 ```{r}
 x1 <- seq(1,10 ,,100)
 x2 <- seq(1,20,,100)
-MyTheta <- 5
+MyaRange <- 5
 
-cov1 <- Exp.cov(x1,x2, theta=MyTheta)
-cov2 <- stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist", Covariance="Exponential")
-cov3 <- stationary.cov( x1,x2, theta=MyTheta, Distance= "rdist", Covariance="Matern",smoothness=.5)
+cov1 <- Exp.cov(x1,x2, aRange=MyaRange)
+cov2 <- stationary.cov( x1,x2, aRange=MyaRange, Distance= "rdist", Covariance="Exponential")
+cov3 <- stationary.cov( x1,x2, aRange=MyaRange, Distance= "rdist", Covariance="Matern",smoothness=.5)
 
 {test.for.zero(cov1,cov2)
 test.for.zero(cov2,cov3)}
@@ -288,7 +288,7 @@ The input of `sim.rf` is a list that includes information about the covariance f
 ${\large{\mathbf{Basic \> Usage}}}$
 
 > sim.rf(obj)  
-> matern.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid ,theta= 1.0, smoothness=.5)   
+> matern.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid ,aRange= 1.0, smoothness=.5)   
 > Exp.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)  
 
 ${\large{\mathbf{Value}}}$
@@ -301,10 +301,10 @@ A matrix with the random field values.
 
 ```{r, fig.height=7, results='hide'}
 grid <- list( x= seq( 0,20,,100), y= seq(0,20,,100)) 
-obj1 <- matern.image.cov(grid=grid, theta = 0.5 , smoothness = 0.5, setup=TRUE)
-obj2 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 1, setup=TRUE)
-obj3 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 2, setup=TRUE)
-obj4 <- matern.image.cov(grid=grid, theta = 0.5, smoothness = 2.5, setup=TRUE)
+obj1 <- matern.image.cov(grid=grid, aRange = 0.5 , smoothness = 0.5, setup=TRUE)
+obj2 <- matern.image.cov(grid=grid, aRange = 0.5, smoothness = 1, setup=TRUE)
+obj3 <- matern.image.cov(grid=grid, aRange = 0.5, smoothness = 2, setup=TRUE)
+obj4 <- matern.image.cov(grid=grid, aRange = 0.5, smoothness = 2.5, setup=TRUE)
 
 set.seed(2008)
 
@@ -326,7 +326,7 @@ Given a set of spatial data, we need some tools to investigate the covariance of
 
 We define the theoretical variogram of a stationary process $Y(\cdot)$ as $\gamma(\mathbf h) = \frac{1}{2} \operatorname{Var}[ Y(\mathbf s +\mathbf h) -Y( \mathbf s)]$, where $\mathbf h \in \mathbb{R}^d$. Assuming $Y(\cdot)$ has covariance $C(\cdot)$, it is easy to verify that $\gamma(\mathbf h ) = C(\mathbf 0 ) - C(\mathbf h)$. Therefore, $\gamma(\mathbf h)$ is simply a shift and reflection of the covariance function $C(\mathbf h)$. 
 
-In the context of variograms, the spatial parameters $(\rho,\theta,\nu,\sigma^2)$ have a straightforward visual interpretation.
+In the context of variograms, the spatial parameters $(\rho,a,\nu,\sigma^2)$ have a straightforward visual interpretation.
 
 
 ```{r, echo=FALSE}
@@ -351,7 +351,7 @@ ou2 <- Exponential(d3, range=1)
   segments(0,0, 0,0.24, lty="solid", col="red2", lwd=3)
   xtext <- c(4.6,4.6,13.6,13.6,2.5,2.5,5.2,5.4,1.2,2.2)
   ytext <- c(0.08,0.17,0.65,0.75,1.38,1.48,0.35,0.45,1.1,0.755)
-  labels <- c(expression(sigma^2),expression(Nugget),expression(theta),expression('Range (of Matern)')
+  labels <- c(expression(sigma^2),expression(Nugget),expression(aRange),expression('Range (of Matern)')
               ,expression(rho),expression(Sill),expression(nu),expression(Smoothness), expression(Exp), expression(Matern))
   col <- rep(c("red2","orange","purple2","royalblue2","black"), rep(2,5))
   text(x=xtext,y=ytext,labels=labels,col=col)

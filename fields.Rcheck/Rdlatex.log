@@ -1,0 +1,1630 @@
+Hmm ... looks like a package
+
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+
+(./Rd2.tex
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.112, 2017/01/04 Text macros for Inconsolata (msharpe)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+No file Rd2.aux.
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/t1zi4.fd) [1{/usr/loc
+al/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/utf8.def) [2] [3]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [4]
+[5] [6] [7] [8] [9] [10]
+Overfull \hbox (1.7093pt too wide) in paragraph at lines 730--735
+\T1/ptm/m/n/10 ance func-tions for \T1/zi4/m/n/10 sim.rf \T1/ptm/m/n/10 (See de
+-tails be-low.) or to \T1/zi4/m/n/10 circulantEmbeddingSetup
+
+Overfull \hbox (2.3797pt too wide) in paragraph at lines 755--758
+[]\T1/ptm/m/n/10 The func-tions \T1/zi4/m/n/10 circulantEmbedding \T1/ptm/m/n/1
+0 and \T1/zi4/m/n/10 circulantEmbeddingSetup \T1/ptm/m/n/10 are more re-cent \T
+1/zi4/m/n/10 fields \T1/ptm/m/n/10 func-
+[11] [12]
+Underfull \vbox (badness 10000) has occurred while \output is active [13]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1ptm.fd) [14] [15]
+[16]
+Underfull \vbox (badness 10000) has occurred while \output is active [17]
+[18] [19] [20]
+Overfull \hbox (6.72661pt too wide) in paragraph at lines 1394--1397
+[]\T1/ptm/m/n/10 A sym-met-ric ma-trix stored as a vec-tor con-tain-ing el-e-me
+nts for the lower-triangular
+[21] [22] [23]
+Overfull \hbox (15.78853pt too wide) in paragraph at lines 1638--1640
+[]\T1/ptm/m/n/10 Any other ar-gu-ments that will be passed to the co-vari-ance 
+func-tion. e.g. \T1/zi4/m/n/10 smoothness
+[24]
+Overfull \hbox (9.35684pt too wide) in paragraph at lines 1684--1686
+[]\T1/ptm/m/n/10 If marginal is TRUE then just the di-ag-o-nal el-e-ments are r
+e-turned (in R code \T1/zi4/m/n/10 diag( exp(-rdist(u,u))
+
+Overfull \hbox (21.78088pt too wide) in paragraph at lines 1713--1714
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Exponential") 
+
+Overfull \hbox (69.28088pt too wide) in paragraph at lines 1718--1719
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Matern",smoothness=.5)\T1/ptm/m/n/10 . 
+[25] [26]
+Underfull \vbox (badness 10000) has occurred while \output is active [27]
+[28] [29]
+Overfull \hbox (2.50737pt too wide) in paragraph at lines 2044--2048
+\T1/ptm/m/n/10 duces the re-turned ob-ject size. The can-di-date ma-trix is use
+d by plot.spatial.design
+[30] [31] [32]
+Underfull \vbox (badness 10000) has occurred while \output is active [33]
+[34] [35] [36] [37] [38] [39] [40] [41]
+Overfull \hbox (11.5285pt too wide) in paragraph at lines 2927--2933
+[]\T1/ptm/m/n/10 IMPORTANT: If the R ob-ject \T1/zi4/m/n/10 test.for.zero.flag 
+\T1/ptm/m/n/10 ex-ists with any value ( e.g. \T1/zi4/m/n/10 test.for.zero.flag
+[42] [43] [44]
+Overfull \hbox (20.22874pt too wide) in paragraph at lines 3169--3169
+ []\T1/zi4/m/n/9 glist<- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way
+ to get a default grid that covers x[] 
+[45] [46]
+Underfull \vbox (badness 10000) has occurred while \output is active [47]
+Underfull \vbox (badness 10000) has occurred while \output is active [48]
+[49] [50] [51] [52]
+Overfull \hbox (21.42029pt too wide) in paragraph at lines 3665--3665
+ []\T1/zi4/m/n/10 grid, M=NULL,N=NULL,cov.function="stationary.cov", delta = NU
+LL, cov.args = NULL, ...)[] 
+[53] [54] [55] [56] [57] [58] [59] [60] [61]
+Underfull \vbox (badness 10000) has occurred while \output is active [62]
+Underfull \vbox (badness 10000) has occurred while \output is active [63]
+Underfull \vbox (badness 10000) has occurred while \output is active [64]
+[65]
+Overfull \hbox (0.327pt too wide) in paragraph at lines 4573--4576
+[]\T1/ptm/m/n/10 The smoothed im-age in R im-age for-mat. ( A list with com-po-
+nents x, y and z.) \T1/zi4/m/n/10 setup.image.smooth
+[66] [67] [68] [69]
+Underfull \vbox (badness 10000) has occurred while \output is active [70]
+[71] [72]
+Overfull \hbox (15.19753pt too wide) in paragraph at lines 5000--5004
+\T1/ptm/m/n/10 The de-fault if NULL, as-signed at the top level of this func-ti
+on, is list( pivot=FALSE).
+[73] [74] [75]
+Overfull \hbox (16.04765pt too wide) in paragraph at lines 5347--5349
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter used in the fit. Lambda i
+s de-fined as tau**2/sigma.
+[76]
+Overfull \hbox (12.12689pt too wide) in paragraph at lines 5407--5410
+[]\T1/ptm/m/n/10 summary.Krig, pre-dict.Krig, pre-dictSE.Krig, pre-dict-Sur-fac
+eSE, pre-dict-Sur-face, plot.Krig, sur-face.Krig 
+[77]
+Underfull \vbox (badness 10000) has occurred while \output is active [78]
+[79] [80] [81] [82] [83] [84] [85] [86] [87] [88] [89]
+Overfull \hbox (8.55748pt too wide) in paragraph at lines 6253--6255
+[]\T1/ptm/m/n/10 Krig, sur-face.mKrig, Tps, fastTps, pre-dict-Sur-face, pre-dic
+tSE.mKrig, sim.mKrig.approx,  [][]\T1/zi4/m/n/10 mKrig.grid[][][] 
+[90]
+Underfull \vbox (badness 10000) has occurred while \output is active [91]
+Underfull \vbox (badness 10000) has occurred while \output is active [92]
+[93]
+Overfull \hbox (6.15796pt too wide) in paragraph at lines 6506--6507
+[]\T1/ptm/m/n/10 A list of ad-di-tional pa-ram-e-ters to sup-ply to the \T1/zi4
+/m/n/10 mKrig \T1/ptm/m/n/10 func-tion. E.g. \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (23.47847pt too wide) in paragraph at lines 6508--6512
+[]\T1/zi4/m/n/10 mKrig \T1/ptm/m/n/10 func-tion that are dis-tinct from the co-
+vari-ance model. For ex-am-ple \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (322.05087pt too wide) in paragraph at lines 6517--6532
+\T1/zi4/m/n/10 optim.args = list(method = "BFGS",control=list(fnscale = -1,ndep
+s = rep(log(1.1),length(cov.params.start)+1),abstol=1e-04,maxit=20))
+[94] [95] [96]
+Underfull \vbox (badness 10000) has occurred while \output is active [97]
+[98]
+Overfull \hbox (116.43051pt too wide) in paragraph at lines 6850--6850
+ []  \T1/zi4/m/n/10 xStereo<- mapproject( NorthAmericanRainfall$lon,NorthAmeric
+anRainfall$lat, projection="stereographic")[] 
+[99] [100] [101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111]
+[112] [113] [114] [115]
+Overfull \hbox (16.38962pt too wide) in paragraph at lines 8038--8038
+ []\T1/zi4/m/n/10 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alph
+a = 0.5, Niterations = 100,[] 
+
+Overfull \hbox (8.56746pt too wide) in paragraph at lines 8054--8055
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter. If NA found by an ap-pro
+x-i-mate corss-validation
+[116]
+Overfull \hbox (80.53842pt too wide) in paragraph at lines 8081--8082
+\T1/ptm/m/n/10 func-tion es-ti-mate. Specif-i-cally if the cri-te-rion \T1/zi4/
+m/n/10 mean(abs(f.hat.new -f.hat))/mean(abs(f.hat))
+
+Overfull \hbox (3.90088pt too wide) in paragraph at lines 8103--8114
+[] \T1/zi4/m/n/10 Y.psuedo<-f.hat + psi.scale* psi.wght( Y -f.hat,psi.scale=psi
+.scale,alpha=alpha) \T1/ptm/m/n/10 A
+[117] [118]
+Underfull \vbox (badness 10000) has occurred while \output is active [119]
+Overfull \hbox (12.75021pt too wide) in paragraph at lines 8276--8276
+ []     \T1/zi4/m/n/9 temp.obj<- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old
+,  psi.scale=.5, tolerance=1e-6,[] 
+[120] [121] [122] [123] [124]
+Overfull \hbox (5.32745pt too wide) in paragraph at lines 8592--8597
+\T1/ptm/m/n/10 ma-trix among all pair-ings or a sparse ver-sion for points with
+in a fixed thresh-hold dis-tance. \T1/zi4/m/n/10 rdist.vec
+[125] [126] [127]
+Overfull \hbox (23.91594pt too wide) in paragraph at lines 8788--8789
+\T1/ptm/m/n/10 spec-i-fied, the new C im-ple-men-ta-tion is faster. In the case
+ where 'x1' and 'x2' are given, fields::rdist.earth()
+[128]
+Overfull \hbox (5.34082pt too wide) in paragraph at lines 8899--8902
+[][]$\T1/zi4/m/n/10 https : / / r . 789695 . n4 . nabble . com / Registration-[
+]of-[]native-[]routines-[]td4728874 . html$[][] \T1/ptm/m/n/10 for
+[129] [130]
+Overfull \hbox (63.06992pt too wide) in paragraph at lines 9071--9071
+ []\T1/zi4/m/n/10 station.subset<-  (loc[,1]>= xr[1]) & (loc[,1] <= xr[2]) & (l
+oc[,2]>= yr[1]) & (loc[,2]<= yr[2])[] 
+[131] [132] [133] [134] [135]
+Overfull \hbox (0.89897pt too wide) in paragraph at lines 9390--9393
+[]\T1/zi4/m/n/10 sim.Krig and sim.spatialProcess \T1/ptm/m/n/10 a ma-trix with 
+rows in-dexed by the lo-ca-tions in \T1/zi4/m/n/10 xp \T1/ptm/m/n/10 and column
+s
+[136]
+Underfull \vbox (badness 10000) has occurred while \output is active [137]
+Underfull \vbox (badness 10000) has occurred while \output is active [138]
+[139] [140] [141] [142] [143]
+Overfull \hbox (28.87877pt too wide) in paragraph at lines 9938--9946
+\T1/zi4/m/n/10 cov.args \T1/ptm/m/n/10 is also NULL this is filled in as  \T1/z
+i4/m/n/10 list(Covariance = "Matern",smoothness
+
+Overfull \hbox (81.06883pt too wide) in paragraph at lines 9958--9962
+\T1/ptm/m/n/10 vari-ance pa-ram-e-ters spec-i-fied in \T1/zi4/m/n/10 spatialPro
+cess \T1/ptm/m/n/10 and then passed to \T1/zi4/m/n/10 spatialProcessSetDefaults
+ 
+[144] [145]
+Overfull \hbox (29.73868pt too wide) in paragraph at lines 10116--10129
+\T1/ptm/m/n/10 . The fourth plot is a pro-file log like-li-hood trace for aRang
+e based on  \T1/zi4/m/n/10 aRangeProfile$MLEProfileLambda\T1/ptm/m/n/10 . 
+[146] [147]
+Underfull \vbox (badness 10000) has occurred while \output is active [148]
+Underfull \vbox (badness 10000) has occurred while \output is active [149]
+Underfull \vbox (badness 10000) has occurred while \output is active [150]
+[151] [152] [153] [154]
+Overfull \hbox (7.85754pt too wide) in paragraph at lines 10722--10727
+[]\T1/ptm/m/n/10 Matrix con-tain-ing di-ag-o-nal el-e-ments of the smooth-ing m
+a-trix. Num-ber of columns
+[155] [156] [157] [158] [159] [160] [161] [162] [163] [164] [165] [166]
+Overfull \hbox (10.27838pt too wide) in paragraph at lines 11586--11595
+\T1/ptm/m/n/10 color scale for ren-der-ing aerial pho-tos of ski trails. (See [
+][]$\T1/zi4/m/n/10 https : / / github . com / dnychka / MJProject$[][]\T1/ptm/m
+/n/10 .)
+[167] [168] [169]
+Overfull \hbox (16.37779pt too wide) in paragraph at lines 11832--11834
+[]\T1/ptm/m/n/10 Variance of er-rors or if weights are not equal to 1 the vari-
+ance is tau**2/weight. 
+[170] [171]
+Overfull \hbox (29.401pt too wide) in paragraph at lines 11982--11994
+[][][]\T1/zi4/m/n/10 Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 mKrig[][][]\
+T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1
+/zi4/m/n/10 sim.spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 summary
+.Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 predict.Krig[][][]\T1/ptm/m/n/10
+ , [][]\T1/zi4/m/n/10 predictSE.Krig[][][]\T1/ptm/m/n/10 ,
+[172]
+Underfull \vbox (badness 10000) has occurred while \output is active [173]
+Underfull \vbox (badness 10000) has occurred while \output is active [174]
+Underfull \vbox (badness 10000) has occurred while \output is active [175]
+[176] [177]
+Overfull \hbox (36.41006pt too wide) in paragraph at lines 12363--12363
+ []\T1/zi4/m/n/10 boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1
+), plot=TRUE, plot.args, ...)[] 
+[178]
+Overfull \hbox (2.49779pt too wide) in paragraph at lines 12428--12430
+[]\T1/ptm/m/n/10 If \T1/zi4/m/n/10 TRUE\T1/ptm/m/n/10 , cre-ates a plot, oth-er
+-wise re-turns var-i-ogram statis-tics out-put by \T1/zi4/m/n/10 bplot.xy\T1/pt
+m/m/n/10 . 
+
+Overfull \hbox (29.68954pt too wide) in paragraph at lines 12440--12442
+[]\T1/ptm/m/n/10 Additional ar-gu-ment passed to \T1/zi4/m/n/10 plot \T1/ptm/m/
+n/10 for \T1/zi4/m/n/10 plot.vgram \T1/ptm/m/n/10 or to \T1/zi4/m/n/10 bplot.xy
+ \T1/ptm/m/n/10 for \T1/zi4/m/n/10 boxplotVGram\T1/ptm/m/n/10 . 
+[179] [180] [181] [182]
+Overfull \hbox (3.01924pt too wide) in paragraph at lines 12711--12715
+\T1/ptm/m/n/10 and \T1/zi4/m/n/10 dimension \T1/ptm/m/n/10 in the func-tion \T1
+/zi4/m/n/10 wendland.eval\T1/ptm/m/n/10 . The ma-trix of co-ef-fi-cients found 
+by \T1/zi4/m/n/10 Wendland.beta
+[183] [184]
+Overfull \hbox (11.86746pt too wide) in paragraph at lines 12845--12848
+[]\T1/ptm/m/n/10 This a 75X5 ma-trix with the row names iden-ti-fy-ing coun-tri
+es and columns the co-vari-ables:  \T1/zi4/m/n/10 "GDP.cap"
+[185] [186] [187]
+No file Rd2.ind.
+[188]
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information)pdfTeX warning (dest): name
+{Rfn.NativeSymbolInfo} has been referenced but does not exist, replaced by a fi
+xed one
+
+pdfTeX warning (dest): name{Rfn.dist} has been referenced but does not exist, r
+eplaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.optim} has been referenced but does not exist, 
+replaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.surface} has been referenced but does not exist
+, replaced by a fixed one
+
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
+r/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
+/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
+2019/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2019/texmf
+-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/font
+s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/ur
+w/times/utmri8a.pfb>
+Output written on Rd2.pdf (188 pages, 486481 bytes).
+Transcript written on Rd2.log.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+
+(./Rd2.tex
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.112, 2017/01/04 Text macros for Inconsolata (msharpe)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/t1zi4.fd) [1{/usr/loc
+al/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.toc [2])
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/utf8.def) [3] [4]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [5]
+[6] [7] [8] [9] [10] [11] [12]
+Overfull \hbox (1.7093pt too wide) in paragraph at lines 730--735
+\T1/ptm/m/n/10 ance func-tions for \T1/zi4/m/n/10 sim.rf \T1/ptm/m/n/10 (See de
+-tails be-low.) or to \T1/zi4/m/n/10 circulantEmbeddingSetup
+
+Overfull \hbox (2.3797pt too wide) in paragraph at lines 755--758
+[]\T1/ptm/m/n/10 The func-tions \T1/zi4/m/n/10 circulantEmbedding \T1/ptm/m/n/1
+0 and \T1/zi4/m/n/10 circulantEmbeddingSetup \T1/ptm/m/n/10 are more re-cent \T
+1/zi4/m/n/10 fields \T1/ptm/m/n/10 func-
+[13] [14] [15] (/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+[16] [17] [18]
+Underfull \vbox (badness 10000) has occurred while \output is active [19]
+[20] [21] [22]
+Overfull \hbox (6.72661pt too wide) in paragraph at lines 1394--1397
+[]\T1/ptm/m/n/10 A sym-met-ric ma-trix stored as a vec-tor con-tain-ing el-e-me
+nts for the lower-triangular
+[23] [24] [25]
+Overfull \hbox (15.78853pt too wide) in paragraph at lines 1638--1640
+[]\T1/ptm/m/n/10 Any other ar-gu-ments that will be passed to the co-vari-ance 
+func-tion. e.g. \T1/zi4/m/n/10 smoothness
+[26]
+Overfull \hbox (9.35684pt too wide) in paragraph at lines 1684--1686
+[]\T1/ptm/m/n/10 If marginal is TRUE then just the di-ag-o-nal el-e-ments are r
+e-turned (in R code \T1/zi4/m/n/10 diag( exp(-rdist(u,u))
+
+Overfull \hbox (21.78088pt too wide) in paragraph at lines 1713--1714
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Exponential") 
+
+Overfull \hbox (69.28088pt too wide) in paragraph at lines 1718--1719
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Matern",smoothness=.5)\T1/ptm/m/n/10 . 
+[27]
+Underfull \vbox (badness 10000) has occurred while \output is active [28]
+[29] [30] [31]
+Overfull \hbox (2.50737pt too wide) in paragraph at lines 2044--2048
+\T1/ptm/m/n/10 duces the re-turned ob-ject size. The can-di-date ma-trix is use
+d by plot.spatial.design
+[32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+Overfull \hbox (11.5285pt too wide) in paragraph at lines 2927--2933
+[]\T1/ptm/m/n/10 IMPORTANT: If the R ob-ject \T1/zi4/m/n/10 test.for.zero.flag 
+\T1/ptm/m/n/10 ex-ists with any value ( e.g. \T1/zi4/m/n/10 test.for.zero.flag
+[44] [45] [46]
+Overfull \hbox (20.22874pt too wide) in paragraph at lines 3169--3169
+ []\T1/zi4/m/n/9 glist<- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way
+ to get a default grid that covers x[] 
+[47] [48]
+Underfull \vbox (badness 10000) has occurred while \output is active [49]
+Underfull \vbox (badness 10000) has occurred while \output is active [50]
+[51] [52] [53]
+Underfull \vbox (badness 10000) has occurred while \output is active [54]
+Overfull \hbox (21.42029pt too wide) in paragraph at lines 3665--3665
+ []\T1/zi4/m/n/10 grid, M=NULL,N=NULL,cov.function="stationary.cov", delta = NU
+LL, cov.args = NULL, ...)[] 
+[55] [56] [57] [58] [59] [60] [61] [62] [63]
+Underfull \vbox (badness 10000) has occurred while \output is active [64]
+Underfull \vbox (badness 10000) has occurred while \output is active [65]
+Underfull \vbox (badness 10000) has occurred while \output is active [66]
+[67]
+Overfull \hbox (0.327pt too wide) in paragraph at lines 4573--4576
+[]\T1/ptm/m/n/10 The smoothed im-age in R im-age for-mat. ( A list with com-po-
+nents x, y and z.) \T1/zi4/m/n/10 setup.image.smooth
+[68]
+Underfull \vbox (badness 10000) has occurred while \output is active [69]
+[70] [71] [72] [73]
+Overfull \hbox (15.19753pt too wide) in paragraph at lines 5000--5004
+\T1/ptm/m/n/10 The de-fault if NULL, as-signed at the top level of this func-ti
+on, is list( pivot=FALSE).
+[74] [75] [76] [77]
+Overfull \hbox (16.04765pt too wide) in paragraph at lines 5347--5349
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter used in the fit. Lambda i
+s de-fined as tau**2/sigma.
+[78]
+Overfull \hbox (12.12689pt too wide) in paragraph at lines 5407--5410
+[]\T1/ptm/m/n/10 summary.Krig, pre-dict.Krig, pre-dictSE.Krig, pre-dict-Sur-fac
+eSE, pre-dict-Sur-face, plot.Krig, sur-face.Krig 
+[79]
+Underfull \vbox (badness 10000) has occurred while \output is active [80]
+[81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91]
+Overfull \hbox (8.55748pt too wide) in paragraph at lines 6253--6255
+[]\T1/ptm/m/n/10 Krig, sur-face.mKrig, Tps, fastTps, pre-dict-Sur-face, pre-dic
+tSE.mKrig, sim.mKrig.approx,  [][]\T1/zi4/m/n/10 mKrig.grid[][][] 
+[92]
+Underfull \vbox (badness 10000) has occurred while \output is active [93]
+Underfull \vbox (badness 10000) has occurred while \output is active [94]
+[95]
+Overfull \hbox (6.15796pt too wide) in paragraph at lines 6506--6507
+[]\T1/ptm/m/n/10 A list of ad-di-tional pa-ram-e-ters to sup-ply to the \T1/zi4
+/m/n/10 mKrig \T1/ptm/m/n/10 func-tion. E.g. \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (23.47847pt too wide) in paragraph at lines 6508--6512
+[]\T1/zi4/m/n/10 mKrig \T1/ptm/m/n/10 func-tion that are dis-tinct from the co-
+vari-ance model. For ex-am-ple \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (322.05087pt too wide) in paragraph at lines 6517--6532
+\T1/zi4/m/n/10 optim.args = list(method = "BFGS",control=list(fnscale = -1,ndep
+s = rep(log(1.1),length(cov.params.start)+1),abstol=1e-04,maxit=20))
+[96] [97] [98]
+Underfull \vbox (badness 10000) has occurred while \output is active [99]
+[100]
+Overfull \hbox (116.43051pt too wide) in paragraph at lines 6850--6850
+ []  \T1/zi4/m/n/10 xStereo<- mapproject( NorthAmericanRainfall$lon,NorthAmeric
+anRainfall$lat, projection="stereographic")[] 
+[101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112]
+[113] [114] [115] [116] [117]
+Overfull \hbox (16.38962pt too wide) in paragraph at lines 8038--8038
+ []\T1/zi4/m/n/10 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alph
+a = 0.5, Niterations = 100,[] 
+
+Overfull \hbox (8.56746pt too wide) in paragraph at lines 8054--8055
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter. If NA found by an ap-pro
+x-i-mate corss-validation
+[118]
+Overfull \hbox (80.53842pt too wide) in paragraph at lines 8081--8082
+\T1/ptm/m/n/10 func-tion es-ti-mate. Specif-i-cally if the cri-te-rion \T1/zi4/
+m/n/10 mean(abs(f.hat.new -f.hat))/mean(abs(f.hat))
+
+Overfull \hbox (3.90088pt too wide) in paragraph at lines 8103--8114
+[] \T1/zi4/m/n/10 Y.psuedo<-f.hat + psi.scale* psi.wght( Y -f.hat,psi.scale=psi
+.scale,alpha=alpha) \T1/ptm/m/n/10 A
+[119] [120]
+Underfull \vbox (badness 10000) has occurred while \output is active [121]
+Overfull \hbox (12.75021pt too wide) in paragraph at lines 8276--8276
+ []     \T1/zi4/m/n/9 temp.obj<- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old
+,  psi.scale=.5, tolerance=1e-6,[] 
+[122] [123] [124] [125] [126]
+Overfull \hbox (5.32745pt too wide) in paragraph at lines 8592--8597
+\T1/ptm/m/n/10 ma-trix among all pair-ings or a sparse ver-sion for points with
+in a fixed thresh-hold dis-tance. \T1/zi4/m/n/10 rdist.vec
+[127] [128] [129]
+Overfull \hbox (23.91594pt too wide) in paragraph at lines 8788--8789
+\T1/ptm/m/n/10 spec-i-fied, the new C im-ple-men-ta-tion is faster. In the case
+ where 'x1' and 'x2' are given, fields::rdist.earth()
+[130]
+Overfull \hbox (5.34082pt too wide) in paragraph at lines 8899--8902
+[][]$\T1/zi4/m/n/10 https : / / r . 789695 . n4 . nabble . com / Registration-[
+]of-[]native-[]routines-[]td4728874 . html$[][] \T1/ptm/m/n/10 for
+[131] [132]
+Overfull \hbox (63.06992pt too wide) in paragraph at lines 9071--9071
+ []\T1/zi4/m/n/10 station.subset<-  (loc[,1]>= xr[1]) & (loc[,1] <= xr[2]) & (l
+oc[,2]>= yr[1]) & (loc[,2]<= yr[2])[] 
+[133] [134] [135] [136] [137]
+Overfull \hbox (0.89897pt too wide) in paragraph at lines 9390--9393
+[]\T1/zi4/m/n/10 sim.Krig and sim.spatialProcess \T1/ptm/m/n/10 a ma-trix with 
+rows in-dexed by the lo-ca-tions in \T1/zi4/m/n/10 xp \T1/ptm/m/n/10 and column
+s
+[138]
+Underfull \vbox (badness 10000) has occurred while \output is active [139]
+Underfull \vbox (badness 10000) has occurred while \output is active [140]
+[141] [142] [143] [144] [145]
+Overfull \hbox (28.87877pt too wide) in paragraph at lines 9938--9946
+\T1/zi4/m/n/10 cov.args \T1/ptm/m/n/10 is also NULL this is filled in as  \T1/z
+i4/m/n/10 list(Covariance = "Matern",smoothness
+
+Overfull \hbox (81.06883pt too wide) in paragraph at lines 9958--9962
+\T1/ptm/m/n/10 vari-ance pa-ram-e-ters spec-i-fied in \T1/zi4/m/n/10 spatialPro
+cess \T1/ptm/m/n/10 and then passed to \T1/zi4/m/n/10 spatialProcessSetDefaults
+ 
+[146] [147]
+Overfull \hbox (29.73868pt too wide) in paragraph at lines 10116--10129
+\T1/ptm/m/n/10 . The fourth plot is a pro-file log like-li-hood trace for aRang
+e based on  \T1/zi4/m/n/10 aRangeProfile$MLEProfileLambda\T1/ptm/m/n/10 . 
+[148] [149]
+Underfull \vbox (badness 10000) has occurred while \output is active [150]
+Underfull \vbox (badness 10000) has occurred while \output is active [151]
+Underfull \vbox (badness 10000) has occurred while \output is active [152]
+[153] [154] [155] [156]
+Overfull \hbox (7.85754pt too wide) in paragraph at lines 10722--10727
+[]\T1/ptm/m/n/10 Matrix con-tain-ing di-ag-o-nal el-e-ments of the smooth-ing m
+a-trix. Num-ber of columns
+[157] [158] [159] [160] [161] [162] [163] [164] [165] [166] [167] [168]
+Overfull \hbox (10.27838pt too wide) in paragraph at lines 11586--11595
+\T1/ptm/m/n/10 color scale for ren-der-ing aerial pho-tos of ski trails. (See [
+][]$\T1/zi4/m/n/10 https : / / github . com / dnychka / MJProject$[][]\T1/ptm/m
+/n/10 .)
+[169] [170] [171]
+Overfull \hbox (16.37779pt too wide) in paragraph at lines 11832--11834
+[]\T1/ptm/m/n/10 Variance of er-rors or if weights are not equal to 1 the vari-
+ance is tau**2/weight. 
+[172] [173]
+Overfull \hbox (29.401pt too wide) in paragraph at lines 11982--11994
+[][][]\T1/zi4/m/n/10 Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 mKrig[][][]\
+T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1
+/zi4/m/n/10 sim.spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 summary
+.Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 predict.Krig[][][]\T1/ptm/m/n/10
+ , [][]\T1/zi4/m/n/10 predictSE.Krig[][][]\T1/ptm/m/n/10 ,
+[174]
+Underfull \vbox (badness 10000) has occurred while \output is active [175]
+Underfull \vbox (badness 10000) has occurred while \output is active [176]
+Underfull \vbox (badness 10000) has occurred while \output is active [177]
+[178] [179]
+Overfull \hbox (36.41006pt too wide) in paragraph at lines 12363--12363
+ []\T1/zi4/m/n/10 boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1
+), plot=TRUE, plot.args, ...)[] 
+[180]
+Overfull \hbox (2.49779pt too wide) in paragraph at lines 12428--12430
+[]\T1/ptm/m/n/10 If \T1/zi4/m/n/10 TRUE\T1/ptm/m/n/10 , cre-ates a plot, oth-er
+-wise re-turns var-i-ogram statis-tics out-put by \T1/zi4/m/n/10 bplot.xy\T1/pt
+m/m/n/10 . 
+
+Overfull \hbox (29.68954pt too wide) in paragraph at lines 12440--12442
+[]\T1/ptm/m/n/10 Additional ar-gu-ment passed to \T1/zi4/m/n/10 plot \T1/ptm/m/
+n/10 for \T1/zi4/m/n/10 plot.vgram \T1/ptm/m/n/10 or to \T1/zi4/m/n/10 bplot.xy
+ \T1/ptm/m/n/10 for \T1/zi4/m/n/10 boxplotVGram\T1/ptm/m/n/10 . 
+[181] [182] [183] [184]
+Overfull \hbox (3.01924pt too wide) in paragraph at lines 12711--12715
+\T1/ptm/m/n/10 and \T1/zi4/m/n/10 dimension \T1/ptm/m/n/10 in the func-tion \T1
+/zi4/m/n/10 wendland.eval\T1/ptm/m/n/10 . The ma-trix of co-ef-fi-cients found 
+by \T1/zi4/m/n/10 Wendland.beta
+[185] [186]
+Overfull \hbox (11.86746pt too wide) in paragraph at lines 12845--12848
+[]\T1/ptm/m/n/10 This a 75X5 ma-trix with the row names iden-ti-fy-ing coun-tri
+es and columns the co-vari-ables:  \T1/zi4/m/n/10 "GDP.cap"
+[187] [188] [189]
+No file Rd2.ind.
+[190]
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux) )
+(see the transcript file for additional information)pdfTeX warning (dest): name
+{Rfn.NativeSymbolInfo} has been referenced but does not exist, replaced by a fi
+xed one
+
+pdfTeX warning (dest): name{Rfn.dist} has been referenced but does not exist, r
+eplaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.optim} has been referenced but does not exist, 
+replaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.surface} has been referenced but does not exist
+, replaced by a fixed one
+
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
+r/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
+/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/
+2019/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2019/texmf
+-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/font
+s/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/ur
+w/times/utmri8a.pfb>
+Output written on Rd2.pdf (190 pages, 496199 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2019] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (403 entries accepted, 0 rejected).
+Sorting entries......done (3650 comparisons).
+Generating output file Rd2.ind....done (618 lines written, 1 warning).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+
+(./Rd2.tex
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.112, 2017/01/04 Text macros for Inconsolata (msharpe)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/t1zi4.fd) [1{/usr/loc
+al/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.toc [2])
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/utf8.def) [3] [4]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [5]
+[6] [7] [8] [9] [10] [11] [12]
+Overfull \hbox (1.7093pt too wide) in paragraph at lines 730--735
+\T1/ptm/m/n/10 ance func-tions for \T1/zi4/m/n/10 sim.rf \T1/ptm/m/n/10 (See de
+-tails be-low.) or to \T1/zi4/m/n/10 circulantEmbeddingSetup
+
+Overfull \hbox (2.3797pt too wide) in paragraph at lines 755--758
+[]\T1/ptm/m/n/10 The func-tions \T1/zi4/m/n/10 circulantEmbedding \T1/ptm/m/n/1
+0 and \T1/zi4/m/n/10 circulantEmbeddingSetup \T1/ptm/m/n/10 are more re-cent \T
+1/zi4/m/n/10 fields \T1/ptm/m/n/10 func-
+[13] [14] [15] (/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+[16] [17] [18]
+Underfull \vbox (badness 10000) has occurred while \output is active [19]
+[20] [21] [22]
+Overfull \hbox (6.72661pt too wide) in paragraph at lines 1394--1397
+[]\T1/ptm/m/n/10 A sym-met-ric ma-trix stored as a vec-tor con-tain-ing el-e-me
+nts for the lower-triangular
+[23] [24] [25]
+Overfull \hbox (15.78853pt too wide) in paragraph at lines 1638--1640
+[]\T1/ptm/m/n/10 Any other ar-gu-ments that will be passed to the co-vari-ance 
+func-tion. e.g. \T1/zi4/m/n/10 smoothness
+[26]
+Overfull \hbox (9.35684pt too wide) in paragraph at lines 1684--1686
+[]\T1/ptm/m/n/10 If marginal is TRUE then just the di-ag-o-nal el-e-ments are r
+e-turned (in R code \T1/zi4/m/n/10 diag( exp(-rdist(u,u))
+
+Overfull \hbox (21.78088pt too wide) in paragraph at lines 1713--1714
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Exponential") 
+
+Overfull \hbox (69.28088pt too wide) in paragraph at lines 1718--1719
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Matern",smoothness=.5)\T1/ptm/m/n/10 . 
+[27]
+Underfull \vbox (badness 10000) has occurred while \output is active [28]
+[29] [30] [31]
+Overfull \hbox (2.50737pt too wide) in paragraph at lines 2044--2048
+\T1/ptm/m/n/10 duces the re-turned ob-ject size. The can-di-date ma-trix is use
+d by plot.spatial.design
+[32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+Overfull \hbox (11.5285pt too wide) in paragraph at lines 2927--2933
+[]\T1/ptm/m/n/10 IMPORTANT: If the R ob-ject \T1/zi4/m/n/10 test.for.zero.flag 
+\T1/ptm/m/n/10 ex-ists with any value ( e.g. \T1/zi4/m/n/10 test.for.zero.flag
+[44] [45] [46]
+Overfull \hbox (20.22874pt too wide) in paragraph at lines 3169--3169
+ []\T1/zi4/m/n/9 glist<- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way
+ to get a default grid that covers x[] 
+[47] [48]
+Underfull \vbox (badness 10000) has occurred while \output is active [49]
+Underfull \vbox (badness 10000) has occurred while \output is active [50]
+[51] [52] [53]
+Underfull \vbox (badness 10000) has occurred while \output is active [54]
+Overfull \hbox (21.42029pt too wide) in paragraph at lines 3665--3665
+ []\T1/zi4/m/n/10 grid, M=NULL,N=NULL,cov.function="stationary.cov", delta = NU
+LL, cov.args = NULL, ...)[] 
+[55] [56] [57] [58] [59] [60] [61] [62] [63]
+Underfull \vbox (badness 10000) has occurred while \output is active [64]
+Underfull \vbox (badness 10000) has occurred while \output is active [65]
+Underfull \vbox (badness 10000) has occurred while \output is active [66]
+[67]
+Overfull \hbox (0.327pt too wide) in paragraph at lines 4573--4576
+[]\T1/ptm/m/n/10 The smoothed im-age in R im-age for-mat. ( A list with com-po-
+nents x, y and z.) \T1/zi4/m/n/10 setup.image.smooth
+[68]
+Underfull \vbox (badness 10000) has occurred while \output is active [69]
+[70] [71] [72] [73]
+Overfull \hbox (15.19753pt too wide) in paragraph at lines 5000--5004
+\T1/ptm/m/n/10 The de-fault if NULL, as-signed at the top level of this func-ti
+on, is list( pivot=FALSE).
+[74] [75] [76] [77]
+Overfull \hbox (16.04765pt too wide) in paragraph at lines 5347--5349
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter used in the fit. Lambda i
+s de-fined as tau**2/sigma.
+[78]
+Overfull \hbox (12.12689pt too wide) in paragraph at lines 5407--5410
+[]\T1/ptm/m/n/10 summary.Krig, pre-dict.Krig, pre-dictSE.Krig, pre-dict-Sur-fac
+eSE, pre-dict-Sur-face, plot.Krig, sur-face.Krig 
+[79]
+Underfull \vbox (badness 10000) has occurred while \output is active [80]
+[81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91]
+Overfull \hbox (8.55748pt too wide) in paragraph at lines 6253--6255
+[]\T1/ptm/m/n/10 Krig, sur-face.mKrig, Tps, fastTps, pre-dict-Sur-face, pre-dic
+tSE.mKrig, sim.mKrig.approx,  [][]\T1/zi4/m/n/10 mKrig.grid[][][] 
+[92]
+Underfull \vbox (badness 10000) has occurred while \output is active [93]
+Underfull \vbox (badness 10000) has occurred while \output is active [94]
+[95]
+Overfull \hbox (6.15796pt too wide) in paragraph at lines 6506--6507
+[]\T1/ptm/m/n/10 A list of ad-di-tional pa-ram-e-ters to sup-ply to the \T1/zi4
+/m/n/10 mKrig \T1/ptm/m/n/10 func-tion. E.g. \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (23.47847pt too wide) in paragraph at lines 6508--6512
+[]\T1/zi4/m/n/10 mKrig \T1/ptm/m/n/10 func-tion that are dis-tinct from the co-
+vari-ance model. For ex-am-ple \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (322.05087pt too wide) in paragraph at lines 6517--6532
+\T1/zi4/m/n/10 optim.args = list(method = "BFGS",control=list(fnscale = -1,ndep
+s = rep(log(1.1),length(cov.params.start)+1),abstol=1e-04,maxit=20))
+[96] [97] [98]
+Underfull \vbox (badness 10000) has occurred while \output is active [99]
+[100]
+Overfull \hbox (116.43051pt too wide) in paragraph at lines 6850--6850
+ []  \T1/zi4/m/n/10 xStereo<- mapproject( NorthAmericanRainfall$lon,NorthAmeric
+anRainfall$lat, projection="stereographic")[] 
+[101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112]
+[113] [114] [115] [116] [117]
+Overfull \hbox (16.38962pt too wide) in paragraph at lines 8038--8038
+ []\T1/zi4/m/n/10 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alph
+a = 0.5, Niterations = 100,[] 
+
+Overfull \hbox (8.56746pt too wide) in paragraph at lines 8054--8055
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter. If NA found by an ap-pro
+x-i-mate corss-validation
+[118]
+Overfull \hbox (80.53842pt too wide) in paragraph at lines 8081--8082
+\T1/ptm/m/n/10 func-tion es-ti-mate. Specif-i-cally if the cri-te-rion \T1/zi4/
+m/n/10 mean(abs(f.hat.new -f.hat))/mean(abs(f.hat))
+
+Overfull \hbox (3.90088pt too wide) in paragraph at lines 8103--8114
+[] \T1/zi4/m/n/10 Y.psuedo<-f.hat + psi.scale* psi.wght( Y -f.hat,psi.scale=psi
+.scale,alpha=alpha) \T1/ptm/m/n/10 A
+[119] [120]
+Underfull \vbox (badness 10000) has occurred while \output is active [121]
+Overfull \hbox (12.75021pt too wide) in paragraph at lines 8276--8276
+ []     \T1/zi4/m/n/9 temp.obj<- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old
+,  psi.scale=.5, tolerance=1e-6,[] 
+[122] [123] [124] [125] [126]
+Overfull \hbox (5.32745pt too wide) in paragraph at lines 8592--8597
+\T1/ptm/m/n/10 ma-trix among all pair-ings or a sparse ver-sion for points with
+in a fixed thresh-hold dis-tance. \T1/zi4/m/n/10 rdist.vec
+[127] [128] [129]
+Overfull \hbox (23.91594pt too wide) in paragraph at lines 8788--8789
+\T1/ptm/m/n/10 spec-i-fied, the new C im-ple-men-ta-tion is faster. In the case
+ where 'x1' and 'x2' are given, fields::rdist.earth()
+[130]
+Overfull \hbox (5.34082pt too wide) in paragraph at lines 8899--8902
+[][]$\T1/zi4/m/n/10 https : / / r . 789695 . n4 . nabble . com / Registration-[
+]of-[]native-[]routines-[]td4728874 . html$[][] \T1/ptm/m/n/10 for
+[131] [132]
+Overfull \hbox (63.06992pt too wide) in paragraph at lines 9071--9071
+ []\T1/zi4/m/n/10 station.subset<-  (loc[,1]>= xr[1]) & (loc[,1] <= xr[2]) & (l
+oc[,2]>= yr[1]) & (loc[,2]<= yr[2])[] 
+[133] [134] [135] [136] [137]
+Overfull \hbox (0.89897pt too wide) in paragraph at lines 9390--9393
+[]\T1/zi4/m/n/10 sim.Krig and sim.spatialProcess \T1/ptm/m/n/10 a ma-trix with 
+rows in-dexed by the lo-ca-tions in \T1/zi4/m/n/10 xp \T1/ptm/m/n/10 and column
+s
+[138]
+Underfull \vbox (badness 10000) has occurred while \output is active [139]
+Underfull \vbox (badness 10000) has occurred while \output is active [140]
+[141] [142] [143] [144] [145]
+Overfull \hbox (28.87877pt too wide) in paragraph at lines 9938--9946
+\T1/zi4/m/n/10 cov.args \T1/ptm/m/n/10 is also NULL this is filled in as  \T1/z
+i4/m/n/10 list(Covariance = "Matern",smoothness
+
+Overfull \hbox (81.06883pt too wide) in paragraph at lines 9958--9962
+\T1/ptm/m/n/10 vari-ance pa-ram-e-ters spec-i-fied in \T1/zi4/m/n/10 spatialPro
+cess \T1/ptm/m/n/10 and then passed to \T1/zi4/m/n/10 spatialProcessSetDefaults
+ 
+[146] [147]
+Overfull \hbox (29.73868pt too wide) in paragraph at lines 10116--10129
+\T1/ptm/m/n/10 . The fourth plot is a pro-file log like-li-hood trace for aRang
+e based on  \T1/zi4/m/n/10 aRangeProfile$MLEProfileLambda\T1/ptm/m/n/10 . 
+[148] [149]
+Underfull \vbox (badness 10000) has occurred while \output is active [150]
+Underfull \vbox (badness 10000) has occurred while \output is active [151]
+Underfull \vbox (badness 10000) has occurred while \output is active [152]
+[153] [154] [155] [156]
+Overfull \hbox (7.85754pt too wide) in paragraph at lines 10722--10727
+[]\T1/ptm/m/n/10 Matrix con-tain-ing di-ag-o-nal el-e-ments of the smooth-ing m
+a-trix. Num-ber of columns
+[157] [158] [159] [160] [161] [162] [163] [164] [165] [166] [167] [168]
+Overfull \hbox (10.27838pt too wide) in paragraph at lines 11586--11595
+\T1/ptm/m/n/10 color scale for ren-der-ing aerial pho-tos of ski trails. (See [
+][]$\T1/zi4/m/n/10 https : / / github . com / dnychka / MJProject$[][]\T1/ptm/m
+/n/10 .)
+[169] [170] [171]
+Overfull \hbox (16.37779pt too wide) in paragraph at lines 11832--11834
+[]\T1/ptm/m/n/10 Variance of er-rors or if weights are not equal to 1 the vari-
+ance is tau**2/weight. 
+[172] [173]
+Overfull \hbox (29.401pt too wide) in paragraph at lines 11982--11994
+[][][]\T1/zi4/m/n/10 Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 mKrig[][][]\
+T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1
+/zi4/m/n/10 sim.spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 summary
+.Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 predict.Krig[][][]\T1/ptm/m/n/10
+ , [][]\T1/zi4/m/n/10 predictSE.Krig[][][]\T1/ptm/m/n/10 ,
+[174]
+Underfull \vbox (badness 10000) has occurred while \output is active [175]
+Underfull \vbox (badness 10000) has occurred while \output is active [176]
+Underfull \vbox (badness 10000) has occurred while \output is active [177]
+[178] [179]
+Overfull \hbox (36.41006pt too wide) in paragraph at lines 12363--12363
+ []\T1/zi4/m/n/10 boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1
+), plot=TRUE, plot.args, ...)[] 
+[180]
+Overfull \hbox (2.49779pt too wide) in paragraph at lines 12428--12430
+[]\T1/ptm/m/n/10 If \T1/zi4/m/n/10 TRUE\T1/ptm/m/n/10 , cre-ates a plot, oth-er
+-wise re-turns var-i-ogram statis-tics out-put by \T1/zi4/m/n/10 bplot.xy\T1/pt
+m/m/n/10 . 
+
+Overfull \hbox (29.68954pt too wide) in paragraph at lines 12440--12442
+[]\T1/ptm/m/n/10 Additional ar-gu-ment passed to \T1/zi4/m/n/10 plot \T1/ptm/m/
+n/10 for \T1/zi4/m/n/10 plot.vgram \T1/ptm/m/n/10 or to \T1/zi4/m/n/10 bplot.xy
+ \T1/ptm/m/n/10 for \T1/zi4/m/n/10 boxplotVGram\T1/ptm/m/n/10 . 
+[181] [182] [183] [184]
+Overfull \hbox (3.01924pt too wide) in paragraph at lines 12711--12715
+\T1/ptm/m/n/10 and \T1/zi4/m/n/10 dimension \T1/ptm/m/n/10 in the func-tion \T1
+/zi4/m/n/10 wendland.eval\T1/ptm/m/n/10 . The ma-trix of co-ef-fi-cients found 
+by \T1/zi4/m/n/10 Wendland.beta
+[185] [186]
+Overfull \hbox (11.86746pt too wide) in paragraph at lines 12845--12848
+[]\T1/ptm/m/n/10 This a 75X5 ma-trix with the row names iden-ti-fy-ing coun-tri
+es and columns the co-vari-ables:  \T1/zi4/m/n/10 "GDP.cap"
+[187] [188] [189]
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.ind [190] [191]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 102.
+
+[192] [193] [194] [195])
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)pdfTeX warning (dest): name
+{Rfn.NativeSymbolInfo} has been referenced but does not exist, replaced by a fi
+xed one
+
+pdfTeX warning (dest): name{Rfn.dist} has been referenced but does not exist, r
+eplaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.optim} has been referenced but does not exist, 
+replaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.surface} has been referenced but does not exist
+, replaced by a fixed one
+
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
+r/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
+/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2019/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
+019/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2019/texmf-
+dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw
+/times/utmri8a.pfb>
+Output written on Rd2.pdf (195 pages, 525777 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2019] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (403 entries accepted, 0 rejected).
+Sorting entries......done (3650 comparisons).
+Generating output file Rd2.ind....done (618 lines written, 1 warning).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+
+(./Rd2.tex
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.112, 2017/01/04 Text macros for Inconsolata (msharpe)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/t1zi4.fd) [1{/usr/loc
+al/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.toc [2])
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/utf8.def) [3] [4] [5]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [6]
+[7] [8] [9] [10] [11] [12]
+Overfull \hbox (1.7093pt too wide) in paragraph at lines 730--735
+\T1/ptm/m/n/10 ance func-tions for \T1/zi4/m/n/10 sim.rf \T1/ptm/m/n/10 (See de
+-tails be-low.) or to \T1/zi4/m/n/10 circulantEmbeddingSetup
+
+Overfull \hbox (2.3797pt too wide) in paragraph at lines 755--758
+[]\T1/ptm/m/n/10 The func-tions \T1/zi4/m/n/10 circulantEmbedding \T1/ptm/m/n/1
+0 and \T1/zi4/m/n/10 circulantEmbeddingSetup \T1/ptm/m/n/10 are more re-cent \T
+1/zi4/m/n/10 fields \T1/ptm/m/n/10 func-
+[13] [14] [15] (/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+[16] [17] [18]
+Underfull \vbox (badness 10000) has occurred while \output is active [19]
+[20] [21] [22]
+Overfull \hbox (6.72661pt too wide) in paragraph at lines 1394--1397
+[]\T1/ptm/m/n/10 A sym-met-ric ma-trix stored as a vec-tor con-tain-ing el-e-me
+nts for the lower-triangular
+[23] [24] [25]
+Overfull \hbox (15.78853pt too wide) in paragraph at lines 1638--1640
+[]\T1/ptm/m/n/10 Any other ar-gu-ments that will be passed to the co-vari-ance 
+func-tion. e.g. \T1/zi4/m/n/10 smoothness
+[26]
+Overfull \hbox (9.35684pt too wide) in paragraph at lines 1684--1686
+[]\T1/ptm/m/n/10 If marginal is TRUE then just the di-ag-o-nal el-e-ments are r
+e-turned (in R code \T1/zi4/m/n/10 diag( exp(-rdist(u,u))
+
+Overfull \hbox (21.78088pt too wide) in paragraph at lines 1713--1714
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Exponential") 
+
+Overfull \hbox (69.28088pt too wide) in paragraph at lines 1718--1719
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Matern",smoothness=.5)\T1/ptm/m/n/10 . 
+[27]
+Underfull \vbox (badness 10000) has occurred while \output is active [28]
+[29] [30] [31]
+Overfull \hbox (2.50737pt too wide) in paragraph at lines 2044--2048
+\T1/ptm/m/n/10 duces the re-turned ob-ject size. The can-di-date ma-trix is use
+d by plot.spatial.design
+[32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+Overfull \hbox (11.5285pt too wide) in paragraph at lines 2927--2933
+[]\T1/ptm/m/n/10 IMPORTANT: If the R ob-ject \T1/zi4/m/n/10 test.for.zero.flag 
+\T1/ptm/m/n/10 ex-ists with any value ( e.g. \T1/zi4/m/n/10 test.for.zero.flag
+[44] [45] [46]
+Overfull \hbox (20.22874pt too wide) in paragraph at lines 3169--3169
+ []\T1/zi4/m/n/9 glist<- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way
+ to get a default grid that covers x[] 
+[47] [48]
+Underfull \vbox (badness 10000) has occurred while \output is active [49]
+Underfull \vbox (badness 10000) has occurred while \output is active [50]
+[51] [52] [53]
+Underfull \vbox (badness 10000) has occurred while \output is active [54]
+Overfull \hbox (21.42029pt too wide) in paragraph at lines 3665--3665
+ []\T1/zi4/m/n/10 grid, M=NULL,N=NULL,cov.function="stationary.cov", delta = NU
+LL, cov.args = NULL, ...)[] 
+[55] [56] [57] [58] [59] [60] [61] [62] [63]
+Underfull \vbox (badness 10000) has occurred while \output is active [64]
+Underfull \vbox (badness 10000) has occurred while \output is active [65]
+Underfull \vbox (badness 10000) has occurred while \output is active [66]
+[67]
+Overfull \hbox (0.327pt too wide) in paragraph at lines 4573--4576
+[]\T1/ptm/m/n/10 The smoothed im-age in R im-age for-mat. ( A list with com-po-
+nents x, y and z.) \T1/zi4/m/n/10 setup.image.smooth
+[68]
+Underfull \vbox (badness 10000) has occurred while \output is active [69]
+[70] [71] [72] [73]
+Overfull \hbox (15.19753pt too wide) in paragraph at lines 5000--5004
+\T1/ptm/m/n/10 The de-fault if NULL, as-signed at the top level of this func-ti
+on, is list( pivot=FALSE).
+[74] [75] [76] [77]
+Overfull \hbox (16.04765pt too wide) in paragraph at lines 5347--5349
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter used in the fit. Lambda i
+s de-fined as tau**2/sigma.
+[78]
+Overfull \hbox (12.12689pt too wide) in paragraph at lines 5407--5410
+[]\T1/ptm/m/n/10 summary.Krig, pre-dict.Krig, pre-dictSE.Krig, pre-dict-Sur-fac
+eSE, pre-dict-Sur-face, plot.Krig, sur-face.Krig 
+[79]
+Underfull \vbox (badness 10000) has occurred while \output is active [80]
+[81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91]
+Overfull \hbox (8.55748pt too wide) in paragraph at lines 6253--6255
+[]\T1/ptm/m/n/10 Krig, sur-face.mKrig, Tps, fastTps, pre-dict-Sur-face, pre-dic
+tSE.mKrig, sim.mKrig.approx,  [][]\T1/zi4/m/n/10 mKrig.grid[][][] 
+[92]
+Underfull \vbox (badness 10000) has occurred while \output is active [93]
+Underfull \vbox (badness 10000) has occurred while \output is active [94]
+[95]
+Overfull \hbox (6.15796pt too wide) in paragraph at lines 6506--6507
+[]\T1/ptm/m/n/10 A list of ad-di-tional pa-ram-e-ters to sup-ply to the \T1/zi4
+/m/n/10 mKrig \T1/ptm/m/n/10 func-tion. E.g. \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (23.47847pt too wide) in paragraph at lines 6508--6512
+[]\T1/zi4/m/n/10 mKrig \T1/ptm/m/n/10 func-tion that are dis-tinct from the co-
+vari-ance model. For ex-am-ple \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (322.05087pt too wide) in paragraph at lines 6517--6532
+\T1/zi4/m/n/10 optim.args = list(method = "BFGS",control=list(fnscale = -1,ndep
+s = rep(log(1.1),length(cov.params.start)+1),abstol=1e-04,maxit=20))
+[96] [97] [98]
+Underfull \vbox (badness 10000) has occurred while \output is active [99]
+[100]
+Overfull \hbox (116.43051pt too wide) in paragraph at lines 6850--6850
+ []  \T1/zi4/m/n/10 xStereo<- mapproject( NorthAmericanRainfall$lon,NorthAmeric
+anRainfall$lat, projection="stereographic")[] 
+[101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112]
+[113] [114] [115] [116] [117]
+Overfull \hbox (16.38962pt too wide) in paragraph at lines 8038--8038
+ []\T1/zi4/m/n/10 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alph
+a = 0.5, Niterations = 100,[] 
+
+Overfull \hbox (8.56746pt too wide) in paragraph at lines 8054--8055
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter. If NA found by an ap-pro
+x-i-mate corss-validation
+[118]
+Overfull \hbox (80.53842pt too wide) in paragraph at lines 8081--8082
+\T1/ptm/m/n/10 func-tion es-ti-mate. Specif-i-cally if the cri-te-rion \T1/zi4/
+m/n/10 mean(abs(f.hat.new -f.hat))/mean(abs(f.hat))
+
+Overfull \hbox (3.90088pt too wide) in paragraph at lines 8103--8114
+[] \T1/zi4/m/n/10 Y.psuedo<-f.hat + psi.scale* psi.wght( Y -f.hat,psi.scale=psi
+.scale,alpha=alpha) \T1/ptm/m/n/10 A
+[119] [120]
+Underfull \vbox (badness 10000) has occurred while \output is active [121]
+Overfull \hbox (12.75021pt too wide) in paragraph at lines 8276--8276
+ []     \T1/zi4/m/n/9 temp.obj<- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old
+,  psi.scale=.5, tolerance=1e-6,[] 
+[122] [123] [124] [125] [126]
+Overfull \hbox (5.32745pt too wide) in paragraph at lines 8592--8597
+\T1/ptm/m/n/10 ma-trix among all pair-ings or a sparse ver-sion for points with
+in a fixed thresh-hold dis-tance. \T1/zi4/m/n/10 rdist.vec
+[127] [128] [129]
+Overfull \hbox (23.91594pt too wide) in paragraph at lines 8788--8789
+\T1/ptm/m/n/10 spec-i-fied, the new C im-ple-men-ta-tion is faster. In the case
+ where 'x1' and 'x2' are given, fields::rdist.earth()
+[130]
+Overfull \hbox (5.34082pt too wide) in paragraph at lines 8899--8902
+[][]$\T1/zi4/m/n/10 https : / / r . 789695 . n4 . nabble . com / Registration-[
+]of-[]native-[]routines-[]td4728874 . html$[][] \T1/ptm/m/n/10 for
+[131] [132]
+Overfull \hbox (63.06992pt too wide) in paragraph at lines 9071--9071
+ []\T1/zi4/m/n/10 station.subset<-  (loc[,1]>= xr[1]) & (loc[,1] <= xr[2]) & (l
+oc[,2]>= yr[1]) & (loc[,2]<= yr[2])[] 
+[133] [134] [135] [136] [137]
+Overfull \hbox (0.89897pt too wide) in paragraph at lines 9390--9393
+[]\T1/zi4/m/n/10 sim.Krig and sim.spatialProcess \T1/ptm/m/n/10 a ma-trix with 
+rows in-dexed by the lo-ca-tions in \T1/zi4/m/n/10 xp \T1/ptm/m/n/10 and column
+s
+[138]
+Underfull \vbox (badness 10000) has occurred while \output is active [139]
+Underfull \vbox (badness 10000) has occurred while \output is active [140]
+[141] [142] [143] [144] [145]
+Overfull \hbox (28.87877pt too wide) in paragraph at lines 9938--9946
+\T1/zi4/m/n/10 cov.args \T1/ptm/m/n/10 is also NULL this is filled in as  \T1/z
+i4/m/n/10 list(Covariance = "Matern",smoothness
+
+Overfull \hbox (81.06883pt too wide) in paragraph at lines 9958--9962
+\T1/ptm/m/n/10 vari-ance pa-ram-e-ters spec-i-fied in \T1/zi4/m/n/10 spatialPro
+cess \T1/ptm/m/n/10 and then passed to \T1/zi4/m/n/10 spatialProcessSetDefaults
+ 
+[146] [147]
+Overfull \hbox (29.73868pt too wide) in paragraph at lines 10116--10129
+\T1/ptm/m/n/10 . The fourth plot is a pro-file log like-li-hood trace for aRang
+e based on  \T1/zi4/m/n/10 aRangeProfile$MLEProfileLambda\T1/ptm/m/n/10 . 
+[148] [149]
+Underfull \vbox (badness 10000) has occurred while \output is active [150]
+Underfull \vbox (badness 10000) has occurred while \output is active [151]
+Underfull \vbox (badness 10000) has occurred while \output is active [152]
+[153] [154] [155] [156]
+Overfull \hbox (7.85754pt too wide) in paragraph at lines 10722--10727
+[]\T1/ptm/m/n/10 Matrix con-tain-ing di-ag-o-nal el-e-ments of the smooth-ing m
+a-trix. Num-ber of columns
+[157] [158] [159] [160] [161] [162] [163] [164] [165] [166] [167] [168]
+Overfull \hbox (10.27838pt too wide) in paragraph at lines 11586--11595
+\T1/ptm/m/n/10 color scale for ren-der-ing aerial pho-tos of ski trails. (See [
+][]$\T1/zi4/m/n/10 https : / / github . com / dnychka / MJProject$[][]\T1/ptm/m
+/n/10 .)
+[169] [170] [171]
+Overfull \hbox (16.37779pt too wide) in paragraph at lines 11832--11834
+[]\T1/ptm/m/n/10 Variance of er-rors or if weights are not equal to 1 the vari-
+ance is tau**2/weight. 
+[172] [173]
+Overfull \hbox (29.401pt too wide) in paragraph at lines 11982--11994
+[][][]\T1/zi4/m/n/10 Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 mKrig[][][]\
+T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1
+/zi4/m/n/10 sim.spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 summary
+.Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 predict.Krig[][][]\T1/ptm/m/n/10
+ , [][]\T1/zi4/m/n/10 predictSE.Krig[][][]\T1/ptm/m/n/10 ,
+[174]
+Underfull \vbox (badness 10000) has occurred while \output is active [175]
+Underfull \vbox (badness 10000) has occurred while \output is active [176]
+Underfull \vbox (badness 10000) has occurred while \output is active [177]
+[178] [179]
+Overfull \hbox (36.41006pt too wide) in paragraph at lines 12363--12363
+ []\T1/zi4/m/n/10 boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1
+), plot=TRUE, plot.args, ...)[] 
+[180]
+Overfull \hbox (2.49779pt too wide) in paragraph at lines 12428--12430
+[]\T1/ptm/m/n/10 If \T1/zi4/m/n/10 TRUE\T1/ptm/m/n/10 , cre-ates a plot, oth-er
+-wise re-turns var-i-ogram statis-tics out-put by \T1/zi4/m/n/10 bplot.xy\T1/pt
+m/m/n/10 . 
+
+Overfull \hbox (29.68954pt too wide) in paragraph at lines 12440--12442
+[]\T1/ptm/m/n/10 Additional ar-gu-ment passed to \T1/zi4/m/n/10 plot \T1/ptm/m/
+n/10 for \T1/zi4/m/n/10 plot.vgram \T1/ptm/m/n/10 or to \T1/zi4/m/n/10 bplot.xy
+ \T1/ptm/m/n/10 for \T1/zi4/m/n/10 boxplotVGram\T1/ptm/m/n/10 . 
+[181] [182] [183] [184]
+Overfull \hbox (3.01924pt too wide) in paragraph at lines 12711--12715
+\T1/ptm/m/n/10 and \T1/zi4/m/n/10 dimension \T1/ptm/m/n/10 in the func-tion \T1
+/zi4/m/n/10 wendland.eval\T1/ptm/m/n/10 . The ma-trix of co-ef-fi-cients found 
+by \T1/zi4/m/n/10 Wendland.beta
+[185] [186]
+Overfull \hbox (11.86746pt too wide) in paragraph at lines 12845--12848
+[]\T1/ptm/m/n/10 This a 75X5 ma-trix with the row names iden-ti-fy-ing coun-tri
+es and columns the co-vari-ables:  \T1/zi4/m/n/10 "GDP.cap"
+[187] [188] [189]
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.ind [190] [191]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 102.
+
+[192] [193] [194] [195])
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)pdfTeX warning (dest): name
+{Rfn.NativeSymbolInfo} has been referenced but does not exist, replaced by a fi
+xed one
+
+pdfTeX warning (dest): name{Rfn.dist} has been referenced but does not exist, r
+eplaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.optim} has been referenced but does not exist, 
+replaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.surface} has been referenced but does not exist
+, replaced by a fixed one
+
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
+r/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
+/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2019/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
+019/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2019/texmf-
+dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw
+/times/utmri8a.pfb>
+Output written on Rd2.pdf (195 pages, 526139 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2019] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (403 entries accepted, 0 rejected).
+Sorting entries......done (3650 comparisons).
+Generating output file Rd2.ind....done (618 lines written, 1 warning).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+LaTeX2e <2018-12-01>
+
+(./Rd2.tex
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2018/09/03 v1.4i Standard LaTeX document class
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/bk10.clo))
+(/Library/Frameworks/R.framework/Resources/share/texmf/tex/latex/Rd.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/url/url.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/textcomp.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1enc.dfu)))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/fontenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/t1enc.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.112, 2017/01/04 Text macros for Inconsolata (msharpe)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/local/texlive/2019/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics/color.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty))
+(/usr/local/texlive/2019/texmf-dist/tex/generic/ifxetex/ifxetex.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/auxhook.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/kvoptions.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/latexconfig/hyperref.cfg))
+(/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/local/texlive/2019/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty))
+
+Package hyperref Warning: Option `hyperindex' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+
+Package hyperref Warning: Option `pagebackref' has already been used,
+(hyperref)                setting the option has no effect on input line 377.
+
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/inputenc.sty
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/latin1.def))
+Writing index file Rd2.idx
+
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux) (/usr/local/texlive/2019/texmf-dist/tex/latex/base/ts1cmr.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/local/texlive/2019/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/local/texlive/2019/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/local/texlive/2019/texmf-dist/tex/generic/oberdiek/gettitlestring.sty))
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.out)
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/t1zi4.fd) [1{/usr/loc
+al/texlive/2019/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/t1phv.fd)
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.toc [2])
+(/usr/local/texlive/2019/texmf-dist/tex/latex/base/utf8.def) [3] [4] [5]
+(/usr/local/texlive/2019/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [6]
+[7] [8] [9] [10] [11] [12]
+Overfull \hbox (1.7093pt too wide) in paragraph at lines 730--735
+\T1/ptm/m/n/10 ance func-tions for \T1/zi4/m/n/10 sim.rf \T1/ptm/m/n/10 (See de
+-tails be-low.) or to \T1/zi4/m/n/10 circulantEmbeddingSetup
+
+Overfull \hbox (2.3797pt too wide) in paragraph at lines 755--758
+[]\T1/ptm/m/n/10 The func-tions \T1/zi4/m/n/10 circulantEmbedding \T1/ptm/m/n/1
+0 and \T1/zi4/m/n/10 circulantEmbeddingSetup \T1/ptm/m/n/10 are more re-cent \T
+1/zi4/m/n/10 fields \T1/ptm/m/n/10 func-
+[13] [14] [15] (/usr/local/texlive/2019/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+[16] [17] [18]
+Underfull \vbox (badness 10000) has occurred while \output is active [19]
+[20] [21] [22]
+Overfull \hbox (6.72661pt too wide) in paragraph at lines 1394--1397
+[]\T1/ptm/m/n/10 A sym-met-ric ma-trix stored as a vec-tor con-tain-ing el-e-me
+nts for the lower-triangular
+[23] [24] [25]
+Overfull \hbox (15.78853pt too wide) in paragraph at lines 1638--1640
+[]\T1/ptm/m/n/10 Any other ar-gu-ments that will be passed to the co-vari-ance 
+func-tion. e.g. \T1/zi4/m/n/10 smoothness
+[26]
+Overfull \hbox (9.35684pt too wide) in paragraph at lines 1684--1686
+[]\T1/ptm/m/n/10 If marginal is TRUE then just the di-ag-o-nal el-e-ments are r
+e-turned (in R code \T1/zi4/m/n/10 diag( exp(-rdist(u,u))
+
+Overfull \hbox (21.78088pt too wide) in paragraph at lines 1713--1714
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Exponential") 
+
+Overfull \hbox (69.28088pt too wide) in paragraph at lines 1718--1719
+[]\T1/zi4/m/n/10 stationary.cov( x1,x2,aRange=MyTheta,Distance= "rdist",Covaria
+nce="Matern",smoothness=.5)\T1/ptm/m/n/10 . 
+[27]
+Underfull \vbox (badness 10000) has occurred while \output is active [28]
+[29] [30] [31]
+Overfull \hbox (2.50737pt too wide) in paragraph at lines 2044--2048
+\T1/ptm/m/n/10 duces the re-turned ob-ject size. The can-di-date ma-trix is use
+d by plot.spatial.design
+[32] [33] [34] [35] [36] [37] [38] [39] [40] [41] [42] [43]
+Overfull \hbox (11.5285pt too wide) in paragraph at lines 2927--2933
+[]\T1/ptm/m/n/10 IMPORTANT: If the R ob-ject \T1/zi4/m/n/10 test.for.zero.flag 
+\T1/ptm/m/n/10 ex-ists with any value ( e.g. \T1/zi4/m/n/10 test.for.zero.flag
+[44] [45] [46]
+Overfull \hbox (20.22874pt too wide) in paragraph at lines 3169--3169
+ []\T1/zi4/m/n/9 glist<- fields.x.to.grid(x, nx=80, ny=80) # this is a cute way
+ to get a default grid that covers x[] 
+[47] [48]
+Underfull \vbox (badness 10000) has occurred while \output is active [49]
+Underfull \vbox (badness 10000) has occurred while \output is active [50]
+[51] [52] [53]
+Underfull \vbox (badness 10000) has occurred while \output is active [54]
+Overfull \hbox (21.42029pt too wide) in paragraph at lines 3665--3665
+ []\T1/zi4/m/n/10 grid, M=NULL,N=NULL,cov.function="stationary.cov", delta = NU
+LL, cov.args = NULL, ...)[] 
+[55] [56] [57] [58] [59] [60] [61] [62] [63]
+Underfull \vbox (badness 10000) has occurred while \output is active [64]
+Underfull \vbox (badness 10000) has occurred while \output is active [65]
+Underfull \vbox (badness 10000) has occurred while \output is active [66]
+[67]
+Overfull \hbox (0.327pt too wide) in paragraph at lines 4573--4576
+[]\T1/ptm/m/n/10 The smoothed im-age in R im-age for-mat. ( A list with com-po-
+nents x, y and z.) \T1/zi4/m/n/10 setup.image.smooth
+[68]
+Underfull \vbox (badness 10000) has occurred while \output is active [69]
+[70] [71] [72] [73]
+Overfull \hbox (15.19753pt too wide) in paragraph at lines 5000--5004
+\T1/ptm/m/n/10 The de-fault if NULL, as-signed at the top level of this func-ti
+on, is list( pivot=FALSE).
+[74] [75] [76] [77]
+Overfull \hbox (16.04765pt too wide) in paragraph at lines 5347--5349
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter used in the fit. Lambda i
+s de-fined as tau**2/sigma.
+[78]
+Overfull \hbox (12.12689pt too wide) in paragraph at lines 5407--5410
+[]\T1/ptm/m/n/10 summary.Krig, pre-dict.Krig, pre-dictSE.Krig, pre-dict-Sur-fac
+eSE, pre-dict-Sur-face, plot.Krig, sur-face.Krig 
+[79]
+Underfull \vbox (badness 10000) has occurred while \output is active [80]
+[81] [82] [83] [84] [85] [86] [87] [88] [89] [90] [91]
+Overfull \hbox (8.55748pt too wide) in paragraph at lines 6253--6255
+[]\T1/ptm/m/n/10 Krig, sur-face.mKrig, Tps, fastTps, pre-dict-Sur-face, pre-dic
+tSE.mKrig, sim.mKrig.approx,  [][]\T1/zi4/m/n/10 mKrig.grid[][][] 
+[92]
+Underfull \vbox (badness 10000) has occurred while \output is active [93]
+Underfull \vbox (badness 10000) has occurred while \output is active [94]
+[95]
+Overfull \hbox (6.15796pt too wide) in paragraph at lines 6506--6507
+[]\T1/ptm/m/n/10 A list of ad-di-tional pa-ram-e-ters to sup-ply to the \T1/zi4
+/m/n/10 mKrig \T1/ptm/m/n/10 func-tion. E.g. \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (23.47847pt too wide) in paragraph at lines 6508--6512
+[]\T1/zi4/m/n/10 mKrig \T1/ptm/m/n/10 func-tion that are dis-tinct from the co-
+vari-ance model. For ex-am-ple \T1/zi4/m/n/10 mKrig.args=
+
+Overfull \hbox (322.05087pt too wide) in paragraph at lines 6517--6532
+\T1/zi4/m/n/10 optim.args = list(method = "BFGS",control=list(fnscale = -1,ndep
+s = rep(log(1.1),length(cov.params.start)+1),abstol=1e-04,maxit=20))
+[96] [97] [98]
+Underfull \vbox (badness 10000) has occurred while \output is active [99]
+[100]
+Overfull \hbox (116.43051pt too wide) in paragraph at lines 6850--6850
+ []  \T1/zi4/m/n/10 xStereo<- mapproject( NorthAmericanRainfall$lon,NorthAmeric
+anRainfall$lat, projection="stereographic")[] 
+[101] [102] [103] [104] [105] [106] [107] [108] [109] [110] [111] [112]
+[113] [114] [115] [116] [117]
+Overfull \hbox (16.38962pt too wide) in paragraph at lines 8038--8038
+ []\T1/zi4/m/n/10 QTps(x, Y, ..., f.start = NULL, psi.scale = NULL, C = 1, alph
+a = 0.5, Niterations = 100,[] 
+
+Overfull \hbox (8.56746pt too wide) in paragraph at lines 8054--8055
+[]\T1/ptm/m/n/10 Value of the smooth-ing pa-ram-e-ter. If NA found by an ap-pro
+x-i-mate corss-validation
+[118]
+Overfull \hbox (80.53842pt too wide) in paragraph at lines 8081--8082
+\T1/ptm/m/n/10 func-tion es-ti-mate. Specif-i-cally if the cri-te-rion \T1/zi4/
+m/n/10 mean(abs(f.hat.new -f.hat))/mean(abs(f.hat))
+
+Overfull \hbox (3.90088pt too wide) in paragraph at lines 8103--8114
+[] \T1/zi4/m/n/10 Y.psuedo<-f.hat + psi.scale* psi.wght( Y -f.hat,psi.scale=psi
+.scale,alpha=alpha) \T1/ptm/m/n/10 A
+[119] [120]
+Underfull \vbox (badness 10000) has occurred while \output is active [121]
+Overfull \hbox (12.75021pt too wide) in paragraph at lines 8276--8276
+ []     \T1/zi4/m/n/9 temp.obj<- QTps(rat.diet$t,rat.diet$con, f.start=fhat.old
+,  psi.scale=.5, tolerance=1e-6,[] 
+[122] [123] [124] [125] [126]
+Overfull \hbox (5.32745pt too wide) in paragraph at lines 8592--8597
+\T1/ptm/m/n/10 ma-trix among all pair-ings or a sparse ver-sion for points with
+in a fixed thresh-hold dis-tance. \T1/zi4/m/n/10 rdist.vec
+[127] [128] [129]
+Overfull \hbox (23.91594pt too wide) in paragraph at lines 8788--8789
+\T1/ptm/m/n/10 spec-i-fied, the new C im-ple-men-ta-tion is faster. In the case
+ where 'x1' and 'x2' are given, fields::rdist.earth()
+[130]
+Overfull \hbox (5.34082pt too wide) in paragraph at lines 8899--8902
+[][]$\T1/zi4/m/n/10 https : / / r . 789695 . n4 . nabble . com / Registration-[
+]of-[]native-[]routines-[]td4728874 . html$[][] \T1/ptm/m/n/10 for
+[131] [132]
+Overfull \hbox (63.06992pt too wide) in paragraph at lines 9071--9071
+ []\T1/zi4/m/n/10 station.subset<-  (loc[,1]>= xr[1]) & (loc[,1] <= xr[2]) & (l
+oc[,2]>= yr[1]) & (loc[,2]<= yr[2])[] 
+[133] [134] [135] [136] [137]
+Overfull \hbox (0.89897pt too wide) in paragraph at lines 9390--9393
+[]\T1/zi4/m/n/10 sim.Krig and sim.spatialProcess \T1/ptm/m/n/10 a ma-trix with 
+rows in-dexed by the lo-ca-tions in \T1/zi4/m/n/10 xp \T1/ptm/m/n/10 and column
+s
+[138]
+Underfull \vbox (badness 10000) has occurred while \output is active [139]
+Underfull \vbox (badness 10000) has occurred while \output is active [140]
+[141] [142] [143] [144] [145]
+Overfull \hbox (28.87877pt too wide) in paragraph at lines 9938--9946
+\T1/zi4/m/n/10 cov.args \T1/ptm/m/n/10 is also NULL this is filled in as  \T1/z
+i4/m/n/10 list(Covariance = "Matern",smoothness
+
+Overfull \hbox (81.06883pt too wide) in paragraph at lines 9958--9962
+\T1/ptm/m/n/10 vari-ance pa-ram-e-ters spec-i-fied in \T1/zi4/m/n/10 spatialPro
+cess \T1/ptm/m/n/10 and then passed to \T1/zi4/m/n/10 spatialProcessSetDefaults
+ 
+[146] [147]
+Overfull \hbox (29.73868pt too wide) in paragraph at lines 10116--10129
+\T1/ptm/m/n/10 . The fourth plot is a pro-file log like-li-hood trace for aRang
+e based on  \T1/zi4/m/n/10 aRangeProfile$MLEProfileLambda\T1/ptm/m/n/10 . 
+[148] [149]
+Underfull \vbox (badness 10000) has occurred while \output is active [150]
+Underfull \vbox (badness 10000) has occurred while \output is active [151]
+Underfull \vbox (badness 10000) has occurred while \output is active [152]
+[153] [154] [155] [156]
+Overfull \hbox (7.85754pt too wide) in paragraph at lines 10722--10727
+[]\T1/ptm/m/n/10 Matrix con-tain-ing di-ag-o-nal el-e-ments of the smooth-ing m
+a-trix. Num-ber of columns
+[157] [158] [159] [160] [161] [162] [163] [164] [165] [166] [167] [168]
+Overfull \hbox (10.27838pt too wide) in paragraph at lines 11586--11595
+\T1/ptm/m/n/10 color scale for ren-der-ing aerial pho-tos of ski trails. (See [
+][]$\T1/zi4/m/n/10 https : / / github . com / dnychka / MJProject$[][]\T1/ptm/m
+/n/10 .)
+[169] [170] [171]
+Overfull \hbox (16.37779pt too wide) in paragraph at lines 11832--11834
+[]\T1/ptm/m/n/10 Variance of er-rors or if weights are not equal to 1 the vari-
+ance is tau**2/weight. 
+[172] [173]
+Overfull \hbox (29.401pt too wide) in paragraph at lines 11982--11994
+[][][]\T1/zi4/m/n/10 Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 mKrig[][][]\
+T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1
+/zi4/m/n/10 sim.spatialProcess[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 summary
+.Krig[][][]\T1/ptm/m/n/10 , [][]\T1/zi4/m/n/10 predict.Krig[][][]\T1/ptm/m/n/10
+ , [][]\T1/zi4/m/n/10 predictSE.Krig[][][]\T1/ptm/m/n/10 ,
+[174]
+Underfull \vbox (badness 10000) has occurred while \output is active [175]
+Underfull \vbox (badness 10000) has occurred while \output is active [176]
+Underfull \vbox (badness 10000) has occurred while \output is active [177]
+[178] [179]
+Overfull \hbox (36.41006pt too wide) in paragraph at lines 12363--12363
+ []\T1/zi4/m/n/10 boxplotVGram(x, N=10, breaks = pretty(x$d, N, eps.correct = 1
+), plot=TRUE, plot.args, ...)[] 
+[180]
+Overfull \hbox (2.49779pt too wide) in paragraph at lines 12428--12430
+[]\T1/ptm/m/n/10 If \T1/zi4/m/n/10 TRUE\T1/ptm/m/n/10 , cre-ates a plot, oth-er
+-wise re-turns var-i-ogram statis-tics out-put by \T1/zi4/m/n/10 bplot.xy\T1/pt
+m/m/n/10 . 
+
+Overfull \hbox (29.68954pt too wide) in paragraph at lines 12440--12442
+[]\T1/ptm/m/n/10 Additional ar-gu-ment passed to \T1/zi4/m/n/10 plot \T1/ptm/m/
+n/10 for \T1/zi4/m/n/10 plot.vgram \T1/ptm/m/n/10 or to \T1/zi4/m/n/10 bplot.xy
+ \T1/ptm/m/n/10 for \T1/zi4/m/n/10 boxplotVGram\T1/ptm/m/n/10 . 
+[181] [182] [183] [184]
+Overfull \hbox (3.01924pt too wide) in paragraph at lines 12711--12715
+\T1/ptm/m/n/10 and \T1/zi4/m/n/10 dimension \T1/ptm/m/n/10 in the func-tion \T1
+/zi4/m/n/10 wendland.eval\T1/ptm/m/n/10 . The ma-trix of co-ef-fi-cients found 
+by \T1/zi4/m/n/10 Wendland.beta
+[185] [186]
+Overfull \hbox (11.86746pt too wide) in paragraph at lines 12845--12848
+[]\T1/ptm/m/n/10 This a 75X5 ma-trix with the row names iden-ti-fy-ing coun-tri
+es and columns the co-vari-ables:  \T1/zi4/m/n/10 "GDP.cap"
+[187] [188] [189]
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.ind [190] [191]
+
+LaTeX Font Warning: Font shape `T1/zi4/m/it' undefined
+(Font)              using `T1/zi4/m/n' instead on input line 102.
+
+[192] [193] [194] [195])
+(/private/var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T/RtmpyY6mwE/Rd2pdfac8c
+1a094b45/Rd2.aux)
+
+LaTeX Font Warning: Some font shapes were not available, defaults substituted.
+
+ )
+(see the transcript file for additional information)pdfTeX warning (dest): name
+{Rfn.NativeSymbolInfo} has been referenced but does not exist, replaced by a fi
+xed one
+
+pdfTeX warning (dest): name{Rfn.dist} has been referenced but does not exist, r
+eplaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.optim} has been referenced but does not exist, 
+replaced by a fixed one
+
+pdfTeX warning (dest): name{Rfn.surface} has been referenced but does not exist
+, replaced by a fixed one
+
+{/usr/local/texlive/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/us
+r/local/texlive/2019/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive
+/2019/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-0.enc}</usr/local/texlive/20
+19/texmf-dist/fonts/type1/public/inconsolata/Inconsolata-zi4r.pfb></usr/local/t
+exlive/2019/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/te
+xlive/2019/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb></usr/local/texlive/2
+019/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2019/texmf-
+dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts
+/type1/urw/times/utmr8a.pfb></usr/local/texlive/2019/texmf-dist/fonts/type1/urw
+/times/utmri8a.pfb>
+Output written on Rd2.pdf (195 pages, 526159 bytes).
+Transcript written on Rd2.log.
+Saving output to ‘fields-manual.pdf’ ...
+Done
+You may want to clean up by 'rm -Rf /var/folders/xv/qglvkhrs30ndqsdc0__sx9lc0000gn/T//RtmpyY6mwE/Rd2pdfac8c1a094b45'

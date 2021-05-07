@@ -32,7 +32,7 @@ where $\hat{\mathbf d}$ is the Generalized Least Squares estimate of $\mathbf d$
 
 Variogram fitting is often not a reliable way of finding the parameters of our spatial model. Statisticians usually take two routes for parameter estimation: generalized cross validation (GCV), or maximum likelihood estimation (MLE).
 
-Under the `fields` spatial model $Y(\mathbf x) =  \mathbf Z(\mathbf x) \mathbf{d} + g(\mathbf x) + \epsilon(\mathbf x)$,  we have Gaussian observations $\mathbf Y \sim N( \mathbf{Zd}, \rho \mathbf K + \sigma^2 \mathbf I)$. Thus, calculating the log-likelihood $\ell(\mathbf{d},\boldsymbol{\xi})$ is easy. Here, we denote the variance of $\mathbf{Y}$ as $\Sigma := \rho \mathbf K + \sigma^2 \mathbf I$ and use $\boldsymbol \xi$ as a vector of spatial parameters (e.g. $\boldsymbol \xi = (\rho,\sigma^2,\theta,\nu)$).
+Under the `fields` spatial model $Y(\mathbf x) =  \mathbf Z(\mathbf x) \mathbf{d} + g(\mathbf x) + \epsilon(\mathbf x)$,  we have Gaussian observations $\mathbf Y \sim N( \mathbf{Zd}, \rho \mathbf K + \sigma^2 \mathbf I)$. Thus, calculating the log-likelihood $\ell(\mathbf{d},\boldsymbol{\xi})$ is easy. Here, we denote the variance of $\mathbf{Y}$ as $\Sigma := \rho \mathbf K + \sigma^2 \mathbf I$ and use $\boldsymbol \xi$ as a vector of spatial parameters (e.g. $\boldsymbol \xi = (\rho,\sigma^2,a ,\nu)$).
 \[
 \ell(\mathbf{d},\boldsymbol{\xi}) \propto -\frac{1}{2} \left( \log( \det(\Sigma))  + (\mathbf Y - \mathbf{Zd})^T \Sigma^{-1} (\mathbf Y - \mathbf{Zd}) \right)
 \]

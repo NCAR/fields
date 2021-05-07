@@ -22,13 +22,13 @@ In this way `Tps` requires little extra coding beyond the `Krig` function itself
 ${\large{\mathbf{Basic \> Usage}}}$
 
 > Tps(x, Y, m = NULL, p = NULL, lon.lat = FALSE)  
-> fastTps(x, Y, m = NULL, p = NULL,  theta, lon.lat=FALSE, lambda=0)  
+> fastTps(x, Y, m = NULL, p = NULL,  aRange, lon.lat=FALSE, lambda=0)  
 
 ${\large{\mathbf{Value}}}$
 
-Both functions returns a list of class `Krig`. `m` determines the degree (`m-l`) of the polynomial function capturing the spatial drift/trend component of the model. The default is the value such that `2m-d` is greater than zero where `d` is the dimension of `x`. `p` is the polynomial power for Wendland radial basis functions. The default is `2m-d`. `theta` is the tapering range that is passed to the Wendland compactly supported covariance. The covariance (i.e. the radial basis function) is zero beyond range `theta`. The larger `theta` is, the closer this model will approximate the standard thin plate spline.  
+Both functions returns a list of class `Krig`. `m` determines the degree (`m-l`) of the polynomial function capturing the spatial drift/trend component of the model. The default is the value such that `2m-d` is greater than zero where `d` is the dimension of `x`. `p` is the polynomial power for Wendland radial basis functions. The default is `2m-d`. `aRange` is the tapering range that is passed to the Wendland compactly supported covariance. The covariance (i.e. the radial basis function) is zero beyond range `aRange`. The larger `aRange` is, the closer this model will approximate the standard thin plate spline.  
 
-Some care needs to exercised in specifying the taper range `theta` and power `p` which describes the polynomial behavior of the Wendland at the origin. Note that unlike `Tps` the locations are not scaled to unit range and this can cause havoc in smoothing problems with variables in very different units. So rescaling the locations `x <- scale(x)` is a good idea for putting the variables on a common scale for smoothing. This function does have the potential to approximate estimates of `Tps` for very large spatial data sets. Also, the function `predictSurface.fastTps` has been made more efficient for the case of `k = 2` and `m = 2`.  
+Some care needs to exercised in specifying the taper range `aRange` and power `p` which describes the polynomial behavior of the Wendland at the origin. Note that unlike `Tps` the locations are not scaled to unit range and this can cause havoc in smoothing problems with variables in very different units. So rescaling the locations `x <- scale(x)` is a good idea for putting the variables on a common scale for smoothing. This function does have the potential to approximate estimates of `Tps` for very large spatial data sets. Also, the function `predictSurface.fastTps` has been made more efficient for the case of `k = 2` and `m = 2`.  
 
 
 ***
@@ -134,7 +134,7 @@ surface(fit,col=rev(cm.colors(50)))
 
 ##`fastTps` with several `lambda` values
 
-The `fastTps` function is actually a wrapper for the `mKrig` function with the compactly supported Wendland covariance function. The taper range `theta` and the the polynomial power for the Wendland rbf `p` must be chosen. The defaults are `theta = 1` and `p = 2m-d` where `m` is chosen such that `p` is positive.
+The `fastTps` function is actually a wrapper for the `mKrig` function with the compactly supported Wendland covariance function. The taper range `aRange` and the the polynomial power for the Wendland rbf `p` must be chosen. The defaults are `aRange = 1` and `p = 2m-d` where `m` is chosen such that `p` is positive.
 
 Both `Tps` and `fastTps` return a list of class `Krig` which includes fitted values, the predicted surface at the observations, and the residuals. The list also includes the values of the GCV grid search.
 
@@ -144,9 +144,9 @@ We start by showing how different `lambda` values affect the `fastTps` fit using
 hc <- rev(heat_hcl(12,c=c(80,30),l=c(30,90),power=c(1/5,1.5)))
 
 quilt.plot(RMprecip$x,RMprecip$y,col=hc)
-fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2, theta=3.0) -> out1
-fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-1, theta=3.0) -> out2
-fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1, theta=3.0) -> out3
+fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2, aRange=3.0) -> out1
+fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-1, aRange=3.0) -> out2
+fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1, aRange=3.0) -> out3
 ```
 
 ```{r, fig.width=11,fig.height=4, results='hide'}
@@ -159,12 +159,12 @@ surface(out3, main="lambda=1",col=hc)
 US( add=TRUE, col="grey")
 ```
 
-Note that setting `theta` to 3 degrees is a very generous taper range. Use some trial `theta` values with `rdist.nearest` to determine a a useful taper (see the examples in `mKrig`). Some empirical studies suggest that in the interpolation case in 2d, the taper should be large enough so there are about 20 non-zero nearest neighbors for every location.
+Note that setting `aRange` to 3 degrees is a very generous taper range. Use some trial `aRange` values with `rdist.nearest` to determine a a useful taper (see the examples in `mKrig`). Some empirical studies suggest that in the interpolation case in 2d, the taper should be large enough so there are about 20 non-zero nearest neighbors for every location.
 
-Now we use great circle distance for this smooth. Note that when `lon.lat=TRUE`, `theta` for the taper support is automatically converted to degrees.
+Now we use great circle distance for this smooth. Note that when `lon.lat=TRUE`, `aRange` for the taper support is automatically converted to degrees.
 
 ```{r, results='hide'}
-fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2,lon.lat=TRUE, theta=300) -> out4
+fastTps( RMprecip$x,RMprecip$y,m=2,lambda= 1e-2,lon.lat=TRUE, aRange=300) -> out4
 out3$eff.df
 out4$eff.df 
 ```
@@ -189,17 +189,16 @@ y<- ozone2$y[16,]
 good<- !is.na( y)
 y<-y[good]
 x<- ozone2$lon.lat[good,]
-O3FitMLE<- fastTpsMLE( x,y, theta=1.5 )
-O3Obj<- fastTps( x,y, theta=1.5, lambda=O3FitMLE$lambda.MLE)
+O3Obj<- fastTps( x,y, aRange=1.5 )
 grid.list<- fields.x.to.grid( O3Obj$x, nx=100, ny=100)
-O3Sim<- sim.fastTps.approx( O3Obj,predictionPointsList=grid.list,M=5)
+O3Sim<- sim.mKrig.approx( O3Obj,predictionPointsList=grid.list,M=5)
 # controlling the grids
 xR<- range( x[,1], na.rm=TRUE)
 yR<- range( x[,2], na.rm=TRUE)
 simulationGridList<- list( x= seq(xR[1],xR[2],,400), y= seq( yR[1],yR[2], ,400))
 # very fine localized prediction grid
 O3GridList<- list( x= seq( -90.5,-88.5,,200), y= seq( 38,40,,200))
-O3Sim<- sim.fastTps.approx( O3Obj, M=5, predictionPointsList=O3GridList, simulationGridList = simulationGridList)
+O3Sim<- sim.mKrig.approx( O3Obj, M=5, predictionPointsList=O3GridList, simulationGridList = simulationGridList)
 set.panel(1,2)
 plot( O3Obj$x, main="Simulation 1",xlab="",ylab="")
 US( add=TRUE)

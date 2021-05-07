@@ -5,6 +5,7 @@ knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
 library(fields)
 library(colorRamps)
 library(RColorBrewer)
+
 ```
 
 The `mKrig` function is both a Kriging/linear algebra engine and also user-level function for fitting spatial models. The `mKrig` engine is a simple and fast version of `Krig`. The "m" stands for micro, being a succinct (and we hope readable) function. The function focuses on the same computations as in `Krig.engine.fixed` done for a fixed `lambda` parameter, for unique spatial locations and for data without missing values. `mKrig` is optimized for large data sets, sparse linear algebra, and a clear exposition of the computations. The underlying code in `mKrig` is more readable and straightforward, but it does fewer checks on the data than `Krig`. One savings in computation is that Monte Carlo simulations are used to compute the trace of the smoothing matrix $\operatorname{tr}(A(\lambda))$, which can be used for the effective degrees of freedom of the model.
@@ -50,8 +51,8 @@ y<- ozone2$y[16,]
 good<- !is.na( y)
 y<-y[good]
 x<- ozone2$lon.lat[good,]
-out<- mKrig( x,y, theta = 2.0, lambda=.01)
-out2 <- Krig( x,y, theta=2.0, lambda=.01)
+out<- mKrig( x,y, aRange = 2.0, lambda=.01)
+out2 <- Krig( x,y, aRange=2.0, lambda=.01)
 grid.list <- fields.x.to.grid(x)
 grid <- make.surface.grid(grid.list)
 out.p <- matrix(predict(out,grid),nrow=80,ncol=80)
@@ -82,7 +83,7 @@ good<- !is.na(yCO)
 yCO<-yCO[good]
 xCO<- CO.loc[good,]
 Z<- CO.elev[good]
-out<- mKrig(xCO,yCO, Z=Z, cov.function="stationary.cov", Covariance="Matern", theta=4.0, smoothness=1.0, lambda=.1)
+out<- mKrig(xCO,yCO, Z=Z, cov.function="stationary.cov", Covariance="Matern", aRange=4.0, smoothness=1.0, lambda=.1)
 pred0 <- predict(out, grid.list=CO.Grid, Z= as.vector(CO.elevGrid$z))
 pred <- as.surface(make.surface.grid(CO.Grid) , pred0)
 set.panel(1,3)
@@ -103,9 +104,9 @@ This example shows the versatility of `fields`, fitting `Krig`, `spatialProcess`
 x <- flame$x
 y <- flame$y
 look <- as.image(Z=y, x=x)
-fit <- Krig(x=x, Y=y, cov.function="stationary.cov", theta=5)
+fit <- Krig(x=x, Y=y, cov.function="stationary.cov", aRange=5)
 fit1 <- spatialProcess(x,y)
-fit2 <- mKrig(x, y, cov.function = "wendland.cov", k=2, theta=4, lambda=0.75)
+fit2 <- mKrig(x, y, cov.function = "wendland.cov", k=2, aRange=4, lambda=0.75)
 set.panel(2,2)
 image.plot(look, main="Data",smallplot= c(.88,.9,0.2,.8),zlim=c(0.005,0.05),col=brewer.pal(9,'Reds'))
 surface(fit, main="Exponential Krig",legend.shrink=0.6,smallplot= c(.88,.9,0.2,.8),zlim=c(0.005,0.05),col=brewer.pal(9,'Reds'))
@@ -130,16 +131,16 @@ xM <- new.dat$xM
 yM <- new.dat$yM
 quilt.plot(xM, yM, main="Unique data",col=rev(bpy.colors()))
 ###fit <- spatialProcess(xM, yM) takes too long 
-fit <- mKrig(xM, yM, cov.function="wendland.cov", theta=2,lambda=2)
-#try different theta and lambda
-surface(fit, main="Wendland, theta=2, lambda=2",col=rev(bpy.colors()))
+fit <- mKrig(xM, yM, cov.function="wendland.cov", aRange=2,lambda=2)
+#try different aRange and lambda
+surface(fit, main="Wendland, aRange=2, lambda=2",col=rev(bpy.colors()))
 pred <- predictSurface(fit)
 ```
 
 ```{r, fig.width=11, fig.height=8, results='hide',warning=FALSE,message=FALSE}
 set.panel()
 library(sp) #for colors
-drape.plot(pred, border=NA, theta=155, phi=25, horizontal=FALSE, xlab="Humidity", ylab="Temp", zlab="Power Usage",col=rev(bpy.colors()))
+drape.plot(pred, border=NA, aRange=155, phi=25, horizontal=FALSE, xlab="Humidity", ylab="Temp", zlab="Power Usage",col=rev(bpy.colors()))
 title("Wendland         ")
 ```
 
@@ -155,8 +156,8 @@ y<- ozone2$y[16,]
 good<- !is.na( y)
 y<-y[good]
 x<- ozone2$lon.lat[good,]
-mKrig( x,y,cov.function="stationary.taper.cov",theta = 2.0, lambda=.01,
-       Taper="Wendland", Taper.args=list(theta = 1.5, k=2, dimension=2)) -> out2
+out2 <- mKrig( x,y,cov.function="stationary.taper.cov",aRange = 2.0, lambda=.01,
+       Taper="Wendland", Taper.args=list(aRange = 1.5, k=2, dimension=2)) 
 ```
 
 Now, we will compare many `lambda`'s on a grid using GCV for this small data set. One should really just use `Krig` or `Tps`, but this is an example of approximate GCV that will work for much larger data sets using sparse covariances and the Monte Carlo trace estimate.
@@ -169,13 +170,13 @@ GCV.est<- rep( NA, 15)
 eff.df<- rep( NA, 15)
 logPL<- rep( NA, 15)
 for( k in 1:15){    # loop over lambda's
-  out<- mKrig( x,y,cov.function="stationary.taper.cov", theta = 2.0, 
-               lambda=lgrid[k], Taper="Wendland", Taper.args=list(theta = 1.5, k=2, dimension=2))
+  out<- mKrig( x,y,cov.function="stationary.taper.cov", aRange = 2.0, 
+               lambda=lgrid[k], Taper="Wendland", Taper.args=list(aRange = 1.5, k=2, dimension=2))
   GCV[k,]<- out$GCV.info
   trA[k,]<- out$trA.info
   eff.df[k]<- out$eff.df
   GCV.est[k]<- out$GCV
-  logPL[k]<- out$lnProfileLike
+  logPL[k]<- out$summary["lnProfileLike.FULL"]
 }
 ```
 
@@ -188,8 +189,8 @@ matplot( trA, GCV, type="l", col=1, lty=2,
 lines( eff.df, GCV.est, lwd=2, col=2)
 lines( eff.df, rowMeans(GCV), lwd=2)
 # add exact GCV computed by Krig
-out0<- Krig( x,y,cov.function="stationary.taper.cov", theta = 2.0, Taper="Wendland", 
-             Taper.args=list(theta = 1.5, k=2, dimension=2), spam.format=FALSE)
+out0<- Krig( x,y,cov.function="stationary.taper.cov", aRange = 2.0, Taper="Wendland", 
+             Taper.args=list(aRange = 1.5, k=2, dimension=2), spam.format=FALSE)
 lines( out0$gcv.grid[,2:3], lwd=4, col="darkgreen")
 # add profile likelihood
 utemp<- par()$usr
@@ -209,22 +210,25 @@ title( "GCV ( green = exact) and -ln profile likelihood", cex=2)
 # fits for first 10 days from ozone data
 data( ozone2) 	 
 NDays<- 10
-O3MLE<- matrix( NA, nrow= NDays, ncol=7)
+O3MLE<-NULL
 for( day in 1: NDays){
   ind<- !is.na(ozone2$y[day,] )
   x<- ozone2$lon.lat[ind,]
   y<- ozone2$y[day,ind]
-  O3MLE[day,]<- MLESpatialProcess( x,y,Distance="rdist.earth")$MLEJoint$summary
+  tmpFit<- spatialProcess( x,y,Distance="rdist.earth")
+  O3MLE<- rbind( O3MLE, tmpFit$MLESummary)
 }
-colnames(O3MLE) <- c("lnProfileLike.FULL","lambda","theta","sigmaMLE","rhoMLE","funEval","gradEval" )
-O3MLE[,1:5]
+# last two columns are repeated
+O3MLE<- O3MLE[, -c(11,12)]
+
 ```
 
-Names of summary: "lnProfileLike.FULL", "lambda", "theta", "sigmaMLE", "rhoMLE", "funEval", "gradEval". We left out the last two columns in the previous output. It can be interesting to visualize the results as pairwise scatter plots for individual estimates. 
-
 ```{r}
-plot(O3MLE[,2], O3MLE[,3], log = 'xy', xlab = "lambda", ylab = "theta")
-title("theta vs lambda for 10 days")
+plot( O3MLE[,"lambda"], O3MLE[,"aRange"], log = 'xy', xlab = "lambda", ylab = "aRange")
+title("aRange vs lambda MLEs for 10 days")
+
+plot( O3MLE[,"eff.df"], O3MLE[,"aRange"], log = 'xy', xlab = "eff.df", ylab = "aRange")
+title("aRange vs effective degrees of freedom  for 10 days")
 ```
 
 An alternative to fitting a different mean part of the model for each day is to pool all of the days and compute the fixed effects by averaging. The function `mKrig.coef` takes care of this for us. One just needs to pass an `mKrig` object, and a vector `y` of new observations. If `y` is a matrix, the columns are treated as multiple realizations of the same field.
@@ -256,7 +260,7 @@ x <- ozone2$lon.lat[-omitted,]
 Y <- goody
 out <- mKrig(x, Y[,1], Distance="rdist.earth")
 out2 <- mKrig(x, Y, Distance="rdist.earth",collapseFixedEffect=TRUE)   
-comp <- rbind(c(out$d),out2$d[1:3,1])
+comp <- rbind(c(out$beta),out2$beta[1:3,1])
 rownames(comp) <- c("Day 1", "All Days")
 comp
 ```
@@ -282,7 +286,7 @@ y<-y[good]
 x<- ozone2$lon.lat[good,]
 xMissing<- ozone2$lon.lat[!good,]
 
-O3.fit<- mKrig( x,y, Covariance="Matern", theta=.5,smoothness=1.0, lambda= .01 )
+O3.fit<- mKrig( x,y, Covariance="Matern", aRange=.5,smoothness=1.0, lambda= .01 )
 ```
 
 <surface( O3.fit,col=brewer.pal(9,'Spectral'))>
@@ -325,23 +329,23 @@ x<- matrix(2*(runif(2*N)-.5),ncol=2)
 values <- sin( 1.8*pi*x[,1])*sin( 2.5*pi*x[,2])
 
 y<- values + rnorm(N)*.1
-look2 <- mKrig( x,y, cov.function="wendland.cov",k=2, theta=.2,lambda=.1)
+look2 <- mKrig( x,y, cov.function="wendland.cov",k=2, aRange=.2,lambda=.1)
 predictSurface(look2) -> out.p
 surface( out.p,col=brewer.pal(9,'Blues'))
 title("Surface")
 ```
 
-Even though there are a large number of points, this works because the number of nonzero elements within distance `theta` are less than the default maximum allocated size of the sparse covariance matrix. See `spam.options()` for the default values. The following will give a warning for `theta=.9` because allocation for the covariance matirx storage is too small. Here `theta` controls the support of the covariance and so indirectly the number of nonzero elements in the sparse matrix.
+Even though there are a large number of points, this works because the number of nonzero elements within distance `aRange` are less than the default maximum allocated size of the sparse covariance matrix. See `options()` for the default values. The following will give a warning for `aRange=.9` because allocation for the covariance matirx storage is too small. Here `aRange` controls the support of the covariance and so indirectly the number of nonzero elements in the sparse matrix.
 
 ```{r}
-look2<- mKrig(x,y, cov.function="wendland.cov",k=2, theta=.9, lambda=.1)
+look2<- mKrig(x,y, cov.function="wendland.cov",k=2, aRange=.9, lambda=.1)
 ```
 
-The warning resets the memory allocation for the covariance matrix according the to values `spam.options(nearestdistnnz=c(416052,400))`. This is inefficient because the preliminary pass failed. The following call completes the computation in "one pass" without a warning and without having to reallocate more memory.
+The warning resets the memory allocation for the covariance matrix according the to values `options(spam.nearestdistnnz=c(416052,400))`. This is inefficient because the preliminary pass failed. The following call completes the computation in "one pass" without a warning and without having to reallocate more memory.
 
 ```{r}
-spam.options(nearestdistnnz=c(4.2E5,400))
-look2<- mKrig( x,y, cov.function="wendland.cov",k=2, theta=.9, lambda=1e-2)
+options(spam.nearestdistnnz=c(4.2E5,400))
+look2<- mKrig( x,y, cov.function="wendland.cov",k=2, aRange=.9, lambda=1e-2)
 ```
 
 As a check notice that `print(look2)` reports the number of nonzero elements consistent with the specifc allocation increase in `spam.options`.
@@ -358,9 +362,9 @@ y <- values + rnorm(N)*.01
 The following is an example of where the allocation (for `nnzR`) for the cholesky factor is too small. A warning is issued and the allocation is increased by 25. To avoid the warning, use the second call to `mKrig`.
 
 ```{r}
-look2<- mKrig( x,y,cov.function="wendland.cov",k=2, theta=.1, lambda=1e2 )
+look2<- mKrig( x,y,cov.function="wendland.cov",k=2, aRange=.1, lambda=1e2 )
 
-look2<-mKrig( x,y,cov.function="wendland.cov", k=2, theta=.1,lambda=1e2,
+look2<-mKrig( x,y,cov.function="wendland.cov", k=2, aRange=.1,lambda=1e2,
               chol.args=list(pivot=TRUE, memory=list(nnzR = 450000)))
 ```
 
@@ -370,7 +374,7 @@ Next, we show how to fit multiple data sets observed at the same locations.
 y1 <- values + rnorm(N)*.01
 y2 <- values + rnorm(N)*.01
 Y <- cbind(y1, y2)
-look3<- mKrig( x,Y,cov.function="wendland.cov",k=2,theta=.1, lambda=1e2 )
+look3<- mKrig( x,Y,cov.function="wendland.cov",k=2,aRange=.1, lambda=1e2 )
 print( look3)
 ```
 
@@ -378,7 +382,7 @@ Note the slight difference in the summary output because two data sets have been
 
 ***
 
-<We continue by showing a method for finding a good choice for `theta` as a taper. Suppose the target `theta` is a spatial prediction using roughly 50 nearest neighbors (tapering covariances is effective for roughly 20 or more in the situation of interpolation) see Furrer, Genton and Nychka (2006). We begin with a random sample of 100 points to get an idea of scale and save computation time.>
+<We continue by showing a method for finding a good choice for `aRange` as a taper. Suppose the target `aRange` is a spatial prediction using roughly 50 nearest neighbors (tapering covariances is effective for roughly 20 or more in the situation of interpolation) see Furrer, Genton and Nychka (2006). We begin with a random sample of 100 points to get an idea of scale and save computation time.>
 
 ```{r, include=FALSE, eval=FALSE}
 set.seed(223)
@@ -404,14 +408,14 @@ min( hold2)
 <We declare `min(hold2)` is close enough, so now the following will use no less than 55 nearest neighbors due to the tapering.>
 
 ```{r, results='hide',fig.width=12, , include=FALSE, eval=FALSE}
-mKrig(x,y, cov.function="wendland.cov",k=2, theta=dguess,lambda=1e2) -> look2
+mKrig(x,y, cov.function="wendland.cov",k=2, aRange=dguess,lambda=1e2) -> look2
 # precompute distance matrix in compact form
 distMat = rdist(x, compact=TRUE)
 # use precomputed distance matrix
-look3 <- mKrig( x,Y,cov.function="stationary.cov", theta=.1,lambda=1e2, distMat=distMat)
+look3 <- mKrig( x,Y,cov.function="stationary.cov", aRange=.1,lambda=1e2, distMat=distMat)
 #precompute distance matrix in standard form
 distMat = rdist(x)
-look4 <- mKrig( x,Y,cov.function="stationary.cov", theta=.1,lambda=1e2, distMat=distMat)
+look4 <- mKrig( x,Y,cov.function="stationary.cov", aRange=.1,lambda=1e2, distMat=distMat)
 set.panel(1,3)
 surface(look2,smallplot= c(.88,.9,0.2,.8),zlim=c(-.15,.16),col=brewer.pal(9,'Blues'))
 surface(look3,smallplot= c(.88,.9,0.2,.8),zlim=c(-.15,.16),col=brewer.pal(9,'Blues'))
@@ -422,7 +426,7 @@ surface(look4,smallplot= c(.88,.9,0.2,.8),zlim=c(-.15,.16),col=brewer.pal(9,'Blu
 
 ## Using `V`, `mKrig`,`Tps` with `RMprecip`
 
-In this example we return to the Rocky Mountain precipitation data. We make a grid and append our data observations to it, then interpolate using a `Tps` model. We compare this to an `mKrig` model using a Wendland covariance. We also use the `V` argument in `mKrig`, which is a matrix that describes the inverse linear transformation of the coordinates before distances are found. In R code this transformation is `x1 %*% t(solve(V))`. The default is `NULL`, i.e. $V=\theta  \cdot \mathbf{I}_{n \times n}$. If one has a vector of `theta` values that are the scalings for each coordinate then just express this as `V = diag(theta)` in the call to this function.
+In this example we return to the Rocky Mountain precipitation data. We make a grid and append our data observations to it, then interpolate using a `Tps` model. We compare this to an `mKrig` model using a Wendland covariance. We also use the `V` argument in `mKrig`, which is a matrix that describes the inverse linear transformation of the coordinates before distances are found. In R code this transformation is `x1 %*% t(solve(V))`. The default is `NULL`, i.e. $V=a   \cdot \mathbf{I}_{n \times n}$. If one has a vector of `aRange` values that are the scalings for each coordinate then just express this as `V = diag(aRange)` in the call to this function.
 
 Again, `smallplot` is used strictly for formatting this document.
 

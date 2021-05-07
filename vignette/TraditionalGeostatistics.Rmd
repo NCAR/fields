@@ -37,15 +37,15 @@ Suppose we want to predict the temperature $Y(\cdot)$ at a new location $\mathbf
 \]
 
 
-Now, the question is how to determine the covariance function of $Y(\cdot)$. For this example, we'll consider the (isotropic) exponential covariance: $\operatorname{Cov}[ Y(\mathbf x), Y(\mathbf x')] = \rho e^{ - \| \mathbf x - \mathbf x'\|/\theta}$. Here, $\theta$ is a range parameter that corresponds to the length of spatial autocorrelation of our process, and $\rho$ is the overall variance of the process.
+Now, the question is how to determine the covariance function of $Y(\cdot)$. For this example, we'll consider the (isotropic) exponential covariance: $\operatorname{Cov}[ Y(\mathbf x), Y(\mathbf x')] = \rho e^{ - \| \mathbf x - \mathbf x'\|/a }$. Here, $a $ is a range parameter that corresponds to the length of spatial autocorrelation of our process, and $\rho$ is the overall variance of the process.
 
 The covariance matrix $\Sigma$ thus has $i,j$-th entry
 \[
-\Sigma_{i,j} = e^{ - \| \mathbf x_i - \mathbf x_j\|/\theta} + \sigma^2  \mathbf{1}_{ \{ \mathbf x_i = \mathbf x_j \} }, 
+\Sigma_{i,j} = e^{ - \| \mathbf x_i - \mathbf x_j\|/a } + \sigma^2  \mathbf{1}_{ \{ \mathbf x_i = \mathbf x_j \} }, 
 \]
 where $\mathbf{1}_{ \{ \mathbf x_i = \mathbf x_j \} }= \begin{cases} 1 & \mathbf x_i = \mathbf x_j \\ 0 & \text{else} \end{cases}$
 
-Earlier, we defined the variogram, which measures how our data $Y(\mathbf x)$ is related over distance. To find paramters $(\theta,\rho,\sigma^2)$ for the covariance function, a common geostatistical approach is to fit a curve to the (binned) semivariogram. Since we are working with longitudinal and latitudinal data, we use the option `lon.lat=TRUE`. 
+Earlier, we defined the variogram, which measures how our data $Y(\mathbf x)$ is related over distance. To find paramters $(a ,\rho,\sigma^2)$ for the covariance function, a common geostatistical approach is to fit a curve to the (binned) semivariogram. Since we are working with longitudinal and latitudinal data, we use the option `lon.lat=TRUE`. 
 
 ```{r, message=FALSE, results='hide'}
 my.vgram <- vgram(loc=grd.CO,y=y.CO,N=30,lon.lat=TRUE) #use 30 bins
@@ -61,14 +61,14 @@ plot(my.vgram$stats["mean",1:15]~my.vgram$centers[1:15],main='Binned Semivariogr
 Next, we fit parameters to the above semivariogram using least squares and `L-BFGS` optimization, an alternative to fitting by eye. The exponential variogram formula is as follows:
 \[
 \gamma(r) = \begin{cases}
-\rho \left(1- e^{-r/\theta} \right) + \sigma^2 & r >0 \\
+\rho \left(1- e^{-r/a } \right) + \sigma^2 & r >0 \\
 0 & r=0
 \end{cases}
 \]
 The Matern semivariogram (with smoothing parameter $\nu$) is:
 \[
 \gamma(r) = \begin{cases}
-\rho \left(1-  \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{ r}{\theta } \right)^\nu K_\nu \left( \frac{r}{\theta} \right) \right) + \sigma^2 & r >0 \\
+\rho \left(1-  \frac{2^{1-\nu}}{\Gamma(\nu)} \left( \frac{ r}{a  } \right)^\nu K_\nu \left( \frac{r}{a } \right) \right) + \sigma^2 & r >0 \\
 0 & r=0
 \end{cases}
 \]
@@ -79,7 +79,7 @@ In each case, we minimize least squares to find estimates of the covariance para
 ```{r,results='hide'}
 
 #Exponential plot
-ls.exponential <- function(par){ # par = (rho,theta,sigma^2)
+ls.exponential <- function(par){ # par = (rho,aRange,sigma^2)
 	theoretical.vgram <- par[1] * (1 - exp(-my.vgram$centers[1:15] / par[2])) + par[3]
     sum( (theoretical.vgram - my.vgram$stats["mean",1:15])^2 ) }
 
@@ -87,14 +87,14 @@ ls.exponential <- function(par){ # par = (rho,theta,sigma^2)
 out.exponential <- optim(par=c(2,50,1),fn=ls.exponential,method="L-BFGS", lower = c(0,0,0), upper = c(10,100,3))
 
 rho.exponential <- out.exponential$par[1]
-theta.exponential <- out.exponential$par[2]
+aRange.exponential <- out.exponential$par[2]
 sigma2.exponential <- out.exponential$par[3]
 
 plot(my.vgram$stats["mean",1:15]~my.vgram$centers[1:15], main="Exponential vs. Matern")
-lines(c(sigma2.exponential + rho.exponential*(1-exp(-my.vgram$centers/theta.exponential)))~my.vgram$centers,col=1)
+lines(c(sigma2.exponential + rho.exponential*(1-exp(-my.vgram$centers/aRange.exponential)))~my.vgram$centers,col=1)
 
 #Matern plot 
-ls.matern <- function(par){ # par = (rho,theta,nu,sigmasq)
+ls.matern <- function(par){ # par = (rho,aRange,nu,sigmasq)
     theoretical.vgram <- par[1] * (1 - Matern(my.vgram$centers[1:15], range= par[2], nu = par[3])) + par[4]    
     sum((theoretical.vgram - my.vgram$stats["mean",1:15])^2 )  } 
 
@@ -102,11 +102,11 @@ ls.matern <- function(par){ # par = (rho,theta,nu,sigmasq)
 out.matern <- optim(par=c(2,50,2.5,1),fn=ls.matern,method="L-BFGS", lower = c(0,0,1,0), upper = c(25,100,6,3))
 
 rho.matern <- out.matern$par[1]
-theta.matern <- out.matern$par[2]
+aRange.matern <- out.matern$par[2]
 nu.matern <- out.matern$par[3]
 sigma2.matern <- out.matern$par[4]
 
-lines(c(sigma2.matern + rho.matern*(1-Matern(my.vgram$centers[1:15],range = theta.matern, nu = nu.matern )))~my.vgram$centers[1:15],col=2)
+lines(c(sigma2.matern + rho.matern*(1-Matern(my.vgram$centers[1:15],range = aRange.matern, nu = nu.matern )))~my.vgram$centers[1:15],col=2)
 
 legend(x=2, y=19 ,legend=c("Exponential","Matern"),col=c(1,2),pch=15, cex=1)
 ```
@@ -126,8 +126,8 @@ x0 <- as.matrix(cbind(-103,39.5))   #rdist only takes matrices
 dist0.mat <- rdist.earth(grd.CO,x0)
 dist.mat <- rdist.earth(grd.CO,grd.CO)
 
-Sigma0 <- rho.matern * Matern(dist0.mat, range=theta.matern, nu=nu.matern)
-Sigma <- rho.matern * Matern(dist.mat, range=theta.matern, nu=nu.matern) 
+Sigma0 <- rho.matern * Matern(dist0.mat, range=aRange.matern, nu=nu.matern)
+Sigma <- rho.matern * Matern(dist.mat, range=aRange.matern, nu=nu.matern) 
 diag(Sigma) <- diag(Sigma) + sigma2.matern 
 Sigma.inverse <- solve(Sigma)
 
@@ -173,7 +173,7 @@ The kriging estimate at each location follows after modifying $\Sigma_0$.
 
 ```{r,fig.width=11, results='hide'}
 dist0.mat <- rdist.earth(grd.CO,pred.grd)
-Sigma0 <- rho.matern * Matern(dist0.mat, range=theta.matern, nu=nu.matern)
+Sigma0 <- rho.matern * Matern(dist0.mat, range=aRange.matern, nu=nu.matern)
 grid.predictions <-  t(Sigma0) %*% Sigma.inverse %*% y.CO  
 
 set.panel(1,2)
@@ -195,7 +195,7 @@ The elevation plot is a near inverse of our prediction grid -- this agrees with 
 
 ```{r,echo=FALSE,fig.width=8,fig.height=6,message=FALSE,warning=FALSE}
 library(sp)
-fit <- Krig(grd.CO,y.CO,Covariance="Matern",Z=z.CO,theta=theta.matern)
+fit <- Krig(grd.CO,y.CO,Covariance="Matern",Z=z.CO,aRange=aRange.matern)
 pred <- predictSurface(fit, grid.list=CO.Grid,ZGrid=CO.elevGrid,extrap=TRUE)
 surface(pred,main="spatialProcess Prediction",col=tim.colors())
 ```

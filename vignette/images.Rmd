@@ -136,7 +136,7 @@ str(xg)
 A typical operation is to go from a `grid.list` to the set of grid locations, evaluate a function at these locations, and then reformat this as an image/surface for plotting. Here is how to do this cleanly:
 
 ```{r}
-fit <- spatialProcess(RMprecip$x, RMprecip$y, theta=20)
+fit <- spatialProcess(RMprecip$x, RMprecip$y, aRange=20)
 grid.list <- list( x= -111:-99, y=35:45)
 xg<- make.surface.grid(grid.list)
 look <- predict(fit, xg)
@@ -178,7 +178,7 @@ drape.plot(look.surface)
 In summary, we fit a `spatialProcess` object from our data, created a "grid.list", constructed a full set of gridded locations using the "grid.list," found Kriging estimates at the gridded locations, converted back to a "grid.list", and then plotted with `surface`. Compare this with the convenient `surface.mKrig`.
 
 ```{r}
-fit <- spatialProcess(RMprecip$x, RMprecip$y, theta=20)
+fit <- spatialProcess(RMprecip$x, RMprecip$y, aRange=20)
 surface(fit)
 ```
 
@@ -209,8 +209,8 @@ quilt.plot(ChicagoO3$x, ChicagoO3$y,col=terrain.colors(50))
 ```
 
 ```{r, results='hide', fig.width=11}
-fit<- Krig(ChicagoO3$x,ChicagoO3$y, theta=30) 
+fit<- Krig(ChicagoO3$x,ChicagoO3$y, aRange=30) 
 set.panel(1,2)
 surface(fit, type="C", nx=128, ny=128,col=terrain.colors(50))
-surface(fit, type="p", nx=56, ny=56, extrap = TRUE, border=NA, theta=-8, phi=20,col=terrain.colors(50))
+surface(fit, type="p", nx=56, ny=56, extrap = TRUE, border=NA, aRange=-8, phi=20,col=terrain.colors(50))
 ```

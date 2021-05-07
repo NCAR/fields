@@ -1,0 +1,12 @@
+CO2: CO2 CO2.true
+COmonthlyMet: CO.Grid CO.elev CO.elevGrid CO.id CO.loc CO.names CO.ppt CO.ppt.MAM CO.ppt.MAM.climate CO.tmax CO.tmax.MAM CO.tmax.MAM.climate CO.tmean.MAM.climate CO.tmin CO.tmin.MAM CO.tmin.MAM.climate CO.years
+NorthAmericanRainfall
+PRISMelevation
+RCMexample
+RMelevation
+US.dat
+WorldBankCO2
+lennon
+ozone2
+rat.diet
+world.dat

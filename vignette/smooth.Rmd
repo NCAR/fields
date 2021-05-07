@@ -9,7 +9,7 @@ library(fields)
 
 ## Smoothing with `image.smooth` and `smooth.2d`
 
-`image.smooth` and `smooth.2d` are two functions in `fields` that will smooth 2-d data using a kernel. `image.smooth` requires the data in the form of an image matrix, and it can handle missing values for cells. `smooth.2d` takes irregular data as input  but then discretizes it to a regular grid (possibly with missing cells) and applies the same smoothing operations as `image.smooth`. In both cases the default kernel function is an exponential, although different kernel forms can be specified. For the exponential, the bandwidth parameter is passed as the argument `theta`.
+`image.smooth` and `smooth.2d` are two functions in `fields` that will smooth 2-d data using a kernel. `image.smooth` requires the data in the form of an image matrix, and it can handle missing values for cells. `smooth.2d` takes irregular data as input  but then discretizes it to a regular grid (possibly with missing cells) and applies the same smoothing operations as `image.smooth`. In both cases the default kernel function is an exponential, although different kernel forms can be specified. For the exponential, the bandwidth parameter is passed as the argument `aRange`.
 
 Using `smooth.2d` is essentially the same as applying `as.image` to coerce an irregular grid of data to become equispaced and then `image.smooth`. Both of these functions use the base R `fft` function for efficiency.
 
@@ -20,8 +20,8 @@ Using `smooth.2d` is essentially the same as applying `as.image` to coerce an ir
 ${\large{\mathbf{Basic \> Usage}}}$
 
 > smooth.2d(Y, cov.function = gauss.cov)  
-> image.smooth(x, kernel.function = double.exp, theta = 1)  
-> setup.image.smooth(nrow = 64, ncol = 64, dx = 1, dy = 1, kernel.function = double.exp, theta = 1)  
+> image.smooth(x, kernel.function = double.exp, aRange = 1)  
+> setup.image.smooth(nrow = 64, ncol = 64, dx = 1, dy = 1, kernel.function = double.exp, aRange = 1)  
 
 ${\large{\mathbf{Value}}}$
 
@@ -35,7 +35,7 @@ Here is an example smoothing the `RMprecip` data and plotting the smoothed image
  
 ```{r, results='hide', fig.width=11}
 set.panel(1,2)
-out<- smooth.2d( RMprecip$y, x=RMprecip$x, theta=1.0)
+out<- smooth.2d( RMprecip$y, x=RMprecip$x, aRange=1.0)
 quilt.plot( RMprecip$y, x=RMprecip$x,zlim=c(0,250),main="Image")
 image( out, zlim=c(0,250),col=tim.colors(),main="Smoothed Image (same z-scale)")
 ```
@@ -49,14 +49,14 @@ If we think of an image as a matrix of pixel values, these smoothers work by mul
 \end{pmatrix}
 \]
 
-We can control the behavior of the smoother by specifying `cov.function`/`kernel.function`. The kernel/covariance function is discretized into the form of a smoothing matrix, then the matrices are convolved. Below are examples where we define new kernels based on the gaussian and gamma distributions. Parameters such as `sigma` in the gaussian kernel control the smoothing weights. Especially in this case, since the Fourier transform of a gaussian is gaussian, we can be certain of which high frequencies we attenuate in the signal. To see an example of how to define a new covariance function, see the  `Covariance` section of this vignette. A kernel function that is only being passed to `image.smooth` does not need to satisfy the covariance requirements in the package (see the `C` parameter for covariances). `setup.image.smooth` creates a weighting object outside of a call to `image.smooth`. This is useful when one wants to smooth different data sets but on the same grid with the same kernel function. The argument `theta` is the bandwidth parameter in `setup.image.smooth`.
+We can control the behavior of the smoother by specifying `cov.function`/`kernel.function`. The kernel/covariance function is discretized into the form of a smoothing matrix, then the matrices are convolved. Below are examples where we define new kernels based on the gaussian and gamma distributions. Parameters such as `sigma` in the gaussian kernel control the smoothing weights. Especially in this case, since the Fourier transform of a gaussian is gaussian, we can be certain of which high frequencies we attenuate in the signal. To see an example of how to define a new covariance function, see the  `Covariance` section of this vignette. A kernel function that is only being passed to `image.smooth` does not need to satisfy the covariance requirements in the package (see the `C` parameter for covariances). `setup.image.smooth` creates a weighting object outside of a call to `image.smooth`. This is useful when one wants to smooth different data sets but on the same grid with the same kernel function. The argument `aRange` is the bandwidth parameter in `setup.image.smooth`.
 
 ```{r}
 gaussianKern <- function(x, sigma=2){
   1/sqrt(2*pi*sigma^2) * exp(-0.5*(x)^2 / sigma^2)
 }
 wght <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
-                   kernel.function = gaussianKern, theta = 0.5)
+                   kernel.function = gaussianKern, aRange = 0.5)
 ```
 
 We use this setup to smooth the `RMprecip` for the final time, showing how we can use either `smooth.2d` or `image.smooth`. We use kernels as well as different levels of resolution in this example.
@@ -65,17 +65,17 @@ We use this setup to smooth the `RMprecip` for the final time, showing how we ca
 # Use our kernel: first coerce data as.image, then image.smooth with our wght setup
 look<- image.smooth( as.image( RMprecip$y, x = RMprecip$x), wght)
 # Normal kernel smooth of the precip data with bandwidth of .5 (degree), now using smooth.2d
-look2 <- smooth.2d( RMprecip$y, x=RMprecip$x, theta=.5)
+look2 <- smooth.2d( RMprecip$y, x=RMprecip$x, aRange=.5)
 # finer resolution used in computing the smooth
-look3<-smooth.2d( RMprecip$y, x=RMprecip$x, theta=.25, nrow=256,
+look3<-smooth.2d( RMprecip$y, x=RMprecip$x, aRange=.25, nrow=256,
                   ncol=256,Nwidth=32,Mwidth=32)
 look4 <- image.smooth( as.image(RMprecip$y, x=RMprecip$x), 
-                    kernel.function=double.exp,theta=0.5)
+                    kernel.function=double.exp,aRange=0.5)
 set.panel(2,2)
-image.plot( look, zlim=c(0,250)); title("gaussianKern, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
-image( look4, zlim=c(0,250),col=tim.colors()); title("double.exp, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
-image.plot( look2, zlim =c(0,250)); title("smooth.2d, theta=0.5"); US( add=TRUE, col="grey", lwd=2)
-image( look3, zlim =c(0,250),col=tim.colors()); title("smooth.2d, finer res, theta=.25"); US( add=TRUE, col="grey", lwd=2)
+image.plot( look, zlim=c(0,250)); title("gaussianKern, aRange=0.5"); US( add=TRUE, col="grey", lwd=2)
+image( look4, zlim=c(0,250),col=tim.colors()); title("double.exp, aRange=0.5"); US( add=TRUE, col="grey", lwd=2)
+image.plot( look2, zlim =c(0,250)); title("smooth.2d, aRange=0.5"); US( add=TRUE, col="grey", lwd=2)
+image( look3, zlim =c(0,250),col=tim.colors()); title("smooth.2d, finer res, aRange=.25"); US( add=TRUE, col="grey", lwd=2)
 
 ```             
 
@@ -98,9 +98,9 @@ gammaKern <- function(x, shape=1.1){
   dgamma(x, shape=shape)
 }
 set <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
-                   kernel.function = double.exp,theta = 1)
+                   kernel.function = double.exp,aRange = 1)
 set2 <-  setup.image.smooth(nrow = 256, ncol = 256, dx = 1, dy = 1,
-                  kernel.function = gammaKern,theta = 1)
+                  kernel.function = gammaKern,aRange = 1)
 ```
 
 Now we apply `image.smooth` to the data.
@@ -220,7 +220,7 @@ dz<- (
 zlim<- range( c( dz), na.rm=TRUE)
 zcol<-drape.color( dz, zlim =zlim)$color.index
 # wireframe with these colors
-persp( volcano, col=zcol, theta=30, phi=20)
+persp( volcano, col=zcol, aRange=30, phi=20)
 # add legend using image.plot function
 image.plot( zlim=zlim, legend.only =TRUE, horizontal =TRUE, col=tim.colors(64))
 ```

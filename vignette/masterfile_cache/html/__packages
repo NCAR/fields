@@ -9,3 +9,6 @@ gstat
 RColorBrewer
 colorspace
 colorRamps
+dotCall64
+viridisLite
+viridis

@@ -1,14 +1,14 @@
 ---
 title: '`fields` vignette'
-author: "Ashton Wiens and Mitchell Krock"
+author: "Ashton Wiens, Mitchell Krock, Emma Lilly and Doug Nychka"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output:
-  html_document:
+  pdf_document:
     number_sections: yes
     toc: yes
 ---
 
-```{r set-options, echo=FALSE, eval=FALSE}
+```{r set-options, echo=FALSE, eval=TRUE}
 options(width = 400)
 knitr::opts_chunk$set(fig.show = 'hide')   #only if you want no figures
 ```

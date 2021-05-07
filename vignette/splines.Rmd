@@ -155,7 +155,7 @@ process estimate (Kriging). A "fast" version of this function uses a compactly s
 ${\large{\mathbf{Basic \> Usage}}}$
 
 > Tps(x, Y, m=NULL, p=NULL,)  
-> fastTps(x, Y, m = NULL, p = NULL, theta, lambda=0)  
+> fastTps(x, Y, m = NULL, p = NULL, aRange, lambda=0)  
 
 ${\large{\mathbf{Value}}}$
 
@@ -277,7 +277,7 @@ Using the `WorldBankCO2` data, we show a small example using `fastTps`. We plot 
 ```{r}
 x <- WorldBankCO2[,'Pop.urb']
 y <- log10(WorldBankCO2[,'CO2.cap'])
-out.fast <- fastTps(x,y,lambda=2, theta=20)
+out.fast <- fastTps(x,y,lambda=2, aRange=20)
 plot(x,y)
 xgrid<- seq(  min(x), max(x),,300)
 fhat.fast <- predict( out.fast,xgrid)
@@ -348,7 +348,7 @@ predict(obj, x)-> y2
 # the two predicted lines (should) coincide
 
 obj2 <- Tps(rat.diet$t, rat.diet$trt)
-obj3 <- fastTps(rat.diet$t, rat.diet$trt, theta=10)
+obj3 <- fastTps(rat.diet$t, rat.diet$trt, aRange=10)
 obj5 <- QTps(rat.diet$t, rat.diet$trt)
 predict(obj2, x) -> pred2
 predict(obj3, x) -> pred3

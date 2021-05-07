@@ -24,7 +24,7 @@ However, we want to make it clear that the spatial polynomial $P(\cdot)$ is (by 
 
 ***
 
-`spatialProcess` represents one-stop shopping for fitting a spatial model in `fields`. It was designed so that users are able to quickly fit models and visualize them. We also add one caution: it hides several default model choices from the user. After a covariance model is chosen, a grid search is performed to find the optimal values of the parameters `theta`, `rho`, and `sigma2`, and then the spatial model is computed with these estimated parameters. Any other covariance parameters (e.g. the smoothness) need to be specified. The default call uses the covariance function `stationary.cov`, specifically with the `Matern` and smoothness `nu=1`. The optimization is done by `MLESpatialProcess`.
+`spatialProcess` represents one-stop shopping for fitting a spatial model in `fields`. It was designed so that users are able to quickly fit models and visualize them. We also add one caution: it hides several default model choices from the user. After a covariance model is chosen, a grid search is performed to find the optimal values of the parameters `aRange`, `rho`, and `sigma2`, and then the spatial model is computed with these estimated parameters. Any other covariance parameters (e.g. the smoothness) need to be specified. The default call uses the covariance function `stationary.cov`, specifically with the `Matern` and smoothness `nu=1`. The optimization is done by `MLESpatialProcess`.
 
 A good way to think about the spatial model functions in `fields` is in the context of engines and wrappers. The two engines in `fields` which perform the Kriging computations are `Krig` and `mKrig`. `Krig` is a more numerically stable algorithm: if a covariance matrix is close to singular, `mKrig` will fails whereas `Krig` may still be able to perform the calculations. On the other hand, `mKrig` is set up to handle large data sets with sparse covariance matrices by using the `SPAM` package.
 
@@ -39,12 +39,12 @@ There is always a hazard in providing a simple to use method that makes many def
 ${\large{\mathbf{Basic \> Usage}}}$
 
 > spatialProcess(x, y, Z = NULL, cov.function = "stationary.cov",   
-> $\> \> \> \quad$ cov.args = list(Covariance = "Matern", smoothness = 1), theta = NULL)  
-> Krig(x, Y, theta, Covariance="Matern", smoothness, Distance="rdist")   
+> $\> \> \> \quad$ cov.args = list(Covariance = "Matern", smoothness = 1), aRange = NULL)  
+> Krig(x, Y, aRange, Covariance="Matern", smoothness, Distance="rdist")   
 
 ${\large{\mathbf{Value}}}$
 
-`spatialProcess` returns object of classes `mKrig` and `spatialProcess`. The main difference from `mKrig` is an extra component `MLEInfo` that has the results of the grid evaluation over `theta` (maximizing `lambda`), joint maximization over `theta` and `lambda`, and a grid evaluation over `lambda` with `theta` fixed at its MLE. The `Krig` function produces an object of class `Krig`.
+`spatialProcess` returns object of classes `mKrig` and `spatialProcess`. The main difference from `mKrig` is an extra component `MLEInfo` that has the results of the grid evaluation over `aRange` (maximizing `lambda`), joint maximization over `aRange` and `lambda`, and a grid evaluation over `lambda` with `aRange` fixed at its MLE. The `Krig` function produces an object of class `Krig`.
 
 ***
 
@@ -71,7 +71,7 @@ surface(fit)
 title("Kriging Predictions")
 ```
 
-Next we look at the summary of the model parameters. The optimization search is automated in `fields`, but all of the information is easily accessible for the user. Recall the range is $\theta$, the nugget is $\sigma^2$, the sill is $\rho$, and we set $\lambda=\sigma^2/\rho$.
+Next we look at the summary of the model parameters. The optimization search is automated in `fields`, but all of the information is easily accessible for the user. Recall the range is $a $, the nugget is $\sigma^2$, the sill is $\rho$, and we set $\lambda=\sigma^2/\rho$.
 
 ```{r}
 print(c(fit$cov.function.name,fit$args))
@@ -84,7 +84,7 @@ The summary shows the value of the profile log likelihood function, the estimate
 
 We can use `plot` to view diagnostic plots of the fit. The first three plots are the same as `sreg` and `mKrig` objects. Plot 1 shows data vs. predicted values, and plot 2 shows predicted values vs. residuals. Plot 3 shows the criteria to select the smoothing parameter $\lambda = \sigma^2 / \rho$. The x axis has transformed $\lambda$ in terms of effective degrees of freedom to make it easier to interpret. Note that here the GCV function is minimized while the REML is maximized.
 
-One of the main features of `spatialProcess` is the ability to optimize over `theta` as well as the usual `lambda`/`rho`/`sigma` combination. For this reason, plot 4 shows the profile likelihood versus values of `theta` instead of a histogram of the standard residuals displayed in the plots of other class objects
+One of the main features of `spatialProcess` is the ability to optimize over `aRange` as well as the usual `lambda`/`rho`/`sigma` combination. For this reason, plot 4 shows the profile likelihood versus values of `aRange` instead of a histogram of the standard residuals displayed in the plots of other class objects
 
 ```{r,results="hide"}
 set.panel(2,2)
@@ -148,7 +148,7 @@ sim.surf <- as.surface(full.grid, sim[2,])
 set.panel(1,2)
 surface(sim.surf,col=topo.colors(100)); title("Conditional Simulation")
 
-drape.plot(sim.surf, border=NA, theta = 30, phi= 25,col=topo.colors(100)) -> dp
+drape.plot(sim.surf, border=NA, aRange = 30, phi= 25,col=topo.colors(100)) -> dp
 title("3D Perspective with observations in black")
 trans3d( x[,1], x[,2],y,dp)-> uv
 points( uv, col="black", pch="+", cex=0.5)
@@ -164,7 +164,7 @@ lookSE <- as.surface(full.grid, SEout)
 {surface(lookSE,col=topo.colors(100))
 title("Kriging Uncertainty")
 points(x[,1],x[,2],col="magenta",bg="white",pch=21)}
-{drape.plot(lookSE, border=NA, theta=160, phi=55,col=topo.colors(100)) -> dp2
+{drape.plot(lookSE, border=NA, aRange=160, phi=55,col=topo.colors(100)) -> dp2
 title("Drape Plot")
 pushpin(x[,1],x[,2],SEobs,dp2, cex=0.4, col="white")}
 ```
@@ -252,13 +252,13 @@ test.for.zero( stuffFields, stuffGeoR, tol=.005)
 
 ## `COmonthlyMet`
 
-We'll return to the dataset `COmonthlyMet`. When using other `fields` functions for Kriging such as `Krig` and `mKrig`, the user has to pass in a range `theta`, which can be initally guessed for a quick fit by looking at a variogram. 
+We'll return to the dataset `COmonthlyMet`. When using other `fields` functions for Kriging such as `Krig` and `mKrig`, the user has to pass in a range `aRange`, which can be initally guessed for a quick fit by looking at a variogram. 
 
-Note that the estimated `theta` without including the `Z` covariate `CO.elev` will probably change if do we include `Z`.
+Note that the estimated `aRange` without including the `Z` covariate `CO.elev` will probably change if do we include `Z`.
 
-Ultimately, using a variogram to determine spatial parameters for our covariance is not a reliable method. A more rigorous way to determine parameters is via Maximum Likelihood, which is performed within `spatialProcess`. To be precise, the parameters `theta`, `rho`, and `sigma2` are estimated using Maximum Likelihood, and the user only needs to input `x`, `y`, and a type of covariance. (Note: If a Matern covariance is used, then smoothness must be supplied. See below how one might select between different smoothness values.)
+Ultimately, using a variogram to determine spatial parameters for our covariance is not a reliable method. A more rigorous way to determine parameters is via Maximum Likelihood, which is performed within `spatialProcess`. To be precise, the parameters `aRange`, `rho`, and `sigma2` are estimated using Maximum Likelihood, and the user only needs to input `x`, `y`, and a type of covariance. (Note: If a Matern covariance is used, then smoothness must be supplied. See below how one might select between different smoothness values.)
 
-Of course, `spatialProcess` runs slower than the functions would with a user-supplied `theta`. One must take caution when using `spatialProcess` with large datasets. Below, we run through this climate example using `spatialProcess` to construct our model.  
+Of course, `spatialProcess` runs slower than the functions would with a user-supplied `aRange`. One must take caution when using `spatialProcess` with large datasets. Below, we run through this climate example using `spatialProcess` to construct our model.  
  
 ```{r}
 data(COmonthlyMet)
@@ -282,7 +282,7 @@ out5 <- spatialProcess(grd.CO,y.CO,Z=z.CO, Distance="rdist.earth",
 rbind(out0.5$summary,out1$summary,out2.5$summary,out5$summary)
 ```
 
-Observe the largely different values for parameters, but similar values for log-likelihood. Note that there is an interplay between smoothness and range, so directly comparing `theta` is not appropriate. Will the underlying spatial process be much different if we vary the `smoothness`? We'll use the `drop.Z` command to make the differences in the spatial process clear.
+Observe the largely different values for parameters, but similar values for log-likelihood. Note that there is an interplay between smoothness and range, so directly comparing `aRange` is not appropriate. Will the underlying spatial process be much different if we vary the `smoothness`? We'll use the `drop.Z` command to make the differences in the spatial process clear.
 
 <Note that `predictSurface.Krig` and `predictSurface.mKrig` are the same. With a `spatialProcess` object, just using `predictSurface` throws an error, you must use `predictSurface.Krig`. (Take this out soon.)>
 
@@ -337,16 +337,16 @@ Notice that smoothness values 2.5 and 5 look nearly identical. In practice, one 
 n=1000
 set.seed(124)
 x = matrix(runif(2*n), nrow=n)  #generate observations at the locations
-trueTheta = .1   #scale
+trueaRange = .1   #scale
 trueSigma = .01   #nugget
-Sigma = exp( -rdist(x,x) /trueTheta )  
+Sigma = exp( -rdist(x,x) /trueaRange )  
 y = t(chol(Sigma))%*% (rnorm(n))  +  trueSigma * rnorm(n)
 out = MLESpatialProcess(x, y, smoothness=.5,
                         mKrig.args = list( m = 1))
 out$summary
 ```
 
-<We see that `MLEspatialProcess` estimates `theta` decently well but `sigmaMLE` is far from the truth. Try with more data points! Now we switch to a Matern covariance, then compute the joint MLE of range, smoothness, and lambda. > 
+<We see that `MLEspatialProcess` estimates `aRange` decently well but `sigmaMLE` is far from the truth. Try with more data points! Now we switch to a Matern covariance, then compute the joint MLE of range, smoothness, and lambda. > 
 
 ```{r,include=FALSE,eval=FALSE}
 testSmoothness = c(.5, 1, 2)

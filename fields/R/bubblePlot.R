@@ -1,4 +1,4 @@
-bubblePlot= function( x, y, z, 
+bubblePlot <-  function( x, y, z, 
                       col = tim.colors(256),
                       horizontal = FALSE,
                       legend.cex = 1.0,
@@ -7,17 +7,20 @@ bubblePlot= function( x, y, z,
                       legend.shrink = 0.9, 
                       legend.width = 1.2, 
                       legend.mar = ifelse(horizontal, 3.1, 5.1),
-                      axis.args = NULL, legend.args = NULL,
+                      axis.args = NULL, 
+                      legend.args = NULL,
                       size=1.0,
                       add=FALSE,
+                      legendLayout=NULL,
+                      highlight=TRUE,
+                      highlight.color="grey30",
                       ...){
   # NOTE: need to use
   # when just adding points to a plot 
   #  add=TRUE
+  
   # use setupLegend before plotting to 
   # include a legend color scales
-  
- 
   # adjust values of x,y, and z if (x,y) passed in first argument
    x<- as.matrix( x)
   if( dim(x)[2]==2){
@@ -27,31 +30,35 @@ bubblePlot= function( x, y, z,
   }
 # color table for z  values  
   ctab= color.scale( z, col)
-  if(!add){
-    setupLegend( 
-      legend.shrink = legend.shrink, 
-      legend.width = legend.width ,
-      legend.mar = legend.mar, 
-      horizontal = horizontal
+# setup space for a legend if needed  
+  if(!add  & is.null(legendLayout) ){
+    legendLayout<- setupLegend( 
+       legend.shrink = legend.shrink, 
+        legend.width = legend.width ,
+          legend.mar = legend.mar, 
+          horizontal = horizontal
        ) 
-
-      plot( x,y, col=ctab,...) 
-      
   } 
+  
+  if( !add){
+    plot( x,y, col=ctab, cex=size, pch=16, ...) 
+  }
   else{
  # just add points to an existing plot
-  points( x,y, col=ctab, ...)
+  points( x,y, cex=size, col=ctab, pch=16, ...)
   }
+# add a circle around points   
+  if(highlight){
+    points( x, y, cex=size, col=highlight.color)
+  } 
   
 # save current graphics settings  
   big.par <- par(no.readonly = TRUE)
   mfg.save <- par()$mfg
- # print( big.par$plt)
- # print( big.par$usr)
   
-# add legend if setup has been called  
-  if(exists(".legendInfo")){
-    addLegend( 
+# add legend  
+if( !add | !is.null(legendLayout)){  
+    addLegend( legendLayout, 
       col = col,
       zlim = range(z, na.rm=TRUE),
       axis.args = axis.args, 
@@ -60,8 +67,9 @@ bubblePlot= function( x, y, z,
               legend.lab = legend.lab,
               legend.line = legend.line 
               )
-  }
-# return to graphics setting of the  scatterplot  
+}
+  
+# return to graphics setting of the scatterplot  
 # so more good stuff can be added ...
   par(plt = big.par$plt, xpd = FALSE)
   par(mfg = mfg.save, new = FALSE)

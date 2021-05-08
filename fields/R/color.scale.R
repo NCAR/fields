@@ -27,7 +27,6 @@ color.scale <- function(z, col = tim.colors(256),
 #    
 # bind session variable locally to avboid errors when R package checks
 # are run
-    .colorMap<- NULL
     if (is.null(zlim)) {
         zlim <- range(z, na.rm = TRUE)
     }
@@ -44,12 +43,12 @@ color.scale <- function(z, col = tim.colors(256),
      colorMap<- ifelse(is.na(icolor),
                          transparent.color, col[icolor])
 # add zlim and col table as attributes so one can add
-# legend.     
+#  a legend and know what one is doing.     
     attr( colorMap,"zlim")<- zlim
     attr(colorMap,"col")<- col
-    # potential hooks for colorBar functions
+# potential hooks for colorBar functions
     colorMapInfo<- list( col=col, zlim=zlim)
-    assign( ".colorMapInfo", colorMapInfo, pos=1)
+# .fieldsColorMapInfo <<- colorMapInfo
     return( colorMap)
 }
 

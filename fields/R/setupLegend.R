@@ -8,8 +8,6 @@ setupLegend<- function( horizontal = FALSE,
 ){
   # save current graphics settings
    
-  
-  
   temp <- imageplot.setup(add = FALSE, 
                           legend.shrink = legend.shrink, 
                           legend.width = legend.width ,
@@ -17,9 +15,14 @@ setupLegend<- function( horizontal = FALSE,
                           horizontal = horizontal,
                           bigplot = NULL,
                           smallplot = NULL)
-  Info<- list( smallplot = temp$smallplot,
-               oldPar =  par(no.readonly = TRUE) )
+  Info<- list(    smallplot = temp$smallplot, 
+              legend.shrink = legend.shrink, 
+                legend.mar  = legend.mar, 
+               legend.width = legend.width ,
+                 horizontal = horizontal)
+#oldPar =  par(no.readonly = TRUE) )
   par(plt = temp$bigplot)
-  assign( ".legendInfo",Info, pos=1)
+  
+  return( Info)
 }
 

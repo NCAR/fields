@@ -56,16 +56,9 @@ setupLegend( horizontal = FALSE,
                         legend.width = 1.2, 
                         legend.mar = ifelse(horizontal, 3.1, 5.1)
 			)
-			
-	addLegend(
-                col = NULL,
-               zlim = NULL,
-          axis.args = NULL,
-        legend.args = NULL,
-         legend.cex = 1.0, 
-         legend.lab = NULL,
-        legend.line = 2)
-			
+	addLegend(legendLayout, col, zlim, axis.args = NULL, legend.args
+                 = NULL, legend.cex = 1, legend.lab = NULL, legend.line
+                 = 2)		
 }
 
 \arguments{ 
@@ -163,6 +156,9 @@ of the plot.
 Width in characters of the legend strip. Default is 1.2, a little
 bigger 
 that the width of a character. }
+
+\item{legendLayout}{The list returned by \code{setupLegend} used to layout
+    the legend after a plot is drawn. }
 
 \item{lwd}{Line width of bordering lines around pixels.
  This might need to be set less than 1.0 
@@ -367,19 +363,28 @@ function \code{setupLegend} should be used first to create enough space
 to add a color scale later. After plotting then \code{addLegend} will add the
 color scale. Note that if the color scale has been created by the \code{color.scale} function the last call to this function will use the color scale and limits created in \code{color.scale}.
 
-In summary here is an example of using these functions:
+In summary here is an example of using these functions with the colors in mind:
 
 \preformatted{
-  setupLegend()
+  info<- setupLegend()
   colTab<- rainbow(10)
-  plot( 1:10, 1:10, col=colTab, pch=16)
-  addLegend(col=colTab, zlim = c(1,10))
+  plot( 1:10, 201:210, col=colTab, pch=16)
+  addLegend(info, col=colTab, zlim = c(1,10))
 }
 
-More complete graphics specifications, such as ggplot,  do not need such
+Here is one where four colors are mapped to specific values (ala image).
+
+\preformatted{
+  info<-setupLegend()
+  colTab= color.scale(201:210, rainbow(4))
+  plot( 1:10, 201:210, col=colTab, pch=16 )
+  addLegend(info, col=colTab, zlim = c(201,210) )
+}
+
+More complete graphics languages, such as that in  ggplot,  do not need such
 functions because the
 entire graphics segment is parsed to create the complete figure. In this way
-room for color scale can be created automatically. The functions proposed here
+room for a color scale can be created automatically. The functions proposed here
 are a simple work around to create these figures using base R graphics. 
 
 \strong{Other packages}
@@ -572,17 +577,20 @@ col=topo.colors(64))
 #
 
 # adding a legend by  automatically making room. 
-  setupLegend()
+# and coloring points
+  info<- setupLegend()
   colTab<- rainbow(10)
-  plot( 1:10, 1:10, col=colTab, pch=16)
-  addLegend(col=colTab, zlim = c(1,10))
+  plot( 201:210, 201:210, col=colTab, pch=16)
+  addLegend(info, col=colTab, zlim = c(201,210))
 #
 
 #######################################################
 ##### Comparison to ggplot
 #######################################################
 # the following example was created as way avoid doing more important
-# things
+# things 
+# Note how close base graphics can get to reproducing the ggplot style.
+
 \dontrun{
 library( viridis)
 library(ggplot2)

@@ -35,19 +35,15 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            col = tim.colors(nlevel),
            nrow=NULL, ncol=NULL,FUN =
                  NULL, plot=TRUE, na.rm=FALSE, ...)
-bubblePlot( x, y, z, 
-                      col = tim.colors(256),
-                      horizontal = FALSE,
-                      legend.cex = 1.0,
-                      legend.lab = NULL,
-                      legend.line= 2, 
-                      legend.shrink = 0.9, 
-                      legend.width = 1.2, 
-                      legend.mar = ifelse(horizontal, 3.1, 5.1),
-                      axis.args = NULL, legend.args = NULL,
-                      size=1.0,
-                      add=FALSE,
-                      ...)		 
+                 
+bubblePlot(x, y, z, col = tim.colors(256), horizontal = FALSE,
+                 legend.cex = 1, legend.lab = NULL, legend.line = 2,
+                 legend.shrink = 0.9, legend.width = 1.2, legend.mar =
+                 ifelse(horizontal, 3.1, 5.1), axis.args = NULL,
+                 legend.args = NULL, size = 1, add = FALSE,
+                 legendLayout = NULL, highlight = TRUE, highlight.color
+                 = "grey30", ...)
+
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -84,6 +80,13 @@ If false (default) legend will be a vertical strip on the right side. If
 true the legend strip will be along the bottom.  
 }
 
+\item{highlight}{If TRUE will add a circle around the "bubble" in the color
+\code{highlight.color}.
+}
+
+
+\item{highlight.color}{ Color of circle, default is a darker grey.}
+
 \item{legend.cex}{Character expansion to change size of the legend
 label.}
 
@@ -115,6 +118,7 @@ create the legend axis. (See examples in \code{\link{image.plot}}.)}
 legend label, e.g. if you need to the rotate text or other details.  This is in the form of a list and is just passed to the 
 mtext function and you will need to give both the side and line arguments for positioning.  This usually will not be needed. 
 (See examples in \code{\link{image.plot}} .)}
+\item{legendLayout}{The list returned by \code{setupLegend} that has the legend information about positioning.}
 
 }
 \details{
@@ -158,7 +162,7 @@ for more details. Other graphics approaches in R such as ggplot determine
 the plotting regions and layout based on having the entire figure
 specification at hand. Although this a comprehensive solution it also seems
 overkill to just add a lone color bar to annotate a plot. Moreover, and the graphics lower level functions
-to add the color bar legend are already available from the image.plot function.
+to add the color bar legend are already available from the image.plot functio.
 }
 
 \author{D.Nychka}
@@ -171,9 +175,8 @@ data( ozone2)
 quilt.plot( ozone2$lon.lat, ozone2$y[16,])
 US( add=TRUE, col="grey", lwd=2)
 
-bubblePlot( ozone2$lon.lat, ozone2$y[16,]
-)
-US( add=TRUE, col="grey", lwd=2)
+bubblePlot( ozone2$lon.lat, ozone2$y[16,] )
+US( add=TRUE, col="magenta", lwd=2)
 
 
 ### adding a common legend strip "by hand"

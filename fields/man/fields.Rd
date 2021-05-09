@@ -33,9 +33,8 @@ fields - tools for spatial data
  Kriging and Kriging for large data sets.  One main feature is any
  covariance function implemented in R code can be used for spatial prediction. Another important feature is that fields will take advantage of compactly supported covariance functions in a seamless way through 
 the spam package. See \code{library( help=fields)} for a listing of all the
-fields contents and I recommend the excellent fields vignette created by Ashton and Mitch:
-\href{https://github.com/NCAR/fields/blob/master/fieldsVignette.pdf}{Fields Vignette}
-
+fields contents and we recommend the excellent fields vignette created by Ashton Weins, Mitchell Krock, and Emma Lilly:
+\href{https://github.com/NCAR/fields/tree/master/vignette}{Fields Vignette}.
 fields stives to have readable and tutorial code. Take a look at the 
 source code for  \code{mKrig} to see how things work 
 "under the hood" and how a statistical, linear algebra computation is
@@ -51,27 +50,28 @@ refer to  the github directory
 \itemize{ 
 
 \item \code{\link{spatialProcess}} An easy to use method that fits a spatial process model
-( e.g. Kriging) but also estimates the key spatial parameters:  nugget variance, sill variance and range by maximum likelihood. Default covariance model is a Matern covariance function.
+( e.g. Kriging) but also estimates the key spatial parameters:  nugget variance, sill variance and range by maximum likelihood. Default covariance model is a Matern covariance function. This function and related functions called by this are the core methods in fields and have much flexibility. 
+
+\code{\link{spatialProcess}} allows one to supply a covariance function that is
+written in native R code.  See (\code{\link{stationary.cov}}) that includes
+several families of covariances  including the
+Matern and several distance metrics including great circle distance.
  
 \item \code{\link{Tps}} Thin Plate spline
 regression including GCV and REML estimates for the smoothing parameter. 
 
-
-\item \code{\link{Krig}} Spatial process estimation that is the core function of fields.
+\item \code{\link{Krig}} Spatial process estimation that is used to compute a thin plate  estimate. 
  
-The Krig function allows you to supply a covariance function that is
-written in native R code.  See (\code{\link{stationary.cov}}) that includes
-several families of covariances and distance metrics including the
-Matern and great circle distance. 
+  
 
-\item \code{\link{mKrig}} (micro Krig) are
+\item \code{\link{mKrig}} (micro Krig) and
       \code{\link{fastTps}}
  fast efficient Universal Kriging and spline-like functions, that can take advantage of sparse covariance
 functions and thus handle very large numbers of spatial locations. 
  \code{\link{QTps}} A easy to use extension of thin plate splines for quantile and robust surface fitting.
 
-\item \code{\link{mKrigMLEGrid}} for maximum likelihood estimates of covariance parameters. This function also 
-handles replicate fields assumed to be independent realizations at the same locations.  
+\item \code{\link{mKrigMLEGrid}} and \code{\link{mKrigMLEJoint}} for maximum likelihood estimates of covariance parameters. These functions also 
+handle replicate fields, assumed to be independent realizations, at the same locations and can also take any covariate function function written in R following the \code{fields} format 
 
 }
 
@@ -84,8 +84,9 @@ with temporal replications.
 \item \code{\link{cover.design}} Generates space-filling designs where the distance 
 function is expresed in R code.
 
-\item \code{as.image}, \code{image.plot}, \code{drape.plot}, \code{quilt.plot}
-\code{add.image}, \code{crop.image}, \code{half.image}, \code{average.image}, 
+\item \code{\link{as.image}, \code{\link{image.plot}}, \code{
+\link{drape.plot}}, \code{\link{quilt.plot}}
+\code{\link{add.image}}, \code{\link{crop.image}}, \code{\link{half.image}}, \code{\link{average.image}}, 
 \code{\link{designer.colors}}, \code{\link{color.scale}}, \code{\link{in.poly}} Many
 convenient functions for working with image data and rationally (well,
 maybe reasonably) creating and  placing a color scale on an image plot. 
@@ -152,9 +153,7 @@ this package.
 # some air quality data, daily surface ozone measurements for the Midwest:
 data(ozone2)
 x<-ozone2$lon.lat
-y<- ozone2$y[16,] # June 18, 1987
-# (artifically) reduce data size for CRAN ...
-
+y<- ozone2$y[16,] # June 18, 1987 , there are some missing values 
 
 # pixel plot of spatial data
 quilt.plot( x,y)

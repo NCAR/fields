@@ -328,7 +328,7 @@ obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
 
 ######### boot strap 
   set.seed(123)
-  M<- 250
+  M<- 25
 # create M indepedent copies of the observation vector
   ySynthetic<- simSpatialData( obj, M)
   bootSummary<- NULL

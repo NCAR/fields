@@ -193,7 +193,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
   }
   
   if( obj$CASE==1){
-    obj$InitialGridSearch<- NULL
+    InitialGridSearch<- NULL
   }
   
 ####################################################################

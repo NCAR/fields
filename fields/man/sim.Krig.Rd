@@ -243,7 +243,7 @@ aHat<- obj$summary["aRange"]
 lambdaHat<- obj$summary["lambda"]
 ######### boot strap 
 set.seed(123)
-M<- 100
+M<- 25
 # create M indepedent copies of the observation vector
 ySynthetic<- simSpatialData( obj, M)
 

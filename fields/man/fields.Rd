@@ -84,16 +84,20 @@ with temporal replications.
 \item \code{\link{cover.design}} Generates space-filling designs where the distance 
 function is expresed in R code.
 
-\item \code{\link{as.image}, \code{\link{image.plot}}, \code{
-\link{drape.plot}}, \code{\link{quilt.plot}}
-\code{\link{add.image}}, \code{\link{crop.image}}, \code{\link{half.image}}, \code{\link{average.image}}, 
-\code{\link{designer.colors}}, \code{\link{color.scale}}, \code{\link{in.poly}} Many
+\item Many
 convenient functions for working with image data and rationally (well,
-maybe reasonably) creating and  placing a color scale on an image plot. 
-See also  \code{\link{grid.list}} for how fields works with grids and \code{\link{US}}
+maybe reasonably) creating and  placing a color scale on an image plot: 
+\code{\link{as.image}}, \code{\link{image.plot}}, \code{
+\link{drape.plot}}, \code{\link{quilt.plot}}
+\code{\link{add.image}}, \code{\link{crop.image}}, \code{\link{half.image}},
+\code{\link{average.image}}, 
+\code{\link{designer.colors}}, \code{\link{color.scale}},
+\code{\link{in.poly}}  
+See also  \code{\link{grid.list}} for how fields works with grids and
+\code{\link{US}}
 and \code{\link{world}} for adding a map quickly. 
 
-\item \code{\link{sreg}} \code{\link{splint}}   Fast 1-D smoothing 
+\item \code{\link{sreg}} \code{\link{splint}}   Fast 1-D cubic smoothing 
 splines and interpolating cubic splines.
 
 }

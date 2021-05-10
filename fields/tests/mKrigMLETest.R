@@ -16,7 +16,7 @@
   # GNU General Public License for more details.
 
 suppressMessages(library( fields ))
-#options( echo=FALSE)
+options( echo=FALSE)
 
 #
 ##### generate test data
@@ -186,13 +186,6 @@ test.for.zero(MLEfit0$summary[1],
 #              m=2)
 
 
-genCovMat = function(x, aRange, lambda) {
-  distanceMatrix<- rdist(x,x)
-  Sigma<- Matern( distanceMatrix/aRange, smoothness=1.0 )
-  + diag(x=lambda, nrow=nrow(distanceMatrix))
-  return(Sigma)
-}
-
 #generate observation locations
 set.seed( 22)
 n=100
@@ -204,7 +197,7 @@ trueLambda = .1
 distanceMatrix<- rdist(x,x)
 Sigma<- Matern( distanceMatrix/trueARange, smoothness=1.0 )
 U = chol(Sigma)
-M<- 1e5 # lots of replicated fields.
+M<- 2e3 # lots of replicated fields.
 set.seed( 332)
 y = t(U)%*%matrix( rnorm(n*M), n,M) + 
              sqrt(trueLambda)*matrix( rnorm(n*M), n,M)
@@ -215,8 +208,8 @@ out<- mKrig( x,y, lambda=trueLambda, aRange=trueARange,
 )
        
 optim.args = list(method = "BFGS", 
-                  control = list(fnscale = -1, parscale = c(0.5, 0.5), 
-                                 ndeps = c(0.05,0.05)))
+                  control = list(fnscale = -1, 
+                                 ndeps = c(0.09,0.09)))
 
 MLEfitA <- mKrigMLEJoint(x, y, 
                          cov.params.start= list(aRange=.2, lambda=.01), 
@@ -225,16 +218,16 @@ MLEfitA <- mKrigMLEJoint(x, y,
                          cov.args = list(Covariance = "Matern",
                                          smoothness=1.0),
                          na.rm=TRUE,
-                         reltol = 1e-7,
+                         reltol = 1e-6,
                          mKrig.args = list( m=0),
                          verbose=FALSE)
 
 cat("Testing mKrigMLEJoint against true values",
     fill=TRUE)
 
-test.for.zero( MLEfitA$summary["lambda"],.1, tol=.002)
-test.for.zero( MLEfitA$summary["aRange"],.1, tol=.0005)
-test.for.zero( MLEfitA$summary["sigma2"], 1.0, tol=.0005)
+test.for.zero( MLEfitA$summary["lambda"],.1, tol=.006)
+test.for.zero( MLEfitA$summary["aRange"],.1, tol=.02)
+test.for.zero( MLEfitA$summary["sigma2"], 1.0, tol=.02)
 
 ### now test REML fitting
 MLEfitB <- mKrigMLEJoint(x, y, 
@@ -250,9 +243,9 @@ MLEfitB <- mKrigMLEJoint(x, y,
 
 cat("Testing mKrigMLEJoint  with REML against true values",
     fill=TRUE)
-test.for.zero( MLEfitB$summary["lambda"],.1, tol=.002)
-test.for.zero( MLEfitB$summary["aRange"],.1, tol=.002)
-test.for.zero( MLEfitB$summary["sigma2"], 1.0, tol=.001)
+test.for.zero( MLEfitB$summary["lambda"],.1, tol=.007)
+test.for.zero( MLEfitB$summary["aRange"],.1, tol=.01)
+test.for.zero( MLEfitB$summary["sigma2"], 1.0, tol=.01)
 
 
 cat("Testing mKrigMLEJoint  with REML FALSE  against true values",
@@ -272,7 +265,7 @@ MLEfitC <- mKrigMLEJoint(x, y,
           
 test.for.zero( MLEfitC$summary["lambda"],  .1, tol=.02)
 test.for.zero( MLEfitC$summary[ "aRange"],  .1, tol=.02)
-test.for.zero( MLEfitC$summary["sigma2"], 1.0, tol=.002)
+test.for.zero( MLEfitC$summary["sigma2"], 1.0, tol=.01)
 
 
 cat("all done with mKrigMLEGrid tests", fill=TRUE)

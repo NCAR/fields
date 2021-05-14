@@ -30,7 +30,7 @@ Evaluates the covariance over the upper triangle of a distance matrix
   the covariance matrix to perform the Cholesky decomposition.
 }
 \usage{
-ExponentialUpper(distMat, range = 1, alpha = 1/range)
+ExponentialUpper(distMat, range = 1, alpha = 1/range, theta = NULL)
 }
 \arguments{
   \item{distMat}{
@@ -41,9 +41,13 @@ Range parameter default is one. Note that the scale can also
   be specified through the "aRange" scaling argument used in
   fields covariance functions)
 }
-  \item{alpha}{
-1/range
-}
+
+\item{alpha}{
+1/range}
+  
+\item{theta}{
+Also the range parameter.}
+
 }
 \value{
 The covariance matrix, where only the upper triangle is calculated.
@@ -57,7 +61,7 @@ John Paige
 \examples{
 set.seed(123)
 
-#make distance matrix using the random locations
+#a  distance matrix 
 coords = matrix(runif(10), ncol=2)
 distMat = rdist(coords)
 

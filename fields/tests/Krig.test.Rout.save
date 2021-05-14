@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -44,7 +44,6 @@ Testing:  Compare d coef
 PASSED test at tolerance  1e-08
 Testing:  Compare c coef
 PASSED test at tolerance  1e-08
-HERE
 Testing:  Compare d coef fixed lambda
 PASSED test at tolerance  1e-08
 Testing:  Compare c coef fixed lambda
@@ -75,14 +74,12 @@ Testing:  Tps with fixed lam
 PASSED test at tolerance  1e-08
 Testing:  Tps with fixed df
 PASSED test at tolerance  1e-08
-HERE
 Testing:  Krig with fixed lam argument
 PASSED test at tolerance  1e-08
 Warning: 
 Grid searches over lambda (nugget and sill variances) with  minima at the endpoints: 
   (REML) Restricted maximum likelihood 
    minimum at  right endpoint  lambda  =  0.003053154 (eff. df= 14.25 )
-HERE
 Testing:   d coef
 PASSED test at tolerance  1e-08
 Testing:  c coef
@@ -91,7 +88,6 @@ Testing:  d fixed case
 PASSED test at tolerance  1e-08
 Testing:   c fixed case
 PASSED test at tolerance  1e-08
-HERE
 Testing:   d new y
 PASSED test at tolerance  1e-08
 Testing:  c new y
@@ -106,4 +102,4 @@ Testing:  GCV
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  0.970   0.080   1.046 
+  0.969   0.089   1.049 

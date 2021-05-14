@@ -154,7 +154,7 @@ double.exp(x)
 dyadic.2check( m,n,cut.p=2)
 dyadic.check( n,cut.p=2) 
 
-Exp.earth.cov (x1, x2, aRange = 1) 
+Exp.earth.cov (x1, x2, aRange = 1, theta=NULL) 
  
 fast.1way  (lev, y, w = rep(1, length(y))) 
  

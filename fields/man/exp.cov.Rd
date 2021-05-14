@@ -52,31 +52,31 @@ function (\code{exp(...)})in R.
 }
 \usage{
 Exp.cov(x1, x2=NULL, aRange = 1, p=1, distMat = NA, 
-  C = NA, marginal = FALSE, onlyUpper=FALSE)
+  C = NA, marginal = FALSE, onlyUpper=FALSE, theta=NULL)
 
-Exp.simple.cov(x1, x2, aRange =1, C=NA,marginal=FALSE)
+Exp.simple.cov(x1, x2, aRange =1, C=NA,marginal=FALSE, theta=NULL)
 
 Rad.cov(x1, x2, p = 1, m=NA, with.log = TRUE, with.constant = TRUE, 
                C=NA,marginal=FALSE, derivative=0)
 
-cubic.cov(x1, x2, aRange = 1, C=NA, marginal=FALSE) 
+cubic.cov(x1, x2, aRange = 1, C=NA, marginal=FALSE, theta=NULL) 
 
 Rad.simple.cov(x1, x2, p=1, with.log = TRUE, with.constant = TRUE, 
                C = NA, marginal=FALSE)
 
 stationary.cov(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", 
   Dist.args = NULL, aRange = 1, V = NULL, C = NA, marginal = FALSE, 
-  derivative = 0, distMat = NA, onlyUpper = FALSE, ...)
+  derivative = 0, distMat = NA, onlyUpper = FALSE, theta=NULL, ...)
 
 stationary.taper.cov(x1, x2, Covariance="Exponential", 
            Taper="Wendland", 
            Dist.args=NULL, Taper.args=NULL, 
            aRange=1.0,V=NULL, C=NA, marginal=FALSE,
-           spam.format=TRUE,verbose=FALSE,...)
+           spam.format=TRUE,verbose=FALSE, theta=NULL,...)
 
 wendland.cov(x1, x2, aRange = 1, V=NULL, k = 2, C = NA, 
              marginal =FALSE,Dist.args = list(method = "euclidean"), 
-             spam.format = TRUE, derivative = 0, verbose=FALSE)
+             spam.format = TRUE, derivative = 0, verbose=FALSE, theta=NULL)
 }
 \arguments{
 \item{x1}{ Matrix of first set of locations where each row gives the
@@ -89,6 +89,8 @@ coordinatesof a particular point. If this is missing x1 is used. }
 the V argument for other scaling options). Any distance calculated for
 a covariance function is divided by aRange before the covariance function
 is evaluated.}
+
+\item{theta}{ Old version of the aRange parameter. If passed will be copied to aRange.}
  
 \item{V}{ A matrix that describes the inverse linear transformation of
 the coordinates before distances are found.  In R code this

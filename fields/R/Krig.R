@@ -202,7 +202,6 @@
   # are surprisingly similar and so are in one engine.
   ###########################################################
   if (out$fixed.model) {
-    cat("HERE", fill=TRUE)
     out$matrices <- Krig.engine.fixed(out, verbose = verbose)
     #  The trace of A matrix in fixed lambda case is not easily computed
     #  so set this to NA.
@@ -331,6 +330,9 @@
   # Note: values in best.model are used in subsquent functions as the choice
   # for these parameters!
   # set class
+  
+##########################
+  out$rhohat<- out$sigmahat
   class(out) <- c("Krig")
   return(out)
 }

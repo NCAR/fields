@@ -44,7 +44,7 @@ Exp.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)
 Rad.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid, ...)
 
 matern.image.cov(ind1, ind2, Y, cov.obj = NULL, setup = FALSE, grid,
-M=NULL,N=NULL,aRange= 1.0, smoothness=.5)
+M=NULL,N=NULL,aRange= 1.0, smoothness=.5, theta=NULL)
 
 wendland.image.cov(ind1, ind2, Y, cov.obj = NULL, 
     setup = FALSE, grid, M = NULL, N = NULL, cov.args=NULL, ...)
@@ -92,6 +92,7 @@ result but  smaller values of M will yield an approximate, faster result.
 
 \item{N}{Size of y-grid used to compute multiplication by the FFT.}
 \item{aRange}{Scale parameter for Matern.}
+\item{theta}{Same as aRange.}
 \item{smoothness}{Smoothness parameter for Matern (.5=Exponential)}
 \item{\dots}{
 Any arguments to pass to the covariance function in setting up the

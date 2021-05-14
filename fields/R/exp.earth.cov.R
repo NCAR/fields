@@ -18,6 +18,10 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-"Exp.earth.cov" <- function(x1, x2, aRange = 1) {
+"Exp.earth.cov" <- function(x1, x2, aRange = 1, theta=NULL) {
+  # theta argument has been deopreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
     exp(-rdist.earth(x1, x2)/aRange)
 }

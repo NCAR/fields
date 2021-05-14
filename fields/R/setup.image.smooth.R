@@ -20,7 +20,12 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "setup.image.smooth" <- function(nrow = 64, ncol = 64, 
     dx = 1, dy = 1, kernel.function = double.exp, aRange = 1, 
-    xwidth = nrow * dx, ywidth = ncol * dx, lambda = NULL, ...) {
+    xwidth = nrow * dx, ywidth = ncol * dx, lambda = NULL, theta=NULL,  ...) {
+# theta is depreciated    
+    if( !is.null(theta)){
+        aRange<- theta
+    }
+#    
     M2 <- round((nrow + xwidth/dx)/2)
     N2 <- round((ncol + ywidth/dy)/2)
     M <- 2 * M2

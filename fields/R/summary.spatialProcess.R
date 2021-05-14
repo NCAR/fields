@@ -51,11 +51,12 @@ summary.spatialProcess <- function(object, ...) {
     c2 <- c(c2, object$nZ)
   }
   
+   
+  c1 <- c(c1, "sigma Process stan. dev: ")
+  c2 <- c(c2, signif( sqrt(object$MLESummary["sigma2"]), digits))
+  
   c1 <- c(c1, "tau  Nugget stan. dev:")
   c2 <- c(c2, signif(object$MLESummary["tau"], digits))
-    
-  c1 <- c(c1, "sigma Process variance: ")
-  c2 <- c(c2, signif( sqrt(object$MLESummary["sigma2"]), digits))
   
   c1 <- c(c1, "lambda   tau^2/sigma^2: ")
   c2 <- c(c2, signif(object$MLESummary["lambda"], digits))

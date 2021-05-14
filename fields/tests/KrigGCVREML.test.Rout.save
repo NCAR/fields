@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -61,4 +61,4 @@ done with GCV and REML tests
 > 
 > proc.time()
    user  system elapsed 
-  0.925   0.097   1.010 
+  0.912   0.096   1.000 

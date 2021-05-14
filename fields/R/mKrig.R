@@ -299,6 +299,18 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   summaryPars["GCV"] <- object$GCV
   object$summary<- summaryPars
   
+  ########################
+  ### add in some depreciated components so that LatticeKrig 8.4
+  ### passes its tests.
+  ########################
+  object$rho.MLE<- sigma2.MLE
+  object$rho.MLE.FULL<- sigma2.MLE.FULL
+  object$lnProfileLike<- lnProfileLike
+  object$lnProfileLike.FULL<- lnProfileLike.FULL
+  object$quad.form <- quad.form
+  object$rhohat<- sigma2.MLE.FULL
+  object$d<- beta
+    
   class(object) <- "mKrig"
   return(object)
 }

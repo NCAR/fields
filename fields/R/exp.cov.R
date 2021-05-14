@@ -19,7 +19,12 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 "Exp.cov" <- function(x1, x2=NULL, aRange = 1, p=1, 
-                      distMat = NA, C = NA, marginal = FALSE, onlyUpper=FALSE) {
+                      distMat = NA, C = NA, marginal = FALSE, onlyUpper=FALSE,
+                      theta=NULL) {
+  # theta argument has been depreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
   
   if (!is.matrix(x1)) 
     x1 <- as.matrix(x1)

@@ -18,7 +18,12 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-ExponentialUpper = function(distMat, range = 1, alpha = 1/range) {
+ExponentialUpper = function(distMat, range = 1, alpha = 1/range,
+                            theta=NULL) {
+  # theta argument has been depreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
   # Evaluates the exponential covariance function over the upper triangle of the distance matrix
   
   if(nrow(distMat) != ncol(distMat))

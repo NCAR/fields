@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -40,7 +40,6 @@ Type 'q()' to quit R.
 > #
 > 
 > options( echo=FALSE)
-HERE
 Testing:   d coef
 PASSED test at tolerance  1e-08
 Testing:  c coef
@@ -68,4 +67,4 @@ All done with Z tests and Krig/Tps including predict and predictSE !
 > 
 > proc.time()
    user  system elapsed 
-  1.330   0.110   1.431 
+  1.137   0.116   1.299 

@@ -21,8 +21,13 @@
 "stationary.taper.cov" <- function(x1, x2=NULL, Covariance = "Exponential", 
     Taper = "Wendland", Dist.args = NULL, Taper.args = NULL, 
     aRange = 1, V = NULL, C = NA, marginal = FALSE, spam.format = TRUE, 
-    verbose = FALSE, ...) {
-    # get covariance function arguments from call
+    verbose = FALSE, theta=NULL, ...) {
+     # theta argument has been deopreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
+                                        # get covariance function arguments from call
+    
     Cov.args <- list(...)
     # coerce x1 and x2 to matrices
     if (is.data.frame(x1)) 

@@ -20,9 +20,15 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "stationary.cov" <- function(x1, x2=NULL, Covariance = "Exponential", Distance = "rdist", 
                              Dist.args = NULL, aRange = 1, V = NULL, C = NA, marginal = FALSE, 
-                             derivative = 0, distMat = NA, onlyUpper = FALSE, ...) {
+                             derivative = 0, distMat = NA, onlyUpper = FALSE,
+                             theta=NULL, ...) {
   
   # get covariance function arguments from call
+  # theta argument has been deopreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
+  
   cov.args <- list(...)
   # coerce x1 and x2 to matrices
   if (is.data.frame(x1)) 

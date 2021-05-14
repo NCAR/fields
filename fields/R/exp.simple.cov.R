@@ -19,7 +19,7 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 Exp.simple.cov <- function(x1, x2=NULL, aRange = 1, C = NA, 
-    marginal = FALSE) {
+    marginal = FALSE, theta=NULL) {
     # this is a simple exponential covariance function
     # with the calling format and behaviour used in fields.
     #
@@ -30,6 +30,11 @@ Exp.simple.cov <- function(x1, x2=NULL, aRange = 1, C = NA,
     # 1) cross covaraince matrix
     # 2) cross covariance matrix times a vector (C)
     # 3) the diagonal elements of covariance matrix at locations x1.
+    #
+    # theta argument has been depreciated.
+    if( !is.null( theta)){
+        aRange<- theta
+    }
     if( !is.null(x2)){
     	x2<- x1
     }

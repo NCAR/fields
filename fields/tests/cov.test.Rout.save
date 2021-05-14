@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -53,4 +53,4 @@ PASSED test at tolerance  1e-08
 end tests of V argument in covariances
 > proc.time()
    user  system elapsed 
-  0.825   0.083   0.903 
+  0.796   0.083   0.875 

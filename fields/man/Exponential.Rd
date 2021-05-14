@@ -34,7 +34,7 @@ To set the nugget variance, use te \code{tau2} argument in
 \code{mKrig} or \code{Krig}.
 }
 \usage{
-Exponential(d, range = 1, alpha = 1/range, phi=1.0)
+Exponential(d, range = 1, alpha = 1/range, phi=1.0,theta = NULL)
 Matern(d , range = 1,alpha=1/range, smoothness = 0.5, 
        nu= smoothness, phi=1.0) 
 Matern.cor.to.range(d, nu, cor.target=.5, guess=NULL,...)
@@ -51,6 +51,7 @@ RadialBasis(d,M,dimension, derivative = 0)
            scaling argument  used in fields covariance functions) }
 
   \item{alpha}{1/range }
+  \item{theta}{Same as alpha}
   
   \item{phi}{This parameter option is added to be compatible with older
   versions of fields and refers to the marginal variance of the process.

@@ -20,8 +20,12 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 "image.smooth" <- function(x, wght = NULL, dx = 1, 
     dy = 1, kernel.function = double.exp, aRange = 1, grid = NULL, 
-    tol = 1e-08, xwidth = NULL, ywidth = NULL, weights = NULL, 
+    tol = 1e-08, xwidth = NULL, ywidth = NULL, weights = NULL, theta=NULL,
     ...) {
+    # theta argument has been depreciated.
+    if( !is.null( theta)){
+        aRange<- theta
+    }
     # first part of this function is figuring what has been passed and
     # what to do
     if (is.list(x)) {

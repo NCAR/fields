@@ -33,11 +33,12 @@ are handled using the Nadaraya/Watson normalization of the kernel.
 \method{image}{smooth}(x, wght = NULL, dx = 1, dy = 1,
     kernel.function = double.exp,
     aRange = 1, grid = NULL, tol = 1e-08, xwidth = NULL, ywidth = NULL,
-    weights = NULL,...)
+    weights = NULL, theta=NULL, ...)
 
 setup.image.smooth(nrow = 64, ncol = 64, dx = 1, dy = 1,
                    kernel.function = double.exp,
-                   aRange = 1, xwidth = nrow * dx, ywidth = ncol * dx, lambda=NULL, ...)}
+                   aRange = 1, xwidth = nrow * dx, ywidth = ncol * dx,
+		   lambda=NULL,theta=NULL, ...)}
 \arguments{
 \item{x}{
 A matrix image. Missing values can be indicated by NAs. }
@@ -55,6 +56,7 @@ Grid spacing in x direction }
 between two points divided by the bandwidth. The default is exp(
 -abs(x)) yielding a normal kernel}
 \item{aRange}{the bandwidth or scale parameter.}
+\item{theta}{Same as aRange.}
 \item{xwidth}{
  Amount of zero padding in horizontal dimension in units of the grid spacing.
 If NULL the default value is equal to the width of the image the most 

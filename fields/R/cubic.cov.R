@@ -18,10 +18,14 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-cubic.cov <- function(x1, x2=NULL, aRange = 1, C = NA, marginal = FALSE) {
+cubic.cov <- function(x1, x2=NULL, aRange = 1, C = NA, marginal = FALSE,
+                      theta=NULL) {
     # comments in Exp.simple.cov for more details about the
     # required parts of this covariance
-    
+    # theta argument has been deopreciated.
+    if( !is.null( theta)){
+        aRange<- theta
+    }
     if (is.matrix(x1)) {
         if (ncol(x1) != 1) {
             stop(" x is a matrix this is a  1-d covariance")

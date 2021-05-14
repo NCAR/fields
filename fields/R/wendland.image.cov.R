@@ -26,6 +26,12 @@ wendland.image.cov <- function(ind1, ind2, Y, cov.obj = NULL,
     # covariance
     #
     cov.args<-c( cov.args, list(...))
+    #
+    # theta has been deopreciated.
+    if( !is.null(cov.args$theta )){
+      cov.args$aRange <- cov.args$theta
+    }
+    #
     delta<- cov.args$aRange 
     if (is.null(cov.obj)) {
         dx <- grid$x[2] - grid$x[1]

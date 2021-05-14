@@ -1,6 +1,10 @@
 "fastTps" <- function(x, Y, m = NULL, p = NULL, aRange, 
-                      lon.lat = FALSE, find.trA=FALSE,  REML=FALSE,
+                      lon.lat = FALSE, find.trA=FALSE,  REML=FALSE, theta=NULL,
                       ...) {
+  # theta argument has been depreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
   x <- as.matrix(x)
   d <- ncol(x)
   if (is.null(p)) {

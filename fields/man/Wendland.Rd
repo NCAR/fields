@@ -43,9 +43,9 @@ sparse covariance matrices.
 }
 
 \usage{
-Wendland(d, aRange = 1, dimension, k,derivative=0, phi=NA)
+Wendland(d, aRange = 1, dimension, k,derivative=0, phi=NA, theta=NULL)
 
-Wendland2.2(d, aRange=1)
+Wendland2.2(d, aRange=1, theta=NULL)
 Wendland.beta(n,k)
 wendland.eval(r, n, k, derivative = 0)
 fields.pochup(q, k)
@@ -65,6 +65,7 @@ fields.D(f,name,order = 1)
 the locations.}
 \item{aRange}{Scale for distances. This is the same as the
 range parameter.}
+\item{theta}{Same as aRange.}
 \item{dimension}{Dimension of the locations}
 \item{n}{Dimension for computing Wendland polynomial coefficients}
 \item{k}{Order of covariance function.}

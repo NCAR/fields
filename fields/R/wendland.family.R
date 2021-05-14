@@ -18,7 +18,11 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-Wendland2.2 <- function(d, aRange = 1) {
+Wendland2.2 <- function(d, aRange = 1, theta=NULL) {
+  # theta argument has been deopreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
     # Cari's test function  with explicit form  for d=2 k=2
     # taper range is 1.0
     d <- d/aRange
@@ -27,12 +31,18 @@ Wendland2.2 <- function(d, aRange = 1) {
     return(((1 - d)^6 * (35 * d^2 + 18 * d + 3))/3 * (d < 1))
 }
 #
+#
 # the monster
 #
 "wendland.cov" <- function(x1, x2=NULL, aRange = 1, V = NULL, 
     k = 2, C = NA, marginal = FALSE, Dist.args = list(method = "euclidean"), 
-    spam.format = TRUE, derivative = 0,  verbose = FALSE) {
+    spam.format = TRUE, derivative = 0,  verbose = FALSE, 
+    theta=NULL) {
     #
+    # theta argument has been deopreciated.
+    if( !is.null( theta)){
+       aRange<- theta
+     }
     #   if marginal variance is needed
     #  this is a quick return
     if (marginal) {
@@ -166,14 +176,7 @@ Wendland2.2 <- function(d, aRange = 1) {
 #
 #
 #
-Wendland2.2 <- function(d, aRange = 1) {
-    # Cari Kaufman's test case with explicit form  for d=2 k=2
-    # taper range is 1.0
-    d <- d/aRange
-    if (any(d < 0)) 
-        stop("d must be nonnegative")
-    return(((1 - d)^6 * (35 * d^2 + 18 * d + 3))/3 * (d < 1))
-}
+
 ############## basic evaluation of Wendland and its derivatives.
 ###########################
 # n: Wendland interpolation matrix is positive definite on R^n, i.e.  n is
@@ -186,7 +189,12 @@ Wendland2.2 <- function(d, aRange = 1) {
 #########################################
 ## top level function:
 Wendland = function(d, aRange = 1, dimension, k, derivative = 0, 
-    phi = NA) {
+    phi = NA, theta=NULL) {
+# theta argument has been deopreciated.
+  if( !is.null( theta)){
+    aRange<- theta
+  }
+  
     if (!is.na(phi)) {
         stop("phi argument has been depreciated")
     }

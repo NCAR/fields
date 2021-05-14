@@ -1,6 +1,6 @@
 
-R version 4.0.2 (2020-06-22) -- "Taking Off Again"
-Copyright (C) 2020 The R Foundation for Statistical Computing
+R version 4.0.5 (2021-03-31) -- "Shake and Throw"
+Copyright (C) 2021 The R Foundation for Statistical Computing
 Platform: x86_64-apple-darwin17.0 (64-bit)
 
 R is free software and comes with ABSOLUTELY NO WARRANTY.
@@ -39,7 +39,6 @@ Type 'q()' to quit R.
 > 
 > suppressMessages(library(fields))
 > options( echo=FALSE)
-HERE
 Testing:  Amatrix vs. predict
 PASSED test at tolerance  1e-08
 Testing:  Marginal predictSE
@@ -50,14 +49,12 @@ PASSED test at tolerance  1e-08
 PASSED test at tolerance  1e-08
 Testing:  test of formula with explicit d and c
 PASSED test at tolerance  1e-08
-HERE
 Testing:  Krig function and direct formula
 PASSED test at tolerance  1e-08
 Testing:  new predict formula and direct formula
 PASSED test at tolerance  1e-08
 Testing:  New se _function_ and old Krig _function_
 PASSED test at tolerance  1e-08
-HERE
 Testing:  Benchmark of formula
 PASSED test at tolerance  1e-08
 Testing:  Benchmark of formula mKrig coefs
@@ -66,4 +63,4 @@ Testing:  test function with several locations Krig mKrig functions
 PASSED test at tolerance  1e-08
 > proc.time()
    user  system elapsed 
-  0.862   0.075   0.929 
+  0.958   0.098   1.062 

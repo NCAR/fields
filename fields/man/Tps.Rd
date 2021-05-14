@@ -40,7 +40,7 @@ Tps(x, Y, m = NULL, p = NULL, scale.type = "range", lon.lat = FALSE,
          miles = TRUE, method = "GCV", GCV = TRUE, ...)
 
 fastTps(x, Y, m = NULL, p = NULL, aRange, lon.lat = FALSE,
-                 find.trA = FALSE, REML = FALSE, ...)
+                 find.trA = FALSE, REML = FALSE,theta=NULL,  ...)
           
 }
 \arguments{
@@ -107,6 +107,8 @@ linear system but
 the cholesky decomposition is reused.}
 
 \item{REML}{If TRUE find the MLE for lambda using restricted maximum likelihood instead of the full version. }
+
+\item{theta}{ Same as aRange.}
   
 \item{\dots}{For \code{Tps} any argument that is valid for the
 \code{Krig} function. Some of the main ones are listed below.

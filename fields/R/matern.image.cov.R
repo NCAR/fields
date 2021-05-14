@@ -19,7 +19,13 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 matern.image.cov <- function(ind1, ind2, Y, cov.obj = NULL, 
-    setup = FALSE, grid, M = NULL, N = NULL,aRange=1, smoothness=.5 ) {
+    setup = FALSE, grid, M = NULL, N = NULL,
+    aRange=1, smoothness=.5,theta=NULL ) {
+    # theta argument has been depreciated.
+    if( !is.null( theta)){
+        aRange<- theta
+    }
+    #
     if (is.null(cov.obj)) {
         dx <- grid$x[2] - grid$x[1]
         dy <- grid$y[2] - grid$y[1]

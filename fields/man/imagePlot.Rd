@@ -19,8 +19,13 @@
 %# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 %# or see http://www.r-project.org/Licenses/GPL-2    
 
-\name{image.plot}
-\alias{image.plot}
+\name{imagePlot}
+\alias{imagePlot}
+\alias{colorBar}
+\alias{setupLegend}
+\alias{addLegend}
+\alias{addColorBarTriangle}
+
 \title{
   Draws an image plot with a legend strip for the color scale based on either
 a regular grid or a grid of quadrilaterals.  
@@ -31,24 +36,41 @@ placement of a legend. This is done by splitting the plotting region
 into two parts. Putting the image in one and the legend in the other. After the
 legend is added the plot region is reset to the image plot.
 This function also allows for plotting quadrilateral cells in the image format that
-often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic 
-to the ggplot package.
-\code{image.plot} functionality has been frozen, see the more recent function
-\code{\link{imagePlot}} which is backwardly compatible with this function. 
-}
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic to the ggplot package.
+Two additional functions are provided to add color scale to other kinds
+of figures. 
 
+}
 \usage{
-\method{image}{plot}(...,
-                 add = FALSE, 
-                 breaks= NULL, nlevel = 64, col = NULL,  
-    horizontal = FALSE, legend.shrink = 0.9, legend.width = 1.2, 
-    legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL,
-    legend.line= 2,                    
-    graphics.reset = FALSE, bigplot = NULL, smallplot = NULL, 
-    legend.only = FALSE,  lab.breaks = NULL, 
-    axis.args = NULL, legend.args = NULL, legend.cex=1.0,
-    midpoint = FALSE, border = NA, 
-    lwd = 1,verbose = FALSE )	
+imagePlot(..., add = FALSE, breaks = NULL, nlevel = 64, col =
+                 NULL, horizontal = FALSE, legend.shrink = 0.9,
+                 legend.width = 1.2, legend.mar = ifelse(horizontal,
+                 3.1, 5.1), legend.lab = NULL, legend.line = 2,
+                 graphics.reset = FALSE, bigplot = NULL, smallplot =
+                 NULL, legend.only = FALSE, lab.breaks = NULL,
+                 axis.args = NULL, legend.args = NULL, legend.cex = 1,
+                 midpoint = FALSE, border = NA, lwd = 1,
+                 lowerTriangle = FALSE,
+                 upperTriangle = FALSE, verbose = FALSE)
+                 
+colorBar(breaks, smallplot, colorTable, horizontal = FALSE,
+                 lab.breaks, axis.args, legend.lab, legend.line = 2,
+                 legend.args, legend.cex = 1, lowerTriangle = FALSE,
+                 upperTriangle = FALSE)
+
+
+setupLegend( horizontal = FALSE,
+                        legend.shrink = 0.9, 
+                        legend.width = 1.2, 
+                        legend.mar = ifelse(horizontal, 3.1, 5.1)
+			)
+addLegend(legendLayout, col, zlim, axis.args = NULL, legend.args
+                 = NULL, legend.cex = 1, legend.lab = NULL, legend.line
+                 = 2)
+		 
+addColorBarTriangle(lowerColor=NULL,
+                                upperColor=NULL,
+                                horizontal=TRUE)		 
 }
 
 \arguments{ 
@@ -72,6 +94,9 @@ on the image plot. To change the graphical defaults for the legend use
 If true add image and a legend strip to the existing plot. 
 }
 
+\item{axis.args}{Additional arguments for the axis function used to 
+create the legend axis. (See example below adding a log scaling.)}
+
 \item{bigplot}{
 Plot coordinates for image plot. If not passed
 these will
@@ -91,6 +116,7 @@ Color table to use for image (See help file on image for details.).
 Default is a pleasing range of 64 divisions suggested by Tim Hoar and is similar to 
 the MATLAB (TM) jet color scheme. Note that if \code{breaks} is specified there must be one less color specified than the number of breaks. 
 }
+\item{colorTable}{The colors for the color scale -- the same as col.}
 
 \item{graphics.reset}{
  If FALSE (default) the plotting region ( plt in par) will not be reset 
@@ -108,8 +134,6 @@ true the legend strip will be along the bottom.
 to put at each break value. This is intended to label axis on a
 transformed scale such as logs.}
 
-\item{axis.args}{Additional arguments for the axis function used to 
-create the legend axis. (See example below adding a log scaling.)}
 
 \item{legend.only}{
 If TRUE just add the
@@ -147,6 +171,16 @@ Width in characters of the legend strip. Default is 1.2, a little
 bigger 
 that the width of a character. }
 
+\item{legendLayout}{The list returned by \code{setupLegend} used to layout
+    the legend after a plot is drawn. }
+
+\item{lowerColor}{The name of a color for the triangle added to the
+  upper end of the color bar.}    
+  
+\item{lowerTriangle}{If TRUE  a triangle added to the
+  lower end of the color bar using the first  color in the color table. ( i.e. the \code{col} argument). If FALSE a normal color strip will be drawn. }
+ 
+
 \item{lwd}{Line width of bordering lines around pixels.
  This might need to be set less than 1.0 
 to avoid visible rounding of the pixel corners.}
@@ -179,7 +213,16 @@ for drawing a
 plot with the legend that is the same size as the plots without legends.
 }
 
+\item{upperColor}{The color for the triangle added to the
+  upper end of the color bar.}
+
+ \item{upperTriangle}{If TRUE  a triangle added to the
+  upper end of the color bar using the  last color in the color table. ( i.e. the \code{col} argument). If FALSE a normal color strip will be drawn. }
+ 
 \item{verbose}{If TRUE prints intermediate information about setting up plots (for debugging). }
+
+\item{zlim}{For \code{addLegend}, the range of color scale. Default is to use range set by most recent call to \code{color.scale}}
+}
 
 \section{Side Effects}{
 After exiting, the
@@ -191,16 +234,28 @@ If \code{xlim} and \code{ylim} are specified the pixels may overplot the axis li
 Just use the \code{box} function to redraw them. 
 }
 \details{
-	
-This is a function using the basic R graphics. The coding was done to make it easier for users to see how this function works and to modify. 
+This is a function using the basic R graphics. The
+coding was done to make it easier for users to see how
+this function works and to modify. This will have the
+same functionaity as the older \code{image.plot} but
+calls the \code{colorBar} function in place of direct
+coding in the main function.  The functions \code{colorBar} and
+\code{addColorBarTriangle} are used internally and included for completeness. 
 
 \strong{How this function works:}
-The strategy for \code{image.plot} is simple, divide the plotting region
+The strategy for \code{imagePlot} is simple, divide the plotting region
 into two smaller regions \code{bigplot} and \code{smallplot}. The image
 goes in one and the legend in the other. This way there is always room for
 the legend. Some adjustments are made to this rule by not shrinking the
 \code{bigplot} if there is already room for the legend strip and also
-sticking the legend strip close to the image plot. One can specify the
+sticking the legend strip close to the image plot. The functionality has
+evolved over many uses of image plots for geophysical data and the examples
+given below show the flexibility of this function. This function is backwardly
+compatible with the older \code{image.plot} but includes adding endcap trianglesto the color bar to indicate values beyond the range of the color scale.
+Also the function uses \code{colorBar} to add the legend strip and perhaps this function is useful on its own in other applictions.    
+
+\strong{Figure real estate} 
+One can specify the
 plot regions explicitly by \code{bigplot} and  \code{smallplot} if the
 default choices do not work.(Note that these in figure coordinates.
 ) There may be problems with small plotting
@@ -210,23 +265,29 @@ Sometimes this function will not reset the type of margins correctly and the
 "null" call \code{par(mar = par("mar"))} may help to fix this issue.
 
 \strong{The text is too small!} 
-This always seems to happen as one is rushing to finish a talk  and the figures have tiny default axis labels. Try just calling the function \code{fields.style} before plotting. List out this function to see what is changed, however, all text is increased by 20\% in size. 
+This always seems to happen as one is rushing to finish a talk and the figures have tiny default axis labels. Try just calling the function \code{fields.style} before plotting. List out this function to see what is changed, however, all text is increased by 20\% in size. 
 
-\strong{Why ``image.plot" and not ``image"?} The R Base function \code{image} is very 
+\strong{Why ``imagePlot" and not ``image"?} The R Base function \code{image} is very 
 useful but it is awkward to place a legend quickly. However, that said if you are
 drawing several image plots and want a common legend use the \code{image} function 
-and just just use \code{image.plot} to add the legend. See the example in the 
-help file. Note that you can use \code{image} to draw a bunch of images and then follow with \code{image.plot} and \code{legend.only=TRUE} to add a common legend. (See examples below.)
+and just just use \code{imagePlot} to add the legend. See the example in the 
+help file. Note that you can use \code{image} to draw a bunch of images and then follow with \code{imagePlot} and \code{legend.only=TRUE} to add a common legend. (See examples below.)
 
-\strong{Almost cloropleths too:}  It  should be noted that this image function is slightly
+\strong{Almost cloropleths too!}  This image
+function is slightly
 different than a cloropleth map because
-the legend is assuming that a continous scale has been discretized into a series of colors.
-To make the image.plot function as a  cloropleth graphic one would of course use the
- \code{breaks} option
-and for clarity perhaps code the different regions as different integer values. 
-In addition, for publication quality one would want to use the \code{legend.args} to
-add more descriptive labels at the midpoints in the color strip. 
-
+the legend is assuming that a continous scale has been discretized into a
+series of colors.
+To use the imagePlot function to create a  cloropleth graphic involves an
+extra step of first recoding the image matrix into a set of integers that
+correspond to the colors in the  color table. With this new matrix as the image plot use the  
+ \code{legend.args} list to place labels for each of the colors beside the
+ color strip.  For example, if one has used \code{N} colors in  \code{col}
+ then the locations of the color strip run from 1 to N and one could place
+ the \code{N} color labels at the positions \code{(1:N)} along the axis.
+ Note that this two step technique could also one adpated if one had a
+ nonlinear color scale and wanted to identify the values. 
+ 
 \strong{Relationship of x, y and z:}
  If the z component is a matrix then the user should be aware that
 this function locates the matrix element z[i,j] at the grid locations
@@ -236,7 +297,8 @@ for details on the difference in formatting. What does one do
 if you do not really have the "z" values on a regular grid? See the
 functions \code{quilt.plot.Rd} and \code{as.image} to discretise
 irregular observations to a grid. If the values makes sense as points on 
-a smooth surface see \code{Tps} and \code{fastTps} for surface interpolation.
+a smooth surface see \code{Tps} and \code{fastTps} for surface
+interpolation.
 
 \strong{Adding separate color to indicate the grid box boundaries.} Sometimes you want to show to the grid box borders to emphasize this is not a smooth surface. To our knowledge there is no easy way to do this as an option in \code{image}. But if your image is formatted in the "poly image" style where x and y are also matrices you can use the polyimage  (see the \code{border} argument above) option to draw in boundaries. 
 
@@ -259,7 +321,7 @@ easily because these choices are just passed onto the polygon function.
 
 \strong{Adding the pixel grid for rectangular images:}
 For adding the grid of pixel borders to a rectangular image try this example 
-after calling \code{image.plot}. 
+after calling \code{imagePlot}. 
 
 \preformatted{ 
  dx <- x[2] - x[1]  
@@ -328,7 +390,7 @@ settings (5.1,5.1,5.1,2.1) leaves 2.1 spaces for vertical legends and
 There are always problems with
 default solutions to placing information on graphs but the choices made
 here may be useful for most cases. The most annoying thing is that after
-using image.plot and adding information the next plot that is made may
+using imagePlot and adding information the next plot that is made may
 have the slightly smaller plotting region set by the image plotting.
 The user should set \code{reset.graphics=TRUE} to avoid the plotting
 size 
@@ -373,22 +435,22 @@ are a simple work around to create these figures using base R graphics.
 
 \strong{Other packages}
 \code{levelplot} that is part of the lattice package has a very 
-similar function to image.plot and a formula syntax in the call.
-The \code{geom_raster} for setting up a graphics object within \code{ggplot} is another alternative forr image plots with legends.
-See the last example to compare the steps in creating an image plot using \code{image.plot} that is close to the ggplot version. Mostly this involves resetting base graphics parameters using the {\code{par}} function. 
+similar function to imagePlot and a formula syntax in the call.
+The \code{geom_raster} for setting up a graphics object within \code{ggplot} is another alternative for image plots with legends.  
+See the last example to compare the steps in creating an image plot using \code{imagePlot} that is close to the ggplot version. Mostly this involves resetting
+base graphics parameters using the {\code{par}} function but gives an appreciate of the complexity built in the ggplot default graphic choices.
 
-\strong{Multiple images:} 
+\strong{Multiple images single color bar:} 
 By keeping the \code{zlim} argument the same across images one can generate the
 same color scale. (See the \code{image} help file.)  One useful technique for a
 panel of images is to just draw the images with good old \code{image} 
-and then use image.plot to add a legend to the last plot. (See example 
-below for messing with the outer margins to make this work.) 
-Usually a square plot (\code{pty="s"}) done in a rectangular plot
+and then use imagePlot to add a legend to the last plot. (See example 
+below for messing with the outer margins to also  make this work.) 
+Moreover, a square plot (\code{pty="s"}) done in a rectangular plot
 region will
 have room for the legend stuck to the right side without any other 
 adjustments. See the examples below for more complicated arrangements
- of multiple image plots and a summary 
-legend.  
+ of multiple image plots and a summary color bar.  
 The reader is also referred to the package \code{autoimage} as a set of
 functions in base to help with drawing multiple images and also more
 support for geographic coordinates. 
@@ -396,77 +458,82 @@ support for geographic coordinates.
 
 }
 
-\seealso{ \link{imagePlot},  \link{image},\link{poly.image}, \link{filled.contour},
-\link{quilt.plot}, \link{bubblePlot}, \link{plot.surface},
-\link{add.image}, \link{colorBar}, \link{tim.colors}, \link{designer.colors}
-}
+\seealso{ image, poly.image, filled.contour, quilt.plot, plot.surface, 
+add.image, colorbar.plot, tim.colors, designer.colors } 
 
 \examples{
   x<- 1:10
   y<- 1:15
   z<- outer( x,y,"+") 
-  image.plot(x,y,z) 
+  imagePlot(x,y,z) 
 
 # or 
   obj<- list( x=x,y=y,z=z)
-  image.plot(obj, legend.lab="Sverdrups")
-  
-################################################################ 
-# the next sequence of examples explain how to quickly 
-# adpat this basic plot to include morre features
-# In another direction see the very last example where 
-# we use many of the setting in base R graphic to mimic a 
-# (beautiful) ggplot version. 
-###############################################################
-#
-# add some points on diagonal using standard plot function
-#(with some clipping beyond 10 anticipated)
+  imagePlot(obj, legend.lab="Sverdrups")
+
+# to test add some points on diagonal using standard plot function
+# (with some clipping beyond 10 anticipated)
 
   points( 5:12, 5:12, pch="X", cex=3)
   
-# in general image.plot will reset the plot window so you
+# in general imagePlot will reset the plot window so you
 # can add any feature that normally works in base R
 # e.g. lines, text, contour, boxplots, ....
 #
-# adding breaks and distinct colors for intervals of z
-# with and without lab.breaks
+  
+################################################################ 
+# the next sequence of examples explain how to quickly 
+# adapt this basic plot to include more features
+###############################################################
+#
+# adding explicit breaks and distinct colors for intervals of z
 
-  brk<- quantile( c(z))
-  image.plot(x,y,z, breaks=brk, col=rainbow(4))
+  brk<- quantile(c(z), c(0, .1,.25, .5, .75, .9, 1.0))
+  imagePlot(x,y,z, breaks=brk, col=topo.colors(6))
+  
+# last bins are depicted as end triangles on the color bar. 
+  imagePlot(x,y,z, breaks=brk, col=topo.colors(6),
+           lowerTriangle=TRUE, upperTriangle=TRUE)
+           
+# NOTE:  the image  function does not use -Inf and Inf for the breaks argument
+# and so if one  wants the triangles at ends to indicate values beyond the 
+# range of the color bar one has to create the  breaks "by hand" when the
+# two outer bins will define the values for the triangles.
   
 # annotate legend strip with the  break point values and add a label
-
-  image.plot(x,y,z, breaks=brk, col=rainbow(4),
+  imagePlot(x,y,z, breaks=brk, col=rainbow(6),
                        lab.breaks=names(brk))
 #
-# compare to 
+# compare to default color scale and special labels on color bar
 
-  zp <-quantile(c(z), c( .05, .1,.5, .9,.95))
-  image.plot(x,y,z, 
+  zp <-quantile(c(z), c( .05, .1,.25, .5,.75, .9,.95))
+  imagePlot(x,y,z, 
      axis.args=list( at=zp, labels=names(zp) ) )
      
 # a log scaling for the colors
 
   ticks<- c( 1, 2,4,8,16,32)
-  image.plot(x,y,log(z), axis.args=list( at=log(ticks), labels=ticks))
+  imagePlot(x,y,log(z), axis.args=list( at=log(ticks), labels=ticks))
 
-# see help file for designer.colors to generate a color scale that adapts to 
+# see help(designer.colors) to generate a color scale that adapts to 
 # quantiles of z. 
-# Add some color scales together here is an example of  5 blues to white to 5 reds
+# Add some color scales together here is an example of5 blues to white to 5 reds
 # with white being a specific size.
+
  colorTable<- designer.colors(11, c( "blue","white", "red") )
+ 
 # breaks with a gap of 10 to 17 assigned the white color
  brks<- c(seq( 1, 10,,6), seq( 17, 25,,6)) 
- image.plot( x,y,z,breaks=brks, col=colorTable)
+ imagePlot( x,y,z,breaks=brks, col=colorTable)
 #
 #fat (5 characters wide) and short (50\% of figure)  color bar on the bottom
-   image.plot( x,y,z,legend.width=5, legend.shrink=.5, horizontal=TRUE) 
+   imagePlot( x,y,z,legend.width=5, legend.shrink=.5, horizontal=TRUE) 
 
-# adding a label with all kinds of additional arguments.
+# adding a label and all kinds of additional arguments to color bar
 # use side=4 for vertical legend and side= 1 for horizontal legend
 # to be parallel to axes. See help(mtext).
 
-image.plot(x,y,z, 
+imagePlot(x,y,z, 
        legend.args=list( text="unknown units",
      col="magenta", cex=1.5, side=4, line=2))
      
@@ -485,9 +552,9 @@ image.plot(x,y,z,
 ###############################################################
 data( RCMexample)
 
-image.plot( RCMexample$x, RCMexample$y, RCMexample$z[,,1])
+imagePlot( RCMexample$x, RCMexample$y, RCMexample$z[,,1])
 ind<- 50:75 # make a smaller image to show bordering lines
-image.plot( RCMexample$x[ind,ind], RCMexample$y[ind,ind], RCMexample$z[ind,ind,1],
+imagePlot( RCMexample$x[ind,ind], RCMexample$y[ind,ind], RCMexample$z[ind,ind,1],
                                       border="grey50", lwd=2)
 
 ###############################################################
@@ -511,9 +578,9 @@ for (  k in 1:4){
 }
 
 par(oma=c( 0,0,0,1))# reset margin to be much smaller.
-image.plot( legend.only=TRUE, zlim=c(-4,4)) 
+imagePlot( legend.only=TRUE, zlim=c(-4,4)) 
 
-# image.plot tricked into  plotting in margin of old setting 
+# imagePlot tricked into  plotting in margin of old setting 
 
 set.panel() # reset plotting device
 
@@ -539,7 +606,7 @@ set.panel() # reset plotting device
 
 # move to skinny region on right and draw the legend strip 
    screen( 2)
-   image.plot( zlim=zr,legend.only=TRUE, smallplot=c(.1,.2, .3,.7),
+   imagePlot( zlim=zr,legend.only=TRUE, smallplot=c(.1,.2, .3,.7),
    col=tim.colors())
 
    close.screen( all=TRUE)
@@ -549,15 +616,15 @@ set.panel() # reset plotting device
 # note that here the plot is too big for the vertical strip but the
 # horizontal fits nicely.
 plot( 1:10, 1:10)
-image.plot( zlim=c(0,25), legend.only=TRUE)
-image.plot( zlim=c(0,25), legend.only=TRUE, horizontal =TRUE)
+imagePlot( zlim=c(0,25), legend.only=TRUE)
+imagePlot( zlim=c(0,25), legend.only=TRUE, horizontal =TRUE)
 
 # combining the  usual image function and adding a legend
 # first change margin for some more room
 \dontrun{
 par( mar=c(10,5,5,5))
 image( x,y,z, col=topo.colors(64))
-image.plot( zlim=c(0,25), nlevel=64,legend.only=TRUE, horizontal=TRUE,
+imagePlot( zlim=c(0,25), nlevel=64,legend.only=TRUE, horizontal=TRUE,
 col=topo.colors(64))
 }
 #
@@ -576,10 +643,12 @@ col=topo.colors(64))
 # the following example was created as way avoid doing more important
 # things 
 # Note how close base graphics can get to reproducing the ggplot style.
+# and how a first cut imagePlot(x,y,z, col = viridis(128) ) is probably 
+# acceptable in most cases for fast EDA
 
 \dontrun{
 library( viridis)
-library(ggplot2)
+library( ggplot2)
 
 x<- 1:20
 y<-  1:24
@@ -595,6 +664,9 @@ z<- outer( x, y, "+")
     theme_bw()
 
 
+# reset to a single plot
+ set.panel()
+ 
 # inflate range to give a margin around image
   xr<- range(x) +  c(-.08, .08)* diff( range(x))
   yr<- range(y) +  c(-.08, .08)* diff( range(y))
@@ -603,7 +675,7 @@ z<- outer( x, y, "+")
 # text closer to the axes. 
   par( mgp=c(1.5,.5,0),mar=c(2.5,2.5,.5,1), cex=.8)
   
-  image.plot(x,y,z, 
+  imagePlot(x,y,z, 
              col = viridis(128), 
    legend.shrink = .27,
             xlim = xr, 

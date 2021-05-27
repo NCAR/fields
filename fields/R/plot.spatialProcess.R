@@ -43,12 +43,9 @@
     }
 ################### plot 3 profile over lambda 
     profileLambda<- !is.null( out$profileSummaryLambda)
-    print( profileLambda)
     if (any(which == 3)& profileLambda ) {
       summary<- out$profileSummaryLambda
     	mar.old<- par()$mar
-    
-    	# referring to summary[,2] is fragile -- can be either full or REML
     	par( mar= mar.old + c(0,0,0,2) )
             plot(summary$lambda, summary$lnProfileLike.FULL,  xlab = "lambda", 
                 ylab ="log Profile Likelihood(lambda)", 

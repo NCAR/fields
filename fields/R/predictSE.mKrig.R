@@ -1,14 +1,19 @@
 "predictSE.mKrig" <- function(object, xnew = NULL, 
-                              Z = NULL, verbose = FALSE, drop.Z = FALSE, ...) {
+                              Z = NULL, verbose = FALSE,
+                              drop.Z = FALSE, ...) {
   #
   # name of covariance function
   call.name <- object$cov.function.name
+  
+  if(drop.Z){
+    stop("  Sorry drop.Z not supported")
+  }
   #
   # default is to predict at data x's
   if (is.null(xnew)) {
     xnew <- object$x
   }
-  if ((!drop.Z) & !is.null(object$Z)) {
+  if ( is.null(Z)& !is.null( object$Z) ) {
     Z <- object$Z
   }
   xnew <- as.matrix(xnew)
@@ -16,7 +21,9 @@
     Z <- as.matrix(Z)
   }
   if (verbose) {
+    cat("Passed locations", fill=TRUE)
     print(xnew)
+    cat("Assumed covariates", fill=TRUE)
     print(Z)
   }
   objectSummary<- object$summary
@@ -32,9 +39,7 @@
   if (!drop.Z) {
     t0 <- t(cbind(fields.mkpoly(xnew, m = object$m), Z))
   }
-  else {
-    stop(" drop.Z not supported")
-  }
+  
   #
   # old form based on the predict function
   #   temp1 <-  sigma2*(t0%*% object$Omega %*%t(t0)) -

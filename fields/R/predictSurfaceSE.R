@@ -1,6 +1,6 @@
 # fields  is a package for analysis of spatial data written for
 # the R software environment .
-# Copyright (C) 2018
+# Copyright (C) 2021
 # University Corporation for Atmospheric Research (UCAR)
 # Contact: Douglas Nychka, nychka@ucar.edu,
 # National Center for Atmospheric Research, PO Box 3000, Boulder, CO 80307-3000
@@ -23,22 +23,42 @@
   UseMethod("predictSurfaceSE")
 }
 
-"predictSurfaceSE.default" <- function(object, grid.list = NULL, 
-       extrap = FALSE, chull.mask = NA, nx = 80, ny = 80,
-       xy = c(1,2),  verbose = FALSE, ...) {
-    # NOTE: 
-    # without grid.list
-    # default is 80X80 grid on first two variables
-    # rest are set to median value of x.
+"predictSurfaceSE.default" <- 
+  function(object, grid.list = NULL, 
+           extrap = FALSE, chull.mask = NA, nx = 80, ny = 80,
+           xy = c(1,2),  verbose = FALSE,
+           ZGrid=NULL, just.fixed=FALSE,  ...) {
+    
+    # create a default grid if it is not passed    
     if (is.null(grid.list)) {
-        grid.list <- fields.x.to.grid(object$x, nx = nx, ny = ny, 
-            xy = xy)
-    } 
-    # here is the heavy lifting
+      # NOTE: 
+      # without grid.list
+      # default is 80X80 grid on first two variables
+      # rest are set to median value of the x's
+      grid.list <- fields.x.to.grid(object$x, nx = nx, ny = ny, 
+                                    xy = xy)
+    }
+    # do some checks on Zgrid if passed and also reshape as a matrix
+    # rows index grid locations and columns  are the covariates
+    # (as Z in predict).
+    # if ZGrid is NULL just returns that back
+    
+    Z<- unrollZGrid( grid.list, ZGrid) 
+    
+    # Convert grid.list to the full set of locations
     xg <- make.surface.grid(grid.list)
-# NOTE: the specific predict function called will need to do the checks
-# whether the evaluation of a large number of grid points makes sense. 
-    out <-  as.surface( xg, predictSE(object, xg,...) )
+    # NOTE: the predict function called will need to do some internal  the checks
+    # whether the evaluation of a large number of grid points (xg)  makes sense.
+    if( verbose){
+      print( dim( xg))
+      print( dim( Z))
+    }
+#    
+# Next call is fragile as it assumes the predictSE method includes
+# a  Z argument  (even if it will often just be NULL )
+      out0<- predictSE(object, xg, Z=Z, ...)
+# coerce back into image format      
+      out <-  as.surface( xg, out0)
     #
     # if extrapolate is FALSE set all values outside convex hull to NA
     if (!extrap) {

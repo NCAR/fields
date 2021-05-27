@@ -53,9 +53,9 @@ nx = 80, ny = 80, xy = c(1, 2), verbose = FALSE, ZGrid = NULL,
     
 \method{predictSurface}{mKrig}(object,  ...)
 
-\method{predictSurfaceSE}{default}( object, grid.list = NULL, extrap =
-FALSE, chull.mask = NA, nx = 80, ny = 80, xy = c(1,2), verbose =
-FALSE, ...)
+\method{predictSurfaceSE}{default}(object, grid.list = NULL, extrap = FALSE, chull.mask =
+                 NA, nx = 80, ny = 80, xy = c(1, 2), verbose = FALSE,
+                 ZGrid = NULL, just.fixed = FALSE, ...)
 
 \method{predict}{surface}(object,...)
 }

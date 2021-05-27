@@ -33,8 +33,8 @@
 %%  ~~function to do ... ~~
 }
 \description{
-	For a given covariance function  estimates the covariance parameters by maximum  maximum likelihood and then evaluates the 
-	spatial model with these estimated parameters. The returned objet can be used for spatial prediction, conditional simulation, and profiling the likelihood function. 
+	For a given covariance function  estimates the covariance parameters by maximum   likelihood and then evaluates the 
+	spatial model with these estimated parameters. The returned object can be used for spatial prediction, conditional simulation, and profiling the likelihood function. For fixed values of the covariance parameters this process estimate is also known as Kriging. 
 	 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
@@ -391,6 +391,7 @@ test.for.zero(objTest$fitted.values, obj$fitted.values,
             tag="sanity check" )
 
 \dontrun{
+##################################
 # working with covariates and filling in missing station data
 # using an ensemble method
 # see the example under  help(sim.spatialProcess) to see how to 
@@ -398,17 +399,44 @@ test.for.zero(objTest$fitted.values, obj$fitted.values,
 # covariates. 
 data(COmonthlyMet)
   fit1E<- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev, 
-                               gridARange= seq(.25, 2.0, length.out=10)
+                  profileLambda=TRUE, profileARange=TRUE
 			       )
   set.panel( 2,2)                             
   plot( fit1E)
   
-# conditional simulation at missing data
+  set.panel(1,2)
+  
+# plots of the fitted surface and surface of prediction standard errors   
+  out.p<-predictSurface( fit1E, grid.list=CO.Grid,
+                             ZGrid= CO.elevGrid, extrap=TRUE)
+
+  imagePlot( out.p, col=larry.colors())
+  US(add=TRUE, col="grey")
+  contour( CO.elevGrid, add=TRUE, levels=seq(1000,3000,,5), col="black")
+  title("Average Spring daily min. temp in CO")
+
+  out.p2<-predictSurfaceSE( fit1E, grid.list=CO.Grid,
+                         ZGrid= CO.elevGrid,
+                         extrap=TRUE, verbose=FALSE) 
+
+  imagePlot( out.p2, col=larry.colors())
+  US(add=TRUE, col="grey")
+  points( fit1E$x, pch=".")
+  title("Prediction SE")
+  set.panel()
+}
+
+\dontrun{
+###################################
+# conditional simulation 
+###################################
+#  first a small application  at missing data
   notThere<- is.na(CO.tmin.MAM.climate )
   xp <- CO.loc[notThere,]
   Zp <- CO.elev[notThere]
   infill<- sim.spatialProcess( fit1E, xp=xp,
                       Z= Zp, M= 10)
+  dim( infill)
 #  
 # interpretation is that these infilled values are all equally plausible 
 # given the observations and also given the estimated covariance model
@@ -420,19 +448,25 @@ data(COmonthlyMet)
 # with these standardization one would still preserve the correlations
 # among the infilled values that is also important for considering them as a
 # multivariate prediction.
+
 # conditional simulation on a grid but not using the covariate of elevation
+
  fit2<- spatialProcess(CO.loc,CO.tmin.MAM.climate,
                         gridARange= seq(.25, 2.0, length.out=10)
                        )
 # note larger range parameter
 # create 2500 grid points using a handy fields function
-gridList <- fields.x.to.grid( fit2$x, nx=50,ny=50)
-xGrid<- make.surface.grid( gridList)
-ensemble<- sim.spatialProcess( fit2, xp=xGrid, M= 5)
+  gridList <- fields.x.to.grid( fit2$x, nx=50,ny=50)
+  xGrid<- make.surface.grid( gridList)
+  ensemble<- sim.spatialProcess( fit2, xp=xGrid, M = 6)
 # this is an "n^3" computation so increasing the grid size 
 # can slow things down for computation 
-image.plot( as.surface( xGrid, ensemble[1,]))
-set.panel()
+# The 6 ensemble members 
+   set.panel( 3,2)
+   for( k in 1:6){
+    imagePlot( as.surface( xGrid, ensemble[k,]))
+   }
+  set.panel()
 }
 
 \dontrun{

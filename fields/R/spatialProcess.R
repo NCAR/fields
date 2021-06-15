@@ -85,12 +85,25 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
         names(obj$cov.args),fill=TRUE )
   }
    
+  if( verbose){
+     cat( "Names cov.args:","\n", names( obj$cov.args), fill=TRUE)
+     cat( "Names cov.params.start:","\n", names(cov.params.start), fill=TRUE)
+     cat( "Names argsFull:","\n", names( obj$cov.argsFull),fill=TRUE  )
+   }
+   
    
 ####################################################################  
 # CASE 2 grid search for starting values 
 ####################################################################  
    
   if( (obj$CASE == 2 )  ){
+    if( verbose){
+      cat("grid search starts", fill=TRUE)
+      print(cov.params.start )
+      cat("parGrid names: " , fill=TRUE)
+      print( names( parGrid))
+
+    }
     InitialGridSearch<- mKrigMLEGrid(x, y,  
                              weights = weights,
                                    Z = Z, 
@@ -100,18 +113,23 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                             par.grid = obj$parGrid, 
                               reltol = reltol,
                                na.rm = na.rm,
-                             # verbose = verbose,
+                             verbose = verbose,
                                 REML = REML,
                                  GCV = GCV,
                     cov.params.start = cov.params.start)
   # use grid search to set starting values
-    
+    if( verbose){
+      print(InitialGridSearch$indMax )
+    }
     parNames<- names( obj$parGrid)
     if( is.null( cov.params.start)){
       cov.params.start<- obj$parGrid[InitialGridSearch$indMax,]
       names(cov.params.start )<- parNames
     }
     else{
+      #print( parNames)
+      #print( obj$parGrid)
+      
     cov.params.start[parNames] <- 
        obj$parGrid[InitialGridSearch$indMax, parNames]
     }
@@ -158,11 +176,7 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
                              as.list(MLEInfo$pars.MLE) )
      }
    }
-  if( verbose){
-    cat( "Names cov.args:","\n", names( obj$cov.args), fill=TRUE)
-    cat( "Names cov.params.start:","\n", names(cov.params.start), fill=TRUE)
-    cat( "Names argsFull:","\n", names( obj$cov.argsFull),fill=TRUE  )
-  }
+ 
   mKrigObj <- do.call( "mKrig", 
 	                c( list(x=x,
 	                        y=y,

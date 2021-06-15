@@ -53,13 +53,14 @@ mKrigMLEJoint(x, y, weights = rep(1, nrow(x)), Z = NULL, mKrig.args
                  = NULL, na.rm = TRUE, cov.function = "stationary.cov",
                  cov.args = NULL, cov.params.start = NULL, optim.args =
                  NULL, reltol = 1e-06, parTransform = NULL, REML =
-                 FALSE, GCV = FALSE, hessian = FALSE, iseed = 233, verbose = FALSE)
+                 FALSE, GCV = FALSE, hessian = FALSE, iseed = 233,
+		 verbose = FALSE)
 
 profileCI(obj, parName, CIlevel = 0.95, REML = FALSE) 
 
-
 mKrigJointTemp.fn(parameters, mKrig.args, cov.args, parTransform,
-           parNames, REML = FALSE, GCV=FALSE,  capture.env)
+                 parNames, REML = FALSE, GCV = FALSE, verbose =
+                 verbose, capture.env)
            
 }
 %- maybe also 'usage' for other objects documented here.
@@ -149,7 +150,7 @@ effects the inverse map from the transformed scale into the original values. See
  
 
 
-\item{verbose}{ If \code{TRUE} print out interesting intermediate results.
+\item{verbose}{If \code{TRUE} print out interesting intermediate results.
 }
 
 \item{weights}{

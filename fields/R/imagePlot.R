@@ -31,7 +31,6 @@
     lwd = 1,
     lowerTriangle= FALSE, upperTriangle=FALSE, 
     verbose=FALSE) {
-    
     # save current graphics settings
     old.par <- par(no.readonly = TRUE)
     # set defaults for color scale 

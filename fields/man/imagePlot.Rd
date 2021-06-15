@@ -25,21 +25,20 @@
 \alias{setupLegend}
 \alias{addLegend}
 \alias{addColorBarTriangle}
-
 \title{
   Draws an image plot with a legend strip for the color scale based on either
 a regular grid or a grid of quadrilaterals.  
 }
 \description{
 This function combines the R image function with some automatic 
-placement of a legend. This is done by splitting the plotting region  
+placement of a legend. It is backwardly compatible with the older function \code{\link{image.plot}}.
+This function works by  by splitting the plotting region  
 into two parts. Putting the image in one and the legend in the other. After the
-legend is added the plot region is reset to the image plot.
+legend is added the plot region is reset to the main image plot.
 This function also allows for plotting quadrilateral cells in the image format that
-often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic to the ggplot package.
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. Finally, see the last example where this function can create a similar graphic to the ggplot package but using all base R graphics.
 Two additional functions are provided to add color scale to other kinds
 of figures. 
-
 }
 \usage{
 imagePlot(..., add = FALSE, breaks = NULL, nlevel = 64, col =
@@ -56,8 +55,7 @@ imagePlot(..., add = FALSE, breaks = NULL, nlevel = 64, col =
 colorBar(breaks, smallplot, colorTable, horizontal = FALSE,
                  lab.breaks, axis.args, legend.lab, legend.line = 2,
                  legend.args, legend.cex = 1, lowerTriangle = FALSE,
-                 upperTriangle = FALSE)
-
+                 upperTriangle = NULL)
 
 setupLegend( horizontal = FALSE,
                         legend.shrink = 0.9, 
@@ -111,34 +109,36 @@ the same as the interior color. Otherwise this specifies the color to use.}
 	the colors. Note that if there are nlevel colors there should be  (nlevel+1)
  breakpoints. If \code{breaks} is not specified (nlevel+1) equally spaced breaks are created where the first and last bin have their midpoints at the minimum and maximum values in \code{z} or at \code{zlim}.}
 
-\item{col}{
-Color table to use for image (See help file on image for details.).
-Default is a pleasing range of 64 divisions suggested by Tim Hoar and is similar to 
-the MATLAB (TM) jet color scheme. Note that if \code{breaks} is specified there must be one less color specified than the number of breaks. 
+\item{col}{Color table to use for image (See help file on image for details.).
+Default is a pleasing range of 64 divisions suggested by Tim Hoar and
+is similar to 
+the MATLAB (TM) jet color scheme. Note that if \code{breaks} is
+specified there must be one less color specified than the number of
+breaks. 
 }
+
 \item{colorTable}{The colors for the color scale -- the same as col.}
 
 \item{graphics.reset}{
- If FALSE (default) the plotting region ( plt in par) will not be reset 
-and one can add more information onto the image plot. (e.g. using functions
-such as points or lines.)  If TRUE will reset plot parameters to the
-values before entering the function.  
+ If FALSE (default) the plotting region ( plt in par) will not be reset
+ and one can add more information onto the image plot. (e.g. using
+ functions such as points or lines.)  If TRUE will reset plot
+ parameters to the values before entering the function.  
 }
 
 \item{horizontal}{
-If false (default) legend will be a vertical strip on the right side. If
-true the legend strip will be along the bottom.  
+If FALSE (default) legend will be a vertical strip on the right side. If TRUE the legend strip will be along the bottom.  
 }
 
-\item{lab.breaks}{ If breaks are supplied these are text string labels
-to put at each break value. This is intended to label axis on a
-transformed scale such as logs.}
+\item{lab.breaks}{If breaks are supplied these are text string labels
+to put at each break value. This feature is useful, for example,  to 
+label the legend axis on a transformed scale such as logs. It is also used in the \code{bubblePlot} function to label the colors when z is categorical.}
 
 
 \item{legend.only}{
 If TRUE just add the
 legend to a the plot in the plot region defined by the coordinates in
-smallplot. In the absence of other information the range for the legend 
+smallplot. In the absence of other information the range for the legend
 is determined from the \code{zlim} argument. 
 }
 
@@ -177,21 +177,24 @@ that the width of a character. }
 \item{lowerColor}{The name of a color for the triangle added to the
   upper end of the color bar.}    
   
-\item{lowerTriangle}{If TRUE  a triangle added to the
-  lower end of the color bar using the first  color in the color table. ( i.e. the \code{col} argument). If FALSE a normal color strip will be drawn. }
+\item{lowerTriangle}{If TRUE  a triangle will be added to the
+  lower end of the color bar using the first color in the color table.
+  ( i.e. the  color of \code{col[1]}). If FALSE a normal color strip
+  will be drawn. }
  
-
 \item{lwd}{Line width of bordering lines around pixels.
- This might need to be set less than 1.0 
-to avoid visible rounding of the pixel corners.}
+ This might need to be set less than 1.0 to avoid visible rounding of the pixel corners.}
 
 \item{midpoint}{ 
-This option for the case of unequally spaced grids with x and y being 
+This option is for the case of unequally spaced grids with x and y
+being 
 matrices of grid point locations. 
  If FALSE (default) the quadralaterals  will be extended
-to surround the  z locations as midpoints. If TRUE z values will be
+to surround the  z locations as their midpoints.
+If TRUE z values will be
 averaged
-to yield a midpoint value and the original grid points be used to define
+to yield a midpoint value and the original grid points be used to
+define
 the
 quadralaterals. (See help on poly.image for details). In most cases
 midpoint should be FALSE to preserve exact values for z and 
@@ -204,13 +207,15 @@ Number of color levels used in legend strip
 \item{smallplot}{
 Plot coordinates for legend strip.  If not passed these will be
 determined within
-the function. Be sure to leave room for the axis labels. For example, if
+the function. Be sure to leave room for the axis labels. For example,
+if
 the legend is on the
 right side  \code{smallplot= c(.85,.9,0,1) } will leave (.1 in plot
 coordinates) for the
 axis labels to the right of the color strip. This argument is useful 
 for drawing a 
-plot with the legend that is the same size as the plots without legends.
+plot with the legend that is the same size as the plots without
+legends.
 }
 
 \item{upperColor}{The color for the triangle added to the
@@ -234,7 +239,7 @@ If \code{xlim} and \code{ylim} are specified the pixels may overplot the axis li
 Just use the \code{box} function to redraw them. 
 }
 \details{
-This is a function using the basic R graphics. The
+This is a function using base R graphics. The
 coding was done to make it easier for users to see how
 this function works and to modify. This will have the
 same functionaity as the older \code{image.plot} but
@@ -243,14 +248,14 @@ coding in the main function.  The functions \code{colorBar} and
 \code{addColorBarTriangle} are used internally and included for completeness. 
 
 \strong{How this function works:}
-The strategy for \code{imagePlot} is simple, divide the plotting region
+The strategy for \code{imagePlot} is simple: divide the plotting region
 into two smaller regions \code{bigplot} and \code{smallplot}. The image
 goes in one and the legend in the other. This way there is always room for
 the legend. Some adjustments are made to this rule by not shrinking the
 \code{bigplot} if there is already room for the legend strip and also
 sticking the legend strip close to the image plot. The functionality has
 evolved over many uses of image plots for geophysical data and the examples
-given below show the flexibility of this function. This function is backwardly
+given below show the flexibility of this function. Also this function is backwardly
 compatible with the older \code{image.plot} but includes adding endcap trianglesto the color bar to indicate values beyond the range of the color scale.
 Also the function uses \code{colorBar} to add the legend strip and perhaps this function is useful on its own in other applictions.    
 
@@ -345,13 +350,13 @@ z. The examples below show how to do each of these. In addition, by
 supplying \code{lab.break} strings or axis parameters one can
 annotate the legend axis in an informative matter.
 
-\strong{Adding just the legend strip:}
+\strong{Adding just a legend strip/ color bar:}
 Note that to add just the legend strip all the numerical information one
 needs is the \code{zlim} argument and the color table! See examples for tricks in positioning.
 
 \strong{About color tables:}
-We like \code{tim.colors} 
-as a default color scale and so if this what you use this can be omitted.
+We like \code{tim.colors}(the default) 
+as  default color scales and so if this what you use this can be omitted.
 Unfortunately this is not the default for the \code{image} function. Another
 important color scale is \code{ viridis() } from the viridis package.
 It seems that by
@@ -359,8 +364,9 @@ and large everyone seems to react postively to viridis -- guess that is the
 point!
 
 The
-topographic color scale (\code{topo.colors}) is
-also a close second showing our geophysical bias.
+topographic color scale (\code{\link{topo.colors}}) is
+also a close second  and also see \code{\link{snow.colors} }
+showing our geophysical bias.
 Users may find \code{larry.colors} useful for coding distinct regions
 in the style of a cloropleith map.   See also
 \code{terrain.colors} for a subset of the topo ones and \code{designer.colors} to "roll

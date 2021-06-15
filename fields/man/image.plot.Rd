@@ -179,7 +179,9 @@ for drawing a
 plot with the legend that is the same size as the plots without legends.
 }
 
-\item{verbose}{If TRUE prints intermediate information about setting up plots (for debugging). }
+\item{verbose}{If TRUE prints intermediate information about
+setting up plots (for debugging). }
+}
 
 \section{Side Effects}{
 After exiting, the
@@ -190,6 +192,7 @@ smaller plotting region that has accommodated room for the legend subplot.
 If \code{xlim} and \code{ylim} are specified the pixels may overplot the axis lines. 
 Just use the \code{box} function to redraw them. 
 }
+
 \details{
 	
 This is a function using the basic R graphics. The coding was done to make it easier for users to see how this function works and to modify. 

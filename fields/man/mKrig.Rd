@@ -109,7 +109,11 @@ If TRUE will estimate the effective degrees of freedom using
 
 \item{llambda}{If not \code{NULL} then \code{lambda = exp( llambda)}}
 
-\item{m}{ The degree of the polynomial used in teh fixed part is (m-1)}
+\item{m}{ The degree of the polynomial used in the fixed part.
+This is follows the thin plate spline convention that the degree is m-1. 
+Default is m=2 for a linear function, m=1 a constant and,
+as an quick logical switch, m=0 will result in no fixed part in the spatial model.
+}
 
 \item{na.rm}{If TRUE NAs in y are omitted along with corresonding rows of x.}
 

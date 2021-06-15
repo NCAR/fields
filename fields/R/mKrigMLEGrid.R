@@ -105,7 +105,10 @@ mKrigMLEGrid <- function(x, y, weights = rep(1, nrow(x)), Z = NULL,
   else{
     indMax<- which.max( summary[,"lnProfileREML.FULL"]) 
   }
-  
+  if( verbose){
+    cat("summary from mKrigMLEGrid:", fill=TRUE)
+    print(summary )
+  }
   return(list(summary = summary, par.grid = par.grid,
               call = match.call(), indMax= indMax )
          )

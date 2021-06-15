@@ -1,9 +1,9 @@
 spatialProcessSetDefaults<- function( x, cov.function,
                                       cov.args,
                                       cov.params.start,
+                                      parGrid,
                                       mKrig.args,
                                       extraArgs=NULL,
-                                      parGrid,
                                       gridN=5,
                                       verbose=FALSE)
 {
@@ -21,7 +21,9 @@ spatialProcessSetDefaults<- function( x, cov.function,
     }
     if( is.null(cov.args$Covariance )){
       cov.args$Covariance<- "Matern"
-      if( is.null(cov.args$smoothness )){
+      if( is.null(cov.args$smoothness ) 
+           & is.null(cov.params.start$smoothness ) 
+           & is.null(parGrid$smoothness) ){
         cov.args$smoothness<- 1.0
       }
     }
@@ -39,11 +41,30 @@ spatialProcessSetDefaults<- function( x, cov.function,
       cov.args <- list(extraArgs)
     }
   }
- 
+  
+ # check for duplicate arguments in starting values and fixed values
+  
+  covArgsNames <- names(cov.args)
+  covStartNames<-names(cov.params.start)
+  covParGridNames<- names( parGrid)
+  #print( covParGridNames)
+  if( length( intersect( covArgsNames,covStartNames))>0){
+    cat("A problem with duplicate  parameters:", fill=TRUE)
+    cat("Names cov.args:", fill=TRUE)
+    print(covArgsNames)
+    cat("Names cov.params.start :", fill=TRUE)
+    print(covStartNames)
+    stop("parameters must either have starting values ( in cov.params.start list) 
+     or be specified as a covariance function argument (in cov.args list) ")
+  }
+  
+  
   if( verbose){
-    cat("update and passed cov.args", fill=TRUE)
+    cat("Updated and passed cov.args", fill=TRUE)
     print( cov.args)
   }
+  
+  
   
   noLambda<- is.null( cov.args$lambda) & is.null(cov.params.start$lambda)
   noARange<- is.null( cov.args$aRange) & is.null(cov.params.start$aRange)
@@ -101,6 +122,7 @@ spatialProcessSetDefaults<- function( x, cov.function,
   }
  
   if( !is.null(parGrid) ){
+    
     CASE<- 2
   }
   

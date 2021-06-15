@@ -49,8 +49,8 @@ alpha=1.0)
 designer.colors( n=256, col= c("darkgreen", "white", "darkred"), x=
                               seq(0,1,, length(col)) ,alpha=1.0)
 
-color.scale( z, col=tim.colors(256), zlim =NULL,
-transparent.color="white", eps= 1e-8)
+color.scale(z, col = tim.colors, NC = 256, zlim = NULL,
+                 transparent.color = "white", eps = 1e-08)
 
 fieldsPlotColors( col,...)
 
@@ -69,7 +69,10 @@ orignal definition.}
 
 \item{middle}{Color scale passes through this color at halfway}
 
-\item{col}{A list of colors (names or hex values) to interpolate}
+\item{col}{A list of colors (names or hex values) to interpolate.
+But for the \code{color.scale} function this can be also be a function that
+returns \code{NC} colors when called with just the
+\code{NC} argument.}
 
 \item{x}{Positions of colors on a [0,1] scale. Default is to assume
 that the x values are equally spacesd from 0 to 1.}
@@ -82,8 +85,12 @@ that the x values are equally spacesd from 0 to 1.}
 \item{transparent.color}{Color value to use for NA's or values outside
 \code{zlim}}
 
-\item{eps}{A small inflation of the range to avoid boundary values of
-\code{z} being coded as NAs}
+\item{eps}{A small inflation of the range to avoid the  boundary values of
+\code{z} being coded as NAs.}
+
+\item{NC}{The number of colors to return from calling the function passed in the \code{col} argument. This is only used if \code{col} is a function.
+}
+
 \item{\dots}{Additional plotting arguments to code{image.plot}}
 
 }

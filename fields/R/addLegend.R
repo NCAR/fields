@@ -7,10 +7,9 @@ addLegend<- function(legendLayout,
          legend.lab = NULL,
         legend.line = 2 
            ){
-  
    info<- legendLayout
    
-   image.plot( legend.only=TRUE,
+   imagePlot( legend.only=TRUE,
               add=TRUE,
               smallplot = info$smallplot,
               col= col,

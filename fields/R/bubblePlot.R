@@ -1,5 +1,5 @@
 bubblePlot <-  function( x, y, z, 
-                      col = tim.colors(256),
+                      col = tim.colors,
                       horizontal = FALSE,
                       legend.cex = 1.0,
                       legend.lab = NULL,
@@ -30,6 +30,8 @@ bubblePlot <-  function( x, y, z,
   }
 # color table for z  values  
   ctab= color.scale( z, col)
+  
+  
 # setup space for a legend if needed  
   if(!add  & is.null(legendLayout) ){
     legendLayout<- setupLegend( 
@@ -57,15 +59,22 @@ bubblePlot <-  function( x, y, z,
   mfg.save <- par()$mfg
   
 # add legend  
-if( !add | !is.null(legendLayout)){  
+if( !add | !is.null(legendLayout)){ 
+   levelsZ<- attr(ctab,"levelsZ")
+    if((is.null(axis.args))&(!is.null(levelsZ))){
+      axis.args= list(at= 1: length( levelsZ) , labels= levelsZ)
+    }
+#
+    print( legend.args)
     addLegend( legendLayout, 
-      col = col,
-      zlim = range(z, na.rm=TRUE),
+      col = attr(ctab,"col"), 
+      #zlim = range(z, na.rm=TRUE),
+      zlim= attr(ctab,"zlim"),
       axis.args = axis.args, 
       legend.args = legend.args,
               legend.cex = legend.cex,
               legend.lab = legend.lab,
-              legend.line = legend.line 
+              legend.line = legend.line
               )
 }
   

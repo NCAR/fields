@@ -36,7 +36,7 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            nrow=NULL, ncol=NULL,FUN =
                  NULL, plot=TRUE, na.rm=FALSE, ...)
                  
-bubblePlot(x, y, z, col = tim.colors(256), horizontal = FALSE,
+bubblePlot(x, y, z, col = tim.colors, horizontal = FALSE,
                  legend.cex = 1, legend.lab = NULL, legend.line = 2,
                  legend.shrink = 0.9, legend.width = 1.2, legend.mar =
                  ifelse(horizontal, 3.1, 5.1), axis.args = NULL,
@@ -51,7 +51,7 @@ bubblePlot(x, y, z, col = tim.colors(256), horizontal = FALSE,
      a 2 column matrix of the x-y coordinates. }
   \item{y}{A vector of the y coordinates -or- if the locations are passed 
 in x the z vector  }
-  \item{z}{Values of the variable to be plotted.}
+  \item{z}{Values of the variable to be plotted. For bubblePlot if a character or factor will be assigned colors based on the order of appearance.}
   \item{nlevel}{Number of color levels.}
   \item{nx}{Number of grid boxes in x if a grid is not specified.}
   \item{ny}{Number of grid boxes in y. }
@@ -60,7 +60,7 @@ in x the z vector  }
   \item{grid}{A grid in the form of a \code{grid list}.  }
   \item{add.legend}{If TRUE a legend color strip is added}
   \item{add}{If FALSE add to existing plot.}
-  \item{col}{Color scale for the image, the default is tim.colors --
+  \item{col}{Color function or the color scale for the image, the   default is the tim.colors  function --
     a pleasing spectrum for quilt.plot and the  modern and versitle
      viridis for bubblePlot }
     \item{plot}{If FALSE just returns the image object instead of plotting it.}
@@ -177,6 +177,18 @@ US( add=TRUE, col="grey", lwd=2)
 
 bubblePlot( ozone2$lon.lat, ozone2$y[16,] )
 US( add=TRUE, col="magenta", lwd=2)
+
+# colors based on a factor or character vector
+O3Levels<- cut( ozone2$y[16,], c( 0,40,60,80,Inf),
+labels=c("low","bckgrd","med", "high"))
+table( O3Levels)
+bubblePlot( ozone2$lon.lat, O3Levels )
+US( add=TRUE, col="magenta", lwd=2)
+
+
+
+
+
 
 
 ### adding a common legend strip "by hand"

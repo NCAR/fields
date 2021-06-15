@@ -17,6 +17,7 @@
 
 suppressMessages(library( fields ))
 options( echo=FALSE)
+#options( echo=TRUE)
 
 #
 ##### generate test data

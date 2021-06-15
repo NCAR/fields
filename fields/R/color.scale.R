@@ -18,19 +18,37 @@
 # along with the R software environment if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
-color.scale <- function(z, col = tim.colors(256), 
+color.scale <- function(z, col = tim.colors, NC=256,
     zlim = NULL, transparent.color = "white", eps = 1e-08) {
 #
 # converts real values to a color scale of NC values.
 # role of eps is to prevent values exactly at the end of the range from being
 # missed
 #    
-# bind session variable locally to avboid errors when R package checks
-# are run
+# convert factor or character z to integers
+    colFactor<- FALSE
+    levelsZ<- NULL
+    
+    if( is.character(z)){
+        z<- as.factor( z)
+    }
+    
+    if( is.factor( z)){
+        levelsZ<- levels(z)
+        z<- as.integer(z) 
+        coFactor<-TRUE
+        NC<- length( levelsZ)
+    }
+
     if (is.null(zlim)) {
         zlim <- range(z, na.rm = TRUE)
     }
     z[(z < zlim[1]) | (z > zlim[2])] <- NA
+    
+    if( is.function(col)){
+        col<- col(NC)
+    }
+    
     NC <- length(col)
     span<- zlim[2]-zlim[1]
     # expand breaks slightly to include obs on the boundaries. 
@@ -46,6 +64,7 @@ color.scale <- function(z, col = tim.colors(256),
 #  a legend and know what one is doing.     
     attr( colorMap,"zlim")<- zlim
     attr(colorMap,"col")<- col
+    attr(colorMap,"levelsZ")<- levelsZ
 # potential hooks for colorBar functions
     colorMapInfo<- list( col=col, zlim=zlim)
 # .fieldsColorMapInfo <<- colorMapInfo

@@ -63,14 +63,9 @@ spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
 \method{plot}{spatialProcess}(x, digits = 4, which = 1:4, ...)
 
                            
-spatialProcessSetDefaults( x, cov.function,
-                                      cov.args,
-                                      cov.params.start,
-                                      mKrig.args,
-                                      extraArgs=NULL,
-                                      parGrid,
-                                      gridN=5,
-                                      verbose=FALSE)
+spatialProcessSetDefaults(x, cov.function, cov.args, cov.params.start, parGrid,
+                 mKrig.args, extraArgs = NULL, gridN = 5, verbose =
+                 FALSE)
     
 confidenceIntervalMLE( obj, CILevel, verbose=FALSE)
 
@@ -141,7 +136,10 @@ cross-validation function. }
   	
 \item{na.rm}{If TRUE NAs are removed from the data.}
 
-\item{mKrig.args}{Arguments passed to the mKrig function.}
+\item{mKrig.args}{Arguments as a list passed to the mKrig function. For example use
+mKrig.args=list( m = 1) to set the fixed part of the model to just a constant function , 
+or 0 to omit any fixed part. (The default is m=2 a linear function, which is recommend for most data analysis.) See \code{\link{mKrig}} for more details. 
+}
 
 \item{obj}{A spatialProcess object returned from the spatialProcess function.}
 \item{object}{ See \code{obj}.}
@@ -169,11 +167,11 @@ extra time and is not necessary so the default is FALSE. }
   \item{\dots}{
   	Any other arguments that will be passed to the \code{mKrig} function and interpreted
   	as additional arguments to the covariance function.  This is a lazy way of specifying these. 
-  	E.g. \code{aRange =.1} will set the covariance argument aRagne to .1. 
+  	E.g. \code{aRange =.1} will set the covariance argument aRange to .1. 
   }
   
   \item{which}{The vector 1:4 or any subset of 1:4, giving the plots
-  to draw. See the description ofthese plots below.}
+  to draw. See the description of these plots below.}
 
 }
 \details{
@@ -181,38 +179,41 @@ extra time and is not necessary so the default is FALSE. }
 	important to be aware of these. 
 	The spatial model is 
 	
-	Y.k= P(x.k) + Z(x.k)\%*\%d2 + g(x.k) + e.k
+	Y.k= P(x.k) + Z(x.k)\%*\%beta2 + g(x.k) + e.k
 
 where ".k" means subscripted by k, Y.k is the dependent variable
 observed at location x.k. P is a low degree polynomial (default is a
-linear function in the spatial coordinates) and Z is a matrix of covariates (optional) that
+linear function in the spatial coordinates, m=2 ) and Z is a
+matrix of covariates (optional) that
 enter as a linear model the fixed part. g is a mean zero,
 Gaussian stochastic process with a marginal variance of sigma and a
 scale (or range) parameter, aRange. The measurement errors, e.k, are
 assumed to be uncorrelated, normally distributed with mean zero and
 standard deviation tau. If weights are supplied then the variance of e is assumed to be
-\code{tau^2/ weights}.
+\code{tau^2/ weights}. The polynomial if specified and extra covariates define
+the fixed part of this spatial model and the coefficients are found by
+generalized least squares (GLS).
 
-
-Perhaps the most important aspect of this  function is that
- 	the range (aRange), nugget (tau**2) and process variance (sigma) parameters
- 	for the covariance are estimated by restricted maximum
+Perhaps the most important aspect of this function is that
+ 	the range parameter (aRange), nugget (tau**2) and process variance (sigma) parameters
+ 	for the covariance are estimated by maximum
  	likelihood and this is the model that is then  used for spatial
- 	prediction. Geostatistics usaually refers to tau**2 + sigma as the 
+ 	prediction. Geostatistics usually refers to tau^2 + sigma^2 as the 
  	"sill" and often these parameters are estimated by variogram fitting rather
  	than maximum likelihood. To be consistent with spline models and to focus
  	on the key part of model we reparametrize as lambda= tau**2/
- 	sigma and sigma. Thinking about h as the spatial signal and e as the noise lambda
- 	can be interpreted  as the noise to signal variance ratio in this spatial
- 	context.(See the comparision with fitting the geoR model in the
-examples section.)
+ 	sigma^2 and sigma. Thinking about h as the spatial signal and e as the noise  1/lambda
+ 	can be interpreted  as the "signal to noise " ratio in this spatial
+ 	context.(See also the comparison with fitting the geoR model in the
+  examples section.)
  	
- 	The likelihood and the cross valdiation function
+ 	For an isotropic covariance function, the likelihood and the cross-validation function
  	can be concentrated to only depend on lambda and aRange and so
- 	in reported the optimiztation of these two criterion we focus
+ 	in reporting the optimization of these two criterion we focus
  	on this form of the parameters.  Once lambda and aRange are
  	found, the MLE for sigma has a closed form and of course then
- 	tau is then determined from lambda and sigma. 
+ 	tau is then determined from lambda and sigma. The estimates of the coefficients 
+ 	for the fixed part of the model, determined by GLS, will also be the MLEs. 
  	
  	Often the lambda
  	parameter is difficult to interpret when covariates and a
@@ -221,20 +222,20 @@ examples section.)
  	domain. For this reason it is convenient to report the
  	effective degrees of freedom (also referred to trA in R code and
  	the output summaries) associated with the predicted
- 	surface or curve. This measure has a one to one relationship
- 	with lamdba and is easier to interpret. For example an eff
+ 	surface or curve. This measure has a one-to-one relationship
+ 	with lambda and is easier to interpret. For example an eff
  	degrees of freedom that is very small suggests that the
- 	surface is rwell represented by a low ordoer
+ 	surface is well represented by a low order
  	polynomial. Degrees of freedom close to the number of
  	locations indicates a surface that is close to interpolating
  	the observations and suggests a small or zero value for the
  	nugget variance.
  	
  	The default covariance model is assumed to follow a Matern
- 	 with smoothness set to 1.0.  This is implementd using the
+ 	 with smoothness set to 1.0.  This is implemented using the
  	 \code{stationary.cov} covariance that can take a argument for
  	 the form of the covariance, a sill and range parameters and
- 	 possibily additional parameter might comtrol the shape.
+ 	 possibly additional parameter might control the shape.
  	 
  	 See the example below how to switch to another model. (Note
  	 that the exponential is also part of the Matern family with
@@ -244,7 +245,7 @@ examples section.)
  	and the returned list from this function is added to the Krig
  	output object that is returned by this function. The estimate
  	is a version of maximum likelihood where the observations are
- 	transfromed to remove the fixed linear part of the model.  If
+ 	transformed to remove the fixed linear part of the model.  If
  	the user just wants to fix the range parameter aRange then
  	\code{Krig} can be used.
  	
@@ -265,25 +266,25 @@ be aware of these choices and try alternative models and parameter
 values to assess the robustness of your conclusions. Also examine the
 residuals to check the adequacy of the fit. See the examples below for
 some help in how to do this easily in fields. Also see quilt.plot to
-get an quick plot of a spatial field  to discern obvious spatial paterns.
+get an quick plot of a spatial field  to discern obvious spatial patterns.
 
 
 \strong{summary} method forms a list of class \code{spatialProcessSummary} that has a
 subset of information from the output object and also creates a table of the estimates
 of the linear parameters in the fixed part of the model.
-With replacated fields there is an option to estimate different linear parameters for each field
+With replicated fields there is an option to estimate different linear parameters for each field
 ( \code{ collapseFixedEffect = FALSE } ) and in this case a table is not created because
 there is more than one estimate. See (\code{Omega} and \code{fixedEffectsCov}) in the
 \code{mKrig} object to build the standard errors.
 
-\strong{plot} method  provides potentially  four diagnositic plots of the fit.Use the \code{which}
+\strong{plot} method  provides potentially  four diagnostic plots of the fit.Use the \code{which}
 to pick and choose among them 
 or use \code{set.panel} to see  them all.
 The third and fourth plots, however, are only available if the profile computations been done. 
 If lambda is profiled (\code{lambdaProfile} is not
 \code{NULL} ) the third plot is the profile log
 likelihood for lambda and with the GCV function on a
-second verical scale.
+second vertical scale.
 This is based on the grid evaluations in the component 
 \code{ lambdaProfile\$MLEProfileLambda} .
 The fourth
@@ -300,7 +301,7 @@ some details and explanations.
 }
 \value{
 	An object of classes \code{mKrig} and  \code{SpatialProcess}. The difference
-	from mKrig are some extra  components. The more useful ones are listed belo
+	from mKrig are some extra  components. The more useful ones are listed below
 	
 	
   \strong{MLESummary} A named array that has the fixed and estimated parameters along with likelihood values and some optim info.     

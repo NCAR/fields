@@ -153,7 +153,8 @@ mKrigMLEJoint<- function(x, y, weights = rep(1, nrow(x)),  Z = NULL,
                                   cov.args = cov.args, 
                                capture.env = capture.env,
                                       REML = REML,
-                                      GCV  = GCV)
+                                      GCV  = GCV,
+                                   verbose = verbose)
                            )
                   )
   # reformat the  optim results
@@ -219,12 +220,18 @@ else{
                               mKrig.args, cov.args, parTransform, parNames,
                               REML=FALSE,
                               GCV= FALSE,
+                              verbose = verbose,
                               capture.env) {
+   verbose<- FALSE # turn off verbose
   # optimization is over a transformed scale ( so need to back transform for mKrig)
   tPars<- parTransform( parameters, inv=TRUE)
   names( tPars)<- parNames
   #get all this eval's covariance arguments using the input parameters
   cov.args.temp = c(cov.args, tPars)
+  if( verbose){
+    cat("pars in call to objective function:", fill=TRUE)
+    print(tPars )
+  }
   # NOTE: FULL refers to estimates collapsed across the replicates if Y is a matrix
   # NOTE  cov.args.temp can also include lambda as a component. 
   # due to the flexibility in arguments to mKrig  ( I.e. the ... argument)

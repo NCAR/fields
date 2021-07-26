@@ -36,7 +36,8 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            nrow=NULL, ncol=NULL,FUN =
                  NULL, plot=TRUE, na.rm=FALSE, ...)
                  
-bubblePlot(x, y, z, col = tim.colors, horizontal = FALSE,
+bubblePlot(x, y, z, col = viridis(256), 
+       zlim=NULL, horizontal = FALSE,
                  legend.cex = 1, legend.lab = NULL, legend.line = 2,
                  legend.shrink = 0.9, legend.width = 1.2, legend.mar =
                  ifelse(horizontal, 3.1, 5.1), axis.args = NULL,
@@ -63,12 +64,14 @@ in x the z vector  }
   \item{col}{Color function or the color scale for the image, the   default is the tim.colors  function --
     a pleasing spectrum for quilt.plot and the  modern and versitle
      viridis for bubblePlot }
+     
     \item{plot}{If FALSE just returns the image object instead of plotting it.}
     \item{FUN}{The function to apply to values that are common to a grid
     box. The default is to find the mean. (see \code{as.image}).}
     \item{na.rm}{If FALSE NAs are not removed from zand so a grid box
     even one of these values may be an NA. (See details below.)}
   \item{size}{Size of bubble dots in cex units. Can be a vector to procduce different size points in the scatterplot.}
+  \item{zlim}{Numerical range to determine the colorscale. If omitted the range of z is used. }
   \item{\dots}{ for quilt.plot  arguments to be passed to the \code{image.plot}
   function. For bubblePlot arguments to be passed to the \code{plot}
   function if \code{add=FALSE}, the default and to the \code{points}

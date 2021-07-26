@@ -1,5 +1,6 @@
 bubblePlot <-  function( x, y, z, 
-                      col = tim.colors,
+                      col = viridis::viridis(256),
+                      zlim = NULL,
                       horizontal = FALSE,
                       legend.cex = 1.0,
                       legend.lab = NULL,
@@ -29,7 +30,7 @@ bubblePlot <-  function( x, y, z,
     x<- x[,1]
   }
 # color table for z  values  
-  ctab= color.scale( z, col)
+  ctab= color.scale( z, col, zlim=zlim)
   
   
 # setup space for a legend if needed  

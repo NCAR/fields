@@ -203,7 +203,6 @@ spatialProcess <- function(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
     obj$MLESummary <- mKrigObj$summary
     obj$InitialGridSearch<- NULL
     obj$parameterCovariance<- NULL
-    
   }
   
   if( obj$CASE==1){

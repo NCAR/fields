@@ -19,7 +19,9 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 # or see http://www.r-project.org/Licenses/GPL-2    
 circulantEmbeddingSetup <- function( 
-     grid, M = NULL, cov.function="stationary.cov", cov.args=NULL, ...) {
+     grid, M = NULL, 
+     cov.function="stationary.cov", cov.args=NULL,
+     delta=NULL, ...) {
     #
     # if cov object is missing then create
     # basically need to enlarge domain and find the FFT of the
@@ -36,6 +38,12 @@ circulantEmbeddingSetup <- function(
         }
        
 # M is the larger grid size the includes m should be at least 2*m for embedding to be exact.         
+        if( !is.null(delta)){
+            M<- rep( NA, L)
+            for( i in 1:L){
+                M[i]<- m[i] + ceiling( delta/ dx[i])
+            }  
+        }
         if( is.null(M)){
           M<- rep( NA, L)
           for( i in 1:L){
@@ -49,7 +57,7 @@ circulantEmbeddingSetup <- function(
         bigIndex<- makeMultiIndex( M)
         MCenter<- round( M/2)
         center<-      rbind( MCenter* dx)
-# this might be made more effficient anothe way ....  
+# this might be made more efficient another way ....  
         bigGrid<- array( NA, dim(bigIndex) )
         for( i in 1:L){
           bigGrid[,i]<- bigIndex[,i]*dx[i]
@@ -61,19 +69,25 @@ circulantEmbeddingSetup <- function(
         out<- do.call(cov.function, c(cov.args, list(x1 = bigGrid, x2 = center)))  
         # coerce to an array note that this depends on the bigIndex varying in the right way
         out<- array( c(out),M)
-        temp <- array( 0, M)
+        
         #
+        # this normalization can be skipped because the simulated field 
+        # is stationary and periodic.
+        # for example
+        # wght <- fft(out)/prod(M)
+        # OLD CODE:
         # a simple way to normalize. This could be avoided by
         # translating image from the center ...
-        #
         # add to the middle point in the array -- matches the center from above
-        temp[rbind( MCenter)] <- 1
-        wght <- fft(out)/(fft(temp) * prod(M))
+         temp <- array( 0, M)
+         temp[rbind( MCenter)] <- 1
+         wght <- fft(out)/(fft(temp) * prod(M))
+        
         #
         # wght is the discrete FFT for the covariance suitable for fast
         # multiplication by convolution.
         #
-        covObject <- list(m = m, grid = grid, dx=dx, M = M, 
+        covObject <- list(m = m, grid = grid, dx=dx, M = M, delta=delta, 
             wght = wght,  call = match.call())
         return( covObject)
        

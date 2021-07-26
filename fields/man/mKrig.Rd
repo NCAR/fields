@@ -40,7 +40,7 @@ covariance paramters.
 \usage{
 mKrig(x, y, weights = rep(1, nrow(x)), Z = NULL,
                  cov.function = "stationary.cov", cov.args = NULL,
-                 lambda = 0, m = 2, chol.args = NULL, find.trA = TRUE,
+                 lambda = NA, m = 2, chol.args = NULL, find.trA = TRUE,
                  NtrA = 20, iseed = NA, llambda = NULL, na.rm = FALSE,
                  collapseFixedEffect = TRUE, tau = NA, sigma2 = NA,
                  ...)

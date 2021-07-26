@@ -294,6 +294,7 @@ Douglas W. Nychka, John Paige
  par.grid<- list( aRange= seq( .1,.35,,8))
   obj1b<- mKrigMLEGrid( x,Y,
      cov.args = list(Covariance="Matern", smoothness=1.0), 
+     cov.params.start=list( lambda = .5),
         par.grid = par.grid
                     )
   obj1b$summary # take a look

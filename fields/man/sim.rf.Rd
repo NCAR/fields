@@ -35,7 +35,8 @@ circulant embedding.
 sim.rf(obj)
 circulantEmbedding(obj)
 circulantEmbeddingSetup( 
-     grid, M = NULL, cov.function="stationary.cov", cov.args=NULL, ...)
+     grid, M = NULL, cov.function="stationary.cov", cov.args=NULL,delta=NULL,
+        ...)
 
 }
 \arguments{
@@ -58,7 +59,7 @@ in finding distances.}
 
 \item{cov.args}{A list of arguments to include with the covariance function, Eg. aRange and 
 smoothness for the Matern.}
-
+\item{delta}{If NULL the spatial domain is artifically doubled in size in all dimensions to account for the periodic wrapping of the fft. If  passed this is the amount to extend the domain and can be less than double if a compact covariance function is used. }
 \item{\dots}{For convenience any other arguments to pass to the covariance function. }
 }
 

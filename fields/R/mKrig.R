@@ -20,7 +20,7 @@
 # or see http://www.r-project.org/Licenses/GPL-2    
 mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                   cov.function="stationary.cov", 
-                  cov.args = NULL, lambda = 0, m = 2, 
+                  cov.args = NULL, lambda = NA, m = 2, 
                   chol.args = NULL, find.trA = TRUE, NtrA = 20, 
                   iseed = NA, llambda = NULL, na.rm=FALSE, 
                   collapseFixedEffect = TRUE, 
@@ -33,6 +33,12 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   #If cov.args$find.trA is true, set onlyUpper to FALSE (onlyUpper doesn't
   #play nice with predict.mKrig, called by mKrig.trace)
   #
+  # next function also omits NAs from x,y,weights, and Z  if na.rm=TRUE.
+  object<- mKrigCheckXY( x, y, weights, Z, na.rm = na.rm)
+  # as the computation progresses additional components are 
+  # added to the object list and by the end this is the returned 
+  # object of class mKrig.
+  
   if(find.trA == TRUE && supportsArg(cov.function, "onlyUpper"))
     cov.args$onlyUpper= FALSE
   if(find.trA == TRUE && supportsArg(cov.function, "distMat"))
@@ -42,8 +48,14 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
     lambda <- exp(llambda)
   }
   if( !is.na(tau)&!is.na(sigma2)){
+    fixedParameters<- TRUE
     lambda<- tau^2/sigma2
   }
+  else{
+    fixedParameters<- FALSE
+  }
+  object$fixedParameters<- fixedParameters
+  
   # see comments in Krig.engine.fixed for algorithmic commentary
   #
   # check for duplicate x's.
@@ -51,8 +63,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   if (any(duplicated(cat.matrix(x)))) {
     stop("locations are not unique see help(mKrig) ")
   }
-  # next function also omits NAs from x,y,weights, and Z  if na.rm=TRUE.
-  object<- mKrigCheckXY( x, y, weights, Z, na.rm = na.rm)
+ 
   # create fixed part of model as m-1 order polynomial
   # NOTE: if m==0 then fields.mkpoly returns a NULL to 
   # indicate no polynomial part.
@@ -79,7 +90,8 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   # covariance matrix at observation locations
   # NOTE: if cov.function is a sparse constuct then Mc will be sparse.
   # see e.g. wendland.cov
-  Mc <- do.call(cov.function, c(cov.args, list(x1 = object$knots, x2 = object$knots)))
+  Mc <- do.call(cov.function, c(cov.args, 
+                                list(x1 = object$knots, x2 = object$knots)))
   #
   # decide how to handle the pivoting.
   # one wants to do pivoting if the matrix is sparse.
@@ -290,8 +302,16 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
                             "tau","sigma2","aRange","eff.df","GCV")
   summaryPars["lnProfileLike.FULL"]<- lnProfileLike.FULL
   summaryPars["lnProfileREML.FULL"]<- lnProfileREML.FULL
-  summaryPars["tau"]  <- tau.MLE.FULL
-  summaryPars["sigma2"]<- sigma2.MLE.FULL
+  
+  if( fixedParameters){
+    summaryPars["tau"]  <- tau
+    summaryPars["sigma2"]<- sigma2
+    }
+  else{  
+    summaryPars["tau"]  <- tau.MLE.FULL
+    summaryPars["sigma2"]<- sigma2.MLE.FULL
+  }
+  
   summaryPars["lambda"]<- lambda
   summaryPars["aRange"] <-ifelse( !is.null(cov.args$aRange), 
                                      cov.args$aRange, NA)
@@ -303,6 +323,7 @@ mKrig <- function(x, y, weights=rep(1, nrow(x)), Z = NULL,
   ### add in some depreciated components so that LatticeKrig 8.4
   ### passes its tests.
   ########################
+  
   object$rho.MLE<- sigma2.MLE
   object$rho.MLE.FULL<- sigma2.MLE.FULL
   object$lnProfileLike<- lnProfileLike

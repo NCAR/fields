@@ -1,0 +1,8 @@
+import( stats, evd, graphics, stats4 )
+export( dtrunc,
+        extrunc,
+        vartrunc,
+        ptrunc,
+        qqtrunc,
+        qtrunc,
+        rtrunc )

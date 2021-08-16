@@ -1,0 +1,1721 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage{t1enc}
+\usepackage[latin1]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{graphics}
+
+\usepackage[round]{natbib}
+\bibliographystyle{jrss}
+
+\pagestyle{plain}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{1.5ex plus 0.5ex minus 0.5ex}
+\setlength{\oddsidemargin}{0in}
+\setlength{\evensidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textwidth}{6.3in}
+\setlength{\textheight}{9.8in}
+
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+
+\begin{document}
+\sloppy
+
+\begin{center}
+\LARGE 
+A User's Guide to the evd Package (Version 2.2) \\
+\Large
+\vspace{0.2cm}
+Alec Stephenson \\
+\normalsize
+Copyright \copyright 2006 \\
+\vspace{0.2cm}
+Department of Statistics and Applied Probability,\\
+National University of Singapore, \\
+Singapore 117546. \\
+\vspace{0.2cm}
+E-mail: alec\_stephenson@hotmail.com \\
+25th March 2006 
+\end{center}
+
+%\nocite{frantiag84}
+%\nocite{gumbgold64}
+%\nocite{gumbmust67}
+%\nocite{jenk55}
+%\nocite{joe97}
+%\nocite{kotzbala00}
+%\nocite{mont70}
+%\nocite{montotte78}
+%\nocite{smit86}
+%\nocite{sney77}
+%\nocite{step:sim}
+%\nocite{tawn93}
+
+\section{Introduction}
+\setcounter{footnote}{0}
+
+\subsection{What is the evd package?}
+\label{intro}
+
+The evd (extreme value distributions) package is an add-on package for the R \citep{R} statistical computing system.
+The package contains the following (user-level) functions.
+It also contains the demo \verb+soe9+, giving examples from Chapter Nine of \citet{beirgoeg04}.
+
+Univariate Distributions. Density, distribution, simulation and quantile (inverse distribution) functions for univariate parametric distributions.\\ 
+\verb+  dgev  dgpd  dgumbel  drweibull  dfrechet  dextreme  dorder+\\
+\verb+  pgev  pgpd  pgumbel  prweibull  pfrechet  pextreme  porder+\\
+\verb+  rgev  rgpd  rgumbel  rrweibull  rfrechet  rextreme  rorder+\\
+\verb+  qgev  qgpd  qgumbel  qrweibull  qfrechet  qextreme+
+
+Multivariate Distributions. Density, distribution, simulation and dependence functions for multivariate parametric extreme value models.\\
+\verb+  dbvevd  dmvevd  pbvevd  pmvevd  rbvevd  rmvevd  abvevd  amvevd+
+
+Non-parametric Estimation. Calculate and plot non-parametric estimates of dependence functions and quantile curves.\\  
+\verb+  abvnonpar  amvnonpar  qcbvnonpar+
+
+Stochastic Processes. Generate stochastic processes associated with extreme value theory, identify extreme clusters and estimate the extremal index.\\
+\verb+  evmc  marma  mar  mma  clusters  exi+
+
+Fitting Models. Obtain maximum likelihood estimates and standard errors for univariate and bivariate models used in extreme value theory.\\
+\verb+  fbvevd  fgev  fpot  forder  fextreme+
+
+Pre-model Diagnostics. Threshold identification and dependence summaries.\\
+\verb+  mrlplot  tcplot  chiplot+ 
+
+Model Diagnostics. Model diagnostics for fitted models; diagnostic plots and analysis of deviance.\\  
+\verb+  plot.uvevd  plot.bvevd  anova.evd+
+
+Profile likelihoods. Obtain profile traces, plot profile log-likelihoods and obtain profile confidence intervals from fitted models.\\ 
+\verb+  profile.evd  plot.profile.evd  profile2d.evd  plot.profile2d.evd+
+
+The following datasets are also included in the package.\\
+\verb+  failure  fox  lisbon  ocmulgee  oldage  oxford  lossalae+\\ 
+\verb+  portpirie  sask  sealevel  uccle  venice  sealevel2+
+
+\subsection{Obtaining the package/guide}
+
+The evd package can be downloaded from CRAN (The Comprehensive R
+Archive Network) at \verb+http://cran.r-project.org/+. 
+This guide (in pdf) will be in the directory \verb+evd/doc/+
+underneath wherever the package is installed.
+
+\subsection{Contents}
+
+This guide contains examples\footnote{All of the examples presented in
+this guide are called with \texttt{options(digits = 4)}, and with the
+option \texttt{show.signif.stars} set to \texttt{FALSE}.} on the use
+of the evd package. 
+The examples do not include any theoretical justification.
+See \citet{cole01} for an introduction to the statistics of extreme
+values, and \citet{beirgoeg04} for a more detailed treatment. 
+
+Section \ref{uni} covers the standard (non-fitting) functions for
+univariate distributions. 
+Sections \ref{biv} and \ref{mult} do the same for bivariate and
+multivariate extreme value models. 
+Dependence functions of extreme value distributions are discussed in
+Section \ref{depfun}. 
+Stochastic processes are discussed in Section \ref{stochproc}.
+Maximum likelihood fitting of univariate models, peaks over threshold
+models and bivariate extreme value models is discussed in Sections
+\ref{unifit}, \ref{potfit} and \ref{bivfit} respectively. 
+Three practical examples using the data sets \verb+oxford+,
+\verb+rain+ and \verb+sealevel+ are given in Sections \ref{egoxford},
+\ref{egrain} and \ref{egsealevel} respectively. 
+
+This guide should not be viewed as an alternative to the documentation
+files included within the package. 
+These remain the definitive source of information. 
+A reference manual containing all the documentation files can be
+downloaded from CRAN. 
+
+\subsection{Citing the package}
+
+Volume 2/2 of R-News (the newsletter of the R-project) contains an
+article that describes an earlier version of the evd package. 
+To cite the package in publications please cite the R-News article. 
+The article and the corresponding citation can be downloaded from
+\verb+http://www.cran.r-project.org/doc/Rnews/+.
+
+\subsection{Caveat}
+
+I have checked these functions as best I can but, as ever, they may
+contain bugs. 
+If you find a bug or suspected bug in the code or the documentation
+please report it to me at \verb+alec_stephenson@hotmail.com+.  
+Please include an appropriate subject line.
+
+\subsection{Legalese}
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.  
+See the GNU General Public License for more details.
+
+A copy of the GNU General Public License can be obtained from 
+\verb+http://www.gnu.org/copyleft/gpl.html+.
+You can also obtain it by writing to the Free Software Foundation, 
+Inc., 59 Temple Place -- Suite 330, Boston, MA 02111-1307, USA. 
+
+\section{Univariate Distributions}
+\setcounter{footnote}{0}
+\label{uni}
+
+The Gumbel, Fr\'{e}chet and (reversed) Weibull distribution functions are respectively given by
+\begin{align}
+&G(z) = \exp\left\{-\exp\left[-\left(\frac{z-a}{b}\right)\right]\right\}, 
+        \quad -\infty < z < \infty \label{gumbel} \\
+&G(z) = \begin{cases}
+        0, & z \leq a, \\
+        \exp\left\{-\left(\frac{z-a}{b}\right)^{-\alpha}\right\}, & z > a,
+        \end{cases} \label{frechet} \\ 
+&G(z) = \begin{cases}
+        \exp\left\{-\left[-\left(\frac{z-a}{b}\right)\right]^{\alpha}\right\},
+        & z < a, \\
+        1, & z \geq a,
+        \end{cases} \label{weibull}
+\end{align}
+where $a$ is a location parameter, $b > 0$ is a scale parameter and $\alpha > 0$ is a shape parameter. 
+The distribution \eqref{weibull} is often referred to as the Weibull distribution. 
+To avoid confusion I will call this the reversed Weibull, since it is related  by a change of sign to the three parameter Weibull distribution used in survival analysis.
+
+The Generalised Extreme Value (GEV) distribution function is given by
+\begin{equation}
+G(z) = \exp \left\{ - \left[ 1+ \xi \left( z-\mu \right) /\sigma  \right]_{+}^{-1/\xi} \right\},
+\label{gev}
+\end{equation}   
+where ($\mu,\sigma,\xi$) are the location, scale and shape parameters respectively, $\sigma > 0$ and $h_{+}=\max(h,0)$.
+When $\xi>0$ the GEV distribution has a finite lower end point, given by $\mu - \sigma/\xi$.
+When $\xi<0$ the GEV distribution has a finite upper end point, also given by $\mu - \sigma/\xi$. 
+The parametric form of the GEV encompasses that of the Gumbel, Fr\`{e}chet and reversed Weibull distributions. 
+The Gumbel distribution is obtained in the limit as $\xi\rightarrow0$.
+The Fr\'{e}chet and Weibull distributions are obtained when $\xi>0$ and $\xi<0$ respectively. 
+To recover the parameterisation of the Fr\'{e}chet distribution \eqref{frechet} set $\xi=1/\alpha>0$, $\sigma=b/\alpha>0$ and $\mu=a+b$.
+To recover the parameterisation of the reversed Weibull distribution \eqref{weibull} set $\xi=-1/\alpha<0$, $\sigma=b/\alpha>0$ and $\mu=a-b$.
+
+The generalised Pareto distribution (GPD) function is given by
+\begin{equation*}
+G(z) = 1 - \left[1 + \xi \left( z-\mu \right) /\sigma  \right]_{+}^{-1/\xi},
+\end{equation*}   
+for $z > \mu$, where ($\mu,\sigma,\xi$) are the location, scale and shape parameters respectively, $\sigma > 0$ and $h_{+}=\max(h,0)$.
+The GPD has a finite lower end point, given by $\mu$.
+When $\xi<0$ the GPD also has a finite upper end point, given by $\mu - \sigma/\xi$.
+A shifted exponential distribution is obtained in the limit as $\xi\rightarrow0$.
+
+It is standard practice within R to concatenate the letters r, p, q and d with an abbreviated distribution name to yield the names of the corresponding simulation, distribution, quantile (inverse distribution) and density functions respectively.
+The evd package follows this convention.
+Each of the five distributions defined above has an associated set of functions, as given in Section \ref{intro}. Some examples are given below.
+They should be familiar to those who have had previous experience with R.
+
+\begin{verbatim}
+> rgev(6, loc = c(20,1), scale = .5, shape = 1)
+[1] 23.7290  1.2492 19.6680  0.8662 19.7939  2.6512
+> rgpd(3, loc = 2)
+[1] 2.483681 3.666805 2.837809
+
+> qrweibull(seq(0.1, 0.4, 0.1), 2, 0.5, 1, lower.tail = FALSE)
+> qrweibull(seq(0.9, 0.6, -0.1), loc = 2, scale = 0.5, shape = 1)
+# Both give
+[1] 1.947 1.888 1.822 1.745
+
+> pfrechet(2:6, 2, 0.5, 1)
+[1] 0.0000 0.6065 0.7788 0.8465 0.8825
+> pfrechet(2:6, 2, 0.5, 1, low = FALSE)
+[1] 1.0000 0.3935 0.2212 0.1535 0.1175
+
+> drweibull(-1:3, 2, 0.5, log = TRUE)
+[1] -5.307 -3.307 -1.307   -Inf   -Inf
+> dgumbel(-1:3, 0, 1)
+[1] 0.17937 0.36788 0.25465 0.11820 0.04737
+\end{verbatim}
+
+Let $F$ be an arbitrary distribution function, and let $X_1,\dots,X_m$ be a random sample from $F$.
+Define $U_m=\max\{X_1,\dots,X_m\}$ and $L_m=\min\{X_1,\dots,X_m\}$.
+The distributions of $U_m$ and $L_m$ are given by
+\begin{align}
+&\Pr(U_m \leq x) = [F(x)]^m 
+\label{maxdens} \\
+&\Pr(L_m \leq x) = 1 - [1 - F(x)]^m.
+\label{mindens}
+\end{align}
+Simulation, distribution, quantile and density functions for the distribution of $U_m$, given an integer $m$ and an arbitrary distribution function $F$, are provided by \verb+rextreme+, \verb+pextreme+, \verb+qextreme+ and \verb+dextreme+ respectively.
+The integer $m$ should be given to the argument \verb+mlen+.
+The distribution $F$ is most easily specified by passing an
+abbreviated distribution name to the argument \verb+distn+.
+If \verb+largest+ is \verb+FALSE+ the distribution of $L_m$ is used. 
+Some examples are given below.
+
+\begin{verbatim}
+> rextreme(1, distn = "norm", sd = 2, mlen = 20, largest = FALSE)
+> min(rnorm(20, mean = 0, sd = 2))
+# Both simulate from the same distribution
+[1] -2.612
+
+> rextreme(4, distn = "exp", rate = 1, mlen = 5)
+> rextreme(4, distn = "exp", mlen = 5)
+# Both simulate from the same distribution
+[1] 2.2001 0.8584 4.5595 3.9397
+
+> pextreme(c(.4, .5), distn = "norm", mean = 0.5, sd = c(1, 2), mlen = 4)
+[1] 0.04484 0.06250
+> dextreme(c(1, 4), distn = "gamma", shape = 1, scale = 0.3, mlen = 100)
+[1] 0.3261328 0.0005398
+\end{verbatim}
+
+Let $X_{(1)} \geq X_{(2)} \geq \dots \geq X_{(m)}$ be the order statistics of the random sample $X_1,\dots,X_m$.
+The distribution of the $j$th largest order statistic, for $j = 1,\dots,m$, is
+\begin{equation}
+\Pr(X_{(j)} \leq x) = \sum_{k=0}^{j-1} \binom{m}{k} [F(x)]^{m-k} [1 - F(x)]^k.
+\label{orderdens}
+\end{equation}
+The distribution of the $j$th smallest order statistic is obtained by setting $j = m + 1 - j$.
+Simulation, distribution and density functions for the distribution of $X_{(j)}$, for given integers $m$ and $j \in \{1,\dots,m\}$, and for an arbitrary distribution function $F$, are provided by \verb+rorder+, \verb+porder+ and \verb+dorder+ respectively.
+The integer $m$ should again be given to the argument \verb+mlen+.
+If \verb+largest+ is \verb+FALSE+ the distribution of the \verb+j+th smallest order statistic $X_{(m+j-1)}$ is used.
+Some examples are given below.
+
+\begin{verbatim}
+> rorder(1, distn = "norm", mlen = 20, j = 2)
+[1] 2.284
+> porder(c(1, 2), distn = "gamma", shape = c(.5, .7), mlen = 10, j = 2)
+[1] 0.5177 0.8259
+> dorder(c(1, 2), distn = "gamma", shape = c(.5, .7), mlen = 10, j = 2)
+[1] 0.7473 0.3081
+\end{verbatim}
+
+\section{Bivariate Extreme Value Distributions}
+\setcounter{footnote}{0}
+\label{biv}
+
+The evd package contains functions associated with nine parametric bivariate extreme value distributions.
+The univariate marginal distributions in each case are GEV, with marginal parameters ($\mu_1,\sigma_1,\xi_1$) and ($\mu_2,\sigma_2,\xi_2$).
+
+There are three symmetric models, with distribution functions 
+\begin{align}
+&G(z_1,z_2) = \exp\left\{- (y_1^{1/\alpha}+y_2^{1/\alpha})^\alpha \right\}, \quad 0<\alpha\leq1, \label{log} \\
+&G(z_1,z_2) = \exp\left\{ - y_1 - y_2 + (y_1^{-r}+y_2^{-r})^{-1/r} \right\}, \quad r>0, \label{neglog} \\
+&G(z_1,z_2) = \exp\left( - y_1\Phi\{\lambda^{-1}+{\textstyle\frac{1}{2}}\lambda[\log(y_1/y_2)]\} - y_2\Phi\{\lambda^{-1}+{\textstyle\frac{1}{2}}\lambda[\log(y_2/y_1)]\}\right), \quad \lambda>0, \notag
+\end{align}
+known as the logistic \citep{gumb60b}, negative logistic \citep{gala75} and H\"{u}sler-Reiss \citep{huslreis89} models respectively, where
+\begin{equation}
+y_j = y_j(z_j) = \{1+\xi_j(z_j-\mu_j)/\sigma_j\}_{+}^{-1/\xi_j}
+\label{mtrans}
+\end{equation}
+for $j=1,2$.
+Independence\footnote{
+Independence occurs when $G(z_1,z_2) = \exp\{-(y_1+y_2)\}$.} 
+is obtained when $\alpha=1$, $r\downarrow0$ or $\lambda\downarrow0$.
+Complete dependence\footnote{
+Complete dependence occurs when $G(z_1,z_2) = \exp\{-\max(y_1,y_2)\}$.} 
+is obtained when $\alpha\downarrow0$, $r\rightarrow\infty$ or $\lambda\rightarrow\infty$.
+
+The distributions functions \eqref{log} and \eqref{neglog} have asymmetric extensions, given by
+\begin{align}
+&G(z_1,z_2) = \exp\left\{ - (1-\theta_1)y_1 - (1-\theta_2)y_2 - [(\theta_1y_1)^{1/\alpha}+(\theta_2y_2)^{1/\alpha}]^\alpha\right\}, \quad 0<\alpha\leq1, \notag \\
+&G(z_1,z_2) = \exp\left\{ - y_1 - y_2 + [(\theta_1y_1)^{-r}+(\theta_2y_2)^{-r}]^{-1/r}\right\}, \quad r>0, \notag 
+\end{align}
+known as the asymmetric logistic \citep{tawn88} and asymmetric negative logistic \citep{joe90} models respectively, where the asymmetry parameters $0\leq\theta_1,\theta_2\leq1$.
+For the asymmetric logistic model independence is obtained when either $\alpha = 1$, $\theta_1 = 0$ or $\theta_2 = 0$.
+Different limits occur when $\theta_1$ and $\theta_2$ are fixed and $\alpha\downarrow0$.
+For the asymmetric negative logistic model independence is obtained when either $r\downarrow0$, $\theta_1\downarrow0$ or $\theta_2\downarrow0$. 
+Different limits occur when $\theta_1$ and $\theta_2$ are fixed and $r\rightarrow\infty$.
+
+The remaining four bivariate models are defined in Appendix A. Density, distribution and simulation functions for each of the nine models are provided by \verb+dbvevd+, \verb+pbvevd+ and \verb+rbvevd+ respectively.
+The argument \verb+model+ denotes the specified model, which must be either \verb+"log"+ (the default), \verb+"alog"+, \verb+"hr"+, \verb+"neglog"+, \verb+"aneglog"+, \verb+"bilog"+, \verb+"negbilog"+, \verb+"ct"+ or \verb+"amix"+ (or any unique partial match).
+The first argument in \verb+pbvevd+ and \verb+dbvevd+ should be a vector of length two or a matrix with two columns, so that each row specifies a value for $(z_1,z_2)$.
+
+The parameters of the specified model can be passed using one or more of the arguments \verb+dep+, \verb+asy+, \verb+alpha+ and \verb+beta+.
+The marginal parameters ($\mu_1,\sigma_1,\xi_1$) and ($\mu_2,\sigma_2,\xi_2$) can be passed using the arguments \verb+mar1+ and \verb+mar2+ respectively.
+Gumbel marginal distributions are used by default.
+The arguments \verb+mar1+ and \verb+mar2+ can also be matrices with three columns, in which case each column represents a vector of values to be passed to the corresponding marginal parameter.
+Some examples are given below.
+
+\begin{verbatim}
+> rbvevd(3, dep = .8, asy = c(.4, 1), model = "alog")
+         [,1]    [,2]
+[1,]  0.07876 -0.7971
+[2,]  0.01091 -0.8113
+[3,] -0.10491 -0.8831
+
+> rbvevd(3, alpha = .5, beta = 1.2, model = "negb", mar1 = rep(1, 3))
+       [,1]  [,2]
+[1,] 0.7417 1.085
+[2,] 0.8391 1.825
+[3,] 2.0142 2.280
+
+> pbvevd(c(1, 1.2), dep = .4, asy = c(.4, .6), model = "an", mar1 = rep(1, 3))
+[1] 0.173
+> tmp.quant <- matrix(c(1,1.2,1,2), ncol = 2, byrow = TRUE)
+> tmp.mar <- matrix(c(1,1,1,1.2,1.2,1.2), ncol = 3, byrow = TRUE)
+> pbvevd(tmp.quant, dep = .4, asy = c(.4, .6), model = "an", mar1 = tmp.mar)
+[1] 0.173 0.175
+
+> dbvevd(c(1, 1.2), alpha = .2, beta = .6, model = "ct", mar1 = rep(1, 3))
+[1] 0.1213
+> dbvevd(tmp.quant, alpha = 0.2, beta = 0.6, model = "ct", mar1 = tmp.mar)
+[1] 0.1213 0.0586
+\end{verbatim}
+
+%The logistic and asymmetric logistic models respectively are simulated using bivariate versions of Algorithms 1.1 and 1.2 in \citet{step02a}.
+%All other models are simulated using a root finding algorithm to generate random vectors from the conditional distribution function.
+%The simulation of the the bilogistic or negative bilogistic model is relatively slow (about 2.8 seconds per 1000 random vectors on a 450MHz PIII, 512Mb RAM) because each evaluation of either distribution function requires a root finding algorithm to evaluate $\gamma$.
+
+\section{Multivariate Extreme Value Distributions}
+\setcounter{footnote}{0}
+\label{mult}
+
+Let $z=(z_1,\dots,z_d)$.
+The $d$-dimensional logistic model \citep{gumb60b} has distribution function
+\begin{equation*}
+G(z) = \exp\left\{-\left(\sum\nolimits_{j=1}^d y_j^{1/\alpha}\right)^\alpha\right\}
+\end{equation*} 
+where $\alpha\in(0,1]$ and $(y_1,\dots,y_d)$ is defined by the transformations \eqref{mtrans}.
+
+This distribution can be extended to an asymmetric form. 
+Let $B$ be the set of all non-empty subsets of $\{1,\dots,d\}$, let $B_1=\{b \in B:|b|=1\}$, where $|b|$ denotes the number of elements in the set $b$,  and let $B_{(i)}=\{b \in B:i \in b\}$.
+The multivariate asymmetric logistic model \citep{tawn90} is given by
+\begin{equation*}
+G(z)=\exp\left\{-\sum\nolimits_{b \in B} \left[\sum\nolimits_{i \in b}(\theta_{i,b}y_i)^{1/\alpha_b}\right]^{\alpha_b}\right\}
+\end{equation*} 
+where the dependence parameters $\alpha_b\in(0,1]$ for all $b\in B \setminus B_1$, and the asymmetry parameters $\theta_{i,b}\in[0,1]$ for all $b\in B$ and $i\in b$.
+The constraints $\sum_{b \in B_{(i)}}\theta_{i,b}=1$ for $i=1,\dots,d$ ensure that the marginal distributions are GEV.
+There exists further constraints which arise from the possible redundancy of asymmetry parameters in the expansion of the distributional form.
+Specifically, if $\alpha_b=1$ for some $b\in B \setminus B_1$ then $\theta_{i,b}=0$ for all $i \in b$.
+Let $b_{-i_0}=\{i \in b:i \neq i_0\}$.
+If, for some $b \in B \setminus B_1$, $\theta_{i,b}=0$ for all $i \in b_{-i_0}$, then $\theta_{i_0,b}=0$.
+
+%The model contains $2^d-d-1$ dependence parameters and $d2^{d-1}$ asymmetry parameters (excluding the constraints).
+%The logistic model \eqref{multlog} can be obtained by setting $\theta_{i,12 \dots d}=1$ for all $i = 1,\dots,d$ (which implies that $\theta_{i,b}=0$ whenever $|b|<d$) and $\alpha_{12 \dots d} = \alpha$.
+%The density functions for the symmetric and asymmetric logistic models are given in \citet{step:phd}.
+
+Density, distribution and simulation functions for these models are provided by \verb+dmvevd+, \verb+pmvevd+ and \verb+rmvevd+ respectively.
+The argument \verb+model+ denotes the specified model, which must be either \verb+"log"+ (the default) or \verb+"alog"+ (or any unique partial match).
+The argument \verb+d+ denotes the dimension of the model.
+By default, \verb+d = 2+.
+The first argument in \verb+pbvevd+ and \verb+dbvevd+ should be a vector of length \verb+d+ or a matrix with \verb+d+ columns, so that each row specifies a value for $(z_1,\dots,z_d)$.
+The marginal parameters $(\mu_i,\sigma_i,\xi_i)$, for $i=1,\dots,d$, can be passed using the argument \verb+mar+.
+Gumbel marginal distributions are used by default.
+For the symmetric logistic model, the argument  \verb+dep+ represents the parameter $\alpha$.
+Some examples are given below.
+%The simulation functions \verb+rmvlog+ and \verb+rmvalog+ use Algorithms 2.1 and 2.2 in \citet{step02a}.
+
+\begin{verbatim}
+> rmvevd(3, dep = .6, model = "log", d = 5)
+        [,1]    [,2]    [,3]     [,4]  [,5]
+[1,]  0.1335  0.2878 1.07886  1.55515 1.310
+[2,]  1.7100  0.9453 1.02070 -0.02553 1.527
+[3,] -0.3376 -0.5814 0.07426  0.10906 2.827
+
+> tmp.mar <- matrix(c(1,1,1,1,1,1.5,1,1,2), ncol = 3, byrow = TRUE)
+> rmvevd(3, dep = .6, d = 5, mar = tmp.mar)
+      [,1]   [,2]   [,3]   [,4]  [,5]
+[1,] 2.803 4.6415 1.8531 3.5569 8.854
+[2,] 0.751 0.9704 2.3328 2.6537 1.233
+[3,] 4.641 1.4321 0.5825 0.6041 2.021
+
+> tmp.quant <- matrix(rep(c(1,1.5,2), 5), ncol = 5)
+> pmvevd(tmp.quant, dep = .6, d = 5, mar = tmp.mar)
+[1] 0.07233 0.16387 0.21949
+> dmvevd(tmp.quant, dep = .6, d = 5, mar = tmp.mar, log = TRUE)
+[1] -3.564 -6.610 -9.460
+\end{verbatim}
+
+For the asymmetric logistic model \verb+dep+ should be a vector of length $2^{\verb+d+}-\verb+d+-1$ containing the dependence parameters.
+For example, when $\verb+d+ = 4$
+\begin{equation*}
+\verb+dep+ = \texttt{c}(\alpha_{12},\alpha_{13},\alpha_{14},\alpha_{23},\alpha_{24},\alpha_{34},\alpha_{123},\alpha_{124},\alpha_{134},\alpha_{234},\alpha_{1234}).
+\end{equation*}
+The asymmetry parameters should be passed to \verb+asy+ in a list with $2^{\verb+d+}-1$ elements, where each element is a vector (including vectors of length one) corresponding to a set $b \in B$, containing $\{\theta_{i,b}:i \in b\}$.
+For example, when $\verb+d+ = 4$
+\begin{align*}
+\texttt{asy} = \texttt{list}&(\theta_{1,1}, \theta_{2,2}, \theta_{3,3}, \theta_{4,4}, \texttt{c}(\theta_{1,12},\theta_{2,12}), \texttt{c}(\theta_{1,13},\theta_{3,13}), \texttt{c}(\theta_{1,14},\theta_{4,14}), \texttt{c}(\theta_{2,23},\theta_{3,23}), \\
+&\texttt{c}(\theta_{2,24},\theta_{4,24}), \texttt{c}(\theta_{3,34},\theta_{4,34}), \texttt{c}(\theta_{1,123},\theta_{2,123},\theta_{3,123}), \texttt{c}(\theta_{1,124},\theta_{2,124},\theta_{4,124}), \\
+&\texttt{c}(\theta_{1,134},\theta_{3,134},\theta_{4,134}), \texttt{c}(\theta_{2,234},\theta_{3,234},\theta_{4,234}), \texttt{c}(\theta_{1,1234},\theta_{2,1234},\theta_{3,1234},\theta_{4,1234})).
+\end{align*}
+All the constraints, including  $\sum_{b \in B_{(i)}}\theta_{i,b}=1$ for $i=1,\dots,d$, must be satisfied or an error will occur.
+Some examples are given below.
+
+The dependence parameters used in the following trivariate asymmetric logistic model are $(\alpha_{12},\alpha_{13},\alpha_{23},\alpha_{123})=(.6,.5,.8,.3)$.
+The asymmetry parameters are $\theta_{1,1}=.4$, $\theta_{2,2}=0$, $\theta_{3,3}=.6$, $(\theta_{1,12},\theta_{2,12})=(.3,.2)$, $(\theta_{1,13},\theta_{3,13})=(.1,.1)$, $(\theta_{2,23},\theta_{3,23})=(.4,.1)$ and finally $(\theta_{1,123},\theta_{2,123},\theta_{3,123})=(.2,.4,.2)$.
+
+\begin{verbatim}
+> asy <- list(.4, 0, .6, c(.3,.2), c(.1,.1), c(.4,.1), c(.2,.4,.2))
+> rmvevd(3, dep = c(.6,.5,.8,.3), asy = asy, model = "alog", d = 3)
+         [,1]    [,2]    [,3]
+[1,]  0.52375 -0.8844  1.4898
+[2,]  1.16174 -0.4368 -0.7404
+[3,] -0.03737  1.5139 -0.5996
+
+> dmvevd(c(2, 2, 2), dep = c(.6,.5,.8,.3), asy = asy, model = "a", d = 3)
+[1] 0.006636
+
+> tmp.quant <- matrix(rep(c(1,1.5,2), 3), ncol = 3)
+> pmvevd(tmp.quant, dep = c(.6,.5,.8,.3), asy = asy, model = "a", d = 3)
+[1] 0.4131 0.5849 0.7223
+\end{verbatim}
+
+The dependence parameters used in the following four dimensional asymmetric logistic model are $\alpha_b = 1$ for $|b| = 2$\footnote{
+The values taken by $\alpha_b$ when $|b| = 2$ are irrelevant here because $\theta_{i,b}=0$ for all $i \in b$ when $|b|=2$.} 
+and $(\alpha_{123},\alpha_{124},\alpha_{134},\alpha_{234},\alpha_{1234})=(.7,.3,.8,.7,.5)$.
+The asymmetry parameters are $\theta_{i,b}=0$ for all $i \in b$ when $|b|\leq2$, $(\theta_{1,123},\theta_{2,123},\theta_{3,123})=(.2,.1,.2)$, $(\theta_{1,124},\theta_{2,124},\theta_{4,124})=(.1,.1,.2)$, $(\theta_{1,134},\theta_{3,134},\theta_{4,134})=(.3,.4,.1)$, $(\theta_{2,234},\theta_{3,234},\theta_{4,234})=(.2,.2,.2)$ and finally $(\theta_{1,1234},\theta_{2,1234},\theta_{3,1234},\theta_{4,1234})=(.4,.6,.2,.5)$.    
+
+\begin{verbatim}
+> asy <- list(0, 0, 0, 0, c(0,0), c(0,0), c(0,0), c(0,0), c(0,0), c(0,0), 
+  c(.2,.1,.2), c(.1,.1,.2), c(.3,.4,.1), c(.2,.2,.2), c(.4,.6,.2,.5))
+> rmvevd(3, dep = c(rep(1,6),.7,.3,.8,.7,.5), asy = asy, model = "alog", d = 4)
+        [,1]    [,2]    [,3]    [,4]
+[1,] -0.5930 -0.1916  1.0211  0.6113
+[2,]  4.3522 -1.0050  2.3618 -0.1875
+[3,]  0.5805  0.4443 -0.5958  0.9717
+\end{verbatim}
+
+%I will end this section with some examples that may be helpful in deciphering errors.
+
+%\begin{verbatim}
+%> asy <- list(.4, 0, .5, c(.3,.2), c(.1,.15), c(.4,.075), c(.2,.4,.25))
+%> rmvevd(3, dep = c(.6,.5,.8,.3), asy = asy, model = "alog", d = 3)
+%Error in mvalog.check(asy, dep, d = d) : 
+%        `asy' does not satisfy the appropriate constraints
+%
+%# 0.5 + 0.15 + 0.075 + 0.25 does not equal one; the sum constraint on the third
+%margin is not satisfied.
+%
+%> asy <- list(.4, 0, .6, c(.3,.2), c(.1,.1), c(.4,.1), c(.2,.4,.2))
+%> rmvevd(3, dep = c(.6,1,.8,.3), asy = asy, model = "alog", d = 3)
+%Error in mvalog.check(asy, dep, d = d) :
+%        `asy' does not satisfy the appropriate constraints
+%
+%# A dependence parameter is equal to one but the corresponding asymmetry 
+%parameters are not zero (the first `further constraint').
+%# One possible alternative which preserves dep (and still satisfies the sum 
+%constraints) is
+%
+%> asy <- list(.4, 0, .6, c(.3,.2), c(0,0), c(.4,.1), c(.3,.4,.3))
+%> rmvevd(3, dep = c(.6,1,.8,.3), asy = asy, model = "alog", d = 3)
+%       [,1]    [,2]    [,3]
+%[1,]  4.627  2.9125  0.9414
+%[2,]  1.200  0.1556  0.2048
+%[3,] -1.159 -0.8749 -1.0340
+%
+%> asy <- list(.5, 0, .6, c(.3,.2), c(0,.1), c(.4,.1), c(.2,.4,.2))
+%> rmvevd(3, dep = c(.6,.5,.8,.3), asy = asy, model = "alog", d = 3)
+%Error in mvalog.check(asy, dep, d = d) :
+%        `asy' does not satisfy the appropriate constraints
+%
+%# The fifth element in asy contains exactly one non-zero asymmetry parameter
+%(the second `further constraint').
+%
+%> asy <- list(.4, 0, .6, c(.3,.2), c(.1,.1), c(.4,.1), c(.2,.4,.2))
+%> rmvevd(3, dep = c(.6,.5,.8,.3), asy = asy, model = "alog")
+%Error in mvalog.check(asy, dep, d = d) :
+%         `asy' should be a list of length 3
+%
+%# the dimension has been mis-specified (the default dimension is 2).
+%\end{verbatim}
+
+\section{Dependence Functions}
+\setcounter{footnote}{0}
+\label{depfun}
+
+Let $z=(z_1,\dots,z_d)$ and $\omega=(\omega_1,\dots,\omega_d)$. Any $d$-dimensional extreme value distribution function can be represented in the form
+\begin{equation*}
+G(z) = \exp\left\{ - \left\{\sum\nolimits_{j=1}^d y_j \right\} A\left(\frac{y_1}{\sum\nolimits_{j=1}^d y_j}, \dots, \frac{y_d}{\sum\nolimits_{j=1}^d y_j} \right)\right\},
+\end{equation*}
+where $(y_1,\dots,y_d)$ is defined by the transformations \eqref{mtrans}. It follows that $A(\omega)=-\log\{G(y_1^{-1}(\omega_1),\dots,y_d^{-1}(\omega_d))\}$, defined on the simplex $S_d =\{\omega \in \mathbb{R}^d_+: \sum_{j=1}^d \omega_j = 1\}$. 
+$A(\cdot)$ is known as the dependence function. The dependence function characterises the dependence structure of $G$.
+It can be shown that $A(\omega)=1$ when $\omega$ is one of the $d$ vertices of $S_d$ (i.e.\ when one component of $\omega$ is equal to one, and all remaining components are equal to zero), and that $A$ is a convex function with $\max(\omega_1,\dots,\omega_d) \leq A(\omega) \leq 1$ for all $\omega \in S_d$.
+The lower and upper bounds are obtained at complete dependence and mutual independence respectively. 
+In particular, $A(1/d,\dots,1/d)$ is equal to $1/d$ at complete dependence, and $1$ at mutual independence.  
+
+The dependence function of a \emph{bivariate} extreme value distribution is a special case (because the sets $S_2$ and [0,1] are equivalent), and is typically defined as follows.
+Any bivariate extreme value distribution function can be represented in the form
+\begin{equation}
+G(z_1,z_2) = \exp\left\{ - (y_1 + y_2)A\left(\frac{y_1}{y_1+y_2}\right)\right\},
+\label{bvdepfn}
+\end{equation}
+so that $A(\omega)=-\log\{G(y_1^{-1}(\omega),y_2^{-1}(1-\omega))\}$, defined on
+$0\leq\omega\leq1$.\footnote{Some authors \citep[e.g.][]{pick81} use $A(\omega)=-\log\{G(y_1^{-1}(1-\omega),y_2^{-1}(\omega))\}$.}
+It follows that $A(0)=A(1)=1$, and that $A(\cdot)$ is a convex function with $\max(\omega,1-\omega) \leq A(\omega) \leq 1$ for all $0\leq\omega\leq1$. 
+At independence $A(1/2) = 1$.
+At complete dependence $A(1/2) = 0.5$. 
+
+Dependence functions for parametric bivariate and trivariate extreme value models can be calculated and plotted, at given parameter values, using the functions \verb+abvevd+ and \verb+amvevd+. 
+Non-parametric estimators of dependence functions can also be calculated and plotted, using the functions \verb+abvnonpar+ and \verb+amvnonpar+.
+Some examples are given below.
+The last lines of code produce Figure \ref{depfns}.
+
+%Non-parametric estimators of dependence functions of bivariate extreme value models are constructed as follows.
+
+%Suppose $(z_{i1},z_{i2})$ for $i=1,\dots,n$ are $n$ bivariate observations that are passed to \verb+abvnonpar+ using the argument \verb+data+.
+%The marginal parameters are estimated (under the assumption of independence) and the data is transformed using
+%\begin{align}
+%y_{i1} &= \{1+\hat{\xi}_1(z_{i1}-\hat{\mu}_1)/\hat{\sigma}_1\}_{+}^{-1/\hat{\xi}_1} \notag \\
+%y_{i2} &= \{1+\hat{\xi}_2(z_{i2}-\hat{\mu}_2)/\hat{\sigma}_2\}_{+}^{-1/\hat{\xi}_2}
+%\label{transtoexp}
+%\end{align} 
+%for $i=1,\dots,n$, where $(\hat{\mu}_1,\hat{\sigma}_1,\hat{\xi}_1)$ and $(\hat{\mu}_2,\hat{\sigma}_2,\hat{\xi}_2)$ are the maximum likelihood estimates for the location, scale and shape parameters on the first and second margins.
+%If non-stationary fitting is implemented using the \verb+nsloc1+ or \verb+nsloc2+ arguments (see Sections \ref{unifit} and \ref{bivfit}) the marginal location parameters may depend on $i$.
+
+%The estimator is specified using the argument \verb+method+. A number of different estimators are implemented. A short simulation study given in Appendix A compares the properties of these estimators. The default estimator is the estimator of \citet{capefoug97}, which is defined (on $0 \leq \omega \leq 1$) by
+%which must be either \verb+"pickands"+, \verb+"deheuvels"+, \verb+"cfg"+ (the default), \verb+"tdo"+ or \verb+"hall"+ (or any unique partial match).
+%These estimators are respectively defined (on $0 \leq \omega \leq 1$) as follows.
+
+%\begin{equation*}
+%\exp\left\{ \{1-p(\omega)\} \int_{0}^{\omega} \frac{H_n(x) - x}{x(1-x)} \, \text{d}x - p(\omega) \int_{\omega}^{1} \frac{H_n(x) - x}{x(1-x)} \, \text{d}x \right\}
+%\end{equation*}
+
+%\citet{pick81}
+%\begin{equation*}
+%A_p(\omega) = n\left\{\sum_{i=1}^n \min\left(\frac{y_{i1}}{\omega},\frac{y_{i2}}{1-\omega}\right)\right\}^{-1}
+%\end{equation*}
+
+%\citet{dehe91}
+%\begin{equation*}
+%A_d(\omega) = n\left\{\sum_{i=1}^n \min\left(\frac{y_{i1}}{\omega},\frac{y_{i2}}{1-\omega}\right) - \omega\sum_{i=1}^n y_{i1} - (1-\omega)\sum_{i=1}^n y_{i2} + n\right\}^{-1}
+%\end{equation*}
+
+%\citet{capefoug97}
+%\begin{equation*}
+%A_c(\omega) = \exp\left\{ \{1-p(\omega)\} \int_{0}^{\omega} \frac{H_n(x) - x}{x(1-x)} \, \text{d}x - p(\omega) \int_{\omega}^{1} \frac{H_n(x) - x}{x(1-x)} \, \text{d}x \right\}
+%\end{equation*}
+
+%\citet{tiag97}
+%\begin{equation*}
+%A_t(\omega) = 1 - \frac{1}{1 + \log n} \sum_{i=1}^n \min\left(\frac{\omega}{1+ny_{i1}},\frac{1-\omega}{1+ny_{i2}}\right)
+%\end{equation*}
+
+%\citet{halltajv00}
+%\begin{equation*}
+%A_h(\omega) = n\left\{\sum_{i=1}^n \min\left(\frac{y_{i1}}{\bar{y}_1 \omega},\frac{y_{i2}}{\bar{y}_2 (1-\omega)}\right)\right\}^{-1}
+%\end{equation*}
+
+%where $H_n(x)$ is the empirical distribution function of $x_1,\dots,x_n$, with $x_i = y_{i1} / (y_{i1} + y_{i2})$ for $i=1,\dots,n$, and $p(\cdot)$ is any bounded function on $[0,1]$, which can be specified using the argument \verb+wf+.
+%By default $p(\cdot)$ is the identity function.
+%In the estimator of \citet{halltajv00}, $\bar{y}_1 = n^{-1}\sum_{i=1}^n y_{i1}$ and $\bar{y}_2 = n^{-1}\sum_{i=1}^n y_{i2}$.
+
+%Let $A_n(\cdot)$ be any estimator of $A(\cdot)$. 
+%$A_n(\cdot)$ will not necessarily satisfy $\max(\omega,1-\omega) \leq A_n(\omega) \leq 1$ for all $0\leq\omega\leq1$.  
+%An obvious modification is
+%\begin{equation*}
+%A_n^{'}(\omega) = \min(1, \max\{A_n(\omega), \omega, 1-\omega\}).
+%\end{equation*}
+%The function \verb+abvnonpar+ always implements this modification. 
+%Another estimator $A_n^{''}(\omega)$ can be derived by taking the convex minorant of $A_n^{'}(\omega)$. 
+%This can be achieved by setting the argument \verb+convex+ to \verb+TRUE+.
+
+%Some examples of the functions described in this section are given below.
+%The last eight lines of code produce Figure \ref{depfns}.
+
+\begin{verbatim}
+> bvlsm <- rmvevd(100, dep = 0.6, model = "log", d = 2)
+> tvlsm <- rmvevd(100, dep = 0.6, model = "log", d = 3)
+
+> abvevd(seq(0,1,0.25), dep = 0.3, asy = c(.7,.9), model = "alog")
+[1] 1.0000 0.8272 0.7013 0.7842 1.0000
+> abvnonpar(seq(0,1,0.25), data = bvlsm)
+[1] 1.0000 0.8634 0.8158 0.8392 1.0000
+
+> abvnonpar(data = bvlsm, plot = TRUE, blty = 1, lty = 2)
+> abvevd(dep = .3, asy = c(.5, .9), model = "al", add = TRUE)
+> abvevd(dep = 1.05, model = "hr", add = TRUE)
+> amvnonpar(data = tvlsm, plot = TRUE, lower = 0.6)
+\end{verbatim}
+
+\begin{figure}
+\hspace*{2.5cm}
+\scalebox{0.25}{\includegraphics{depfns5.ps}}
+\hspace{0cm} 
+\scalebox{0.3}{\includegraphics[0,100][260,580]{depfns6.ps}}
+\vspace{-1cm}
+\caption{Left: Parametric (solid lines) and non-parametric (dashed line) dependence functions for bivariate distributions. The triangular border represents the constraint $\max(\omega,1-\omega) \leq A(\omega) \leq 1$ for all $\omega \in [0,1]$. Right: non-parametric dependence function for a trivariate distribution. Darker colours depict smaller values, and hence stronger dependence.}
+\label{depfns}
+\end{figure}
+
+
+\section{Stochastic Processes}
+\setcounter{footnote}{0}
+\label{stochproc}
+
+The evd package contains four functions that simulate from stochastic processes associated with extreme value theory.
+The functions \verb+marma+, \verb+mar+ and \verb+mma+ generate max autoregressive moving average processes, and the function \verb+evmc+ generates Markov chains with extreme value dependence structures.
+The function \verb+clusters+ identifies extreme clusters of a stochastic process, and \verb+exi+ estimates a quantity known as the Extremal Index.
+
+A max autoregressive moving average process $\{X_k\}$, denoted by MARMA($p$, $q$), satisfies
+\begin{equation*}
+X_k = \max\{\phi_1 X_{k-1}, \dots, \phi_p X_{k-p}, \epsilon_k, \theta_1 \epsilon_{k-1}, \dots, \theta_q \epsilon_{k-q}\}
+\end{equation*}
+where $(\phi_1, \dots, \phi_p)$ and $(\theta_1, \ldots, \theta_p)$ are vectors of non-negative parameters, and $\{\epsilon_k\}$ is a series of \emph{iid} random variables with a common distribution defined by the argument \verb+rand.gen+. The standard Fr\'{e}chet distribution is used by default.
+A max autoregressive process $\{X_k\}$, denoted by MAR($p$), is equivalent to a MARMA($p$, 0) process, so that
+\begin{equation*}
+X_k = \max\{\phi_1 X_{k-1}, \dots, \phi_p X_{k-p}, \epsilon_k\}.
+\end{equation*}
+A max moving average process $\{X_k\}$, denoted by MMA($q$), is equivalent to a MARMA(0, $q$) process, so that
+\begin{equation*}
+X_k = \max\{\epsilon_k, \theta_1 \epsilon_{k-1}, \dots, \theta_q \epsilon_{k-q}\}.
+\end{equation*}
+
+The functions \verb+mar+, \verb+mma+ and \verb+marma+ generate MAR($p$), MMA($q$) and MARMA($p$, $q$) processes respectively.
+Examples of calls to these functions are given below.
+The \verb+n.start+ argument denotes the burn-in period, which can be specified so that the output series is not unduly influenced by the $p$ starting values, which are all zero by default.
+
+\begin{verbatim}
+> marma(100, p = 1, q = 1, psi = 0.75, theta = 0.65)
+> mar(100, psi = 0.85, n.start = 20)
+> mma(100, q = 2, theta = c(0.75, 0.8))
+\end{verbatim}
+
+The function \verb+evmc+ generates first order Markov chains.
+Informally, a first order Markov chain $X_1, \ldots, X_n$ is a stochastic process such that at any given time $t$ the probability distribution of $X_{t+1}$ is independent the past $X_1, \ldots, X_{t-1}$, given the current state $X_t$.
+The \verb+evmc+ function generates a first order Markov chain such that each pair of consecutive values has the dependence structure of a parametric bivariate extreme value model.
+The main arguments of \verb+evmc+ are the same as those of \verb+rbvevd+.
+The function \verb+evmc+ also has the argument \verb+margin+, which denotes the marginal distribution of each value.
+This must be either \verb+"uniform"+ (the default), \verb+"rweibull"+, \verb+"frechet"+ or \verb+"gumbel"+ (or any unique partial match), for the uniform, standard reversed Weibull, standard Gumbel and standard Fr\'{e}chet distributions respectively.
+Examples of calls to \verb+evmc+ are given below.
+
+\begin{verbatim}
+> evmc(100, alpha = 0.1, beta = 0.1, model = "bilog")
+> evmc(100, dep = 10, model = "hr", margins = "gum")
+\end{verbatim}
+
+The function \verb+clusters+ identifies extreme clusters within (stationary) stochastic processes. A simple way of determining clusters is to specify a threshold $u$ and define consecutive exceedances of $u$ to belong to the same cluster.
+It is more common though to consider a cluster to be active until $r$ consecutive values fall below (or are equal to) $u$, for some given clustering interval length $r$.
+%If $r > 1$ the clusters may contain any arbitrarily low value.
+%To avoid this problem a lower threshold $u_l < u$ can be specified so that a cluster is terminated whenever any values fall below (or are equal to) $u_l$.
+The following code uses \verb+clusters+ to generate the plots depicted in Figure \ref{clust}. 
+These plots identify clusters graphically.
+If the argument \verb+plot+ is \verb+FALSE+ (the default), then \verb+clusters+ returns a list of extreme clusters.        
+
+\begin{verbatim}
+> set.seed(150)
+> x <- evmc(50, dep = 0.55, model ="log")
+> clusters(x, 0.8, plot = TRUE)
+> clusters(x, 0.8, 4, plot = TRUE)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{clust1.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{clust3.ps}}
+\end{center}
+\vspace{0cm}
+\caption{The identification of extreme clusters in a stochastic process. The clustering interval lengths are $r = 1$ (left) and $r=4$ (right). The threshold in each case is $u = 0.8$.}
+\label{clust}
+\end{figure}
+
+The function \verb+exi+ returns estimates of the Extremal Index of a (stationary) stochastic process. The Extremal Index is defined in Chapter 3 of \citet{leadling83}. A more informal treatment is given in Chapter 5 of \citet{cole01}. The extremal index can be estimated using the inverse of the average size of extreme clusters, where the cluster size is defined as the number of exceedances that it contains. 
+
+\section{Fitting Univariate Distributions}
+\setcounter{footnote}{0}
+\label{unifit}
+
+This section presents functions that produce maximum likelihood estimates for some of the distributions introduced in Section \ref{uni}.
+Peaks over threshold models are discussed in Section \ref{potfit}.
+Maximum likelihood estimates for bivariate extreme value distributions are discussed in Section \ref{bivfit}.
+For illustrative purposes Sections \ref{unifit}, \ref{potfit} and \ref{bivfit} use only simulated data.
+Three practical examples using the data sets \verb+oxford+,
+\verb+rain+ and \verb+sealevel+ are given in Sections \ref{egoxford},
+\ref{egrain} and \ref{egsealevel} respectively.
+
+The function \verb+fgev+ produces maximum likelihood estimates for the GEV distribution \eqref{gev}.
+The first argument should be a numeric vector containing data to be fitted.
+Missing values are allowed.
+If the argument \verb+start+ is given it should be a named list containing starting values, the names of which should be the parameters over which the likelihood is to be maximised.
+If \verb+start+ is omitted the routine attempts to find good starting values for the optimisation using moment estimators.
+
+If any of the parameters are to be set to fixed values, they can be given as separate arguments. 
+For example, the Gumbel distribution \eqref{gumbel} can be fitted using \verb+shape = 0+.
+Arguments of the optimisation function \verb+optim+ can also be specified.
+This includes the optimisation method, which can be passed using the argument \verb+method+.
+Two examples of the \verb+fgev+ function are given below.
+
+\begin{verbatim}
+> data1 <- rgev(1000, loc = 0.13, scale = 1.1, shape = 0.2)
+
+> m1 <- fgev(data1)
+> m1
+
+Call: fgev(x = data1) 
+Deviance: 3650 
+
+Estimates
+  loc  scale  shape  
+0.127  1.125  0.224  
+
+Standard Errors
+   loc   scale   shape  
+0.0400  0.0321  0.0248  
+
+Optimization Information
+  Convergence: successful 
+  Function Evaluations: 51 
+  Gradient Evaluations: 12 
+
+> m2 <- fgev(data1, loc = 0, scale = 1)
+> fitted(m2)
+shape  
+0.236  
+\end{verbatim}
+In the first example the likelihood is maximised over (\verb+loc+, \verb+scale+, \verb+shape+).
+In the second example the likelihood is maximised over \verb+shape+, with the location and scale parameters fixed at zero and one respectively.
+
+The maximum likelihood estimators do not necessarily have the usual asymptotic properties, since the end points of the GEV distribution depend on the model parameters. \citet{smit85} shows that the usual asymptotic properties hold when $\xi > -0.5$.
+When $-1 < \xi \leq -0.5$ the maximum likelihood estimators do not have the standard asymptotic properties, but generally exist.
+When $\xi \leq -1$ maximum likelihood estimators do not often exist.
+This occurs because of the large mass near the upper end point. 
+The likelihood increases without bound as the upper end point is estimated to be closer and closer to the largest observed value.
+In terms of the reversed Weibull shape parameter $\alpha$, the usual asymptotic properties hold when $\alpha>2$, the asymptotic properties are not standard for $1<\alpha\leq2$, and maximum likelihood estimators do not often exist for $\alpha<1$.
+
+When the usual asymptotic properties hold (as here) the standard errors of the maximum likelihood estimates, approximated using the inverse of the observed information matrix, can be extracted from the fitted object using
+\begin{verbatim}
+> std.errors(m1)
+    loc   scale   shape 
+0.03999 0.03214 0.02479 
+\end{verbatim}
+%When the usual asymptotic properties do not hold the \verb+std.errors+ component will still be based on the inverse of the observed information matrix, but these values must be \emph{interpreted with caution} \citep{smit85}.
+
+Likelihood ratio tests can be performed using the function \verb+anova+.
+We can compare the two models \verb+m1+ and \verb+m2+ to test the null hypothesis that the location parameter is zero and the scale parameter is one.
+\begin{verbatim}
+> anova(m1, m2)
+Analysis of Deviance Table
+
+   M.Df Deviance Df Chisq Pr(>chisq)    
+m1    3     3650                        
+m2    1     3669  2  18.8    8.2e-05
+\end{verbatim}
+The deviance difference, \verb+deviance(m2)+ minus \verb+deviance(m1)+, is about $18.8$, which yields a p-value of $8.2 \times 10^{-5}$ when compared with a chi-squared distribution on two degrees of freedom. Diagnostic plots and profile traces for fitted models can be constructed using the functions \verb+plot+, \verb+profile+ and \verb+profile2d+ (see Section \ref{egoxford}).
+
+By default the maximum likelihood estimates are calculated under the assumption that the data to be fitted are the observed values of independent random variables $Z_1,\dots,Z_n$, where $Z_i \sim \text{GEV}(\mu,\sigma,\xi)$ for each $i=1,\dots,n$. The \verb+nsloc+ argument allows non-stationary models of the form $Z_i \sim \text{GEV}(\mu_i,\sigma,\xi)$, where
+\begin{equation*}
+\mu_i = \beta_0 + \beta_1x_{i1} + \dots + \beta_kx_{ik}.
+\end{equation*}
+The parameters $(\beta_0,\dots,\beta_k)$ are to be estimated. In matrix notation $\boldsymbol{\mu} = \boldsymbol{\beta_0} + X \boldsymbol{\beta} $, where $ \boldsymbol{\mu}= (\mu_1,\dots,\mu_n)^T$, $\boldsymbol{\beta_0} = (\beta_0,\dots,\beta_0)^T$, $\boldsymbol{\beta} = (\beta_1,\dots,\beta_k)^T$ and $X$ is the $n \times k$ covariate matrix (excluding the intercept) with $ij$th element $x_{ij}$.
+
+The \verb+nsloc+ argument must be a data frame containing the matrix $X$, or a numeric vector which is converted into a single column data frame with column name ``trend''.
+The column names of the data frame are used to derive names for the estimated parameters.
+This allows any of the $k+3$ parameters $(\beta_0,\dots,\beta_k,\sigma,\xi)$ to be set to fixed values within the optimisation.  
+The covariates must be (at least approximately) \emph{centred and scaled}, not only for numerical reasons, but also because the starting value (if \verb+start+ is not given) for each corresponding coefficient is taken to be zero.
+When a linear trend is present in the data, the location parameter is often modelled as 
+\begin{equation*}
+\mu_i = \beta_0 + \beta_1t_i,
+\end{equation*}
+where $t_i$ is some centred and scaled version of the time of the $i$th observation.
+More complex changes in $\mu$ may also be appropriate.
+For example, a change-point model   
+\begin{equation*}
+\mu_i = \beta_0 + \beta_1x_i \qquad \text{where} \qquad
+x_i = 
+\begin{cases}
+0 & i \leq i_0 \\
+1 & i > i_0
+\end{cases},
+\end{equation*}
+or a quadratic trend
+\begin{equation*}
+\mu_i = \beta_0 + \beta_1t_i + \beta_2t_i^2.
+\end{equation*}
+See Sections \ref{egoxford} and \ref{egsealevel} for examples of non-stationary modelling. 
+
+The function \verb+fgev+ also has an argument called \verb+prob+.
+If $\verb+prob+ = p$ is passed a value in the interval [0,1], \verb+fgev+ again produces maximum likelihood estimates for the GEV distribution, but the model is re-parameterised from $(\mu,\sigma,\xi)$ to $(z_p,\sigma,\xi)$, where $z_p$ is the quantile corresponding to the upper tail probability $p$. This argument can be used to calculate and plot profile log-likelihoods of extreme quantiles (see Section \ref{egoxford}).
+If \verb+prob+ is zero/one, then $z_p$ is defined as the upper/lower end point $\mu - \sigma/\xi$, and $\xi$ is restricted to the negative/positive axis.
+Under non-stationarity the model is re-parameterised from $(\beta_0,\beta_1,\dots,\beta_k,\sigma,\xi)$ to $(z_p,\beta_1,\dots,\beta_k,\sigma,\xi)$, so that $z_p$ is the quantile corresponding to the upper tail probability $p$ for the distribution obtained when all covariates are zero.
+
+The \verb+fextreme+ function produces maximum likelihood estimates for the distributions \eqref{maxdens} and \eqref{mindens} given an integer $m$ and an arbitrary distribution function $F$.
+The first argument should be a numeric vector containing the data to be fitted, which should represent maxima (if the argument \verb+largest+ is \verb+TRUE+, the default) or minima (if \verb+largest+ is \verb+FALSE+).
+The argument \verb+start+ (which cannot be missing) should be a named list containing starting values, the names of which should be the parameters over which the likelihood is to be maximised.
+If any of the parameters are to be set to fixed values, they can be given as separate arguments.
+Arguments of the optimisation function \verb+optim+ can also be specified.
+The example given below produces maximum likelihood estimates for the distribution \eqref{maxdens}, where $m = 365$ and $F$ is the normal distribution.
+
+\begin{verbatim}
+> d2 <- rextreme(100, distn = "norm", mean = 0.56, mlen = 365)
+# Simulate yearly maxima using normal distribution
+ 
+> sv <- list(mean = 0, sd = 1)
+> nm <- fextreme(d2, start = sv, distn = "norm", mlen = 365)
+> fitted(nm)
+ mean    sd
+0.685 0.959
+\end{verbatim}
+
+The \verb+forder+ function yields maximum likelihood estimates for the distribution \eqref{orderdens} given integers $m$ and $j \in \{1,\dots,m\}$, and an arbitrary distribution function $F$.
+An example is given below, where $m = 365$, $j = 2$ and $F$ is the normal distribution.
+\begin{verbatim}
+> d3 <- rorder(100, distn = "norm", mean = 0.56, mlen = 365, j = 2)
+> sv <- list(mean = 0, sd = 1) 
+> nm2 <- forder(d3, sv, distn = "norm", mlen = 365, j = 2)
+> fitted(nm2)
+ mean    sd 
+0.483 1.042 
+\end{verbatim}
+
+
+\section{Fitting Peaks Over Threshold Models}
+\setcounter{footnote}{0}
+\label{potfit}
+
+Suppose $X_1,\dots,X_n$ is a sequence of independent and identically distributed random variables, with $M_n = \{X_1,\dots,X_n\}$. Suppose that $n$ is large, so that (assuming certain regularity conditions) the distribution of $M_n$ is approximately GEV\@. Then for large enough $u$, the exceedances of the threshold $u$ are approximately distributed as generalised Pareto, with location parameter $u$. The function \verb+fpot+ fits this distribution to the exceedances, and hence produces maximum likelihood estimates for the shape and scale parameters. The value of the threshold $u$ must be specified by the user. It is typically chosen to be as small as possible, subject to the limit model providing a reasonable approximation. 
+
+The functions \verb+mrlplot+ and \verb+tcplot+\footnote{Both of these functions are heavily based on code by Stuart Coles.} produce diagnostic plots that facilitate the specification of $u$. The function \verb+mrlplot+ produces the empirical mean residual life plot, which is a plot of the empirical mean of the excesses of $u$ (i.e.\ the exceedances of $u$ minus $u$), plotted against $u$. If the exceedances of a threshold $u_0$ are generalised Pareto, the empirical mean residual life plot should be approximately linear for all $u > u_0$.
+The function \verb+tcplot+ calculates maximum likelihood estimates for the shape and modified scale parameters using a number of different thresholds, and plots these estimates against $u$.
+If the exceedances of a threshold $u_0$ are generalised Pareto, the shape and modified scale parameters should be approximately constant with respect to all thresholds $u > u_0$.
+Threshold identification plots produced from the example given below are depicted in Figure \ref{threshid}.
+In this case, the threshold $u = 1$ was chosen.
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{threshid1.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{threshid2.ps}}
+\hspace{0cm} 
+\scalebox{0.25}{\includegraphics{threshid3.ps}}
+\end{center} 
+\caption{The identification of a threshold for the (generalised Pareto) peaks over threshold model. From left to right; the empirical mean residual life plot, modified scale parameter estimates and shape parameter estimates.}
+\label{threshid}
+\end{figure}
+
+The following code generates $n = 500$ independent standard normal random variables and fits the (generalised Pareto) peaks over threshold model to the exceedances of the threshold $u = 1$. 
+The function \verb+fpot+ performs the fit.
+Many of the arguments of \verb+fpot+ are similar to those of \verb+fgev+.
+In particular, either of the \verb+scale+ or \verb+shape+ parameters can be set to fixed values by giving those parameters as arguments.
+For example, an exponential distribution for the excesses (or equivalently, a shifted exponential distribution for the exceedances) can be fitted using \verb+shape = 0+.
+
+\begin{verbatim}
+> tmp <- rnorm(500)
+> mrlplot(tmp,  tlim = c(-1,1.5))
+> tcplot(tmp, tlim = c(-1,1.5))
+
+> pot1 <- fpot(tmp, 1)
+> pot1
+
+Call: fpot(x = tmp, threshold = 1) 
+Deviance: 40.5 
+
+Threshold: 1 
+Number Above: 76 
+Proportion Above: 0.152 
+
+Estimates
+ scale   shape  
+ 0.593  -0.211  
+\end{verbatim}
+
+The fitted model \verb+pot1+ gives the estimates for the scale and shape parameters of the generalised Pareto distribution fitted to the exceedances.
+Also given is the proportion of values above the threshold, or equivalently, the maximum likelihood estimate for the probability of an exceedance.
+Diagnostic plots and profile traces for fitted models can be constructed using the functions \verb+plot+ and \verb+profile+ (see Section \ref{egrain}).
+
+The peaks over thresholds model is typically extended to stationary series via declustering, which corresponds to a filtering of dependent observations to obtain a set of threshold exceedances which are approximately independent.
+An empirical rule is used to identify clusters of exceedances, and the generalised Pareto model is then fitted to the cluster maxima, assuming those maxima to be independent.
+The empirical rule, as given in Section \ref{stochproc}, is defined by the function \verb+clusters+.
+A model of this form can be implemented by setting the logical argument \verb+cmax+ to \verb+TRUE+.
+The clusters are identified using the threshold of the peaks over threshold model.
+An illustration of this technique is given below. 
+The argument \verb+r+ is the clustering interval length.
+ 
+\begin{verbatim}
+> tmp2 <- evmc(500, dep = 0.8, margins = "gum")
+> pot2 <- fpot(tmp2, 1.5, cmax = TRUE, r = 3)
+> pot2
+
+Call: fpot(x = tmp, threshold = 1, cmax = TRUE, r = 3) 
+Deviance: 101.1 
+
+Threshold: 1.5 
+Number Above: 92          
+Proportion Above: 0.184 
+
+Clustering Interval: 3  
+Number of Clusters: 41 
+Extremal Index: 0.446 
+
+Estimates
+ scale   shape  
+ 1.657  -0.272  
+\end{verbatim}
+
+The Extremal Index is a quantity briefly discussed in Section \ref{stochproc}. The estimate of the Extremal Index is simply the number of clusters divided by the number of exceedances. 
+
+The function \verb+fpot+ also has an argument called \verb+mper+.
+If $\verb+mper+ = m$ is passed a positive value, \verb+fpot+ again produces maximum likelihood estimates for the generalised Pareto model, but the model is re-parameterised from $(\sigma,\xi)$ to $(z_m,\xi)$, where $z_m$ is the $m$-period return level, defined as follows. 
+Let $G$ be the fitted generalised Pareto distribution function, with location parameter equal to the specified threshold $u$, so that $1 - G(z)$ is the fitted probability of an exceedance over $z > u$ given an exceedance over $u$.
+The fitted probability of an exceedance over $z > u$ is therefore $p(1 - G(z))$, where $p$ is the estimated probability of exceeding $u$, which is given by the empirical proportion of exceedances.
+The $m$-period return level $z_m$ satisfies $p(1 - G(z_m)) = 1/(mN\hat{\theta})$, where $N$ is the number of observations per period, and $\hat{\theta}$ is the estimate of the extremal index if cluster maxima are fitted, with $\hat{\theta} = 1$ otherwise. The value $N$ can be specified using the argument \verb+npp+. For example, if observations are recorded weekly and $\verb+npp+ = 52$, then $z_m$ is the $m$-year return level.
+If \verb+mper+ is \verb+Inf+, then $z_m$ is defined as the upper end point $u - \sigma/\xi$, and $\xi$ is then restricted to be negative.
+The argument \verb+mper+ can be used to calculate and plot profile log-likelihoods of return levels (see Section \ref{egrain}).
+
+
+%The peaks over threshold model permits an alternative characterization in terms of point processes. 
+%Suppose again that $X_1,\dots,X_n$ is a sequence of independent and identically distributed random variables, with $M_n = \{X_1,\dots,X_n\}$, and that $n$ is large, so that (assuming certain regularity conditions) the distribution of $M_n$ is approximately \text{GEV}($\mu,\sigma,\xi$), with (possibly infinite) end points\footnote{If $\xi > 0$, $z_- = \mu - \sigma/\xi$ and $z_+ = \infty$. If $\xi < 0$, $z_- = -\infty$ and $z_+ = \mu - \sigma/\xi$. If $\xi = 0$, the expressions given are all defined by continuity, with $z_- = -\infty$ and $z_+ = \infty$.} $z_-$ and $z_+$. Then for large enough $u > z_-$, the sequence $\{X_1,\dots,X_n\}$ viewed on the interval $(u,z_+)$ can be approximated by a non-homogeneous Poisson process \citep{cole01}.
+%The approximation leads to a likelihood for ($\mu,\sigma,\xi$), and hence maximum likelihood estimates can be obtained.
+%The likelihood can be easily adjusted so that the maxima of a given (large) number $N \leq n$ of random variables is approximately distributed as \text{GEV}($\mu,\sigma,\xi$), so that e.g.\ if observations are recorded weekly and $N = 52$, then ($\mu,\sigma,\xi$) corresponds to the distribution of annual maxima. 
+%The point process characterization can be fitted using the \verb+fpot+ function with \verb+model = "pp"+. 
+%The value $N$ can by specified using the argument \verb+npp+.
+%If \verb+npp+ is unspecified the default value $N = n$ is used.
+%The following code uses the point process characterization to fit a peaks over threshold model to the simulated data \verb+tmp+.
+%The models \verb+pot3+ and \verb+pot4+ are equivalent; the estimates in \verb+pot3+ correspond to the GEV distribution for the maxima of the data set, whereas those in \verb+pot4+ correspond to the GEV distribution for annual maxima, assuming the observations are recorded daily.
+
+%\begin{verbatim} 
+%> pot3 <- fpot(tmp, 1, model = "pp", npp = 500)
+%> pot4 <- fpot(tmp, 1, model = "pp", npp = 365.25)
+%> fitted(pot3)
+%    loc   scale   shape 
+% 2.6839  0.2380 -0.2108 
+%> fitted(pot4)
+%    loc   scale   shape 
+% 2.6065  0.2542 -0.2108 
+%
+%> fitted(pot1)
+% scale  shape 
+% 0.593 -0.211 
+%\end{verbatim}
+
+%Also given above is the parameter estimates for the model \verb+pot1+, fitted using the generalised Pareto characterization. Let $(\tilde{\sigma}, \tilde{\xi})$ denote the scale and shape parameters of the \text{GPD}. The relationship between the two characterizations is then given by $\tilde{\xi} = \xi$ and $\tilde{\sigma} = \sigma + \xi(u - \mu)$, where $u$ is the threshold.
+%This relationship can be seen in the above estimates.
+%Under the generalized Pareto characterization, the parameter $\tilde{\sigma} - \tilde{\xi} u$ is referred to as the modified scale parameter, as plotted in the centre panel of Figure \ref{threshid}. Unlike $\tilde{\sigma} = \tilde{\sigma}(u)$, the modified scale parameter does not depend on the threshold $u$.
+
+\section{Fitting Bivariate Extreme Value Distributions}
+\setcounter{footnote}{0}
+\label{bivfit}
+
+The function \verb+fbvevd+ produces maximum likelihood estimates for nine bivariate extreme value models.
+The first argument should be a numeric matrix (or a data frame) with two columns containing the data to be fitted.
+Missing values are allowed.
+If the argument \verb+start+ is given it should be a named list containing starting values, the names of which should be the parameters over which the likelihood is to be maximised.
+If \verb+start+ is omitted the routine attempts to find good starting values for the optimisation using maximum likelihood estimators under the assumption of independence.
+If any of the parameters are to be set to fixed values, they can be given as separate arguments.
+Common marginal parameters can be fitted using the arguments \verb+cshape+, \verb+cscale+ and \verb+cloc+, and the dependence function can be constrained to symmetry using the argument \verb+sym+ (see the \verb+fbvevd+ help file for details).
+
+The \verb+nsloc1+ and \verb+nsloc2+ arguments allow non-stationary modelling of the location parameters on the first and second margins respectively.
+They should be used in the same manner as the \verb+nsloc+ argument of \verb+fgev+.
+Examples of bivariate models with non-stationary margins are given in Section \ref{egsealevel}.
+
+%For numerical reasons the parameters of each model are subject to the artificial constraints depicted in Table \ref{contab}. The scale parameters on each GEV margin are artificially constrained to be greater than or equal to $0.01$. These constraints only apply to the functions discussed in this section.
+
+%\begin{table}
+%\begin{center}
+%\begin{tabular}{l|c} 
+%Bivariate Model        & Constraints            \\ \hline
+%Logistic       & $0.1\leq\alpha\leq1$        \\
+%Asymmetric Logistic      & $0.1\leq\alpha\leq1$, $0.001\leq\theta_1,\theta_2\leq1$         \\
+%H\"{u}sler-Reiss       & $0.2\leq\lambda\leq10$         \\
+%Negative Logistic       &  $0.05\leq r \leq5$       \\
+%Asymmetric Negative Logistic     & $\quad0.05\leq r \leq5$, $0.001\leq\theta_1,\theta_2\leq1\quad$         \\
+%Bilogistic  &   $0.1\leq\alpha,\beta\leq0.999$ \\
+%Negative Bilogistic   &  $0.1\leq\alpha,\beta\leq20$ \\
+%Coles-Tawn & $0.001\leq\alpha,\beta\leq30$ \\ \hline
+%\end{tabular}
+%\caption{For numerical reasons the parameters of each model are subject to the artificial constraints depicted here.}
+%\label{contab}
+%\end{center}
+%\end{table}
+
+The first example given below produces maximum likelihood estimates for the (symmetric) logistic model.
+The second example constrains the model at independence (where $\texttt{dep} = 1$).
+The estimates produced in the second example are the same as those that would be produced if \verb+fgev+ was separately applied to each margin. 
+
+\begin{verbatim}
+> bvdata <- rbvevd(100, dep = 0.6, mar1 = c(1.2,1.4,0), mar2 = c(1,1.6,0.1))
+
+> m1 <- fbvevd(bvdata, model = "log")
+> m1
+
+Call: fbvevd(x = bvdata, model = "log") 
+Deviance: 728.5 
+AIC: 742.5
+Dependence: 0.3526 
+
+Estimates
+   loc1   scale1   shape1     loc2   scale2   shape2      dep  
+ 1.2121   1.3831  -0.1813   0.8404   1.4005   0.0834   0.7202  
+
+Standard Errors
+  loc1  scale1  shape1    loc2  scale2  shape2     dep  
+0.1540  0.1091  0.0673  0.1537  0.1144  0.0614  0.0624  
+
+Optimization Information
+  Convergence: successful 
+  Function Evaluations: 47 
+  Gradient Evaluations: 10
+
+> m2 <- fbvevd(bvdata, model = "log", dep = 1)
+
+> fitted(m2)
+   loc1   scale1   shape1     loc2   scale2   shape2 
+ 1.2231   1.3776  -0.1914   0.8367   1.4083   0.0868
+
+> std.errors(m2)
+   loc1  scale1  shape1    loc2  scale2  shape2 
+ 0.1543  0.1089  0.0725  0.1565  0.1163  0.0670
+
+> c(logLik(m2), deviance(m2), AIC(m2))
+[1] -376  752  764
+\end{verbatim}
+
+The discussion in Section \ref{unifit} regarding the properties of maximum likelihood estimators for the GEV distribution also applies to all bivariate models.
+The usual asymptotic properties will not hold if either of the marginal shape parameters are less than $-0.5$.
+%When the usual asymptotic properties do not hold the \verb+std.errors+ component will still be based on the inverse of the observed information matrix, but these values must be \emph{interpreted with caution} \citep{smit85}.
+The value in the output labelled \verb+Dependence+ is the fitted estimate of $\chi = 2\{1-A(1/2)\} \in [0,1]$ \citep{coleheff99}, where $A(\cdot)$ denotes the dependence function \eqref{bvdepfn}. At independence $\chi = 0$, and at complete dependence $\chi = 1$.
+
+Diagnostic plots and profile traces for fitted models can be constructed using the functions \verb+plot+, \verb+profile+ and \verb+profile2d+ (see Section \ref{egsealevel}).
+The function \verb+anova+ performs likelihood ratio tests.
+The null hypothesis of the test performed below specifies that the margins are Gumbel distributions ($\texttt{shape1} = \texttt{shape2} = 0$).
+The deviance of the constrained model is compared with the deviance of the unconstrained model, and the p-value is calculated to be $0.78$.
+The hypothesis would not be rejected at any reasonable significance level.
+
+\begin{verbatim}
+> m3 <- fbvevd(bvdata, model = "log", shape1 = 0, shape2 = 0)
+> anova(m1, m3)
+Analysis of Deviance Table
+
+   M.Df Deviance Df Chisq Pr(>chisq)
+m1    7      708                    
+m3    5      708  2   0.5       0.78
+\end{verbatim}
+
+In the following example I attempt to fit the asymmetric logistic model to the simulated data set used above, which is known to be distributed as symmetric logistic. 
+
+\begin{verbatim}
+> m4 <- fbvevd(bvdata, model = "alog")
+> fitted(m4)
+  loc1  scale1  shape1   loc2  scale2  shape2    asy1   asy2    dep
+1.2097  1.3928 -0.1853 0.8421  1.3831  0.0773  0.8331 0.9996 0.6925 
+\end{verbatim}
+
+A boundary of the parameter space has been reached; the maximum likelihood estimate for the second asymmetry parameter is one.
+This may cause difficulties for the optimiser.
+There are two solutions to this problem: the second asymmetry parameter can be fixed at one, or the \verb+L-BFGS-B+ method can be used.
+The \verb+L-BFGS-B+ method allows box-constraints using the arguments \verb+lower+ and \verb+upper+. 
+The following snippet illustrates both approaches. 
+
+\begin{verbatim}
+> mb <- fbvevd(bvdata, model = "alog", asy2 = 1)
+> round(fitted(mb), 3)
+  loc1 scale1 shape1   loc2 scale2 shape2   asy1    dep 
+ 1.212  1.385 -0.176  0.834  1.396  0.086  0.867  0.693
+
+> up <- c(rep(Inf, 6), 1, 1, 1)
+> mb <- fbvevd(bvdata, model = "alog", method = "L-BFGS-B", upper = up)
+> round(fitted(mb), 3)
+  loc1 scale1 shape1   loc2 scale2 shape2   asy1   asy2    dep 
+ 1.212  1.385 -0.176  0.834  1.396  0.086  0.867  1.000  0.693
+\end{verbatim}
+
+
+\section{Example: Oxford Temperature Data}
+\setcounter{footnote}{0}
+\label{egoxford}
+
+The numeric vector \verb+oxford+ contains annual maximum temperatures (in degrees Fahrenheit) at Oxford, England, from 1901 to 1980.
+It is included in the evd package, and can be made available using \verb+data(oxford)+. 
+The data has previously been analysed by \citet{tabo83}.
+I begin by plotting the data.
+The assumptions of stationarity and independence seem sensible, given the plot (not shown) generated using the code below.
+
+\begin{verbatim}
+> data(oxford) ; ox <- oxford
+> plot(1901:1980, ox, xlab = "year", ylab = "temperature")
+\end{verbatim}
+
+The following code fits two models based on the GEV distribution.
+The first model assumes stationarity. 
+The second model allows for a trend term in the location parameter (even though the plot appears to show that this is unnecessary).
+The \verb+nsloc+ argument is centred and scaled so that the intercept \verb+loc+ represents the location parameter in 1950 and the trend \verb+loctrend+ represents the increase in the location parameter (or decrease, if negative) over a period of 100 years.
+
+\begin{verbatim}
+> ox.fit <- fgev(ox)
+
+> tt <- (1901:1980 - 1950)/100
+> ox.fit.trend <- fgev(ox, nsloc = tt)
+
+> fitted(ox.fit.trend)
+     loc loctrend    scale    shape
+ 83.6617  -1.8812   4.2233  -0.2841
+
+> std.errors(ox.fit.trend)
+     loc loctrend    scale    shape
+  0.5557   1.9675   0.3650   0.0707
+\end{verbatim}
+
+% Moved for graphics placement.
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{graph3.ps}}
+\vspace{-1.5cm}
+\hspace{0cm} 
+\scalebox{0.25}{\includegraphics{graph4.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{graph5.ps}}
+\end{center} 
+\caption{Diagnostic plots for the model \texttt{ox.fit}.}
+\label{oxdiag}
+\end{figure}
+
+The trend term not statistically significant (at any reasonable level). 
+The stationary model \verb+ox.fit+ is retained for further analysis.
+
+\begin{verbatim}
+> ox.fit
+
+Call: fgev(x = oxford) 
+Deviance: 457.8 
+
+Estimates
+   loc   scale   shape  
+83.839   4.260  -0.287  
+
+Standard Errors
+   loc   scale   shape  
+0.5231  0.3658  0.0683 
+\end{verbatim}
+
+The fitted shape is negative, so the fitted distribution is Weibull.
+It is often of interest to test the hypothesis that the shape is zero (the Gumbel distribution).
+The code \verb+confint(ox.fit)+ returns the 95\% Wald confidence intervals for the model parameters, roughly equal to the fitted estimates plus or minus twice their standard errors. The interval for the shape parameter is given by $(-0.42,-0.15)$.
+The corresponding Wald test for $\xi = 0$ would be rejected at significance level $0.05$ since the 95\% confidence interval does not contain zero.
+A likelihood ratio test for $\xi = 0$ is performed in the following snippet.
+The hypothesis is rejected at any significance level above $0.00053$.
+
+\begin{verbatim}
+> ox.fit.gum <- fgev(ox, shape = 0)
+> anova(ox.fit, ox.fit.gum)
+Analysis of Deviance Table
+
+           M.Df Deviance Df Chisq Pr(>chisq)
+ox.fit        3      458
+ox.fit.gum    2      470  1    12    0.00053 
+\end{verbatim}
+
+Diagnostic plots can be produced using \verb+plot(ox.fit)+.
+The plots produced compare parametric distributions, densities and quantiles to their empirical counterparts (see the \verb+plot.uvevd+ help file for details). Selected diagnostics are depicted in Figure \ref{oxdiag}.
+
+The small bars on the P-P, Q-Q and return level plots represent simulated (pointwise) 95\% confidence intervals.
+The model \verb+ox.prof+ is seen to be a good fit. 
+The fitted density is close to the non-parametric estimator, and most points lie within the confidence intervals.
+Profile log-likelihoods of the parameters can be plotted using
+
+\begin{verbatim}
+> ox.prof <- profile(ox.fit)
+> plot(ox.prof)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{graph7.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{graph8.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{graph9.ps}}
+\end{center} 
+\caption{Profile log-likelihoods for the model \texttt{ox.fit}.}
+\label{oxprof}
+\end{figure}
+
+The profile log-likelihoods for the scale and shape parameters are the first two plots of Figure \ref{oxprof}. A horizontal line is (optionally) drawn on each plot so that the intersection of the line with the profile log-likelihood yields a profile confidence interval, with (default) confidence coefficient 0.95.
+The end points of the intervals can be derived using \verb+confint(ox.prof)+.
+The profile confidence intervals for the location and shape parameters are approximately the same as the Wald confidence intervals, since the profile log-likelihoods are approximately symmetric.
+The profile log-likelihood for the scale parameter is asymmetric; both end points of the profile confidence interval $(3.64, 5.12)$ are larger than the corresponding end points of the Wald interval $(3.54, 4.98)$. The joint profile log-likelihood of the scale and shape parameters can be plotted using
+
+\begin{verbatim}
+> ox.prof2d <- profile2d(ox.fit, ox.prof, which = c("scale", "shape"))
+> plot(ox.prof2d)
+\end{verbatim}
+
+This produces the image plot in the right panel of Figure \ref{oxprof}. 
+The colours of the image plot represent confidence sets with different confidence coefficients.
+By default, the lightest colour (ignoring the background colour) represents a confidence set with coefficient 0.995; the darkest colour represents a confidence set with coefficient 0.5.
+
+Let $G$ be the GEV distribution function, and let $G(z_p) = 1-p$, so that
+\begin{equation*}
+z_p = 
+\begin{cases}
+\mu - \frac{\sigma}{\xi}[1 - \{-\log(1-p)\}^{-\xi}] & \xi \neq 0 \\
+\mu - \sigma \log\{-\log(1-p)\} & \xi = 0,
+\end{cases}
+\end{equation*}
+is the quantile corresponding to the upper tail probability $p$.
+The profile log-likelihood for $z_{0.1}$ can be plotted using the following.
+The argument $\verb+prob+ = p$ re-parameterises the GEV distribution so that \verb+fgev+ produces maximum likelihood estimates for $(z_p,\sigma,\xi)$. 
+ 
+\begin{verbatim}
+> ox.qfit <- fgev(ox, prob = 0.1)
+> ox.qprof <- profile(ox.qfit, which = "quantile")
+> plot(ox.qprof)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{graph10.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{graph11.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{graph12.ps}}
+\end{center} 
+\caption{Profile log-likelihoods for $z_{0.1}$, $z_{0.01}$ and $z_{0.001}$.}
+\label{quantprof}
+\end{figure}
+
+Figure \ref{quantprof} shows profile log-likelihoods for $z_{0.1}$, $z_{0.01}$ and $z_{0.001}$. 
+The extent of the asymmetry in the profile log-likelihood increases for decreasing (small) $p$.
+This is to be expected, since the data provide increasingly weaker information in the upper tail of the fitted distribution.
+If $\verb+prob+ = p$ is zero, then $z_p$ is the upper end point of the GEV distribution, given by $\mu-\sigma/\xi$ when $\xi < 0$.
+The profile log-likelihood for $z_0$ can be plotted using the following code.
+
+\begin{verbatim}
+> ox.qfit <- fgev(ox, prob = 0)
+> ox.qprof <- profile(ox.qfit, which = "quantile", conf = 0.99)
+> plot(ox.qprof)
+> confint(ox.qprof)
+           lower upper
+  quantile 95.78 113.0
+\end{verbatim}
+
+The argument \verb+conf+ of the function \verb+profile+ controls the range of the profile trace. 
+The profile trace is constructed so that profile confidence intervals with confidence coefficients \verb+conf+ or less can be derived from it.
+By default, $\verb+conf+ = 0.999$, though a smaller value is often appropriate when the profile log-likelihood exhibits strong asymmetry. 
+The 95\% profile confidence interval for the upper end point $z_0$ is derived as (95.8,113.0). 
+
+\section{Example: Rainfall Data}
+\setcounter{footnote}{0}
+\label{egrain}
+
+The numeric vector \verb+rain+ contains 17531 daily rainfall accumulations at a location in south-west England, recorded over the period 1914 to 1962.
+The data is not included in the evd package, but it is available in the ismev package, which can be downloaded from CRAN. 
+As usual, the package can be loaded using \verb+library(ismev)+, and the data can be made available using \verb+data(rain)+. 
+The plot of the data given in Figure 1.7 of \citet{cole01} shows that an assumption of stationarity is sensible.
+The example given here follows \citet{cole01}, pages 84--86.
+
+\begin{verbatim}
+> mrlplot(rain, tlim = c(0,85), nt = 100)
+> par(mfrow = c(2,1))
+> tcplot(rain, tlim = c(0,50), nt = 20)
+> potgp <- fpot(rain, 30, npp = 365.25)
+> potgp2 <- fpot(rain, 30, npp = 365.25, cmax = TRUE, r = 7)
+> clusters(rain, 30, r = 7, cmax = TRUE)
+\end{verbatim}
+
+The first three lines of code produce the threshold diagnostic plots given in pages 80 and 85 of \citet{cole01}, who subsequently decides to work with the threshold $u = 30$.
+The model \verb+potgp+ reports that 152 observations lie above the threshold, giving an exceedance probability estimate of 0.00867.
+The estimates and standard errors of the parameters of \verb+potgp+ agree with those given page 85 of \citet{cole01}.
+In \verb+potgp2+ the peaks over threshold model is applied to cluster maxima, where clusters are defined using a clustering interval length of seven.
+As there is little sign of clustering in the data, this leads to relatively small changes in the parameter estimates, and relatively small increases in the standard errors.
+The final line of code calls the function \verb+clusters+ (see Section \ref{stochproc}) in order to produce the cluster maxima that were used for the fitting of model \verb+potgp2+. 
+
+Diagnostic plots can be produced using \verb+plot(potgp)+. 
+The plots compare parametric distributions, densities and quantiles to their empirical counterparts (see the \verb+plot.uvevd+ help file for details).
+Selected diagnostics are given in Figure \ref{potdiag}.
+The x-axis of the return level plot gives return periods in units of years, since we specified the number of observations per period as $\texttt{npp} = 365.25$.
+The small bars on the P-P, Q-Q and return level plots represent simulated (pointwise) 95\% confidence intervals.
+The model \verb+potgp+ is seen to be a good fit. 
+The fitted density tail is close to the non-parametric estimator, and most points lie within the confidence intervals.
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{potdiag2.ps}}
+\vspace{-1.5cm}
+\hspace{0cm} 
+\scalebox{0.25}{\includegraphics{potdiag3.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{potdiag4.ps}}
+\end{center} 
+\caption{Diagnostic plots for the peaks over threshold model for daily rain data.}
+\label{potdiag}
+\end{figure}
+
+Profile log-likelihoods of the shape parameter and the 100-year return level (not shown) can be plotted using the following code. The argument $\verb+mper+ = m$ re-parameterises the model so that \verb+fpot+ produces maximum likelihood estimates for $(z_m,\xi)$, where $z_m$ is the $m$ period return level, as defined in Section \ref{potfit}. 
+ Horizontal lines denoting 95\% profile confidence intervals are depicted on each plot. The end points of profile confidence intervals can be derived using \verb+confint(prgp3)+.
+ 
+\begin{verbatim}
+potgp3 <- fpot(rain, 30, npp = 365.25, mper = 100)
+prgp3 <- profile(potgp3)
+plot(prgp3)
+\end{verbatim}
+
+%\begin{figure}
+%\begin{center}
+%\scalebox{0.18}{\includegraphics{potprof1.ps}}
+%\vspace{-1.5cm}
+%\hspace{0cm}
+%\scalebox{0.18}{\includegraphics{potprof2.ps}}
+%\end{center} 
+%\caption{Profile deviances for the shape parameter and 100-year return level in the peaks over threshold model for daily rain data.}
+%\label{potprof}
+%\end{figure}
+
+
+\section{Example: Sea Level Data}
+\setcounter{footnote}{0}
+\label{egsealevel}
+
+The \verb+sealevel+ data frame \citep{coletawn90} has two columns containing annual sea level maxima from 1912 to 1992 at Dover and Harwich, two sites on the coast of Britain. 
+It contains 39 missing maxima in total; nine at Dover and thirty at Harwich.
+There are three years for which the annual maximum is not available at either site.
+
+I begin by plotting the data, using the code below. 
+The plot of the Harwich maxima against the Dover maxima, given in the left panel of Figure \ref{seadata}, depicts a reasonable degree of dependence.
+The outlier corresponds to the 1953 flood resulting from a storm passing over the South-East coast of Britain on 1st February.
+The marginal plots (not shown) suggest that the Harwich and Dover maxima both increase with time. The last line of code\footnote{The function \texttt{chiplot} is heavily based on code by Jan Heffernan.} plots estimates of $\chi(u)$ and $\bar{\chi}(u)$ for $0 < u < 1$ \citep{coleheff99}, as depicted in Figure \ref{seadata}. For bivariate extreme value distributions, $\chi(u) = \chi$ is constant for all $0 < u < 1$, and $\lim_{u \rightarrow 1}\bar{\chi}(u) = 1$. The conditions do not seem unreasonable given the wide confidence intervals in each plot.   
+
+\begin{verbatim}
+> data(sealevel) ; sl <- sealevel
+> plot(sl, xlab = "Dover Annual Maxima", ylab = "Harwich Annual Maxima")
+> plot(1912:1992, sl[,1], xlab = "Year", ylab = "Dover Annual Maxima")
+> plot(1912:1992, sl[,2], xlab = "Year", ylab = "Harwich Annual Maxima")
+> chiplot(sl)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{bvgraph1.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{chi.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{chibar.ps}}
+\end{center} 
+\caption{From left to right; Harwich maxima vs Dover maxima, estimated values of $\chi(u)$ vs $u$, estimated values of $\bar{\chi}(u)$ vs $u$.}
+\label{seadata}
+\end{figure}
+
+The following three expressions fit (symmetric) logistic models. 
+The first model incorporates linear trend terms on both marginal location parameters.
+The second model incorporates a linear trend on the Dover margin only.
+The third model assumes stationarity. 
+ The \verb+nsloc1+ and \verb+nsloc2+ arguments are centred and scaled so that the intercepts \verb+loc1+ and \verb+loc2+ represent the marginal location parameters in 1950 and the linear trend parameters \verb+loc1trend+ and \verb+loc2trend+ represent the increase in the marginal location parameters (or decrease, if negative) over a period of 100 years.
+
+\begin{verbatim}
+> tt <- (1912:1992 - 1950)/100
+> m1 <- fbvevd(sl, model = "log", nsloc1 = tt, nsloc2 = tt)
+> m2 <- fbvevd(sl, model = "log", nsloc1 = tt)
+> m3 <- fbvevd(sl, model = "log")
+\end{verbatim}
+
+%I'll leave you to analyse the models in detail.
+%In particular, notice how the trend terms affect the parameter estimates.
+%Marginal Weibull distributions (negative shapes) are estimated when the trends are not included, but marginal Fr\'{e}chet distributions (positive shapes) are estimated upon their inclusion.
+
+The maximum likelihood estimates of the parameters can be compared with their standard errors to perform Wald tests. Wald confidence intervals can be derived using e.g.\ \verb+confint(m1)+.
+Likelihood ratio tests are performed in the following snippet. 
+The p-values confirm the statistical significance of the linear trend terms.
+
+\begin{verbatim}
+> anova(m1, m2, m3)
+Analysis of Deviance Table
+
+   M.Df Deviance Df Chisq Pr(>chisq)
+m1    9    -36.5
+m2    8    -29.2  1  7.26      0.007 
+m3    7     -9.7  1 19.56    9.7e-06 
+\end{verbatim}
+
+Quadratic trends for the location parameter on either or both margins can be incorporated using the following code.
+Further testing, using the models generated below, suggests that a quadratic trend may be implemented for the location parameter on the Harwich margin.
+Despite this, I retain the model \verb+m1+ for further analysis. 
+
+\begin{verbatim}
+> tdframe <- data.frame(trend = tt, quad = tt^2)
+> m4 <- fbvevd(sl, model = "log", nsloc1 = tdframe, nsloc2 = tt)
+> m5 <- fbvevd(sl, model = "log", nsloc1 = tt, nsloc2 = tdframe)
+> m6 <- fbvevd(sl, model = "log", nsloc1 = tdframe, nsloc2 = tdframe)
+\end{verbatim}
+
+The code given below compares two logistic models that are nested within \verb+m1+. Model \verb+m7+ assumes independence.
+The maximum likelihood estimates are the same as those that would be produced if \verb+fgev+ was separately applied to each margin.
+The asymptotic distribution of the deviance difference between models \verb+m7+ and \verb+m1+ is non-regular because the dependence parameter in the restricted (independence) model is fixed at the edge of the parameter space.
+\cite{tawn88} discusses non-regular cases, including this case, for which the asymptotic distribution is one-half of a chi-squared random variable on one degree of freedom.
+In these cases the argument \verb+half+ should be set to \verb+TRUE+.
+The resulting p-value is less than $10^{-6}$, and clearly the independence model is rejected.
+
+Model \verb+m8+ assumes that both marginal shape parameters are zero (or equivalently, that both marginal distributions are Gumbel).
+A likelihood ratio test of this hypothesis provides a p-value of $0.72$.
+The hypothesis would not be rejected at any reasonable significance level.   
+
+\begin{verbatim}
+> m7 <- fbvevd(sl, model = "log", nsloc1 = tt, nsloc2 = tt, dep = 1)
+> anova(m1, m7, half = TRUE)
+Analysis of Deviance Table
+
+   M.Df Deviance Df Chisq Pr(>chisq)
+m1    9    -36.5                    
+m7    8    -22.9  1  27.2    1.9e-07
+
+> m8 <- fbvevd(sl, "log", nsloc1 = tt, nsloc2 = tt, shape1 = 0, shape2 = 0)
+> anova(m1, m8)
+Analysis of Deviance Table
+
+   M.Df Deviance Df Chisq Pr(>chisq)
+m1    9    -36.5
+m8    7    -35.8  2  0.67       0.72
+\end{verbatim}
+
+Diagnostic plots for the fitted (generalised extreme value) marginal distributions can be produced using \verb+plot+ with \verb+mar = 1+ or \verb+mar = 2+.
+The plots produced are of the same structure as those given in Section \ref{egoxford}.
+Diagnostic plots for the fitted dependence structure can be produced using \verb+plot+. There are six plots available (see the \verb+plot.bvevd+ help file for details). Two diagnostic plots are depicted within Figure \ref{seadiag}.
+
+\begin{verbatim}
+> plot(m1, mar = 1)
+> plot(m1, mar = 2)
+> plot(m1, which = 1:5)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.25}{\includegraphics{bvgraph7.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{bvqcurve.ps}}
+\hspace{0cm}
+\scalebox{0.25}{\includegraphics{bvgraph8.ps}}
+\end{center} 
+\caption{From left to right; dependence function diagnostic plot, quantile curves diagnostic plot, profile log-likelihood of the dependence parameter.}
+\label{seadiag}
+\end{figure}
+
+The model \verb+m1+ fits the data reasonably well.
+There are some minor deviations within the conditional P-P plots (not shown), but they do not represent a serious departure of the empirical estimates from the fitted model.
+The profile log-likelihood of the dependence parameter \verb+dep+, as given in the right panel of Figure \ref{seadiag}, can be plotted using the following.
+The argument \verb+xmax+ denotes the upper bound of the parameter.
+
+\begin{verbatim}
+> m1.prof <- profile(m1, which = "dep", xmax = 1)
+> plot(m1.prof)
+> confint(m1.prof)
+      lower upper 
+  dep 0.528 0.887
+\end{verbatim}
+ 
+A horizontal line is (optionally) drawn so that the intersection of the line with the profile log-likelihood yields a profile confidence interval, with (default) confidence coefficient 0.95. The interval is derived as $(0.53,0.89)$.
+
+Further analysis with models other than the (symmetric) logistic yields the following conclusions.
+The two models in Section \ref{biv} that include three parameters with which to describe the dependence structure (the asymmetric logistic and asymmetric negative logistic) are inappropriate.
+In both cases, the maximum likelihood estimate for the parameter \verb+dep+ is at an artificial boundary, because the fitted model is close to a distribution (obtained in the limit) which contains a singular component.
+This is clearly illustrated in the density plots of the fitted models, which both depict a ridge of mass extending towards the 1953 outlier.
+The logistic and the bilogistic models have the lowest deviance of all one and two parameter models respectively.
+The dependence structure of the fitted bilogistic model is almost symmetric. 
+At symmetry, the bilogistic model reduces to the logistic model, and so the latter would appear to be preferable.
+A likelihood ratio test between the two (nested) models gives a p-value of $0.93$.
+
+
+%Models that are not nested can be compared by adding penalty terms to the deviances. 
+%The penalty terms take into account the number of parameters fitted. (If both models have the same number of parameters the deviances can be compared directly.)
+%Three commonly used penalty terms are $2p$ (Akaike's information criterion, or AIC), $p\log(n)$ (Schwarz's criterion, or SC) and $p\{1+\log(n)\}$ (Bayesian information criterion, or BIC),  where $p$ is the number of parameters estimated and $n$ is the number of observations.\footnote{Since \texttt{fbvall} compares models for the dependence structure, $n$ is taken as the number of observations which are complete (i.e.\ not missing on either margin).}
+
+
+%Any bivariate extreme value distribution function can be expressed as  \citep{haan84}
+%\begin{equation*}
+%G(z_1,z_2) = \exp\left\{ - \int_0^1\max\{y_1f_1(x),y_2f_2(x)\} \, \text{d}x \right\}
+%\end{equation*} 
+%where $(y_1,y_2)$ are again defined by the transformations \eqref{mtrans}, and where $f_1$ and $f_2$ are density functions with support [0,1]. 
+%In particular, if we take the beta densities $f_1(x)=(1-\alpha)x^{-\alpha}$ and $f_2(x)=(1-\beta)(1-x)^{-\beta}$ we obtain
+
+\section*{Appendix A: Additional Bivariate Parametric Models}
+
+It can be shown, using a representation of \citet{haan84}, that
+\begin{equation*}
+G(z_1,z_2) = \exp\left\{ - \int_0^1\max\{y_1(1-\alpha)x^{-\alpha},y_2(1-\beta)(1-x)^{-\beta}\} \, \text{d}x \right\}, \quad \alpha,\beta < 1.
+\end{equation*}
+is a bivariate extreme value distribution function. If we further constrain the parameters to be non-negative we obtain the bivariate bilogistic model proposed by \citet{smit90}, which can also be expressed as
+\begin{equation*}
+G(z_1,z_2) = \exp\left\{ - y_1\gamma^{1-\alpha} - y_2(1-\gamma)^{1-\beta} \right\}, \quad 0 < \alpha,\beta <1,
+\end{equation*}
+where $\gamma=\gamma(y_1,y_2;\alpha,\beta)$ solves $(1-\alpha)y_1(1-\gamma)^\beta=(1-\beta)y_2\gamma^\alpha$.
+The logistic model is obtained when $\alpha=\beta$.
+Independence is obtained as $\alpha = \beta \rightarrow1$, and when one of $\alpha,\beta$ is fixed and the other approaches one.
+Different limits occur when one of $\alpha,\beta$ is fixed and the other approaches zero.
+
+Alternatively, if we constrain both parameters to be non-positive and set $\alpha_0=-\alpha > 0$ and $\beta_0=-\beta > 0$ we obtain the negative bilogistic model \citep{coletawn94}, which has the representation
+\begin{equation*}
+G(z_1,z_2) = \exp\left\{-y_1-y_2+y_1\gamma^{1+\alpha_0}+y_2(1-\gamma)^{1+\beta_0} \right\}, \quad \alpha_0,\beta_0 > 0,
+\end{equation*}
+where $\gamma=\gamma(y_1,y_2;-\alpha_0,-\beta_0)$.
+The negative logistic model is obtained when $\alpha_0=\beta_0$ (with $r = 1/\alpha_0 = 1/\beta_0$).
+Independence is obtained as $\alpha_0 = \beta_0 \rightarrow\infty$, and when one of $\alpha_0,\beta_0$ is fixed and the other tends to $\infty$.
+Different limits occur when one of $\alpha_0,\beta_0$ is fixed and the other approaches zero.
+
+The distribution function of the Coles-Tawn model\footnote{\citet{coletawn91} call this the Dirichelet model.}
+\citep{coletawn91} is given by
+\begin{equation*}
+G(z_1,z_2) = \exp\left\{-y_1[1-\text{Be}(u;\alpha+1,\beta)] - y_2\,\text{Be}(u;\alpha,\beta+1) \right\}, \quad \alpha,\beta > 0,
+\end{equation*}
+where $u=\alpha y_2/(\alpha y_2+\beta y_1)$ and Be is the incomplete beta function, given by
+\begin{equation*}
+\text{Be}(u;\alpha,\beta) = \frac{\Gamma(\alpha+\beta)}{\Gamma(\alpha)\Gamma(\beta)} \int_0^u x^{\alpha-1}(1-x)^{\beta-1}  \, \text{d}x.
+\end{equation*}
+Complete dependence is obtained in the limit as $\alpha = \beta \rightarrow\infty$.
+Independence is obtained as $\alpha = \beta \rightarrow0$ and when one of $\alpha,\beta$ is fixed and the other approaches zero.
+Different limits occur when one of $\alpha,\beta$ is fixed and the other tends to $\infty$.
+
+The asymmetric mixed model \citep{tawn88} is typically defined using the corresponding dependence function \eqref{bvdepfn}, which is modelled as a cubic polynomial. Specifically, for $0 \leq t \leq 1$ the dependence function of the asymmetric mixed model is 
+\begin{equation*}
+A(t) = 1 - (\alpha + \beta)t + \alpha t^2 + \beta t^3,
+\end{equation*}
+where both $\alpha$ and $\alpha + 3\beta$ are non-negative, and where both $\alpha + \beta$ and $\alpha + 2\beta$ are less than or equal to one. These constraints imply that $\beta \in [-0.5,0.5]$ and $\alpha \in [0,1.5]$, though $\alpha$ can only be greater than one if $\beta$ is negative. The (symmetric) mixed model is obtained when $\beta = 0$. Complete dependence cannot be obtained. Independence is obtained when $\alpha = \beta = 0$. 
+
+The asymmetric mixed model is often referred to in the literature because the dependence function has a simple form, and because the $\beta = 0$ case is historically important. However it cannot capture strong dependence, and hence it is of limited use as a statistical model. The extension to an $m$-degree polynomial can be made, but this is of no statistical interest because the additional parameters add little additional flexibility.  
+
+\bibliography{bibliog}
+
+\end{document}
+
+
+
+
+
+
+
+
+\section*{Appendix A: Simulation Study}
+
+In this Appendix we use the tools in the package to perform a simulation study to examine the small sample properties of non-parametric estimators for the dependence function $A(\cdot)$ of the bivariate extreme value distribution.
+The estimators referred to in this Appendix are defined in the documentation file for the function \verb+abvnonpar+.
+
+Simulation studies of this form \citep[e.g.][]{halltajv00} typically use the known marginal parameters $(\mu_1,\sigma_1,\xi_1,\mu_2,\sigma_2,\xi_2)$ within the transformations \eqref{transtoexp}.
+In practice, these parameters need to be estimated.
+In this study we seek to replicate the behaviour of the estimators when applied to real data, and we have therefore estimated the marginal parameters by maximum likelihood.
+
+Figure \ref{simfig} depicts the behaviour of the estimators of \citet{capefoug97}, \citet{pick81} and \citet{tiag97}, which we subsequently denote by $A_c$, $A_p$ and $A_t$ respectively. The estimators of \citet{dehe91} and \citet{halltajv00} are not considered, as they produce plots that are indistinguishable from those of $A_p$. 
+The first, second and third columns of the figure employ simulations from (symmetric) logistic distributions, with $\alpha$ equal to $0.5$, $0.75$ and $1$ respectively. 
+Standard Gumbel marginal distributions were used in each case.
+The figure shows that the estimator $A_t$ is abysmal when estimating dependence functions with very strong ($\alpha = 0.5$) or very weak ($\alpha = 1$) levels of dependence.
+The estimators $A_c$ and $A_p$ give more consistent performances across different levels of dependence.
+The estimator $A_c$ appears to outperform $A_p$, as the estimates of the former appear to cluster more tightly around the true dependence function for each $\alpha = 0.5,0.75,1$.
+The plots can easily be generated, using e.g.
+
+\begin{verbatim}
+> dep <- 0.5 ; method <- "cfg"
+> abvevd(dep = dep, plot = TRUE, lty = 0)
+> set.seed(44)
+> for(i in 1:50) {
+    sdt <- rbvevd(100, dep = dep)
+    abvnonpar(data = sdt, add = TRUE, method = method, col = "grey")
+  }
+> abvevd(dep = dep, add = TRUE, lwd = 3)
+\end{verbatim}
+
+\begin{figure}
+\begin{center}
+\scalebox{0.18}{\includegraphics{npsim11.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim12.ps}}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim13.ps}}
+\\
+\scalebox{0.18}{\includegraphics{npsim21.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim22.ps}}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim23.ps}}
+\\
+\scalebox{0.18}{\includegraphics{npsim31.ps}}
+\vspace{-1.5cm}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim32.ps}}
+\hspace{0cm}
+\scalebox{0.18}{\includegraphics{npsim33.ps}}
+\end{center} 
+\caption{Simulated non-parametric dependence function estimates. The grey lines represent estimates derived using the estimators $A_c$ (top row), $A_p$ (middle row) and $A_t$ (bottom row). The thick black lines represent the true dependence functions, which are (symmetric) logistic models with dependence parameters $0.5$ (first column), $0.75$ (second column) and $1$ (third column).}
+\label{simfig}
+\end{figure}
+
+which generates the plot in the top left corner.
+Only the first line of code needs to be changed in order to produce the remaining plots.
+The second line of code establishes the plotting region.
+The simulation is performed in the \verb+for+ loop, and the last line adds the true dependence function to the plot.
+The \verb+set.seed+ function sets the seed of the random generator, which ensures that the simulated data sets used for each plot are comparable.
+
+Let $A_n(\cdot)$ be any estimator of $A(\cdot)$.
+Table \ref{simtab} gives median integrated absolute errors for various non-parametric dependence function estimators.
+The table was constructed as follows.
+For $\alpha = 0.5,0.75,1$ we simulated $1000$ datasets containing $n=25,100$ bivariate observations, using standard Gumbel margins.
+Then for each of the $1000$ datasets we estimated the integrated absolute error $\int_0^1|A_n(x) - A(x)| \, \text{d}x$. 
+The table contains the median of the $1000$ values, for each value of $\alpha$ and $n$.
+We have extended the number of estimators to include the convex minorants of $A_c$ and $A_p$, which we denote by $A_c^*$ and $A_p^*$.
+The convex minorant of $A_t$ is identical to $A_t$, because $A_t$ is always convex.
+
+The table again shows the poor performance of $A_t$ when $\alpha = 0.5$, and particularly when $\alpha = 1$.
+$A_t$ is the best estimator when $\alpha = 0.75$, which is not surprising given that the estimator only yields adequate estimates at mid-range levels of dependence.
+The estimator $A_c$ outperforms $A_p$, confirming the impression given by Figure \ref{simfig}.
+Taking the convex minorant of $A_c$ or $A_p$ leads to an improvement for $\alpha = 0.5$ and $\alpha = 0.75$, but a considerable worsening for $\alpha = 1$.
+This worsening is expected, since taking the convex minorant always leads to estimates of stronger dependence.
+The values in the table can be generated using e.g.
+
+\begin{verbatim}
+> dep <- 0.5 ; n <- 25 ; method <- "cfg" ; cv <- FALSE
+> nn <- 100 ; x <- (1:nn)/(nn + 1)
+> a <- abvevd(x, dep = dep)
+> iae <- numeric(1000)
+> set.seed(44)
+> for(i in 1:1000) {
+    sdt <- rbvevd(n, dep = dep)
+    anp <- abvnonpar(x, data = sdt, method = method, convex = cv)
+    iae[i] <- sum(abs(a - anp))/nn
+  }
+> round(10^4 * median(iae))
+\end{verbatim}
+
+% FOR ENTIRE TABLE
+%\begin{verbatim}
+%method <- rep(c("cfg","cfg","pick","pick","tdo"), 6)
+%cv <- rep(c(FALSE, TRUE, FALSE, TRUE, FALSE), 6)
+%dep <- rep(rep(c(0.5, 0.75, 1), each = 5), 2)
+%n <- rep(c(25, 100), each = 15)
+%sim.all <- numeric(30)
+%
+%for(j in 1:30) {
+%  print(j)
+%  nn <- 100 ; x <- (1:nn)/(nn+1)
+%  a <- abvevd(x, dep = dep[j])
+%  iae <- numeric(1000)
+%  set.seed(44)
+%  for(i in 1:1000) {
+%    sdt <- rbvevd(n[j], dep = dep[j])
+%    anp <- abvnonpar(x, data = sdt, method = method[j], convex = cv[j])
+%    iae[i] <- sum(abs(a - anp))/nn
+%  }
+%  sim.all[j] <- median(iae)
+%}
+%round(10^4 * matrix(sim.all, nrow = 5, ncol = 6))
+%\end{verbatim}
+
+\begin{table}
+\begin{center}
+\begin{tabular}{|l|ccc|ccc|} \hline
+ &  \multicolumn{3}{c|}{$n=25$} & \multicolumn{3}{c|}{$n=100$} \\
+ & $\alpha = 0.5$ & $\alpha = 0.75$ & $\alpha = 1$ & $\alpha = 0.5$ & $\alpha = 0.75$ & $\alpha = 1$  \\ \hline
+
+$A_c$     & 210 & 415 & 110  & 104 & 198 &  62   \\
+$A_c^*$   & 205 & 363 & 340  & 103 & 194 & 168   \\
+$A_p$     & 243 & 469 & 211  & 134 & 242 & 113   \\
+$A_p^*$   & 218 & 357 & 554  & 126 & 215 & 285   \\
+$A_t$     & 393 & 189 & 983  & 334 & 155 & 830   \\ \hline
+\end{tabular}
+ \caption{Median integrated absolute errors $\times$ $10^4$ for non-parametric estimates of the dependence function of the bivariate extreme value distribution, using datasets containing $n=25,100$ bivariate observations, simulated from the (symmetric) logistic model with dependence parameter $\alpha=0.5,0.75,1$. The estimators $A_c^*$ and $A_p^*$ are the convex minorants of $A_c$ and $A_p$ respectively.}
+\label{simtab}
+\end{center}
+\end{table} 
+
+which generates the value in the top left corner.
+Only the first line of code needs to be changed in order to produce the remaining values.
+The integrated absolute error is estimated by evaluating the absolute difference between true dependence function and the non-parametric estimate at $\verb+nn+ = 100$ equally spaced points in the interval $[0,1]$.
+The function \verb+numeric+ merely initializes the object \verb+iae+ to be a vector of $1000$ zeros.
+
+
+
+
+
+
+

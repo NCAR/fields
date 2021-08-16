@@ -1,0 +1,338 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage{amsmath,amssymb}
+
+\pagestyle{plain}
+\setlength{\parindent}{0in}
+\setlength{\parskip}{1.5ex plus 0.5ex minus 0.5ex}
+\setlength{\oddsidemargin}{0in}
+\setlength{\topmargin}{-0.5in}
+\setlength{\textwidth}{6.3in}
+\setlength{\textheight}{9.8in}
+
+%\VignetteIndexEntry{Statistics Of Extremes: Chapter 9}
+
+\begin{document}
+
+\title{Statistics of Multivariate Extremes}
+\author{Alec Stephenson}
+\maketitle
+
+\begin{center}
+\LARGE 
+\textbf{Summary} \\
+\end{center}
+\normalsize
+\vspace{0.5cm}
+This vignette uses the \textbf{evd} package to reproduce the figures, tables and analysis in Chapter 9 of Beirlant et al.\ (2001). The chapter was written by Segers and Vandewalle (2004). The code reproduces almost all figures, but for space reasons only some are shown. Deviations from the book are given as footnotes. Differences will inevitably exist due to numerical optimization and random number generation. 
+\normalsize
+
+\section{Introduction}
+\label{Intro}
+
+The methods used here are illustrated using the \texttt{lossalae} dataset, which contains observations on $1500$ liability claims. The indemnity payment (loss) and the allocated loss adjustment expense (ALAE) is recorded in USD for each claim. The ALAE is the additional expenses associated with the settlement of the claim (e.g.\ claims investigation expenses and legal fees). The dataset also has an attribute called \texttt{capped}, which gives the row names of the indemnity payments that were capped at their policy limit.
+
+We first scale the data so that one unit corresponds to $100\,000$ USD. Putting the data on a sensible scale assists with the numerical optimization involved in maximum likelihood estimation\footnote{The book reports an unsatisfactory fit of the GEV model to the margins. It therefore uses only empirical marginal distributions. This was perhaps due to not scaling the data. In this document we use either fully nonparametric or fully parametric methods.}. The code below plots the raw data using the log scale for both axes (see Figure \ref{rawdata}), and plots the data transformed to uniform $(0,1)$ margins using an empirical transform.
+
+<<label=rawdata>>=
+options(show.signif.stars=FALSE)
+library(evd); nn <- nrow(lossalae)
+loss <- lossalae/1e+05; lts <- c(1e-04, 100)
+plot(loss, log = "xy", xlim = lts, ylim = lts)
+@
+<<>>=
+ula <- apply(loss, 2, rank)/(nn + 1)
+plot(ula)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<rawdata>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Scatterplot of ALAE verses Loss: original data (log-scale).}
+\label{rawdata}
+\end{figure}
+
+\section{Parametric Models}
+
+Any bivariate extreme value distribution function can be represented in the form
+\begin{equation*}
+G(z_1,z_2) = \exp\left\{ - (y_1 + y_2)A\left(\frac{y_1}{y_1+y_2}\right)\right\},
+\label{bvdepfn}
+\end{equation*}
+where
+\begin{equation*}
+y_j = y_j(z_j) = \{1+\xi_j(z_j-\mu_j)/\sigma_j\}_{+}^{-1/\xi_j}
+\label{mtrans}
+\end{equation*}
+for $\sigma_j > 0$ and $j=1,2$, and where
+\begin{equation*}
+A(\omega)=-\log\{G(y_1^{-1}(\omega),y_2^{-1}(1-\omega))\},
+\label{dep}
+\end{equation*}
+defined on $0\leq\omega\leq1$ is called the dependence function\footnote{The book uses the definition $B(\omega) = A(1-\omega)$.}.
+The marginal distributions are generalized extreme value (GEV), given by $G_j(z_j) = \exp(-y_j)$.
+It follows that $A(0)=A(1)=1$, and that $A(\cdot)$ is a convex function with $\max(\omega,1-\omega) \leq A(\omega) \leq 1$ for all $0\leq\omega\leq1$. 
+At independence $A(1/2) = 1$. At complete dependence $A(1/2) = 0.5$.
+
+The dependence function represents only the dependence structure of the distribution, and hence only the dependence parameters of parametric models need to be specified in order to produce dependence function plots. The code below plots dependence functions for four different parametric models. The first of these is given in Figure \ref{asylogdfn}.
+
+<<label=asylogdfn>>=
+abvevd(dep = 0.5, asy = c(1,1), model = "alog", plot = TRUE)
+abvevd(dep = 0.5, asy = c(0.6,0.9), model = "alog", add = TRUE, lty = 2)
+abvevd(dep = 0.5, asy = c(0.8,0.5), model = "alog", add = TRUE, lty = 3)
+@
+
+<<>>=
+abvevd(dep = -1/(-2), model = "neglog", plot = TRUE)
+abvevd(dep = -1/(-1), model = "neglog", add = TRUE, lty = 2)
+abvevd(dep = -1/(-0.5), model = "neglog", add = TRUE, lty = 3)
+@
+
+<<>>=
+abvevd(alpha = 1, beta = -0.2, model = "amix", plot = TRUE)
+abvevd(alpha = 0.6, beta = 0.1, model = "amix", add = TRUE, lty = 2)
+abvevd(alpha = 0.2, beta = 0.2, model = "amix", add = TRUE, lty = 3)
+@
+
+<<>>=
+abvevd(dep = 1/1.25, model = "hr", plot = TRUE)
+abvevd(dep = 1/0.83, model = "hr", add = TRUE, lty = 2)
+abvevd(dep = 1/0.5, model = "hr", add = TRUE, lty = 3)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<asylogdfn>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Dependence functions: asymmetric logistic model.}
+\label{asylogdfn}
+\end{figure}
+
+\section{Componentwise Maxima}
+
+For demonstration purposes we use the data introduced in Section \ref{Intro} to create a dataset of componentwise block maxima by randomly taking $k=50$ groups of size $m=30$, producing $k$ componentwise maxima taken over $m$ observations\footnote{The data may be completely different to the book due to random selection.}. Bivariate extreme value distributions are typically used to model data of this type. The code below creates the componentwise maxima data \texttt{cml} and produces two data plots, the first showing the original data and the componentwise maxima, and the second showing the componentwise maxima data transformed to standard exponential margins.
+
+<<>>=
+set.seed(131); cml <- loss[sample(nn),]
+xx <- rep(1:50, each = 30); lts <- c(1e-04, 100)
+cml <- cbind(tapply(cml[,1], xx, max), tapply(cml[,2], xx, max))
+colnames(cml) <- colnames(loss)
+plot(loss, log = "xy", xlim = lts, ylim = lts, col = "grey")
+points(cml)
+ecml <- -log(apply(cml,2,rank)/51)
+plot(ecml)
+@
+
+The following code estimates and plots the dependence function $A(\cdot)$ from the componentwise maxima data. The first code chunk uses various nonparametric estimates of the dependence function, and also uses empirical (i.e.\ nonparametric) estimation of the margins, as specified by \texttt{epmar = TRUE}. The four different estimates are shown in Figure \ref{nonpardfn}. The second code chunk uses maximum likelihood estimation for parametric models. The call to \texttt{fbvevd} fits the model, and the call to \texttt{plot} plots the parametric dependence function estimates. The argument specification \texttt{asy1 = 1} in the first call to \texttt{fbvevd} constrains the model fit so that the first asymmetry parameter of the model is fixed at the value one.
+
+<<label=nonpardfn>>=
+pp <- "pickands"; cc <- "cfg"
+abvnonpar(data = cml, epmar = TRUE, method = pp, plot = TRUE, lty = 3)
+abvnonpar(data = cml, epmar = TRUE, method = pp, add = TRUE, madj = 1, lty = 2)
+abvnonpar(data = cml, epmar = TRUE, method = pp, add = TRUE, madj = 2, lty = 4)
+abvnonpar(data = cml, epmar = TRUE, method = cc, add = TRUE, lty = 1)
+@
+
+<<>>=
+m1 <- fbvevd(cml, asy1 = 1, model = "alog")
+m2 <- fbvevd(cml, model = "log")
+m3 <- fbvevd(cml, model = "bilog")
+plot(m1, which = 4, nplty = 3)
+plot(m2, which = 4, nplty = 3, lty = 2, add = TRUE)
+plot(m3, which = 4, nplty = 3, lty = 4, add = TRUE)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<nonpardfn>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Nonparametric dependence function estimates by Pickands (dotted line), Deheuvels (dashed line), Hall-Tajvidi (dot-dashed line) and Cap\'{e}r\`{a}a-Foug\`{e}res-Genest (solid line) based on componentwise block maxima data and using empirical marginal estimation.}
+\label{nonpardfn}
+\end{figure}
+
+The objects produced by \texttt{fbvevd} contain information about the parametric fit of the bivariate extreme value distribution. For example, \texttt{m2} contains information on the fit of a (symmetric) logistic extreme value distribution, which has a single dependence parameter and three parameters on each of the GEV margins. Using \texttt{plot(m2)} produces several diagnostic plots, including quantile curves and spectral densities. Using \texttt{deviance(m2)} produces the deviance, which is equal to twice the negative log-likelihood. The following shows the parameter estimates and their standard errors, and gives an analysis of deviance table for testing \texttt{m2} verses \texttt{m3}, which is possible since the models are nested, with \texttt{m3} having one additional dependence parameter. The call to \texttt{exind.test} produces a score test for independence, following Tawn (1988). Omitting the \texttt{method} argument gives a likelihood ratio test, also from Tawn (1988), which is typically more accurate.  
+
+<<>>=
+round(rbind(fitted(m2), std.errors(m2)), 3)
+anova(m3, m2)
+evind.test(cml, method = "score")
+@
+
+The code below uses the function \texttt{qcbvnonpar} to plot quantile curves using nonparametric dependence function estimates. Quantile curves are defined as
+\begin{equation*}
+Q(F, p) = \{(z_1,z_2): F(z_1,z_2) = p\},
+\end{equation*}
+where $F$ is a distribution function and $p$ is a probability. We use the default nonparametric estimation method and we again use empirical estimation of the margins\footnote{Using parametric marginal estimates tends to produce more sensible quantile curve plots, but we follow the book here. Unlike the book, the quantile curves in Figure \ref{nonparqc} are not step functions because the empirical marginal transforms include interpolation.}, as specified by \texttt{epmar = TRUE}. For parametric dependence models similar plots can be produced using e.g.\ \texttt{plot(m2, which = 5)}. Note that because we plot curves corresponding to the distribution of the original dataset rather than the componentwise maxima, we pass the argument \texttt{mint = 30}.
+
+<<label=nonparqc>>=
+lts <- c(0.01,100)
+plot(loss, log = "xy", col = "grey", xlim = lts, ylim = lts)
+points(cml); pp <- c(0.98,0.99,0.995)
+qcbvnonpar(pp, data = cml, epmar = TRUE, mint = 30, add = TRUE)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<nonparqc>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Estimated quantile curves $Q(\hat{F},p)$ for $p=0.98,0.99,0.995$ based on the componentwise block maxima data shown as black circles, using the Cap\'{e}r\`{a}a-Foug\`{e}res-Genest nonparametric estimate of the dependence function and using empirical marginal estimation.}
+\label{nonparqc}
+\end{figure}
+
+\section{Excesses Over A Threshold}
+
+We now consider all the $1500$ observations on liability claims. We assume that the data are distributed according to the distribution function $F$, and we are interested in $F(z)$ where $z=(z_1,z_2)$ is in some sense large. The methods we use assume that $F$ is in the domain of attraction of some bivariate extreme value distribution $G$, and we focus on large data points to estimate features of $G$, and hence of $F(z)$ for large $z$.
+
+Typically we focus on points $z$ that lie above a certain threshold. The functions \texttt{tcplot} and \texttt{mrlplot} can be used for producing plots on each margin to help determine thresholds $u_1$ and $u_2$ for methods that focus primarily on points $z$ such that $z_1 > u_1$ and $z_2 > u_2$. Alternatively, the function \texttt{bvtcplot} can be used to help determine a single threshold $u^{*}$ for methods that focus on points $z$ such that $r(z) > u^{*}$, where $r(z) = x_1(z_1) + x_2(z_2)$, and $x_j(z_j) = -1/\log \hat{F}_j(z_j)$ for $j=1,2$ where $F_j$ is estimated empirically. 
+
+Following Segers and Vandewalle (2004), a sensible choice for threshold $u^{*}$ might be found from Figure \ref{bvtc} by taking the $k$th largest $r(z)$, where $k$ is the largest value for which the y-axis is close to two. Figure \ref{bvtc} is plotted below using \texttt{bvtcplot}. The value of $k$ is returned invisibly. Setting \texttt{spectral = TRUE} uses the $k$th largest points to plot a nonparametric estimate of $H([0,\omega])$ where $H$ is the spectral measure of $G$.
+
+<<eval=FALSE>>=
+k0 <- bvtcplot(loss)$k0
+bvtcplot(loss, spectral = TRUE)
+@
+
+<<label=bvtc, echo=FALSE>>=
+k0 <- bvtcplot(loss)$k0
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<bvtc>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{A plot of $(k/n)r_{(n-k)}$ as a function of $k$, where $r_{(1)} \leq \dots \leq r_{(n)}$ are the ordered values of $r$. The y-axis provides an estimate of $H([0,1]) = 2$ for the spectral measure $H$ of $G$.}
+\label{bvtc}
+\end{figure}
+
+The parametric approach to the problem can employ models similar to those used for bivariate extreme value distributions. We first consider the margins separately by fitting a univariate generalized Pareto distribution to the excesses over the threshold $u_j$ on each margin $j=1,2$. We choose the thresholds so that the number of exceedances is roughly\footnote{The value is chosen so that the thresholds match exactly with those used in the book.} half of the value \texttt{k0}. 
+
+<<>>=
+thresh <- apply(loss, 2, sort, decreasing = TRUE)[(k0+5)/2,]
+mar1 <- fitted(fpot(loss[,1], thresh[1]))
+mar2 <- fitted(fpot(loss[,2], thresh[2]))
+rbind(mar1,mar2)
+@
+
+Parametric threshold models can be fitted using the function \texttt{fbvpot}, with the parametric model specified using the \texttt{model} argument. The default approach uses censored likelihood methodology, where a bivariate extreme value dependence structure is fitted to the data censored at the marginal thresholds $u_1$ and $u_2$. Alternatively, a Poisson process model can be employed using the \texttt{likelihood} argument, employing the methodology of Coles and Tawn (1991). Some examples of parametric fits are given below. Diagnostic plots for the fitted models can be produced using e.g.\ \texttt{plot(m2)}.
+
+<<>>=
+m1 <- fbvpot(loss, thresh, model = "alog", asy1 = 1)
+m2 <- fbvpot(loss, thresh, model = "bilog")
+m3 <- fbvpot(loss, thresh, model = "bilog", likelihood = "poisson")
+round(rbind(fitted(m2), std.errors(m2)), 3)
+@
+
+The following code plots parametric and nonparametric estimates for the bivariate extreme value dependence structure fitted to the upper tail of $F$. The parametric estimates use the previously fitted models. The nonparametric estimate can be plotted using the \texttt{"pot"} method and takes the value \texttt{k0} to specify the threshold.
+
+<<>>=
+abvnonpar(data = loss, method = "pot", k = k0, epmar = TRUE, 
+  plot = TRUE, lty = 3)
+plot(m1, which = 2, add = TRUE)
+plot(m2, which = 2, add = TRUE, lty = 4)
+plot(m3, which = 2, add = TRUE, lty = 2)
+@
+
+Figure \ref{qcthresh} uses our fitted asymmetric logistic model \texttt{m1} to plot quantile curves at probabilities $p=0.98,0.99,0.995$.  The thresholds used for the censored likelihood model fit are also added to the plot.
+
+<<label=qcthresh>>=
+lts <- c(1e-04, 100)
+plot(loss, log = "xy", col = "grey", xlim = lts, ylim = lts)
+plot(m1, which = 3, p = c(0.95,0.975,0.99), tlty = 0, add = TRUE)
+abline(v=thresh[1], h=thresh[2])
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<qcthresh>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Quantile curves for probabilities $p=0.98,0.99,0.995$ for an asymmetric logistic model fit using censored likelihood estimation, with censoring at marginal thresholds given by the vertical and horizontal lines.}
+\label{qcthresh}
+\end{figure}
+
+Models based on bivariate extreme value distributions assume that the margins are either asymptotically dependent or are perfectly independent. They cannot account for situations where the dependence between the margins vanishes at increasingly extreme levels. The remainder of this section illustrates the estimation of dependence measures that can identify such cases. 
+
+We consider three quantities as defined in Coles \textit{et al.} (1999). The coefficient of extremal dependence $\chi \in [0,1]$ is the tendency for one variable to be large given that the other is large. When $\chi = 0$ the variables are asymptotically independent, and when $\chi > 0$ they are asymptotically independent. The second measure $\bar{\chi}$ identifies the strength of dependence for asymptotically independent variables. When $\bar{\chi} = 1$ the variables are asymptotically dependent, and when $-1 \leq \bar{\chi} < 1$ they are asymptotically independent. The third measure is the coefficient of tail dependence $\eta$, which satisfies $\bar{\chi} = 2\eta - 1$.
+
+The following code produces Figure \ref{chiplot} which shows estimates of the functions $\chi(u)$ and $\bar{\chi}(u)$, as defined in Coles \textit{et al.} (1999), for $0 < u < 1$. The functions are defined so that $\chi = \lim_{u \rightarrow 1}\chi(u)$ and $\bar{\chi} = \lim_{u \rightarrow 1}\bar{\chi}(u)$. In this case $\chi(u) > 0 $ for all $u$ but there is little evidence that $\bar{\chi}$ is close to one, so it is difficult to specify the form of dependence on the basis of this plot. 
+
+<<chiplot>>=
+old <- par(mfrow = c(2,1))
+chiplot(loss, ylim1 = c(-0.25,1), ylim2 = c(-0.25,1), nq = 200, 
+  qlim = c(0.02,0.98), which = 1:2, spcases = TRUE)
+par(old)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<chiplot>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{The dependence measures $\chi(u)$ and $\bar{\chi}(u)$. Estimates (solid line), 95\% pointwise confidence intervals (dot-dashed lines). The dashed lines represent the theoretical limits of the functions and the exact independence case at zero.}
+\label{chiplot}
+\end{figure}
+
+We now consider the coefficient of tail dependence $\eta$. We can estimate $\eta$ using univariate theory because of its relationship with $T = \min\{x_1(z_1),x_2(z_2)\}$. If we fit a generalized Pareto distribution to the data points in $T$ that exceed a large fixed threshold, then the estimated shape parameter of the fitted distribution provides an estimate of $\eta$. The call to \texttt{tcplot} plots estimates of $\eta$ at different thresholds in order to assist with threshold choice. The plot seems roughly linear after $u=0.8$, so we take the 80th percentile of $T$ as our threshold. Finally, we use \texttt{anova} to perform a likelihood ratio test for asymptotic dependence, with the null hypothesis $\eta = 1$ versus the alternative $\eta < 1$.   
+
+<<etaplot>>=
+fla <- apply(-1/log(ula), 1, min)
+thresh <- quantile(fla, probs = c(0.025, 0.975))
+tcplot(fla, thresh, nt = 100, pscale = TRUE, which = 2, vci = FALSE, 
+  cilty = 2, type = "l", ylim = c(-0.2,1.2), ylab = "Tail Dependence")
+abline(h = c(0,1))
+@
+
+<<>>=
+thresh <- quantile(fla, probs = 0.8)
+m1 <- fpot(fla, thresh = thresh)
+cat("Tail Dependence:", fitted(m1)["shape"], "\n")
+@
+
+<<>>=
+m2 <- fpot(fla, thresh = thresh, shape = 1)
+anova(m1, m2, half = TRUE)
+@
+
+\begin{figure}[ht]
+\begin{center}
+<<fig=TRUE, echo=FALSE>>=
+<<etaplot>>
+@
+\end{center}
+\vspace{-1cm}
+\caption{Maximum likelihood estimates (solid line) and 95\% pointwise confidence intervals (dot-dashed lines) for $\eta$ at different threshold probabilities.}
+\label{etaplot}
+\end{figure}
+
+\section*{Bibliography}
+
+Beirlant, J., Goegebeur, Y., Segers, J and Teugels, J. (2004) \textit{Statistics of Extremes: Theory and Applications}. Wiley, U.K.
+
+Coles, S. G., Heffernan, J. and Tawn, J. A. (1999) Dependence measures for extreme value analysis. \textit{Extremes}, \textbf{2}, 339--365.
+
+Coles, S. G. and Tawn, J. A. (1991) Modelling extreme multivariate events. \textit{J.\ R.\ Statist.\ Soc.\ B}, \textbf{53}, 377--392.
+
+Segers, J. and Vandewalle, B. (2004). Statistics of Multivariate Extremes. In Beirlant et al. (eds.), \textit{Statistics of Extremes: Theory and Applications}. Wiley, U.K.
+
+Tawn, J. A. (1988). Bivariate extreme value theory: Models and estimation. \textit{Biometrika}, \textbf{75}, 397--415.
+
+\end{document}

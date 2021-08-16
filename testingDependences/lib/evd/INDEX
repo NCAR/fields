@@ -1,0 +1,78 @@
+abvevd                  Parametric Dependence Functions of Bivariate
+                        Extreme Value Models
+abvnonpar               Non-parametric Estimates for Dependence
+                        Functions of the Bivariate Extreme Value
+                        Distribution
+amvevd                  Parametric Dependence Functions of Multivariate
+                        Extreme Value Models
+amvnonpar               Non-parametric Estimates for Dependence
+                        Functions of the Multivariate Extreme Value
+                        Distribution
+anova.evd               Compare Nested EVD Objects
+bvtcplot                Bivariate Threshold Choice Plot
+ccbvevd                 Calculate Conditional Copulas for Parametric
+                        Bivariate Extreme Value Distributions
+chiplot                 Dependence Measure Plots
+clusters                Identify Clusters of Exceedences
+confint.evd             Calculate Confidence Intervals
+dbvevd                  Parametric Bivariate Extreme Value
+                        Distributions
+dextreme                Distributions of Maxima and Minima
+dfrechet                The Frechet Distribution
+dgev                    The Generalized Extreme Value Distribution
+dgpd                    The Generalized Pareto Distribution
+dgumbel                 The Gumbel Distribution
+dorder                  Distributions of Order Statistics
+drweibull               The Reverse Weibull Distribution
+evind.test              Perform Hypothesis Test Of Independence
+evmc                    Simulate Markov Chains With Extreme Value
+                        Dependence Structures
+exi                     Estimates of the Extremal Index
+exiplot                 Plot Estimates of the Extremal Index
+failure                 Failure Times
+fbvevd                  Maximum-likelihood Fitting of Bivariate Extreme
+                        Value Distributions
+fbvpot                  Maximum-likelihood Fitting of Bivariate Extreme
+                        Value Distributions to Threshold Exceedances
+fextreme                Maximum-likelihood Fitting of Maxima and Minima
+fgev                    Maximum-likelihood Fitting of the Generalized
+                        Extreme Value Distribution
+forder                  Maximum-likelihood Fitting of Order Statistics
+fox                     Maximum Annual Flood Discharges of the Fox
+                        River
+fpot                    Peaks Over Threshold Modelling using the
+                        Generalized Pareto or Point Process
+                        Representation
+hbvevd                  Parametric Spectral Density Functions of
+                        Bivariate Extreme Value Models
+lisbon                  Annual Maximum Wind Speeds at Lisbon
+lossalae                General Liability Claims
+marma                   Simulate MARMA(p,q) Processes
+mrlplot                 Empirical Mean Residual Life Plot
+mtransform              GEV Transformations
+ocmulgee                Maximum Annual Flood Discharges of the Ocmulgee
+                        River
+oldage                  Oldest Ages for Swedish Males and Females
+oxford                  Annual Maximum Temperatures at Oxford
+plot.bvevd              Plot Diagnostics for a Bivariate EVD Object
+plot.bvpot              Plot Diagnostics for a Bivariate POT EVD Object
+plot.profile.evd        Plot Profile Log-likelihoods and Calculate
+                        Profile Confidence Intervals
+plot.profile2d.evd      Plot Joint Profile Log-likelihoods
+plot.uvevd              Plot Diagnostics for a Univariate EVD Object
+pmvevd                  Parametric Multivariate Extreme Value
+                        Distributions
+portpirie               Annual Maximum Sea Levels at Port Pirie
+profile.evd             Method for Profiling EVD Objects
+profile2d.evd           Method for Profiling EVD Objects
+qcbvnonpar              Non-parametric Estimates for Bivariate Quantile
+                        Curves
+sask                    Maximum Annual Flood Discharges of the North
+                        Saskachevan River
+sealevel                Annual Sea Level Maxima at Dover and Harwich
+sealevel2               Annual Sea Level Maxima at Dover and Harwich
+                        with Indicator
+tcplot                  Threshold Choice Plot
+uccle                   Rainfall Maxima at Uccle, Belgium
+venice                  Largest Sea Levels in Venice
+venice2                 Largest Sea Levels in Venice

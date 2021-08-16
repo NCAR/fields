@@ -1,0 +1,304 @@
+useDynLib(spam, .registration = TRUE)
+
+import(grid)
+import("dotCall64")
+
+
+importFrom("grDevices", "gray", "heat.colors")
+importFrom("graphics",
+           "axis", "box", "image.default", "par", "points", "polygon", "text")
+importFrom("methods",
+           "callGeneric", "is", "new", "slot<-",  "validObject")
+importFrom("stats", "optim", "rnorm", "runif", "rbinom", "var")
+importFrom("utils", "help")
+
+# Next two paragraphs are from Matrix....
+# Currently, group generics need to be explicitly imported (Bug?):
+importFrom("methods", #Arith,Compare,
+           Math, Math2, Summary#, Complex
+           )
+
+
+S3method("all.equal","spam")
+#S3method("as.matrix.csr","spam")
+S3method("as.matrix","spam")
+S3method("as.vector","spam")
+S3method("determinant","spam")
+S3method("determinant","spam.chol.NgPeyton")
+S3method("chol","spam")
+S3method("diff","spam")
+S3method("dim<-","spam")
+S3method("head","spam")
+S3method("image","spam")
+S3method("isSymmetric","spam")
+S3method("plot","spam")
+S3method("print","spam")
+S3method("print","spam.chol.NgPeyton")
+S3method("solve","spam")
+#S3method("subset_rows","spam")
+S3method("subset","spam")
+S3method("summary","spam")
+S3method("summary","spam.chol.NgPeyton")
+S3method("print","summary.spam")
+S3method("print","summary.spam.chol.NgPeyton")
+S3method("t","spam")
+S3method("tail","spam")
+S3method("update","spam.chol.NgPeyton")
+
+S3method("cbind","spam")
+S3method("rbind","spam")
+
+# Generic functions
+export(
+       "spam_random",
+       "validspamobject",   # __DEFUNCT__
+
+       "is.spam",
+
+       "spam.version",
+       "spam.Version",
+
+       "validate_spam",
+
+       "nearest.dist",
+       "spam_rdist",
+       "spam_rdist.earth",
+
+       "as.spam.matrix",
+       "as.spam.numeric",
+       "as.spam.spam",
+       "as.spam.dist",
+       "as.spam.chol.NgPeyton",
+       "as.spam.list",
+
+       "as.vector.spam",
+       "as.matrix.spam",
+       "spam.list",
+       "spam.numeric",
+
+       "diag.of.spam",
+       "diag.spam",
+       "spam_diag",
+       "diag<-.spam",
+       "diag.spam<-",
+       "rbind.spam",
+       "cbind.spam",
+       "upper.tri.spam",
+       "lower.tri.spam",
+       "t.spam",
+
+       "dim<-.spam",
+       "pad<-.spam",
+
+       "isSymmetric.spam",
+       "all.equal.spam",
+
+       "kronecker.default",
+       "kronecker.spam",
+
+       "gmult",
+
+       "diff.spam",
+
+       "circulant.spam",
+       "toeplitz.spam",
+
+       "determinant.spam",
+       "determinant.spam.chol.NgPeyton",
+       "det",# << "identical" as base - but with correct determinant()
+       "chol.spam",
+       "solve.spam",
+       "forwardsolve.spam",
+       "backsolve.spam",
+       "update.spam.chol.NgPeyton",
+
+       "norm.spam",
+
+       "plot.spam",
+       "display.spam",
+       "image.spam",
+
+       "print.spam",
+       "summary.spam",
+       "print.spam.chol.NgPeyton",
+       "summary.spam.chol.NgPeyton",
+
+       "apply.spam",
+
+       "rmvnorm.spam",
+       "rmvnorm.canonical",
+       "rmvnorm.prec",
+       "rmvnorm.const",
+       "rmvnorm.canonical.const",
+       "rmvnorm.prec.const",
+
+       "precmat",
+       "precmat.RW1",
+       "precmat.RW2",
+       "precmat.RWn",
+       "precmat.season",
+       "precmat.IGMRFreglat",
+       "precmat.IGMRFirreglat",
+       "precmat.GMRFreglat",
+
+       "covmat",
+       "cov.exp",
+       "cov.sph",
+       "cov.nug",
+       "cov.wu1",
+       "cov.wu2",
+       "cov.wu3",
+       "cov.wend1",
+       "cov.wend2",
+       "cov.mat",
+
+       "rowSums.spam",
+       "colSums.spam",
+       "rowMeans.spam",
+       "colMeans.spam",
+
+       "head.spam",
+       "tail.spam",
+
+       "chol2inv.spam",
+
+       "mle.spam",
+       "mle.nomean.spam",
+       "neg2loglikelihood.spam",
+       "mle",
+       "mle.nomean",
+       "neg2loglikelihood",
+
+       "bdiag.spam",
+
+       "var.spam",
+       "eigen.spam",
+       "eigen_approx",
+
+       "bandwidth",
+
+#       ".spam.matmul.mat",
+#       ".spam.matmul",
+#       "solve.spam.mat",
+#       "solve.spam.dummy",
+
+        "subset.spam",
+#       "subset_rows.spam",
+
+        "triplet",
+        "as.spam.matrix.csr",
+#       "as.matrix.csr.spam",
+        "as.dgRMatrix.spam",
+        "as.dgCMatrix.spam",
+        "as.spam.dgRMatrix",
+        "as.spam.dgCMatrix",
+
+        "read.MM",
+        "read.HB",
+
+        "powerboost",
+
+        "permutation.spam",
+
+        "crossprod.spam",
+        "tcrossprod.spam",
+
+        "map.landkreis",
+        "adjacency.landkreis",
+
+        "germany.plot",
+#       "germany.info",
+
+        "grid_trace2",
+        "grid_zoom",
+
+        "rowpointers<-",
+        "entries<-",
+        "colindices<-",
+        "dimension<-",
+
+        "cleanup",
+#       "backsolve"
+
+        "print_nnzpos"
+)
+
+
+# export the two classes
+exportClasses("spam",
+              "spam.chol.NgPeyton")
+
+exportMethods(
+              "Math",
+              "Math2",
+              "Summary",
+
+         #     "show",
+              "print",
+              "image",
+              "display",
+
+              "spam",
+              "as.spam",
+
+              "isSymmetric",
+              "all.equal",
+
+              "summary",
+              "length",
+              "length<-",
+              "c",
+              "dim",
+              "dim<-",
+              "pad<-",
+
+              "rbind",
+              "cbind",
+              "as.spam",
+              "spam",
+              "as.vector",
+              "as.matrix",
+              "determinant",
+              "t",
+              "diag",
+              "diag<-",
+              "upper.tri",
+              "lower.tri",
+
+              "norm",
+              "rowSums",
+              "rowMeans",
+              "colSums",
+              "colMeans",
+
+              "head",
+              "tail",
+
+              "chol",
+              "ordering",
+              "forwardsolve",
+              "backsolve",
+              "solve",
+              "chol2inv",
+
+              "kronecker",
+
+              "permutation",
+
+              "crossprod",
+              "tcrossprod",
+
+
+              "[",
+              "[<-",
+
+              "%*%",
+              "%d*%",
+              "%d+%",
+              "-",
+              "+",
+              "*",
+              "/",
+              "&",
+              "|"
+)

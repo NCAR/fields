@@ -1,0 +1,10 @@
+dtrunc                  Probability density function of truncated
+                        random variables
+extrunc                 Expected value of a truncated random variable
+ptrunc                  Cumulative distribution function of a truncated
+                        random variable
+qqtrunc                 QQ Plot for a Truncated Random Variable
+qtrunc                  Quantitle Function for Truncated Random
+                        Variable
+rtrunc                  Generate truncated random deviates
+vartrunc                Variance of a truncated random variable

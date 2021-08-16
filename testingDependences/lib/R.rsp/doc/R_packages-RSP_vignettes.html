@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>R packages: RSP vignettes</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+<meta name="keywords" content="R, package, vignette, RSP">
+<meta name="author" content="Henrik Bengtsson">
+
+</head>
+
+<body>
+<h1>R packages: RSP vignettes</h1>
+
+<p>Henrik Bengtsson on NA</p>
+
+<p>When building an R package, Sweave vignettes are automatically recognized, compiled into PDFs, which in turn are listed along with their source in the R help system, e.g. <code>help.start()</code>.  These package vignettes are also listed online on the CRAN and Bioconductor package pages, e.g. <a href="https://cran.r-project.org/package=R.rsp">RSP</a>.</p>
+
+<p>Other vignette formats than Sweave can also be included in R packages.  To include such a vignette in a package, three things need to be correct:</p>
+
+<ol>
+<li>the location of the vignette source files,</li>
+<li>the vignettes must contain a special R vignette markup, and</li>
+<li>the <code>DESCRIPTION</code> file needs to be adjusted.</li>
+</ol>
+
+<p>For example, assume that you setup a new package called &#39;YAPackage&#39; with two RSP vignettes.  First, start by making sure they are placed in the package&#39;s vignettes/&#39; directory;</p>
+
+<ul>
+<li><code>vignettes/YAPackage-Intro.tex.rsp</code> - an RSP-embedded TeX vignette </li>
+<li><code>vignettes/YAPackage-ExampleReport.md.rsp</code> - an RSP-embedded Markdown vignette </li>
+</ul>
+
+<p>Second, make sure they both carry the required R vignette markup, which are <code>%\VignetteIndexEntry{...}</code> and <code>%\VignetteEngine{...}</code>.  The former controls the title shown in R&#39;s help indices as well as in online package respositories such as CRAN.   Moreover, the same vignette markup is used everywhere in R regardless of vignette format (TeX, Markdown, HTML, etc.) and vignette engine (Sweave, RSP, knitr, etc.).  What may differ is how you include it the source vignette such that it won&#39;t be part of the final vignette.  With RSP this is easy, because you can do it the same way regardless of format by using RSP preprocessing directives.  For example, in <code>vignettes/YAPackage-Intro.tex.rsp</code> we have the following in the preamble of the TeX file:</p>
+
+<pre><code>&lt;%@meta language=&quot;R-vignette&quot; content=&quot;--------------------------------
+  DIRECTIVES FOR R:
+
+  %\VignetteIndexEntry{YAPackage: An Introduction}
+  %\VignetteAuthor{Ann Statisticus}
+  %\VignetteKeyword{R}
+  %\VignetteKeyword{package}
+  %\VignetteKeyword{introduction}
+  %\VignetteTangle{no}
+  %\VignetteEngine{R.rsp::rsp}
+--------------------------------------------------------------------&quot;%&gt;
+</code></pre>
+
+<p>and in <code>vignettes/YAPackage-ExampleReport.md.rsp</code> we use (somewhere at the top):</p>
+
+<pre><code>&lt;%@meta language=&quot;R-vignette&quot; content=&quot;--------------------------------
+  DIRECTIVES FOR R:
+
+  %\VignetteIndexEntry{Example Report by YAPackage}
+  %\VignetteAuthor{Joe Analyst}
+  %\VignetteEngine{R.rsp::rsp}
+--------------------------------------------------------------------&quot;%&gt;
+</code></pre>
+
+<p>The advantage of using RSP meta directive for this is that it will also populate corresponding meta variables, i.e. <code>title</code>, <code>author</code>, and <code>keywords</code>.  This information can be be reused in the vignette, without having to retype the same information.  For instance, in the TeX vignette we can use <code>\title{&lt;%@meta name=&quot;title&quot;%&gt;}</code> and <code>\author{&lt;%@meta name=&quot;author&quot;%&gt;}</code>.  For Markdown, these meta variables will also be passed along to any Markdown-to-HTML postprocessor such that they annotate the corresponding HTML <code>&lt;head&gt;</code> tags.</p>
+
+<p>Furthermore, in the above example additional custom vignette markup was used, which has special meaning to some vignette engines.  For instance, <code>%\VignetteTangle{no}</code> causes the RSP vignette engine to skip the tangling of that vignette, i.e. the <code>YAPackage-Intro.R</code> script file will not be generated, which otherwise is the default.</p>
+
+<p>The last thing to do is to make sure <code>R.rsp</code> is added to the following two fields of the <code>DESCRIPTION</code> file:</p>
+
+<pre><code>Suggests: R.rsp
+VignetteBuilder: R.rsp
+</code></pre>
+
+<p>That&#39;s it.  <code>R CMD build YAPackage</code> will now detect the two vignettes, compile them into their final formats (PDF for the TeX vignette and HTML for the Markdown vignette), and include them as part of the R help system.  If you submit the package to CRAN or Bioconductor, the vignettes will also appear online.</p>
+
+<p><em>Why is this vignette in HTML format and not in PDF as other vignettes typically are?  This particular vignette was written using RSP-embedded Markdown, which after being compiled into plain Markdown is automatically post processed to HTML.  This illustrates well how RSP can be used for any type of vignette format.</em></p>
+
+</body>
+
+</html>

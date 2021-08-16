@@ -1,0 +1,21 @@
+Package: truncdist
+Version: 1.0-2
+Date: 2016-08-29
+Author: Frederick Novomestky <fn334@nyu.edu>,
+        Saralees Nadarajah <saralees.nadarajah@manchester.ac.uk>
+Maintainer: Frederick Novomestky <fnovomes@poly.edu>
+Depends: R (>= 2.0.1), stats4,evd
+Description: A collection of tools to evaluate probability density
+        functions, cumulative distribution functions, quantile functions
+        and random numbers for truncated random variables.  These functions are
+        provided to also compute the expected value and variance. Nadarajah
+        and Kotz (2006) developed most of the functions. QQ plots can be produced.
+        All the probability functions in the stats, stats4 and evd
+        packages are automatically available for truncation..
+Title: Truncated Random Variables
+License: GPL (>= 2)
+NeedsCompilation: no
+Packaged: 2016-08-29 20:20:23 UTC; fred
+Repository: CRAN
+Date/Publication: 2016-08-30 01:27:43
+Built: R 4.0.2; ; 2020-07-15 08:43:45 UTC; unix

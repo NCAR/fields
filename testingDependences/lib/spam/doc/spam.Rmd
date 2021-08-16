@@ -1,0 +1,290 @@
+---
+title: "Illustrations and Examples"
+author: "Reinhard Furrer, Roman Flury"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::pdf_document:
+    fig_caption: yes
+    number_sections: true
+    toc: true
+    toc_depth: 2
+    citation_package: natbib
+header-includes:
+   - \usepackage{bm}
+   - \usepackage{setspace}\onehalfspacing
+   - \usepackage[labelfont=bf]{caption}
+   - \usepackage{natbib}
+   - \usepackage{hyperref}
+bibliography: spam.bib
+vignette: >
+  \usepackage[utf8]{inputenc}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{`spam`, a SPArse Matrix package}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  # fig.width = 6, fig.height = 6,
+  fig.align = "center"
+)
+options(digits = 3)
+```
+
+```{r loadpkgs, echo=FALSE, eval=TRUE, message=FALSE}
+library("spam")
+```
+
+# Rational for spam
+
+At the core of drawing multivariate normal random variables, calculating or maximizing multivariate normal log-likelihoods, calculating determinants, etc., we need to solve a large (huge) linear system involving a variance matrix, i.e., a symmetric, positive definite matrix.
+
+Assume that we have such a symmetric, positive definite matrix $\boldsymbol{Q}$ of size $n\times n$ that contains many zeros (through tapering, @Furr:Gent:Nych:06, @Furr:Beng:07, or through a Markovian conditional construction).
+Typically, $\boldsymbol{Q}$ contains only $\mathcal{O}(n)$ non-zero elements compared to $\mathcal{O}(n^2)$ for a regular, **full** matrix.
+To take advantage of the few non-zero elements, special structures to represent the matrix are required, i.e., only the positions of the non-zeros and their values are kept in memory.
+Further, new algorithms work with these structures are required.
+The package `spam` provides this functionality, see @Furr:Sain:10 for a detailed exposition.
+
+
+# A Simple Example
+
+This first section illustrates with a simple example how to work with `spam`.
+Within a running R we install and load the current `spam` version from CRAN.
+```{r echo=TRUE, eval=FALSE, message=FALSE}
+install.packages("spam")
+
+library("spam")
+```
+
+We create a trivial matrix and "coerce" it to a sparse matrix.
+```{r trivial}
+Fmat <- matrix(c(3, 0, 1, 0, 2, 0, 1, 0, 3), nrow = 3, ncol = 3)
+Smat <- as.spam(Fmat)
+```
+
+`spam` is conceptualized such that for many operations, the user proceeds as with ordinary full matrices.
+For example:
+```{r operations}
+Fmat
+Smat
+Smat %*% t(Smat)
+Fmat %*% t(Smat)
+```
+
+Hence, the user should not be worried which objects are sparse matrices and which are not.
+Of course not all operations result in sparse objects again,
+```{r nonspam}
+rep(1, 3) %*% Smat
+```
+
+However, other operations yield to different results when applied to full or sparse matrices
+```{r diffbehaviour}
+range(Fmat)
+range(Smat)
+```
+
+
+# Creating Sparse Matrices
+
+The implementation of `spam` is designed as a trade-off between the following competing philosophical maxims.
+It should be competitively fast compared to existing tools or approaches in R and it should be easy to use, modify and extend.
+The former is imposed to assure that the package will be useful and used in practice.
+The latter is necessary since statistical methods and approaches are often very specific and no single package could cover all potential tools.
+Hence, the user needs to understand quickly the underlying structure of the implementation of `spam` and to be able to extend it without getting desperate.
+(When faced with huge amounts of data, sub-sampling is one possibility; using `spam` is another.)
+This philosophical approach also suggests trying to assure `S3` and `S4` compatibility, @Cham:93, see also @Luml:04.
+`S4` has higher priority but there are only a handful cases of `S3` discrepancies, which do however not affect normal usage.
+
+To store the non-zero elements, `spam` uses the "old Yale sparse format".
+In this format, a (sparse) matrix is stored with four elements (vectors), which are (1) the nonzero values row by row, (2) the ordered column indices of nonzero values, (3) the position in the previous two vectors corresponding to new rows, given as pointers, and (4) the column dimension of the matrix.
+We refer to this format as compressed sparse row (CSR) format.
+Hence, to store a matrix with $z$ nonzero elements we thus need $z$ reals and $z+n+2$ integers compared to $n \times n$ reals. Section Representation describes the format in more details.
+
+The package `spam` provides two classes, first, `spam` representing sparse matrices and, second, `spam.chol.NgPeyton` representing Cholesky factors.
+A class definition specifies the objects belonging to the class, these objects are called slots in R and accessed with the `@` operator, see \citet{Cham:93} for a more thorough discussion.
+The four vectors of the CSR representation are implemented as slots.
+In `spam`, all operations can be performed without a detailed knowledge about the slots.
+However, advanced users may want to work on the slots of the class `spam` directly because of computational savings, for example, changing only the contents of a matrix while maintaining its sparsity structure, see Section Tips.
+The Cholesky factor requires additional information (e.g., the used permutation) hence the class `spam.chol.NgPeyton` contains more slots, which are less intuitive.
+There are only very few, specific cases, where the user has to access these slots directly.
+Therefore, user-visibility has been disregarded for the sake of speed.
+The two classes are discussed in the more technical Section Representation.
+
+
+# Displaying
+
+As seen in Section A Simple Example, printing small matrices result in an expected output, i.e., the content of the matrix plus a line indicating the class of the object:
+```{r displ1}
+Smat
+```
+
+For larger objects, not all the elements are printed. For example:
+```{r displ2}
+diag.spam(100)
+```
+
+The size of the matrix when switching from the first printing format to the second is a `spam` option, see Section Options.
+Naturally, we can also use the `str` command which gives us further insight into the individual slots of the `spam` object:
+```{r disp3}
+str(Smat)
+```
+
+Alternatively, calling `summary` gives additional information of the matrix.
+```{r disp4}
+summary(Smat)
+```
+`summary` itself prints on the standard output but also returns a list containing the number of non-zeros (`nnz`) and the density (`density`) (percentage of `nnz` over the total number of elements).
+
+Quite often, it is interesting to look at the sparsity structure of a sparse matrix.
+This is implemented with the command `display`.
+Again, depending on the size, the structure is shown as proper rectangles or as points.
+Figure \ref{fig:display_spam} is the result of the following code.
+```{r disp5, echo=FALSE, warning=FALSE}
+nz <- 2^12
+Smat1 <- spam(0, nz, nz)
+Smat1[cbind(sample(nz, nz), sample(nz, nz))] <- rnorm(nz)
+
+tmp <- round(summary(Smat1)$density, 3)
+```
+
+```{r disp6, echo=FALSE, warning=FALSE, fig.cap = '\\label{fig:display_spam}Sparsity structure of sparse matrices.'}
+par(mfcol=c(1,2),pty='s',mai=c(.8,.8,.2,.2))
+display(Smat)
+display(Smat1)
+```
+
+Additionally, compare Figures of this document.
+Depending on the `cex` value, the `image` may issue a warning, meaning that the dot-size is probably not optimal.
+In fact, visually the density of the matrix `Smat1` seems to be around some percentage whereas the actual density is `r tmp`.
+
+
+The function `image` goes beyond the structure of the matrix by using a specified color scheme for the values.
+Labels can be added manually or with `image.plot` from the package `fields`.
+
+
+# Solving Linear Systems
+
+To be more specific about one of `spam`'s main features, assume we need to calculate $\boldsymbol{A}^{-1}\boldsymbol{b}$ with $\boldsymbol{A}$ a symmetric positive definite matrix featuring some sparsity structure, which is usually accomplished by solving $\boldsymbol{A}\boldsymbol{x}=\boldsymbol{b}$.
+We proceed by factorizing $\boldsymbol{A}$ into $\boldsymbol{R}^T\boldsymbol{R}$, where $\boldsymbol{R}$ is an upper triangular matrix, called the Cholesky factor or Cholesky triangle of $\boldsymbol{A}$, followed by solving $\boldsymbol{R}^T\boldsymbol{y}=\boldsymbol{b}$ and $\boldsymbol{R}\boldsymbol{x}=\boldsymbol{y}$, called forwardsolve and backsolve, respectively.
+To reduce the fill-in of the Cholesky factor $\boldsymbol{R}$, we permute the columns and rows of $\boldsymbol{A}$ according to a (cleverly chosen) permutation $\boldsymbol{P}$, i.e., $\boldsymbol{U}^T\boldsymbol{U}=\boldsymbol{P}^T\boldsymbol{A}\boldsymbol{P}$, with $\boldsymbol{U}$ an upper triangular matrix.
+There exist many different algorithms to find permutations which are optimal for specific matrices %tridiagonal matrices finite element/difference matrices defined on square grids or at least close to optimal with respect to different criteria.
+Note that $\boldsymbol{R}$ and $\boldsymbol{U}$ cannot be linked through $\boldsymbol{P}$ alone.
+Figure \ref{fig:ill} illustrates the factorization with and without permutation.
+For solving a linear system the two triangular solves are performed after the factorization.
+The determinant of $\boldsymbol{A}$ is the squared product of the diagonal elements of its Cholesky factor $\boldsymbol{R}$.
+Hence the same factorization can be used to calculate determinants (a necessary and computational bottleneck in the computation of the log-likelihood of a Gaussian model), illustrating that it is very important to have a very efficient integration (with respect to calculation time and storage capacity) of the Cholesky factorization.
+In the case of GMRF, the off-diagonal non-zero elements correspond to the conditional dependence structure.
+However, for the calculation of the Cholesky factor, the values themselves are less important than the sparsity structure, which is often represented using a graph with edges  representing the non-zero elements or using a "pixel" image of the zero/non-zero structure, see Figure \ref{fig:tree}.
+
+
+```{r }
+i <- c(2, 4, 4, 5, 5)
+j <- c(1, 1, 2, 1, 3)
+
+A <- spam(0, nrow = 5, ncol = 5)
+A[cbind(i, j)] <- rep(0.5, length(i))
+A <- t(A) + A + diag.spam(5)
+A
+
+U <- chol(A)
+```
+
+```{r tree, echo=FALSE, results = 'markup', out.width='40%', fig.show='hold', warning=FALSE, fig.cap='\\label{fig:tree}On the left side the associated graph to the matrix $\\boldsymbol{A}$ is visualized. The nodes of the graph are labeled according to $\\boldsymbol{A}$ (upright) and $\\boldsymbol{P}^T\\boldsymbol{A}\\boldsymbol{P}$ (italics). On the right side the sparsity structure of $\\boldsymbol{A}$ and $\\boldsymbol{P}^T\\boldsymbol{A}\\boldsymbol{P}$ (top row) and the Cholesky factors $\\boldsymbol{R}$ and $\\boldsymbol{U}$ of $\\boldsymbol{A}$ and $\\boldsymbol{P}^T\\boldsymbol{A}\\boldsymbol{P}$ respectively are given in the bottom row. The dashed lines in $\\boldsymbol{U}$ indicate the supernode partition.'}
+
+knitr::include_graphics(c('figures/tree.png', 'figures/ill.png'))
+```
+
+
+The Cholesky factor of a banded matrix is again a banded matrix.
+But arbitrary matrices may produce full Cholesky factors.
+To reduce this so-called *fill-in* of the Cholesky factor $\boldsymbol{R}$, we permute the columns and rows of $\boldsymbol{A}$ according to a (cleverly chosen) permutation $\boldsymbol{P}$, i.e., $\boldsymbol{U}^T\boldsymbol{U}=\boldsymbol{P}^T\boldsymbol{A}\boldsymbol{P}$, with $\boldsymbol{U}$ an upper triangular matrix.
+There exist many different algorithms to find permutations which are optimal for specific matrices or at least close to optimal with respect to different criteria.
+The cost of finding a good permutation matrix $\boldsymbol{P}$ is at least of order $\mathcal{O}(n^{3/2})$.
+However, there exist good, but suboptimal, approaches for $\mathcal{O}(n\log(n))$.
+
+A typical Cholesky factorization of a sparse matrix consists of the steps illustrated in the following pseudo code algorithm.
+
+Step | Description
+---- | ---------------------------------------------------------------------------------------------------------------------------
+[1]  | Determine permutation and permute the input matrix $\boldsymbol{A}$ to obtain $\boldsymbol{P}^T\boldsymbol{A}\boldsymbol{P}$
+[2]  | Symbolic factorization, where the sparsity structure of $\boldsymbol{U}$ is constructed
+[3]  | Numeric factorization, where the elements of $\boldsymbol{U}$ are computed
+
+
+When factorizing matrices with the same sparsity structure Step 1 and 2 do not need to be repeated.
+In MCMC algorithms, this is commonly the case, and exploiting this shortcut leads to very considerable gains in computational efficiency (also noticed by @Rue:Held:05, page 51).
+However, none of the existing sparse matrix packages in R (`SparseM`, `Matrix`) provide the possibility to carry out Step 3 separately and `spam` fills this gap.
+
+As for Step 1, there are many different algorithms to find a permutation, for example, the multiple minimum degree (MMD) algorithm, @Liu:85, and the reverse Cuthill-McKee (RCM) algorithm, @Geor:71.
+The resulting sparsity structure in the permuted matrix determines the sparsity structure of the Cholesky factor.
+As an illustration, Figure \ref{fig:ch2:factor} shows the sparsity structure of the Cholesky factor resulting from an MMD, an RCM, and no permutation of a precision matrix induced by a second-order neighbor structure of the US counties.
+
+How much fill-in with zeros is present depends on the permutation algorithm, in the example of Figure \@ref{fig:ch2:factor} there are $146735$, $256198$ and $689615$ non-zero elements in the Cholesky factors resulting from the MMD, RCM, and no permutation, respectively.
+Note that the actual number of non-zero elements of the Cholesky factor may be smaller than what the constructed sparsity structure indicates.
+Here, there are $14111$, $97565$ and $398353$ zero elements (up to machine precision) that are not exploited.
+
+```{r fillin, echo=FALSE, fig.show='hold', warning=FALSE, fig.cap='\\label{fig:ch2:factor}Sparsity structure of the Cholesky factor with MMD, RCM and no permutation of a precision matrix induced by a second-order neighbor structure of the US counties. The values *nnzR* and *fillin* are the number of non-zero elements in the sparsity structure of the factor and the fill-in, respectively.'}
+
+knitr::include_graphics(c('figures/fig_ch2_factors.png'))
+```
+
+
+# More about Methods
+
+For both sparse classes of `spam` standard methods like `plot`, `dim`, `backsolve`/`forwardsolve`, `determinant` (based on a Cholesky factor) are implemented and behave as in the case of full matrices.
+Print methods display the sparse matrix as a full matrix in case of small matrices and display only the non-zero values otherwise.
+The corresponding cutoff value as well as other parameters can be set and read via `spam.options`.
+
+
+## Methods with Particular Behavior
+
+For the `spam` class additional methods are defined, for examples `rbind`/`cbind`, `dim<-`, etc.
+The group generic functions from `Math`, `Math2` and `Summary` are treated particularly since they operate only on the nonzero entries of the `spam` class.
+For example, for the matrix `A` presented in the introduction `range(A)` is the vector `c(0.5, 1)`, i.e. the zeros are omitted from the calculation.
+The help lists further available methods and highlights the (dis-)similarities compared to when applied to regular matrices or arrays.
+
+
+## Particular Methods with Ordinary Behavior
+
+Besides the two sparse classes mentioned above, `spam` does not maintain different classes for different types of sparse matrices, such as symmetric or diagonal matrices.
+Doing so would result in some storage and computational gain for some matrix operations, at the cost of user visibility.
+Instead of creating more classes we consider additional specific operators.
+As an illustration, consider multiplying a diagonal matrix with a sparse matrix.
+The operator `\%d*\%` uses standard matrix multiplication if both sides are matrices or multiplies each column according the diagonal entry if the left hand side is a diagonal matrix represented by vector.
+
+
+## Importing Foreign Formats
+
+`spam` is not the only R package for sparse matrix algebra.
+The packages `SparseM` @Koen:Ng:03 and `Matrix` @Bates:06 contain similar functionalities for handling sparse matrices, however, both packages do not provide the possibility to split up the Cholesky factorization as discussed previously.
+We briefly discuss the major differences with respect to `spam`; for a detailed description see their manual.
+
+`SparseM` is also based on the Fortran Cholesky factorization of @Ng:Peyt:93 using the MMD permutation and almost exclusively on `SparseKit`.
+It was originally designed for large least squares problems and later also ported to `S4` but is in a few cases inconsistent with existing R methods.
+It supports different sparse storage systems.
+
+`Matrix` incorporates many classes for sparse and full matrices and is based on C.
+For sparse matrices, it uses different storage formats, defines classes for different types of matrices and uses a Cholesky factorization based on UMFPACK, @Davi:04.
+
+`spam` has a few functions that allow to transform matrix formats of the different packages.
+
+`spam` also contains functions that download matrices from MatrixMarket, a web side that stores many different sparse matrices.
+The function `read.MM(file)`, very similar to the function `readMM` from `Matrix`, opens a connection, specified by the argument, and reads a matrix market file. However, as entries of `spam` matrices are of mode `double`, integers matrices are coerced to doubles, patterns lead to matrices containing ones and complex are coerced to the real part thereof.
+In these aforementioned cases, a warning is issued.
+
+MatrixMarket also defines an array format, in which case a (possibly) dense `spam` object is return (retaining only elements which are larger than `getOption('spam.eps')`), a warning is issued.
+
+Similarly to `read.MM(file)`, the function `read.HB(file)` reads matrices in the Harwell-Boeing format.
+Currently, only real assembled Harwell-Boeing can be read with `read.HB`.
+Reading MatrixMarket formats is more flexible.
+
+The functions are based on `readHB` and `readMM` from the library `Matrix` to build the connection and read the raw data.
+At present, `read.MM(file)` is more flexible than `readMM`.
+
+For many operations, `spam` is faster than `Matrix` and `SparseM`.
+It would also be interesting to compare `spam` and the sparse matrix routines of `Matlab` (see Figure 6 of @Furr:Gent:Nych:06 for a comparison between `SparseM` and Matlab).
+
+
+# Bibliography

@@ -1,0 +1,609 @@
+CHANGES FROM VERSION 2.3-2 ARE AS FOLLOWS
+
+  Changed url in CITATION to canonical form.
+  
+  Registered C routines in evd_init.c file.
+  
+  Added a = 0 argument to plotting functions.
+
+CHANGES FROM VERSION 2.3-0 ARE AS FOLLOWS
+
+  Minor edits to vignette.
+  
+  Added cmax to output of fpot to correct bug
+  in profile call.
+  
+  Using requireNamespace in plot.profile2d.evd
+  
+  Added importFrom calls to NAMESPACE
+  
+  Removed dependency on stats
+  
+  Added Imports for stats, grDevices, graphics
+  
+  [Version 2.3-1 was not uploaded to CRAN.]
+
+CHANGES FROM VERSION 2.2-7 ARE AS FOLLOWS
+
+  The demo soe9 has been replaced with a vignette
+  on multivariate extremes.
+	
+  Added functions bvtcplot and evind.test.
+	
+  Added [dpqr]nweibull functions to the namespace!
+	
+  Implemented the possion likelihood for bivariate 
+  threshold models.
+
+CHANGES FROM VERSION 2.2-6 ARE AS FOLLOWS
+  
+  Documentation edited. In particular, \synopsis sections
+  have been removed as this is no longer supported.
+  
+  Added venice2 dataset.
+  
+  Added [dpqr]nweibull functions.
+  
+  The lazy loading of datasets is now implemented.
+  
+  Some internal C and R code cleaning to avoid warnings.
+  In particular, optimizations over one parameter allow
+  consistent inclusion of the "Brent" method.
+
+CHANGES FROM VERSION 2.2-5 ARE AS FOLLOWS
+
+  Included proper NAMESPACE file and removed zzz.R.
+
+CHANGES FROM VERSION 2.2-4 ARE AS FOLLOWS
+
+  Added default NAMESPACE file to avoid note produced
+  under R CMD check.
+
+  Changed licence to GPL-3.
+
+  Datasets are now binary .rda files instead of .R.
+
+  Renamed doc/guide22.tex to doc/guide22.txt.
+
+  Call to library in plot.profile2d.evd did not use
+  full argument matching. Fixed.
+
+CHANGES FROM VERSION 2.2-3 ARE AS FOLLOWS
+
+  Removed defunct url from description file.
+
+  Internal coding change to fpot.norm in order to
+  avoid note produced under R CMD check.
+
+CHANGES FROM VERSION 2.2-2 ARE AS FOLLOWS
+
+  Added a Suggests field to the description file in
+  order to avoid warnings under future versions of
+  R CMD check.   
+
+CHANGES FROM VERSION 2.2-1 ARE AS FOLLOWS
+
+  Fitted objects now contain the variance covariance
+  matrix, which can be accessed by the function vcov. 
+
+  New function confint (methods confint.profile.evd and 
+  confint.evd) for calculating Wald and profile 
+  confidence intervals. The internal function pcint 
+  has now been deleted, and plot.profile.evd no longer 
+  returns profile confidence intervals invisibly. 
+
+  The function amvnonpar now implements non-parametric
+  estimators for dependence functions of extreme value 
+  distributions of any dimension.
+
+  The function amvevd now implements parametric 
+  evaluation of dependence functions of logistic and
+  asymmetric logistic models of any dimension.
+
+  I have removed the bootstrap confidence intervals
+  option from chiplot. This had problems with zero 
+  empirical cdf estimates for some replications. A
+  solution would be to use smoothed estimates, but I
+  decided against implementing this.
+
+  Argument trunc added to chiplot to control whether
+  estimates are truncated at theoretical upper and
+  lower bounds.
+
+  The old interfaces to abvnonpar and amvnonpar have 
+  been removed.
+
+  I have included a CITATION file in the /inst directory
+  so that typing citation("evd") returns an appropriate
+  citation.
+
+  The internal functions ccop and ccop.case have been
+  converted into a new documented function ccbvevd.
+
+  The recommended R package "stats" is now a required
+  package for evd.
+
+  The files INDEX and data/00Index are now unnecessary
+  (the information is now automatically generated from
+  documentation files) and have been removed.
+
+  The defunct function abvpar has been removed.
+
+CHANGES FROM VERSION 2.2-0 ARE AS FOLLOWS
+
+  New function hbvevd for plotting the spectral density
+  of bivariate extreme value models. The spectral density
+  is also now plotted from plot.bvevd.
+
+  Plotting diagnostics are now implemented for bivariate
+  threshold methods using the method function plot.bvpot.
+
+  The fbvpot function is now consistent with fbvevd;
+  the dsm argument has been removed, and the 
+  asymmetric mixed model has been added. Also, the
+  Husler-Reiss model has been added for (undocumented) 
+  Poisson process likelihood fitting.
+
+  The new argument boot in the function chiplot allows
+  bootstrap confidence intervals. The new argument
+  spcase plots lines corresponding to special cases
+  for comparison.
+
+  The functions mrlplot and tcplot have a new argument 
+  pscale allowing the x-axis to be the threshold
+  exceedance probability rather than the threshold.
+
+  The default plotting character in bivariate density 
+  plots is now a circle, to be consistent with quantile
+  curves plots. Also, all plotting functions now produce
+  all available plots by default.
+
+  The function tcplot has a new argument vci allowing
+  control over the plotting style of the confidence
+  intervals. Other arguments allow more control over
+  labels and limits. 
+
+  The clusters function with plot = TRUE would produce 
+  an error if no data points were above the threshold. 
+  This has been fixed.
+
+  The demo soe9 has been expanded to include all of
+  Chapter Nine of the text Statistics of Extremes.
+
+CHANGES FROM VERSION 2.1-7 ARE AS FOLLOWS
+
+  Added the asymmetric mixed bivariate model to the
+  function fbvevd.
+
+  A demo soe9 has been included, giving examples from
+  Chapter Nine of the book statistics of extremes. An
+  associated file demo.txt has been added to the /inst
+  directory.
+  
+  The atvnonpar and atvpar functions have been renamed
+  to amvnonpar and amvevd. The abvpar function has been
+  renamed to abvevd, but the former still runs, with a
+  warning.
+
+  An argument rev has been added to abvpar and abvnonpar,
+  allowing the evaluation of A(1-t) rather than A(t).
+  It can also be passed from plot.bvevd.
+
+  The argument epmar has been added to abvnonpar and 
+  atvnonpar. It allows empirical estimation of the
+  margins.
+
+  The formerly internal function mtransform is now 
+  documented. It transforms to and from exponential
+  distributions under the gev model.
+
+  The profile plots now plot profile log-likelihoods 
+  rather than profile deviances.  
+  
+  The plotting functions plot.uvevd and plot.bvevd
+  have an additional argument cilwd to control the
+  line width of confidence intervals.
+
+  The functions abvpar and abvnonpar now have default
+  axes labels and a border line width argument.
+
+  The function abvnonpar is simpler; the "tdo" method 
+  is now undocumented, old methods "deheuvels" and 
+  "halltajvidi" can now be implemented using the 
+  argument madj. For back compatability, the old 
+  interface can still be used. The weight function
+  option for method "cfg" has been removed, and the
+  "cfg" definition now has a simpler equivalent 
+  representation. Similar changes have been made to
+  atvnonpar (now renamed to amvnonpar).
+
+  In fbvevd the dependence summaries, and hence the
+  argument dsm, have been removed, though the former
+  Dependence One value is now automatically given in
+  the output. The argument warn.inf is now undocumented.
+  
+  The marginal option "exponential" to the function evmc
+  has been changed to "rweibull" (negative exponential)
+  because the former swaps the bivariate tails around.
+
+  The function anova now has a logical argument half to
+  deal with non-regular cases where the asymptotic
+  distribution of the deviance difference is known to
+  be one half of a chi-squared. Also, it no longer
+  errors when testing bilog vs log or negbilog vs bilog.
+
+  Added the dataset lossalae on general liability claims. 
+
+CHANGES FROM VERSION 2.1-6 ARE AS FOLLOWS
+
+  The exi function has been simplified; it now returns
+  only a single estimate, but a new estimation method
+  based on inter-exceedance times has been added. A new 
+  function exiplot plots estimates of the extremal index.
+
+  The rlow argument (lower clustering interval) is now
+  hidden in the documentation for fpot, clusters, exi
+  and exiplot.
+
+  Due to numerical problems, the function rmvevd could 
+  return Inf when the dependence parameters were small.
+  This has been fixed. The maintainer thanks 
+  Mohammed Mehdi Gholam Rezaee for reporting this. 
+  
+  The anova function errored when used inside another 
+  function. This is now corrected. The maintainer thanks 
+  William Valdar for reporting this. 
+
+  In function abvnonpar the method "hall" is now 
+  "halltajvidi", and an additional comment has been added
+  to the help file, following a request from Nader Tajvidi.   
+
+  Typographic sign error in User's Guide corrected.
+  The maintainer thanks C L Wong for reporting this.   
+
+  Spelling errors in uccle help file corrected. The
+  maintainer thanks Tobias Verbeke for reporting
+  this. Apologies to residents of Belgium! 
+
+CHANGES FROM VERSION 2.1-5 ARE AS FOLLOWS
+
+  The data passed to the bivariate fitting function
+  fbvevd can now be a data frame with a third column 
+  of mode logical. See the corresponding documentation 
+  for more details.
+
+  A new dataset called sealevel2 has been introduced.
+
+CHANGES FROM VERSION 2.1-4 ARE AS FOLLOWS
+
+  The lower.tail argument for pbvevd and pmvevd did not
+  properly produce survivor functions when set to FALSE.
+  This has been fixed. 
+
+CHANGES FROM VERSION 2.1-3 ARE AS FOLLOWS
+
+  A file was accidently included in Version 2.1-3 which
+  meant that the package would not easily install under 
+  C compilers other than gcc. This has been fixed.
+
+CHANGES FROM VERSION 2.1-2 ARE AS FOLLOWS
+
+  The function dextreme errored when the argument
+  largest was FALSE. This has been fixed. The
+  maintainer thanks Brian Tolley for reporting this.
+
+CHANGES FROM VERSION 2.1-1 ARE AS FOLLOWS
+  
+  The function fbvevd now has arguments cshape, cscale
+  and cloc for fitting common marginal parameters.
+
+  The function fbvpot now has arguments cshape and 
+  cscale for fitting common marginal parameters.
+
+  The Husler-Reiss model is now implemented in fbvpot.
+
+  New function chiplot for plotting estimates of the 
+  dependence measures chi and chi-bar for bivariate 
+  data.
+   
+  The latex file for The Users' Guide is now included
+  in the doc directory along with the pdf file.
+
+  The default x-label "theshold" in mrlplot has been
+  corrected to "threshold". 
+
+CHANGES FROM VERSION 2.1-0 ARE AS FOLLOWS
+
+  New function fbvpot for fitting bivariate threshold
+  models. A plot method for these models will be 
+  implemented at a later date.
+
+  New argument sym in function fbvevd, to allow the
+  fitting of dependence structures under a symmetry
+  constraint. The argument also exists in the new
+  function fbvpot. 
+
+CHANGES FROM VERSION 2.0-1 ARE AS FOLLOWS
+
+  Univariate threshold models are now implemented. The main
+  new function is fpot, which calculates maximum likelihood
+  estimates under the generalized Pareto and point process
+  representations.
+
+  Density, distribution, quantile and simulation functions
+  for the generalized Pareto distribution have been added.
+
+  The new function clusters identifies extreme clusters. A
+  related function exi calculates estimates of a quantity
+  known as the extremal index.
+  
+  The new plotting functions mrlplot and tcplot aid
+  threshold selection.
+
+  The class structure has changed slightly.
+  Models fitted using fextreme and forder still have class
+  c("extreme", "evd"). Models fitted using fbvevd still have 
+  class c("bvevd", "evd"). Models fitted using the new 
+  function fpot have class c("pot", "uvevd", "evd").  Models 
+  fitted using fgev now have class c("gev", "uvevd", "evd").
+
+  The method function plot.gev is now plot.uvevd. This 
+  operates on both the gev and pot classes, due to the new 
+  class structure.
+
+  The defunct functions fgumbel, frweibull, ffrechet (each
+  defunct since version 1.2-0) and fbvall (defunct since 
+  version 2.0-0) have been removed.
+
+CHANGES FROM VERSION 2.0-0 ARE AS FOLLOWS
+
+  Internal change to avoid warnings under R version 1.7.0 when
+  calling the multivariate asymmetric logistic distribution,
+  density, quantile and generation functions.
+
+  The tests directory has been removed.
+
+  The function evmc unintentionally reversed asymmetric 
+  dependence structures. This has been fixed. The
+  maintainer thanks Chris Ferro for reporting this. 
+
+CHANGES FROM VERSION 1.2-3 ARE AS FOLLOWS
+
+  The function fgev.quantile is now internal; the functionality
+  has been absorbed into fgev.
+
+  It is now possible to parameterize gev model fits using the
+  endpoint of the distribution by setting prob to zero or one 
+  in fgev.
+
+  New functions for generating stochastic processes associated
+  with extreme value theory. marma, mar and mma generate max 
+  autoregressive moving average processes. evmc generates first 
+  order Markov chains with bivariate extreme value dependence 
+  structures.
+
+  The functions fbvlog, fbvalog, etc are now internal. The new 
+  function fbvevd should be used for the fitting of all bivariate
+  models.
+
+  The rbvevd, dbvevd and pbvevd functions replace individual 
+  functions for bivariate models. Similarly, rmvevd and dmvevd 
+  functions replace individual functions for multivariate models. 
+
+  The function abvpar replaces individual functions for 
+  plotting and calculating the dependence functions of 
+  parametric bivariate models. 
+
+  New functions atvnonpar and atvpar, which calculate and plot 
+  dependence functions of trivariate extreme value distributions,
+  using non-parametric estimates and parametric models (at given 
+  parameter values).
+
+  Fitted bivariate models (i.e. objects of class bvevd) now 
+  include Akaike's Information Criterion and, optionally, 
+  various dependence structure summaries. The argument dsm
+  controls this option. 
+
+  New lower.tail argument in bivariate and multivariate 
+  distribution functions.
+
+  The function pcint is now internal. Profile confidence intervals 
+  are now invisibly returned from plot.profile.evd. Also, the
+  argument ci of plot.profile.evd can now be a vector.
+
+  Functions called from plot.evd (dens, pp, qq, rl) and plot.bvevd
+  (bvdens, bvdp, bvcpp) are now internal.
+
+  The default labelling of the x-axis for the return level plot 
+  has been changed from the technically correct 
+  "-1/log(1-1/Return Period)" to the more widely used 
+  "Return Period".
+
+  There now exists a density function for the multivariate asymmetric 
+  logistic model. The density function can be calculated by calling 
+  dmvevd with model = "alog".
+  
+  The argument mar of rmvevd, pmvevd and dmvevd can now be a list
+  with d elements, where d is the dimension of the distribution.
+
+  An extraction function logLik.evd has been added so that the 
+  function AIC.default in R base can be used.
+
+  The function profile2d.evd has a new method argument (to be
+  consistent with profile.evd) and new arguments xaxs and
+  yaxs (to override the default behaviour of the function image).
+
+  The function plot.bvevd has new arguments blty (border 
+  line type) and grid.
+
+  In the function abvnonpar the logical argument convex replaces 
+  the numeric argument modify.
+  
+  The functions fext, rext, etc are now called fextreme, 
+  rextreme, etc.
+
+  The objects formery of class "evd" are now of class 
+  c("gev","evd") or c("extreme","evd"). The plot.evd function 
+  is now plot.gev.
+
+  The row names of all data.frame datasets are now the years of
+  observation. Furthermore, the period of observation for the 
+  venice data has been corrected in the help file.
+
+  The arguments mesh and conf in profile.evd now work as 
+  documented.
+ 
+  The fbvall function is defunct.
+  
+  New datasets: failure, fox, lisbon, ocmulgee, oldage, sask  
+  and uccle. 
+  
+  The CHANGES file has been moved to the top-level directory.
+
+
+CHANGES FROM VERSION 1.2-2 ARE AS FOLLOWS
+
+  Two more datasets - venice and portpirie, intended for use
+  in the evdbayes package.
+
+  Fixed minor problem with extraction functions for bvall objects
+  when only one model is fitted.
+
+  Contours for bivariate density plots are now chosen by 
+  the contour function.
+
+  Error messages in internal functions are more informative.
+
+
+CHANGES FROM VERSION 1.2-1 ARE AS FOLLOWS
+
+  New methods hall and tdo for calculating non-parametric 
+  dependence function estimates.
+
+  BUG fix: the non-parameteric dependence function estimator of 
+  Caperaa et al (the default) was plotting/calculating A(1-x) 
+  rather than A(x).
+
+  The recommended citation for the package is now the article
+  included in R-News Volume 2/2.
+
+  Extra graphical arguments have been included in the abv[...]
+  functions. 
+
+
+CHANGES FROM VERSION 1.2-0 ARE AS FOLLOWS
+
+  The profile.evd function now has a method argument to specify 
+  the optimization method. The default method is now BFGS.
+  
+  A BUG existed in profile.evd; a fatal error would result if 
+  the mesh argument did not have a names attribute. This has 
+  been fixed.
+
+  Internal: General code cleaning/optimizing. New internal 
+  functions have been created.
+
+
+CHANGES FROM VERSION 1.1-0 ARE AS FOLLOWS
+
+  Class orientated objects have been introduced, including print
+  methods and extraction functions.
+  
+  Diagnostics plots can be implemented using plot, or the lower
+  level functions dens, rl, pp, qq (univariate) and bvdens, bvcpp,
+  bvdp (bivariate).
+
+  Parameters can be profiled using the functions profile and 
+  profile2d. Profile deviance surfaces can be plotted using plot.
+  Profile confidence intervals can be calculated using pcint.
+
+  Fitted models can be compared using the function anova.
+
+  New function fgev.quantile to fit the GEV distribution, 
+  re-parameterizing using a quantile. This allows profile 
+  deviances of extreme quantiles to be plotted.
+
+  Extra argument corr for fitting functions.
+  If corr is TRUE the correlation matrix is calculated.
+  By default corr is FALSE.
+
+  Extra argument warn.inf for fitting functions.
+  When warn.inf is TRUE (the default) a warning is given if the 
+  negative log-likelihood is infinite at the starting values.
+
+  The ffrechet, fgumbel and frweibull functions are defunct.
+
+  Internal: Function ccop for calculating conditional copulas.
+
+
+CHANGES FROM VERSION 1.0-0 ARE AS FOLLOWS
+
+  Automated starting values for fitting functions.
+
+  Compiled code is now used within the bivariate fitting routines
+  and all bivariate simulation functions.
+  They are consequently much faster than those in Version 1.0-0.
+
+  Simulation, distribution, density and fitting functions for the
+  bivariate bilogistic, bivariate negative bilogistic and
+  bivariate Coles-Tawn models.
+
+  A new function fbvall which fits all bivariate models 
+  simultaneously.
+  For every model it returns maximum likelihood estimates, standard
+  errors, criteria for model comparisons based on the deviance
+  (e.g. AIC), and summaries of the dependence structure (see the 
+  help file for details).
+
+  A new function abvnonpar which calculates or plots non-parametric
+  estimates of the dependence function.
+
+  All functions explicitly allow for missing values.
+  This includes bivariate fitting functions, where missing values can
+  occur on either or both margins within any observation. 
+
+  Extra argument nsloc for univariate fitting functions,
+  and arguments nsloc1 and nsloc2 for bivariate fitting functions.
+  These allow non-stationary fitting using linear models for the
+  location parameters.
+
+  Extra argument std.err for fitting functions.
+  If std.err is FALSE the standard errors are not calculated.
+  By default std.err is TRUE.
+
+  Extra argument method for fitting functions.
+  The method argument explicitly specifies the optimization method 
+  to be passed to the function optim.
+  The default method is now BFGS for all fitting functions except 
+  fext and forder, where the default method is still Nelder-Mead.
+   
+  The sealevel data frame has been expanded to include observations 
+  from 1912 to 1992. There are 39 missing values.  
+   
+  Explicit error handling in fitting functions when the observed
+  information matrix is singular.  
+  
+  Artificial constraints are now placed on dependence parameters 
+  within bivariate fitting functions to prevent numerical problems.  
+
+  The asy argument for the bivariate asymmetric logistic and 
+  bivariate asymmetric negative logistic models now defaults to
+  c(1,1).
+
+  The default values of the marginal parameters for the bivariate and
+  multivariate functions in Version 1.0-0 are different.
+  This is counter intuitive, so the default value for each margin
+  within the multivariate functions is now c(0,1,0) (Gumbel), which 
+  is consistent with the functions for bivariate models.
+
+  The bivariate density functions contained a fairly minor BUG; if one
+  of the marginal parameter arguments were passed a three column
+  matrix and some of the rows of the matrix produced zero density, a
+  fatal error would result. This has now been fixed.
+
+  Internal: The .C interface is called with PACKAGE = "evd".
+
+  Internal: R_alloc replaces malloc in C routines.
+
+
+

@@ -1,0 +1,22 @@
+citHeader("To cite the evd package in publications please use:")
+
+citEntry(entry="Article",
+         title = "evd: Extreme Value Distributions",
+         author = "A. G. Stephenson",
+         journal = "R News",
+         year = 2002,
+         volume = 2,
+         number = 2,
+         pages = 31-31,
+         month = "June",
+         url = "https://CRAN.R-project.org/doc/Rnews/",
+         textVersion =
+         paste("A. G. Stephenson.",
+               "evd: Extreme Value Distributions.",
+               "R News, 2(2):31-32, June 2002.",
+               "URL: https://CRAN.R-project.org/doc/Rnews/")
+)
+
+citFooter("Thank you very much. Have a lovely day.")
+
+

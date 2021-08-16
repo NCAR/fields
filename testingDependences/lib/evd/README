@@ -1,0 +1,53 @@
+The evd package extends simulation, distribution, quantile and 
+density functions to parametric extreme value distributions, 
+and provides fitting functions which calculate maximum 
+likelihood estimates for univariate and bivariate maxima 
+models, and for univariate and bivariate threshold models.
+
+The file CHANGES documents changes from previous versions.
+The users guide (in pdf) is in the `doc' directory. A vignette
+on multivariate extremes is also included.
+A reference manual containing the help files can be downloaded 
+from CRAN.
+
+The package contains the following (user-level) functions.
+All comments, criticisms and queries are gratefully received.
+
+Univariate Distributions:  
+  [rpqd]gev  [rpqd]gumbel  [rpqd]rweibull  [rpqd]nweibull
+  [rpqd]frechet  [rpqd]gpd  [rpqd]extreme  [rpd]order
+
+Bivariate/Multivariate EVDs:
+  [rpda]bvevd  [rpda]mvevd 
+
+Non-parametric Estimation:  
+  abvnonpar  amvnonpar  qcbvnonpar
+
+Stochastic Processes:
+  evmc  marma  mar  mma  clusters  exi
+
+Fitting Models:  
+  fbvevd  fgev  fpot  fbvpot  forder  fextreme
+
+Pre-model Diagnostics:
+  mrlplot  tcplot  chiplot  bvtcplot  evind.test
+
+Model Diagnostics:  
+  plot.uvevd  plot.bvevd  anova.evd
+
+Profile Likelihoods:
+  profile.evd  plot.profile.evd  profile2d.evd  
+  plot.profile2d.evd 
+
+The following datasets are also included:
+  failure  fox  lisbon  ocmulgee  oldage  oxford  lossalae 
+  portpirie  sask  sealevel  uccle  venice  sealevel2  venice2
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,38 @@
+All R code and documentation in this package is licensed under the terms of the GPL license.  
+
+The Fortran functions in spammodified.f were written by Reinhard Furrer.
+
+The Fortran functions in bckslvmodified.f cholmod.f are modifications of 
+Fortran functions provided by the SparseM package.
+
+The code in cholesky.f is a modified version of code originally
+written by Esmond Ng and Barry Peyton.  The modified version is
+distributed as part of PCx by Czyzyk, Mehrotra, Wagner, and Wright and
+is copywrite by the University of Chicago.  The PCx distribution makes
+the following stipulation:
+
+
+	This software discloses material protectable under copyright 
+	laws of the United States. Permission is hereby granted to use, 
+	reproduce, prepare derivative works, and redistribute to others 
+	at no charge, provided that the original PCx copyright notice, 
+	Government license and disclaimer are retained and any changes 
+	are clearly documented; however, any entity desiring permission 
+	to use this software within a commercial organization or to 
+	incorporate this software or a work based on the software into 
+	a product for sale must contact Paul Betten at the Industrial 
+	Technology Development Center, Argonne National Laboratory.
+
+		PAUL BETTEN
+		betten@anl.gov
+		Industrial Technology Development Center,
+		Argonne National Laboratory,
+		Argonne, IL 60439
+		(630) 252-4962
+		FAX: (630) 252-5230 
+
+All other Fortran functions are from
+
+   http://www-users.cs.umn.edu/~saad/software/SPARSKIT/index.html
+
+(GNU Lesser General Public License)

@@ -1,0 +1,75 @@
+Math                    Mathematical functions
+Math2                   Rounding of Numbers
+Ops.spam                Basic Linear Algebra for Sparse Matrices
+Oral                    Oral Cavity Cancer
+Summary                 Rounding of Numbers
+UScounties              Adjacency structure of the counties in the
+                        contiguous United States
+USprecip                Monthly total precipitation (mm) for April 1948
+                        in the contiguous United States
+adjacency               Administrative districts of Germany
+all.equal.spam          Test if Two 'spam' Objects are (Nearly) Equal
+apply.spam              Apply Functions Over Sparse Matrix Margins
+as.vector               Coercion to a Vector
+bandwidth               Bandwidth of a Sparse Matrix
+bdiag                   Binds Arrays Corner-to-Corner
+cbind                   Combine spam Matrices by Rows or Columns
+chol                    Cholesky Factorization for Sparse Matrices
+circulant.spam          Create Circulant Matrices
+cleanup                 Cleaning up sparse matrices
+coerce.spam             Force a 'spam' Object to Belong to a Class
+complexity              Complexity for Sparse Matrices
+constructors            Slot modification
+covmat                  Covariance functions
+crossprod.default       Spam Matrix Crossproduct
+det                     Calculate the determinant of a positive
+                        definite Sparse Matrix
+diag                    Sparse Matrix diagonals
+diff                    Lagged Differences
+dim.spam                Dimensions of an Object
+display                 Graphially Represent the Nonzero Entries
+dist.spam               Distance Matrix Computation
+eigen.spam              Eigenvalues for Sparse Matrices
+foreign                 Transformation to other sparse formats
+germany.data            Meta-data about administrative districts of
+                        Germany
+germany.plot            Plot administrative districts of Germany
+gmult                   Generalized Multiplication
+grid_trace2             Two trace plots and a scatter plot.
+grid_zoom               grid_zoom
+head.spam               Return the First or Last Part of an Object
+image                   Display a spam Object as Color Image
+import                  Read External Matrix Formats
+isSymmetric.spam        Test if a spam matrix is Symmetric
+kronecker.default       Kronecker Products on Sparse Matrices
+large_matrix            Large 64-bit matrices require the R package
+                        'spam64'
+lower.tri               Lower and Upper Triangular Part of a Sparse
+                        Matrix
+map.landkreis           Administrative districts of Germany
+mle                     Maximum likelihood estimates
+ordering                Extract the permutation
+overview                SPArse Matrix Package
+pad                     Padding a (sparse) matrix
+permutation             Permute a matrix
+powerboost              Specific options Setting
+precmat                 IGMRF Precision Matrices
+precmat.GMRFreglat      Create Precision Matrices
+print                   Printing and summarizing sparse matrices
+rmvnorm.const           Draw Constrainted Multivariate Normals
+rmvnorm.spam            Draw Multivariate Normals
+rowSums                 Form Row and Column Sums and Means
+solve                   Linear Equation Solving for Sparse Matrices
+spam                    Sparse Matrix Class
+spam-class              Class "spam"
+spam-defunct            Defunct Objects in Package 'spam'
+spam.chol.NgPeyton-class
+                        Class "spam.chol.NgPeyton"
+spam.options            Options Settings
+spam_random             Create Random spam Matrices
+spam_rdist              Wrapper for Distance Matrix Computation
+toeplitz.spam           Create Toeplitz Matrices
+triplet                 Transform a spam format to triplets
+validate_spam           Validate a spam objects
+var.spam                Wappers for Sparse Matrices
+version                 Spam Version Information

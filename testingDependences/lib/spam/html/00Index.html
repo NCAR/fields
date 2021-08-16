@@ -1,0 +1,953 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><title>R: SPArse Matrix</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+<h1> SPArse Matrix
+<img class="toplogo" src="../../../doc/html/Rlogo.svg" alt="[R logo]" />
+</h1>
+<hr/>
+<div style="text-align: center;">
+<a href="../../../doc/html/packages.html"><img class="arrow" src="../../../doc/html/left.jpg" alt="[Up]" /></a>
+<a href="../../../doc/html/index.html"><img class="arrow" src="../../../doc/html/up.jpg" alt="[Top]" /></a>
+</div><h2>Documentation for package &lsquo;spam&rsquo; version 2.6-0</h2>
+
+<ul><li><a href="../DESCRIPTION">DESCRIPTION file</a>.</li>
+<li><a href="../doc/index.html">User guides, package vignettes and other documentation.</a></li>
+<li><a href="../demo">Code demos</a>.  Use <a href="../../utils/help/demo">demo()</a> to run them.</li>
+</ul>
+
+<h2>Help Pages</h2>
+
+
+<p style="text-align: center;">
+<a href="#A">A</a>
+<a href="#B">B</a>
+<a href="#C">C</a>
+<a href="#D">D</a>
+<a href="#E">E</a>
+<a href="#F">F</a>
+<a href="#G">G</a>
+<a href="#H">H</a>
+<a href="#I">I</a>
+<a href="#K">K</a>
+<a href="#L">L</a>
+<a href="#M">M</a>
+<a href="#N">N</a>
+<a href="#O">O</a>
+<a href="#P">P</a>
+<a href="#R">R</a>
+<a href="#S">S</a>
+<a href="#T">T</a>
+<a href="#U">U</a>
+<a href="#V">V</a>
+<a href="#misc">misc</a>
+</p>
+
+
+<h2><a name="A">-- A --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Math.html">abs-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">abs.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">acos-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">acos.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">acosh-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">acosh.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="adjacency.html">adjacency</a></td>
+<td>Administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="adjacency.html">adjacency.landkreis</a></td>
+<td>Administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="adjacency.html">adjacency.spam</a></td>
+<td>Administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">all-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="allequal.html">all.equal-method</a></td>
+<td>Test if Two 'spam' Objects are (Nearly) Equal</td></tr>
+<tr><td style="width: 25%;"><a href="allequal.html">all.equal.spam</a></td>
+<td>Test if Two 'spam' Objects are (Nearly) Equal</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">all.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">any-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">any.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="apply.html">apply.spam</a></td>
+<td>Apply Functions Over Sparse Matrix Margins</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">Arith-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">as.dgCMatrix.spam</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">as.dgRMatrix.spam</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">as.matrix-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">as.matrix-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">as.matrix.spam</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam-method</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">as.spam-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.chol.NgPeyton</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">as.spam.dgCMatrix</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">as.spam.dgRMatrix</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.dist</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.list</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.matrix</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">as.spam.matrix.csr</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.numeric</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">as.spam.spam</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="Coercion.html">as.vector</a></td>
+<td>Coercion to a Vector</td></tr>
+<tr><td style="width: 25%;"><a href="Coercion.html">as.vector-method</a></td>
+<td>Coercion to a Vector</td></tr>
+<tr><td style="width: 25%;"><a href="Coercion.html">as.vector.spam</a></td>
+<td>Coercion to a Vector</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">asin-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">asin.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">asinh-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">asinh.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">assign.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">atan-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">atan.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">atanh-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">atanh.spam</a></td>
+<td>Mathematical functions</td></tr>
+</table>
+
+<h2><a name="B">-- B --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-solve.html">backsolve</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">backsolve-method</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">backsolve-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">backsolve-methods</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">backsolve.spam</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="bandwidth.html">bandwidth</a></td>
+<td>Bandwidth of a Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="bdiag.html">bdiag</a></td>
+<td>Binds Arrays Corner-to-Corner</td></tr>
+<tr><td style="width: 25%;"><a href="bdiag.html">bdiag.spam</a></td>
+<td>Binds Arrays Corner-to-Corner</td></tr>
+</table>
+
+<h2><a name="C">-- C --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-class.html">c-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">c-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">cbind</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">cbind-method</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">cbind.spam</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">ceiling-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">ceiling.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="chol.html">chol</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="chol.html">chol-method</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">chol-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="chol.html">chol.spam</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">chol2inv</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">chol2inv-method</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">chol2inv.spam</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="circulant.html">circulant.spam</a></td>
+<td>Create Circulant Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="cleanup.html">cleanup</a></td>
+<td>Cleaning up sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="coerce-methods.html">coerce-method</a></td>
+<td>Force a 'spam' Object to Belong to a Class</td></tr>
+<tr><td style="width: 25%;"><a href="coerce-methods.html">coerce.spam</a></td>
+<td>Force a 'spam' Object to Belong to a Class</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">colindices</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">colindices&lt;-</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colMeans</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colMeans-method</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colMeans.spam</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colSums</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colSums-method</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">colSums.spam</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">Compare-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="complexity.html">complexities</a></td>
+<td>Complexity for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="complexity.html">complexity</a></td>
+<td>Complexity for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">constructors</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cos-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cos.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cosh-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cosh.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.exp</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.mat</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.nug</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.sph</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.wend1</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.wend2</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.wu1</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.wu2</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">cov.wu3</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="covmat.html">covmat</a></td>
+<td>Covariance functions</td></tr>
+<tr><td style="width: 25%;"><a href="crossprod.html">crossprod-method</a></td>
+<td>Spam Matrix Crossproduct</td></tr>
+<tr><td style="width: 25%;"><a href="crossprod.html">crossprod.default</a></td>
+<td>Spam Matrix Crossproduct</td></tr>
+<tr><td style="width: 25%;"><a href="crossprod.html">crossprod.spam</a></td>
+<td>Spam Matrix Crossproduct</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cummax-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cummax.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cummin-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cummin.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cumprod-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cumprod.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cumsum-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">cumsum.spam</a></td>
+<td>Mathematical functions</td></tr>
+</table>
+
+<h2><a name="D">-- D --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="det.html">det</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">det-method</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">det.spam</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">determinant</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">determinant-method</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">determinant-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">determinant.spam</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">determinant.spam.chol</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="det.html">determinant.spam.chol.NgPeyton</a></td>
+<td>Calculate the determinant of a positive definite Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag-method</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">diag-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag.assign-method</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag.of.spam</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag.spam</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag.spam&lt;-</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag&lt;-</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag&lt;--method</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">diag&lt;-.spam</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="diff.html">diff</a></td>
+<td>Lagged Differences</td></tr>
+<tr><td style="width: 25%;"><a href="diff.html">diff-method</a></td>
+<td>Lagged Differences</td></tr>
+<tr><td style="width: 25%;"><a href="diff.html">diff.spam</a></td>
+<td>Lagged Differences</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">digamma-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">digamma.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">dim-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">dim-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="dim.html">dim.spam</a></td>
+<td>Dimensions of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="dim.html">dim&lt;--method</a></td>
+<td>Dimensions of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">dim&lt;--method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="dim.html">dim&lt;-.spam</a></td>
+<td>Dimensions of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">dimension&lt;-</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="display.html">display</a></td>
+<td>Graphially Represent the Nonzero Entries</td></tr>
+<tr><td style="width: 25%;"><a href="display.html">display-method</a></td>
+<td>Graphially Represent the Nonzero Entries</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">display-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="display.html">display.spam</a></td>
+<td>Graphially Represent the Nonzero Entries</td></tr>
+<tr><td style="width: 25%;"><a href="nearestdist.html">dist.spam</a></td>
+<td>Distance Matrix Computation</td></tr>
+<tr><td style="width: 25%;"><a href="nearestdist.html">distance</a></td>
+<td>Distance Matrix Computation</td></tr>
+</table>
+
+<h2><a name="E">-- E --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="eigen.html">eigen.spam</a></td>
+<td>Eigenvalues for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="eigen.html">eigen_approx</a></td>
+<td>Eigenvalues for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">entries</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">entries&lt;-</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">exp-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">exp.spam</a></td>
+<td>Mathematical functions</td></tr>
+</table>
+
+<h2><a name="F">-- F --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Math.html">floor-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">floor.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="foreign.html">foreign</a></td>
+<td>Transformation to other sparse formats</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">forwardsolve</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">forwardsolve-method</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">forwardsolve-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">forwardsolve-methods</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">forwardsolve.spam</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+</table>
+
+<h2><a name="G">-- G --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Math.html">gamma-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">gamma.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="germanydata.html">germany</a></td>
+<td>Meta-data about administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="germanydata.html">germany.data</a></td>
+<td>Meta-data about administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="adjacency.html">germany.graph</a></td>
+<td>Administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="germanydata.html">germany.info</a></td>
+<td>Meta-data about administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="germany.plot.html">germany.plot</a></td>
+<td>Plot administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="germanydata.html">germany.poly</a></td>
+<td>Meta-data about administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="germanydata.html">germany.spam</a></td>
+<td>Meta-data about administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="options.html">getOption.spam</a></td>
+<td>Options Settings</td></tr>
+<tr><td style="width: 25%;"><a href="gmult.html">gmult</a></td>
+<td>Generalized Multiplication</td></tr>
+<tr><td style="width: 25%;"><a href="grid_trace2.html">grid_trace2</a></td>
+<td>Two trace plots and a scatter plot.</td></tr>
+<tr><td style="width: 25%;"><a href="grid_zoom.html">grid_zoom</a></td>
+<td>grid_zoom</td></tr>
+</table>
+
+<h2><a name="H">-- H --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="head.html">head-method</a></td>
+<td>Return the First or Last Part of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="head.html">head.spam</a></td>
+<td>Return the First or Last Part of an Object</td></tr>
+</table>
+
+<h2><a name="I">-- I --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="image.html">image</a></td>
+<td>Display a spam Object as Color Image</td></tr>
+<tr><td style="width: 25%;"><a href="image.html">image-method</a></td>
+<td>Display a spam Object as Color Image</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">image-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="image.html">image.spam</a></td>
+<td>Display a spam Object as Color Image</td></tr>
+<tr><td style="width: 25%;"><a href="image.html">image.spam.chol</a></td>
+<td>Display a spam Object as Color Image</td></tr>
+<tr><td style="width: 25%;"><a href="import.html">import</a></td>
+<td>Read External Matrix Formats</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">initialize-method</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">is.spam</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="isSymmetric.html">isSymmetric-method</a></td>
+<td>Test if a spam matrix is Symmetric</td></tr>
+<tr><td style="width: 25%;"><a href="isSymmetric.html">isSymmetric.spam</a></td>
+<td>Test if a spam matrix is Symmetric</td></tr>
+</table>
+
+<h2><a name="K">-- K --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="kronecker.html">kronecker-method</a></td>
+<td>Kronecker Products on Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="kronecker.html">kronecker.default</a></td>
+<td>Kronecker Products on Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="kronecker.html">kronecker.spam</a></td>
+<td>Kronecker Products on Sparse Matrices</td></tr>
+</table>
+
+<h2><a name="L">-- L --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="large_matrix.html">large matries</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">large matrix</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">large_matries</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">large_matrix</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">length-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">length-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">length&lt;--method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">length&lt;--method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">lgamma-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">lgamma.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log10-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log10.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log2-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">log2.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">long vector</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">long vectors</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="lower.tri.html">lower.tri</a></td>
+<td>Lower and Upper Triangular Part of a Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">lower.tri-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="lower.tri.html">lower.tri.spam</a></td>
+<td>Lower and Upper Triangular Part of a Sparse Matrix</td></tr>
+</table>
+
+<h2><a name="M">-- M --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="landkreis.html">map.landkreis</a></td>
+<td>Administrative districts of Germany</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">Math</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">Math-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">Math.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">Math2</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">Math2-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">Math2.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">max-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">max.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">min-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">min.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">mle</a></td>
+<td>Maximum likelihood estimates</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">mle.nomean</a></td>
+<td>Maximum likelihood estimates</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">mle.nomean.spam</a></td>
+<td>Maximum likelihood estimates</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">mle.spam</a></td>
+<td>Maximum likelihood estimates</td></tr>
+</table>
+
+<h2><a name="N">-- N --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-operations.html">ncol-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="nearestdist.html">nearest.dist</a></td>
+<td>Distance Matrix Computation</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">neg2loglikelihood</a></td>
+<td>Maximum likelihood estimates</td></tr>
+<tr><td style="width: 25%;"><a href="mle.html">neg2loglikelihood.spam</a></td>
+<td>Maximum likelihood estimates</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">norm</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">norm-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">norm.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">nrow-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+</table>
+
+<h2><a name="O">-- O --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-operations.html">Ops.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="options.html">options.spam</a></td>
+<td>Options Settings</td></tr>
+<tr><td style="width: 25%;"><a href="Oral.html">Oral</a></td>
+<td>Oral Cavity Cancer</td></tr>
+<tr><td style="width: 25%;"><a href="Oral.html">Oral.spam</a></td>
+<td>Oral Cavity Cancer</td></tr>
+<tr><td style="width: 25%;"><a href="Oral.html">oral.spam</a></td>
+<td>Oral Cavity Cancer</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering-method</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">ordering-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering-methods</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering.spam</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering.spam.chol</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="ordering.html">ordering.spam.chol.NgPeyton</a></td>
+<td>Extract the permutation</td></tr>
+<tr><td style="width: 25%;"><a href="spam-package.html">overview</a></td>
+<td>SPArse Matrix Package</td></tr>
+</table>
+
+<h2><a name="P">-- P --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="pad.html">pad</a></td>
+<td>Padding a (sparse) matrix</td></tr>
+<tr><td style="width: 25%;"><a href="pad.html">pad.spam</a></td>
+<td>Padding a (sparse) matrix</td></tr>
+<tr><td style="width: 25%;"><a href="pad.html">pad&lt;-</a></td>
+<td>Padding a (sparse) matrix</td></tr>
+<tr><td style="width: 25%;"><a href="pad.html">pad&lt;--method</a></td>
+<td>Padding a (sparse) matrix</td></tr>
+<tr><td style="width: 25%;"><a href="pad.html">pad&lt;-.spam</a></td>
+<td>Padding a (sparse) matrix</td></tr>
+<tr><td style="width: 25%;"><a href="permutation.html">permutation</a></td>
+<td>Permute a matrix</td></tr>
+<tr><td style="width: 25%;"><a href="permutation.html">permutation-method</a></td>
+<td>Permute a matrix</td></tr>
+<tr><td style="width: 25%;"><a href="permutation.html">permutation.spam</a></td>
+<td>Permute a matrix</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">plot-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">plot.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="powerboost.html">powerboost</a></td>
+<td>Specific options Setting</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="makeprec.html">precmat.GMRFreglat</a></td>
+<td>Create Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.IGMRFirreglat</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.IGMRFreglat</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.RW1</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.RW2</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.RWn</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="precmat.html">precmat.season</a></td>
+<td>IGMRF Precision Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print-method</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">print-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.spam</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.spam.chol</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print.spam.chol.NgPeyton</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">print_nnzpos</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">prod-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">prod.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+</table>
+
+<h2><a name="R">-- R --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="Summary.html">range-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">range.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">rbind</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">rbind-method</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="cbind.html">rbind.spam</a></td>
+<td>Combine spam Matrices by Rows or Columns</td></tr>
+<tr><td style="width: 25%;"><a href="fields-wrapper.html">rdist.dist</a></td>
+<td>Wrapper for Distance Matrix Computation</td></tr>
+<tr><td style="width: 25%;"><a href="import.html">read.HB</a></td>
+<td>Read External Matrix Formats</td></tr>
+<tr><td style="width: 25%;"><a href="import.html">read.MM</a></td>
+<td>Read External Matrix Formats</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.html">rmvnorm.canonical</a></td>
+<td>Draw Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.const.html">rmvnorm.canonical.const</a></td>
+<td>Draw Constrainted Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.const.html">rmvnorm.const</a></td>
+<td>Draw Constrainted Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.html">rmvnorm.prec</a></td>
+<td>Draw Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.const.html">rmvnorm.prec.const</a></td>
+<td>Draw Constrainted Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="rmvnorm.html">rmvnorm.spam</a></td>
+<td>Draw Multivariate Normals</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">round-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">round.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowMeans</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowMeans-method</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowMeans.spam</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">rowpointers</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="constructors.html">rowpointers&lt;-</a></td>
+<td>Slot modification</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowSums</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowSums-method</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+<tr><td style="width: 25%;"><a href="rowSums.html">rowSums.spam</a></td>
+<td>Form Row and Column Sums and Means</td></tr>
+</table>
+
+<h2><a name="S">-- S --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-class.html">show-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">show-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">signif-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Math2.html">signif.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">sin-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">sin.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">solve</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">solve-method</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-solve.html">solve.spam</a></td>
+<td>Linear Equation Solving for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-package.html">SPAM</a></td>
+<td>SPArse Matrix Package</td></tr>
+<tr><td style="width: 25%;"><a href="spam-package.html">Spam</a></td>
+<td>SPArse Matrix Package</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">spam</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">spam-class</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-defunct.html">spam-defunct</a></td>
+<td>Defunct Objects in Package 'spam'</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">spam-method</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">spam.chol.NgPeyton-class</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">spam.class</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">spam.creation</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">spam.list</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam.html">spam.numeric</a></td>
+<td>Sparse Matrix Class</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">spam.ops</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="options.html">spam.options</a></td>
+<td>Options Settings</td></tr>
+<tr><td style="width: 25%;"><a href="version.html">spam.Version</a></td>
+<td>Spam Version Information</td></tr>
+<tr><td style="width: 25%;"><a href="version.html">spam.version</a></td>
+<td>Spam Version Information</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">spam64</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="diag.html">spam_diag</a></td>
+<td>Sparse Matrix diagonals</td></tr>
+<tr><td style="width: 25%;"><a href="random.html">spam_random</a></td>
+<td>Create Random spam Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="fields-wrapper.html">spam_rdist</a></td>
+<td>Wrapper for Distance Matrix Computation</td></tr>
+<tr><td style="width: 25%;"><a href="fields-wrapper.html">spam_rdist.earth</a></td>
+<td>Wrapper for Distance Matrix Computation</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">sqrt-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">sqrt.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">subset.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">sum-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">sum.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">Summary</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">Summary-method</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">summary-method</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">summary-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="Summary.html">Summary.spam</a></td>
+<td>Rounding of Numbers</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">summary.spam</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">summary.spam.chol</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+<tr><td style="width: 25%;"><a href="print.html">summary.spam.chol.NgPeyton</a></td>
+<td>Printing and summarizing sparse matrices</td></tr>
+</table>
+
+<h2><a name="T">-- T --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-class.html">t-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam.chol.NgPeyton-class.html">t-method</a></td>
+<td>Class "spam.chol.NgPeyton"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">t.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="head.html">tail-method</a></td>
+<td>Return the First or Last Part of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="head.html">tail.spam</a></td>
+<td>Return the First or Last Part of an Object</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">tan-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">tan.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="crossprod.html">tcrossprod-method</a></td>
+<td>Spam Matrix Crossproduct</td></tr>
+<tr><td style="width: 25%;"><a href="crossprod.html">tcrossprod.spam</a></td>
+<td>Spam Matrix Crossproduct</td></tr>
+<tr><td style="width: 25%;"><a href="toeplitz.html">toeplitz.spam</a></td>
+<td>Create Toeplitz Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">trigamma-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">trigamma.spam</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="triplet.html">triplet</a></td>
+<td>Transform a spam format to triplets</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">trunc-method</a></td>
+<td>Mathematical functions</td></tr>
+<tr><td style="width: 25%;"><a href="Math.html">trunc.spam</a></td>
+<td>Mathematical functions</td></tr>
+</table>
+
+<h2><a name="U">-- U --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="chol.html">update-method</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="chol.html">update.spam</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="chol.html">update.spam.chol.NgPeyton</a></td>
+<td>Cholesky Factorization for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="lower.tri.html">upper.tri</a></td>
+<td>Lower and Upper Triangular Part of a Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">upper.tri-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="lower.tri.html">upper.tri.spam</a></td>
+<td>Lower and Upper Triangular Part of a Sparse Matrix</td></tr>
+<tr><td style="width: 25%;"><a href="UScounties.html">UScounties</a></td>
+<td>Adjacency structure of the counties in the contiguous United States</td></tr>
+<tr><td style="width: 25%;"><a href="UScounties.html">UScounties.ndorder</a></td>
+<td>Adjacency structure of the counties in the contiguous United States</td></tr>
+<tr><td style="width: 25%;"><a href="UScounties.html">UScounties.storder</a></td>
+<td>Adjacency structure of the counties in the contiguous United States</td></tr>
+<tr><td style="width: 25%;"><a href="USprecip.html">USprecip</a></td>
+<td>Monthly total precipitation (mm) for April 1948 in the contiguous United States</td></tr>
+</table>
+
+<h2><a name="V">-- V --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="validate_spam.html">validate_spam</a></td>
+<td>Validate a spam objects</td></tr>
+<tr><td style="width: 25%;"><a href="spam-defunct.html">validspamobject</a></td>
+<td>Defunct Objects in Package 'spam'</td></tr>
+<tr><td style="width: 25%;"><a href="s3only.html">var.spam</a></td>
+<td>Wappers for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="version.html">version</a></td>
+<td>Spam Version Information</td></tr>
+</table>
+
+<h2><a name="misc">-- misc --</a></h2>
+
+<table width="100%">
+<tr><td style="width: 25%;"><a href="spam-class.html">!-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">!=-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%%-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%*%-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%*%-methods</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%/%-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%d*%</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%d*%-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%d+%</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">%d+%-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">&amp;-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">*-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">+-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">+-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">--method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">--method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-package.html">. SPAM .</a></td>
+<td>SPArse Matrix Package</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">/-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">64bit</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="large_matrix.html">64bits</a></td>
+<td>Large 64-bit matrices require the R package 'spam64'</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">&lt;-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">&lt;=-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">==-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">&gt;-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">&gt;=-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">[-method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">[.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-class.html">[&lt;--method</a></td>
+<td>Class "spam"</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">[&lt;--method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">[&lt;-.spam</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">^-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+<tr><td style="width: 25%;"><a href="spam-operations.html">|-method</a></td>
+<td>Basic Linear Algebra for Sparse Matrices</td></tr>
+</table>
+</body></html>

@@ -1,0 +1,60 @@
+useDynLib(evd, .registration = TRUE, .fixes = "C_")
+
+export(rextreme,rorder,rrweibull,rnweibull,rfrechet,rgev,rgpd,rgumbel,rbvevd,rbvalog,rbvamix,rbvaneglog,rbvbilog,rbvct,rbvhr,rbvlog,rbvnegbilog,rbvneglog,rmvevd,rmvlog,rmvalog,
+       dextreme,dorder,drweibull,dnweibull,dfrechet,dgev,dgpd,dgumbel,dbvevd,dbvalog,dbvamix,dbvaneglog,dbvbilog,dbvct,dbvhr,dbvlog,dbvnegbilog,dbvneglog,dmvevd,dmvlog,dmvalog,
+       pextreme,porder,prweibull,pnweibull,pfrechet,pgev,pgpd,pgumbel,pbvevd,pbvalog,pbvamix,pbvaneglog,pbvbilog,pbvct,pbvhr,pbvlog,pbvnegbilog,pbvneglog,pmvevd,pmvlog,pmvalog,
+       qextreme,qrweibull,qnweibull,qfrechet,qgev,qgpd,qgumbel,qcbvnonpar,
+       abvalog,abvamix,abvaneglog,abvbilog,abvct,abvevd,abvhr,abvlog,abvnegbilog,abvneglog,abvnonpar,amvalog,amvevd,amvlog,amvnonpar,
+       hbvalog,hbvamix,hbvaneglog,hbvbilog,hbvct,hbvevd,hbvhr,hbvlog,hbvnegbilog,hbvneglog,fbvalog,fbvamix,fbvaneglog,fbvbilog,fbvcalog,fbvcamix,fbvcaneglog,fbvcbilog,fbvcct,fbvchr,fbvclog,fbvcnegbilog,fbvcneglog,fbvcpot,fbvct,fbvevd,fbvhr,fbvlog,fbvnegbilog,fbvneglog,fbvpbilog,fbvpct,fbvphr,fbvplog,fbvpnegbilog,fbvpneglog,fbvpot,fbvppot,fextreme,fgev,fgev.norm,fgev.quantile,forder,fpot,fpot.norm,fpot.quantile,                    
+       bvcpp,bvdens,bvdp,bvh,bvpost.optim,bvqc,bvstart.vals,ccbvevd,evind.test,chiplot,clusters,dens,evmc,exi,exiplot,mar,marma,mma,mrlplot,mtransform,mvalog.check,pp,profile2d,qq,rl,sep.bvdata,std.errors,subsets,tcplot,bvtcplot,tvdepfn)            
+
+S3method(print, bvevd)
+S3method(print, bvpot)
+S3method(print, evd)
+S3method(print, pot)
+
+S3method(plot, bvevd)
+S3method(plot, bvpot)
+S3method(plot, uvevd)
+S3method(plot, profile.evd)
+S3method(plot, profile2d.evd)
+
+S3method(qq, gev)
+S3method(qq, pot)
+S3method(rl, gev)
+S3method(rl, pot)
+S3method(pp, gev)
+S3method(pp, pot)
+S3method(dens, gev)
+S3method(dens, pot)
+
+S3method(bvdens, bvevd)
+S3method(bvdens, bvpot)
+S3method(bvdp, bvevd)
+S3method(bvdp, bvpot)
+S3method(bvh, bvevd)
+S3method(bvh, bvpot)
+S3method(bvqc, bvevd)
+S3method(bvqc, bvpot)
+
+S3method(fitted, evd)
+S3method(logLik, evd)
+S3method(profile2d, evd)
+S3method(profile, evd)
+S3method(std.errors, evd)
+S3method(vcov, evd)
+S3method(confint, evd)
+S3method(anova, evd)
+
+S3method(confint, profile.evd)
+S3method(bvcpp, bvevd)
+
+importFrom("grDevices", "chull", "dev.interactive", "heat.colors")
+importFrom("graphics", "abline", "contour", "image", "lines",
+           "matplot", "par", "plot", "points", "polygon", "rug",
+           "segments", "text")
+importFrom("stats", "AIC", "anova", "approx", "complete.cases",
+           "dbeta", "density", "deviance", "dnorm", "fitted",
+           "integrate", "na.omit", "optim", "pbeta", "pchisq", "pnorm",
+           "ppoints", "qchisq", "qnorm", "quantile", "rbeta", "rexp",
+           "runif", "spline", "uniroot", "var")

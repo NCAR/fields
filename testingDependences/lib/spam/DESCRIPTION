@@ -1,0 +1,73 @@
+Package: spam
+Type: Package
+Title: SPArse Matrix
+Version: 2.6-0
+Date: 2020-12-14
+Authors@R: c(person("Reinhard", "Furrer", role = c("aut", "cre"),
+                    email = "reinhard.furrer@math.uzh.ch",
+                    comment = c(ORCID = "0000-0002-6319-2332")),
+             person("Florian", "Gerber", role = c("aut"),
+                    email = "florian.gerber@math.uzh.ch",
+                    comment = c(ORCID = "0000-0001-8545-5263")),
+             person("Roman", "Flury", role = c("aut"),
+                    email = "roman.flury@math.uzh.ch",
+                    comment = c(ORCID = "0000-0002-0349-8698")),
+             person("Daniel", "Gerber", role = "ctb",
+                    email = "daniel_gerber_2222@hotmail.com"),
+             person("Kaspar", "Moesinger", role = "ctb",
+                    email = "kaspar.moesinger@gmail.com"),
+             person("Youcef", "Saad", role = "ctb",
+                    comment = "SPARSEKIT http://www-users.cs.umn.edu/~saad/software/SPARSKIT/"),
+             person(c("Esmond", "G."), "Ng", role = "ctb",
+                    comment = "Fortran Cholesky routines"),
+             person(c("Barry", "W."), "Peyton", role = "ctb",
+                    comment = "Fortran Cholesky routines"),
+             person(c("Joseph", "W.H."), "Liu", role = "ctb",
+                    comment = "Fortran Cholesky routines"),
+             person(c("Alan", "D."), "George", role = "ctb",
+                    comment = "Fortran Cholesky routines"),
+             person(c("Lehoucq", "B."), "Rich", role = "ctb",
+                    comment = "ARPACK"),
+             person(c("Maschhoff"), "Kristi", role = "ctb",
+                    comment = "ARPACK"),
+             person(c("Sorensen", "C."), "Danny", role = "ctb",
+                    comment = "ARPACK"),
+             person(c("Yang"), "Chao", role = "ctb",
+                    comment = "ARPACK"))
+Depends: R (>= 3.1), dotCall64, grid, methods
+Suggests: spam64, fields, Matrix, testthat, R.rsp, truncdist, knitr,
+        rmarkdown
+VignetteBuilder: R.rsp, knitr
+Description: Set of functions for sparse matrix algebra.
+    Differences with other sparse matrix packages are:
+    (1) we only support (essentially) one sparse matrix format,
+    (2) based on transparent and simple structure(s),
+    (3) tailored for MCMC calculations within G(M)RF.
+    (4) and it is fast and scalable (with the extension package spam64).
+    Documentation about 'spam' is provided by vignettes included in this package, see also Furrer and Sain (2010) <doi:10.18637/jss.v036.i10>; see 'citation("spam")' for details.
+LazyData: true
+License: LGPL-2 | BSD_3_clause + file LICENSE
+URL: https://www.math.uzh.ch/pages/spam/
+BugReports: https://git.math.uzh.ch/reinhard.furrer/spam/-/issues
+NeedsCompilation: yes
+Packaged: 2020-12-14 20:22:07 UTC; roflur
+Author: Reinhard Furrer [aut, cre] (<https://orcid.org/0000-0002-6319-2332>),
+  Florian Gerber [aut] (<https://orcid.org/0000-0001-8545-5263>),
+  Roman Flury [aut] (<https://orcid.org/0000-0002-0349-8698>),
+  Daniel Gerber [ctb],
+  Kaspar Moesinger [ctb],
+  Youcef Saad [ctb] (SPARSEKIT
+    http://www-users.cs.umn.edu/~saad/software/SPARSKIT/),
+  Esmond G. Ng [ctb] (Fortran Cholesky routines),
+  Barry W. Peyton [ctb] (Fortran Cholesky routines),
+  Joseph W.H. Liu [ctb] (Fortran Cholesky routines),
+  Alan D. George [ctb] (Fortran Cholesky routines),
+  Lehoucq B. Rich [ctb] (ARPACK),
+  Maschhoff Kristi [ctb] (ARPACK),
+  Sorensen C. Danny [ctb] (ARPACK),
+  Yang Chao [ctb] (ARPACK)
+Maintainer: Reinhard Furrer <reinhard.furrer@math.uzh.ch>
+Repository: CRAN
+Date/Publication: 2020-12-14 21:30:02 UTC
+Built: R 4.0.2; x86_64-apple-darwin17.0; 2020-12-15 11:30:25 UTC; unix
+Archs: spam.so.dSYM

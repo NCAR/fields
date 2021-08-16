@@ -15,6 +15,8 @@ offGridWeights<-function(s, gridList, np=2,
   #
   # If mKrigObject (result of fitting model) is given 
   # extract all the covariance information from it. 
+  # For the Matern family besides aRange and sigma2 is the 
+  # smoothness
   if( !is.null( mKrigObject)){
     sigma2<- mKrigObject$summary["sigma2"]
     aRange<- mKrigObject$summary["aRange"]
@@ -25,7 +27,7 @@ offGridWeights<-function(s, gridList, np=2,
     covArgs<-mKrigObject$args 
   # some R arcania -- strip out all arguments used by say stationary.cov
   # but not used by the Covariance function 
-  # Typically for the Matern family all that is left is smoothness
+  # Do not want to call the covariance function with these extra args. 
     if( !is.null( covArgs) ){
       argNames<- names( as.list( get(Covariance)))
       argNames<- argNames[ -length(argNames)]
@@ -53,8 +55,10 @@ offGridWeights<-function(s, gridList, np=2,
   tableLoc<- table( s0Index)
   if( any( tableLoc>=2)){
     ind<-tableLoc >=2
-    print( s0[ind])
-    warning( "Some locations mapped to same grid box")
+    cat("Found", length(ind), "grid boxes", fill=TRUE)
+    print( s0[ind,])
+    warning( "grid boxes include more than one off grid location.
+             See row/column indices listed above.")
   }
   }
   # np=2

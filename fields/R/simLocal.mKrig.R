@@ -49,23 +49,38 @@
                                  )
     }
     else{
+
         nx<- length( predictionGridList$x)
         ny<- length( predictionGridList$y)
     }
     
+   
+# check that predictionGrid is equally spaced
+    dx<- predictionGridList$x[2]- predictionGridList$x[1]
+    if( any( diff (predictionGridList$x)!=dx)){
+      stop( "predictionGridList$x must be equally spaced")
+    }
+    dy<- predictionGridList$y[2]- predictionGridList$y[1]
+    if( any( diff (predictionGridList$y)!=dy)){
+      stop( "predictionGridList$y must be equally spaced")
+    }
     #
+    #
+    
+    
      if (is.null(simulationGridList)) {
          simulationGridList<- list( x= seq( min(predictionGridList$x), 
-                                           max(predictionGridList$x),
-                                           length.out=nx*gridRefinement ),
+                                            max(predictionGridList$x),
+                                             length.out = nx*gridRefinement ),
                                     y= seq( min(predictionGridList$y), 
                                             max(predictionGridList$y),
-                                            length.out=ny*gridRefinement )
+                                             length.out = ny*gridRefinement )
          )
          indexSubset<-  list( x= match(predictionGridList$x,
                                        simulationGridList$x),
                               y = match(predictionGridList$y,
-                                        simulationGridList$y))
+                                        simulationGridList$y)
+                              )
          if( any( is.na( indexSubset))){
              stop("predict grid is not a subset 
                   of the simulation grid")

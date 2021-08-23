@@ -1,0 +1,672 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Draws an image plot with a legend strip for the color scale...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for image.plot {fields}"><tr><td>image.plot {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Draws an image plot with a legend strip for the color scale based on either
+a regular grid or a grid of quadrilaterals.  
+</h2>
+
+<h3>Description</h3>
+
+<p>This function combines the R image function with some automatic 
+placement of a legend. This is done by splitting the plotting region  
+into two parts. Putting the image in one and the legend in the other. After the
+legend is added the plot region is reset to the image plot.
+This function also allows for plotting quadrilateral cells in the image format that
+often arise from regular grids transformed with a map projection or a scaling and rotation of coordinates. See the example where this function can create a similar graphic 
+to the ggplot package.
+<code>image.plot</code> functionality has been frozen, see the more recent function
+<code><a href="../../fields/help/imagePlot.html">imagePlot</a></code> which is backwardly compatible with this function. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'plot'
+image(...,
+                 add = FALSE, 
+                 breaks= NULL, nlevel = 64, col = NULL,  
+    horizontal = FALSE, legend.shrink = 0.9, legend.width = 1.2, 
+    legend.mar = ifelse(horizontal, 3.1, 5.1), legend.lab = NULL,
+    legend.line= 2,                    
+    graphics.reset = FALSE, bigplot = NULL, smallplot = NULL, 
+    legend.only = FALSE,  lab.breaks = NULL, 
+    axis.args = NULL, legend.args = NULL, legend.cex=1.0,
+    midpoint = FALSE, border = NA, 
+    lwd = 1,verbose = FALSE )	
+</pre>
+
+
+<h3>Arguments</h3>
+
+ 
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>The usual arguments to the <code>image</code> function as x,y,or z or as a
+list with x,y,z as components. One can also include a <code>breaks</code> 
+argument for an unequal spaced color scale with color scale boundaries
+at the breaks (see example below).  If a &quot;quadrilateral grid&quot;,
+arguments must be explicitly x,y and z with x, and y being matrices of
+dimensions equal to, or one more than, z giving the grid
+locations. The basic concept is that the coordinates of x and y still
+define a grid but the image cells are quadrilaterals rather than being
+restricted to rectangles. NOTE: graphical argruments passed here will only have impact
+on the image plot. To change the graphical defaults for the legend use
+the individual legend arguments and/or  <code>legend.arg</code> listed 
+below. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>add</code></td>
+<td>
+
+<p>If true add image and a legend strip to the existing plot. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>bigplot</code></td>
+<td>
+
+<p>Plot coordinates for image plot. If not passed
+these will
+be determined within the function.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>border</code></td>
+<td>
+<p>This only works if x and y are matrices &ndash; if NA the quadralaterals will 
+have a border color that is 
+the same as the interior color. Otherwise this specifies the color to use.</p>
+</td></tr>
+<tr valign="top"><td><code>breaks</code></td>
+<td>
+<p>Break points in sorted order to indicate the intervals for assigning
+the colors. Note that if there are nlevel colors there should be  (nlevel+1)
+breakpoints. If <code>breaks</code> is not specified (nlevel+1) equally spaced breaks are created where the first and last bin have their midpoints at the minimum and maximum values in <code>z</code> or at <code>zlim</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+
+<p>Color table to use for image (See help file on image for details.).
+Default is a pleasing range of 64 divisions suggested by Tim Hoar and is similar to 
+the MATLAB (TM) jet color scheme. Note that if <code>breaks</code> is specified there must be one less color specified than the number of breaks. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>graphics.reset</code></td>
+<td>
+
+<p>If FALSE (default) the plotting region ( plt in par) will not be reset 
+and one can add more information onto the image plot. (e.g. using functions
+such as points or lines.)  If TRUE will reset plot parameters to the
+values before entering the function.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>horizontal</code></td>
+<td>
+
+<p>If false (default) legend will be a vertical strip on the right side. If
+true the legend strip will be along the bottom.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>lab.breaks</code></td>
+<td>
+<p> If breaks are supplied these are text string labels
+to put at each break value. This is intended to label axis on a
+transformed scale such as logs.</p>
+</td></tr>
+<tr valign="top"><td><code>axis.args</code></td>
+<td>
+<p>Additional arguments for the axis function used to 
+create the legend axis. (See example below adding a log scaling.)</p>
+</td></tr>
+<tr valign="top"><td><code>legend.only</code></td>
+<td>
+
+<p>If TRUE just add the
+legend to a the plot in the plot region defined by the coordinates in
+smallplot. In the absence of other information the range for the legend 
+is determined from the <code>zlim</code> argument. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>legend.args</code></td>
+<td>
+<p>Arguments for a complete specification of the 
+legend label, e.g. if you need to the rotate text or other details.  This is in the form of list and is just passed to the 
+mtext function and you will need to give both the side and line arguments for positioning.  This usually will not be needed. 
+(See example below.)</p>
+</td></tr>
+<tr valign="top"><td><code>legend.cex</code></td>
+<td>
+<p>Character expansion to change size of the legend label.</p>
+</td></tr>
+<tr valign="top"><td><code>legend.line</code></td>
+<td>
+<p>Distance in units of character height (as in <code>mtext</code>)
+of the legend label from the 
+color bar. Make this larger if the label collides with the color axis labels.</p>
+</td></tr>
+<tr valign="top"><td><code>legend.mar</code></td>
+<td>
+
+<p>Width in characters of legend margin that has the axis. Default is 5.1 
+for a vertical legend and 3.1 for a horizontal legend.</p>
+</td></tr>
+<tr valign="top"><td><code>legend.lab</code></td>
+<td>
+<p> Label for the axis of the color legend. Default is no
+label as this is usual evident from the plot title.</p>
+</td></tr>
+<tr valign="top"><td><code>legend.shrink</code></td>
+<td>
+
+<p>Amount to shrink the size of legend relative to the full height or
+width
+of the plot.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>legend.width</code></td>
+<td>
+
+<p>Width in characters of the legend strip. Default is 1.2, a little
+bigger 
+that the width of a character. </p>
+</td></tr>
+<tr valign="top"><td><code>lwd</code></td>
+<td>
+<p>Line width of bordering lines around pixels.
+This might need to be set less than 1.0 
+to avoid visible rounding of the pixel corners.</p>
+</td></tr>
+<tr valign="top"><td><code>midpoint</code></td>
+<td>
+ 
+<p>This option for the case of unequally spaced grids with x and y being 
+matrices of grid point locations. 
+If FALSE (default) the quadralaterals  will be extended
+to surround the  z locations as midpoints. If TRUE z values will be
+averaged
+to yield a midpoint value and the original grid points be used to define
+the
+quadralaterals. (See help on poly.image for details). In most cases
+midpoint should be FALSE to preserve exact values for z and 
+let the grid polygons be modified.</p>
+</td></tr>
+<tr valign="top"><td><code>nlevel</code></td>
+<td>
+
+<p>Number of color levels used in legend strip  
+</p>
+</td></tr>
+<tr valign="top"><td><code>smallplot</code></td>
+<td>
+
+<p>Plot coordinates for legend strip.  If not passed these will be
+determined within
+the function. Be sure to leave room for the axis labels. For example, if
+the legend is on the
+right side  <code>smallplot= c(.85,.9,0,1) </code> will leave (.1 in plot
+coordinates) for the
+axis labels to the right of the color strip. This argument is useful 
+for drawing a 
+plot with the legend that is the same size as the plots without legends.
+</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE prints intermediate information about
+setting up plots (for debugging). </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This is a function using the basic R graphics. The coding was done to make it easier for users to see how this function works and to modify. 
+</p>
+<p><strong>How this function works:</strong>
+The strategy for <code>image.plot</code> is simple, divide the plotting region
+into two smaller regions <code>bigplot</code> and <code>smallplot</code>. The image
+goes in one and the legend in the other. This way there is always room for
+the legend. Some adjustments are made to this rule by not shrinking the
+<code>bigplot</code> if there is already room for the legend strip and also
+sticking the legend strip close to the image plot. One can specify the
+plot regions explicitly by <code>bigplot</code> and  <code>smallplot</code> if the
+default choices do not work.(Note that these in figure coordinates.
+) There may be problems with small plotting
+regions in fitting both of these elements into the plot region and one may 
+have to change the default character sizes or margins to make things fit.
+Sometimes this function will not reset the type of margins correctly and the
+&quot;null&quot; call <code>par(mar = par("mar"))</code> may help to fix this issue.
+</p>
+<p><strong>The text is too small!</strong> 
+This always seems to happen as one is rushing to finish a talk  and the figures have tiny default axis labels. Try just calling the function <code>fields.style</code> before plotting. List out this function to see what is changed, however, all text is increased by 20% in size. 
+</p>
+<p><strong>Why &ldquo;image.plot&quot; and not &ldquo;image&quot;?</strong> The R Base function <code>image</code> is very 
+useful but it is awkward to place a legend quickly. However, that said if you are
+drawing several image plots and want a common legend use the <code>image</code> function 
+and just just use <code>image.plot</code> to add the legend. See the example in the 
+help file. Note that you can use <code>image</code> to draw a bunch of images and then follow with <code>image.plot</code> and <code>legend.only=TRUE</code> to add a common legend. (See examples below.)
+</p>
+<p><strong>Almost cloropleths too:</strong>  It  should be noted that this image function is slightly
+different than a cloropleth map because
+the legend is assuming that a continous scale has been discretized into a series of colors.
+To make the image.plot function as a  cloropleth graphic one would of course use the
+<code>breaks</code> option
+and for clarity perhaps code the different regions as different integer values. 
+In addition, for publication quality one would want to use the <code>legend.args</code> to
+add more descriptive labels at the midpoints in the color strip. 
+</p>
+<p><strong>Relationship of x, y and z:</strong>
+If the z component is a matrix then the user should be aware that
+this function locates the matrix element z[i,j] at the grid locations
+(x[i], y[j]) this is very different than simply listing out the
+matrix in the usual row column tabular form. See the example below
+for details on the difference in formatting. What does one do
+if you do not really have the &quot;z&quot; values on a regular grid? See the
+functions <code>quilt.plot.Rd</code> and <code>as.image</code> to discretise
+irregular observations to a grid. If the values makes sense as points on 
+a smooth surface see <code>Tps</code> and <code>fastTps</code> for surface interpolation.
+</p>
+<p><strong>Adding separate color to indicate the grid box boundaries.</strong> Sometimes you want to show to the grid box borders to emphasize this is not a smooth surface. To our knowledge there is no easy way to do this as an option in <code>image</code>. But if your image is formatted in the &quot;poly image&quot; style where x and y are also matrices you can use the polyimage  (see the <code>border</code> argument above) option to draw in boundaries. 
+</p>
+<p><strong>Grids with unequally spacing &ndash; quadrialteral pixels:</strong>
+If x and y are matrices that are a smooth transformation of a regular grid  then
+z[i,j] can be interperted as representing the average value in a quadrilateral that is centered at x[i,j] and
+y[i,j] (<code>midpoint</code> TRUE). The details of how this cell is found
+are buried in <code>poly.image</code> but it it essentially found using midpoints between the centers. If <code>midpoint</code> is FALSE then x
+and y are interpreted as the corners of the quadrilateral cells. But
+what about z? The four values of z are now averaged to represent a
+value at the midpoint of the cell and this is what is used for
+plotting. Quadrilateral grids were added to help with plotting 
+the gridded output of geophysical models where the regular grid is
+defined according to one map projection but the image plotting is required
+in another projection. Typically the regular grid becomes distorted in 
+a smooth way when this happens. See the regional climate example for
+a illustration of this application. One can add border colors in this case
+easily because these choices are just passed onto the polygon function. 
+</p>
+<p><strong>Adding the pixel grid for rectangular images:</strong>
+For adding the grid of pixel borders to a rectangular image try this example 
+after calling <code>image.plot</code>. 
+</p>
+<pre> 
+ dx &lt;- x[2] - x[1]  
+ dy &lt;- y[2] - y[1]  
+ xtemp&lt;- seq(  min( x)- dx/2, max(x)+ dx/2,
+         length.out = length(x) +1) 
+ ytemp&lt;- seq(  min( y)- dy/2, max(y)+ dy/2,
+         length.out = length(y) +1)
+ xline( xtemp, col="grey", lwd=2)
+ yline( ytemp, col="grey", lwd=2) 
+</pre>
+<p>Here <code>x</code> and <code>y</code> here are the x and y grid values from the image list.  
+</p>
+<p><strong>Fine tuning color scales:</strong> This function gives some flexibility in
+tuning the color scale to fit the rendering of z values. This can
+either be specially designed color scale with specific colors ( see
+help on <code>designer.colors</code>), positioning the colors at specific
+points on the [0,1] scale, or mapping distinct colors to intervals of
+z. The examples below show how to do each of these. In addition, by
+supplying <code>lab.break</code> strings or axis parameters one can
+annotate the legend axis in an informative matter.
+</p>
+<p><strong>Adding just the legend strip:</strong>
+Note that to add just the legend strip all the numerical information one
+needs is the <code>zlim</code> argument and the color table! See examples for tricks in positioning.
+</p>
+<p><strong>About color tables:</strong>
+We like <code>tim.colors</code> 
+as a default color scale and so if this what you use this can be omitted.
+Unfortunately this is not the default for the <code>image</code> function. Another
+important color scale is <code> viridis() </code> from the viridis package.
+It seems that by
+and large everyone seems to react postively to viridis &ndash; guess that is the
+point!
+</p>
+<p>The
+topographic color scale (<code>topo.colors</code>) is
+also a close second showing our geophysical bias.
+Users may find <code>larry.colors</code> useful for coding distinct regions
+in the style of a cloropleith map.   See also
+<code>terrain.colors</code> for a subset of the topo ones and <code>designer.colors</code> to &quot;roll
+your own&quot; color table. One nice option in this last function is to fix
+color transitions at
+particular quantiles of the data rather than at equally spaced
+intervals. For color choices see how the <code>nlevels</code> argument figures
+into the legend and main plot number of colors. Also see the <code>colors</code>
+function
+for a listing of all the colors that come with the R base environment. 
+</p>
+<p><strong>The details of placing the legend and 
+dividing up the plotting real estate:</strong>
+It is surprising how hard it is to automatically add the
+legend! All &quot;plotting coordinates&quot; mentioned here are in device
+coordinates. The plot region is assumed to be [0,1]X[0,1] and plotting
+regions are defined as rectangles within this square. We found these
+easier to work with than user coordinates.  
+</p>
+<p><code>legend.width</code> and <code>legend.mar</code> are in units of character
+spaces. These units are helpful in thinking about axis labels that
+will be put into these areas. To add more or less space between the
+legend and the image plot alter the mar parameters. The default mar
+settings (5.1,5.1,5.1,2.1) leaves 2.1 spaces for vertical legends and
+5.1 spaces for horizontal legends. 
+</p>
+<p>There are always problems with
+default solutions to placing information on graphs but the choices made
+here may be useful for most cases. The most annoying thing is that after
+using image.plot and adding information the next plot that is made may
+have the slightly smaller plotting region set by the image plotting.
+The user should set <code>reset.graphics=TRUE</code> to avoid the plotting
+size 
+from changing. The disadvantage, however, of resetting the graphics 
+is that one can no longer add additional graphics elements to the 
+image 
+plot. Note that filled.contour always resets the graphics but provides 
+another mechanism to pass through plotting commands. Apparently 
+<code>filled.contour</code>, while very pretty, does not work for multiple plots.
+</p>
+<p><strong>About setup and add legend functions</strong> These came about to create a
+scatterplot in Base R Graphics where the points are colored with a color scale
+and the scale can be plotted as part of the figure
+See <code> <a href="../../fields/help/bubblePlot.html">bubblePlot</a> </code> for a version of this kind of figure.  The
+function <code>setupLegend</code> should be used first to create enough space
+to add a color scale later. After plotting then <code>addLegend</code> will add the
+color scale. Note that if the color scale has been created by the <code>color.scale</code> function the last call to this function will use the color scale and limits created in <code>color.scale</code>.
+</p>
+<p>In summary here is an example of using these functions with the colors in mind:
+</p>
+<pre>
+  info&lt;- setupLegend()
+  colTab&lt;- rainbow(10)
+  plot( 1:10, 201:210, col=colTab, pch=16)
+  addLegend(info, col=colTab, zlim = c(1,10))
+</pre>
+<p>Here is one where four colors are mapped to specific values (ala image).
+</p>
+<pre>
+  info&lt;-setupLegend()
+  colTab= color.scale(201:210, rainbow(4))
+  plot( 1:10, 201:210, col=colTab, pch=16 )
+  addLegend(info, col=colTab, zlim = c(201,210) )
+</pre>
+<p>More complete graphics languages, such as that in  ggplot,  do not need such
+functions because the
+entire graphics segment is parsed to create the complete figure. In this way
+room for a color scale can be created automatically. The functions proposed here
+are a simple work around to create these figures using base R graphics. 
+</p>
+<p><strong>Other packages</strong>
+<code>levelplot</code> that is part of the lattice package has a very 
+similar function to image.plot and a formula syntax in the call.
+The <code>geom_raster</code> for setting up a graphics object within <code>ggplot</code> is another alternative forr image plots with legends.
+See the last example to compare the steps in creating an image plot using <code>image.plot</code> that is close to the ggplot version. Mostly this involves resetting base graphics parameters using the <code>par</code> function. 
+</p>
+<p><strong>Multiple images:</strong> 
+By keeping the <code>zlim</code> argument the same across images one can generate the
+same color scale. (See the <code>image</code> help file.)  One useful technique for a
+panel of images is to just draw the images with good old <code>image</code> 
+and then use image.plot to add a legend to the last plot. (See example 
+below for messing with the outer margins to make this work.) 
+Usually a square plot (<code>pty="s"</code>) done in a rectangular plot
+region will
+have room for the legend stuck to the right side without any other 
+adjustments. See the examples below for more complicated arrangements
+of multiple image plots and a summary 
+legend.  
+The reader is also referred to the package <code>autoimage</code> as a set of
+functions in base to help with drawing multiple images and also more
+support for geographic coordinates. 
+</p>
+
+
+<h3>Side Effects</h3>
+
+<p>After exiting, the
+plotting region may be changed to make it possible to add more features to
+the plot. To be explicit, <code>par()\$plt</code> may be changed to reflect a 
+smaller plotting region that has accommodated room for the legend subplot.  
+</p>
+<p>If <code>xlim</code> and <code>ylim</code> are specified the pixels may overplot the axis lines. 
+Just use the <code>box</code> function to redraw them. 
+</p>
+
+
+<h3>See Also</h3>
+
+ <p><a href="../../fields/help/imagePlot.html">imagePlot</a>,  <a href="../../graphics/html/image.html">image</a>,<a href="../../fields/help/poly.image.html">poly.image</a>, <a href="../../graphics/html/filled.contour.html">filled.contour</a>,
+<a href="../../fields/help/quilt.plot.html">quilt.plot</a>, <a href="../../fields/help/bubblePlot.html">bubblePlot</a>, <a href="../../fields/help/plot.surface.html">plot.surface</a>,
+<a href="../../fields/help/add.image.html">add.image</a>, <a href="../../fields/help/colorBar.html">colorBar</a>, <a href="../../fields/help/tim.colors.html">tim.colors</a>, <a href="../../fields/help/designer.colors.html">designer.colors</a>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+  x&lt;- 1:10
+  y&lt;- 1:15
+  z&lt;- outer( x,y,"+") 
+  image.plot(x,y,z) 
+
+# or 
+  obj&lt;- list( x=x,y=y,z=z)
+  image.plot(obj, legend.lab="Sverdrups")
+  
+################################################################ 
+# the next sequence of examples explain how to quickly 
+# adpat this basic plot to include morre features
+# In another direction see the very last example where 
+# we use many of the setting in base R graphic to mimic a 
+# (beautiful) ggplot version. 
+###############################################################
+#
+# add some points on diagonal using standard plot function
+#(with some clipping beyond 10 anticipated)
+
+  points( 5:12, 5:12, pch="X", cex=3)
+  
+# in general image.plot will reset the plot window so you
+# can add any feature that normally works in base R
+# e.g. lines, text, contour, boxplots, ....
+#
+# adding breaks and distinct colors for intervals of z
+# with and without lab.breaks
+
+  brk&lt;- quantile( c(z))
+  image.plot(x,y,z, breaks=brk, col=rainbow(4))
+  
+# annotate legend strip with the  break point values and add a label
+
+  image.plot(x,y,z, breaks=brk, col=rainbow(4),
+                       lab.breaks=names(brk))
+#
+# compare to 
+
+  zp &lt;-quantile(c(z), c( .05, .1,.5, .9,.95))
+  image.plot(x,y,z, 
+     axis.args=list( at=zp, labels=names(zp) ) )
+     
+# a log scaling for the colors
+
+  ticks&lt;- c( 1, 2,4,8,16,32)
+  image.plot(x,y,log(z), axis.args=list( at=log(ticks), labels=ticks))
+
+# see help file for designer.colors to generate a color scale that adapts to 
+# quantiles of z. 
+# Add some color scales together here is an example of  5 blues to white to 5 reds
+# with white being a specific size.
+ colorTable&lt;- designer.colors(11, c( "blue","white", "red") )
+# breaks with a gap of 10 to 17 assigned the white color
+ brks&lt;- c(seq( 1, 10,,6), seq( 17, 25,,6)) 
+ image.plot( x,y,z,breaks=brks, col=colorTable)
+#
+#fat (5 characters wide) and short (50% of figure)  color bar on the bottom
+   image.plot( x,y,z,legend.width=5, legend.shrink=.5, horizontal=TRUE) 
+
+# adding a label with all kinds of additional arguments.
+# use side=4 for vertical legend and side= 1 for horizontal legend
+# to be parallel to axes. See help(mtext).
+
+image.plot(x,y,z, 
+       legend.args=list( text="unknown units",
+     col="magenta", cex=1.5, side=4, line=2))
+     
+# and finally add some grid lines
+ dx &lt;- x[2] - x[1]  
+ dy &lt;- y[2] - y[1]  
+ xtemp&lt;- seq(  min( x)- dx/2, max(x)+ dx/2,
+         length.out = length(x) +1) 
+ ytemp&lt;- seq(  min( y)- dy/2, max(y)+ dy/2,
+         length.out = length(y) +1)
+ xline( xtemp, col="grey", lwd=2)
+ yline( ytemp, col="grey", lwd=2)
+
+###############################################################
+#### example using an irregular quadrilateral grid
+###############################################################
+data( RCMexample)
+
+image.plot( RCMexample$x, RCMexample$y, RCMexample$z[,,1])
+ind&lt;- 50:75 # make a smaller image to show bordering lines
+image.plot( RCMexample$x[ind,ind], RCMexample$y[ind,ind], RCMexample$z[ind,ind,1],
+                                      border="grey50", lwd=2)
+
+###############################################################
+#### multiple images with a common legend
+###############################################################
+set.panel()
+
+# Here is quick but quirky way to add a common legend to several plots.
+# The idea is leave some room in the margin and then at the end 
+# overplot the legend in this margin
+
+par(oma=c( 0,0,0,4)) # margin of 4 spaces width at right hand side
+set.panel( 2,2) # 2X2 matrix of plots
+
+# now draw all your plots using usual image command
+for (  k in 1:4){
+  data&lt;- matrix( rnorm(150), 10,15)
+  image( data, zlim=c(-4,4), col=tim.colors())
+# and just for fun add a contour plot  
+  contour( data, add=TRUE)
+}
+
+par(oma=c( 0,0,0,1))# reset margin to be much smaller.
+image.plot( legend.only=TRUE, zlim=c(-4,4)) 
+
+# image.plot tricked into  plotting in margin of old setting 
+
+set.panel() # reset plotting device
+
+#
+# Here is a more learned strategy to add a common legend to a panel of
+# plots  consult the split.screen help file for more explanations.
+# For this example we draw two
+# images top and bottom and add a single legend color bar on the right side 
+
+# first divide screen into the figure region (left) and legend region (right)
+   split.screen( rbind(c(0, .8,0,1), c(.8,1,0,1)))
+
+# now subdivide up the figure region into two parts
+   split.screen(c(2,1), screen=1)-&gt; ind
+   zr&lt;- range( 2,35)
+# first image
+   screen( ind[1])
+   image( x,y,z, col=tim.colors(), zlim=zr)
+
+# second image
+   screen( ind[2])
+   image( x,y,z+10, col=tim.colors(), zlim =zr)
+
+# move to skinny region on right and draw the legend strip 
+   screen( 2)
+   image.plot( zlim=zr,legend.only=TRUE, smallplot=c(.1,.2, .3,.7),
+   col=tim.colors())
+
+   close.screen( all=TRUE)
+
+
+# you can always add a legend arbitrarily to any plot;
+# note that here the plot is too big for the vertical strip but the
+# horizontal fits nicely.
+plot( 1:10, 1:10)
+image.plot( zlim=c(0,25), legend.only=TRUE)
+image.plot( zlim=c(0,25), legend.only=TRUE, horizontal =TRUE)
+
+# combining the  usual image function and adding a legend
+# first change margin for some more room
+## Not run: 
+par( mar=c(10,5,5,5))
+image( x,y,z, col=topo.colors(64))
+image.plot( zlim=c(0,25), nlevel=64,legend.only=TRUE, horizontal=TRUE,
+col=topo.colors(64))
+
+## End(Not run)
+#
+
+# adding a legend by  automatically making room. 
+# and coloring points
+  info&lt;- setupLegend()
+  colTab&lt;- rainbow(10)
+  plot( 201:210, 201:210, col=colTab, pch=16)
+  addLegend(info, col=colTab, zlim = c(201,210))
+#
+
+#######################################################
+##### Comparison to ggplot
+#######################################################
+# the following example was created as way avoid doing more important
+# things 
+# Note how close base graphics can get to reproducing the ggplot style.
+
+## Not run: 
+library( viridis)
+library(ggplot2)
+
+x&lt;- 1:20
+y&lt;-  1:24
+z&lt;- outer( x, y, "+")
+
+
+# ggplot version 
+  mesh&lt;- expand.grid( x= x, y=y)
+  mesh$z &lt;- c(z)
+  ggplot( data=mesh, aes( x=x, y=y, fill=z)) + 
+    geom_raster(interpolate= FALSE)  + 
+    scale_fill_continuous(type = "viridis")  +
+    theme_bw()
+
+
+# inflate range to give a margin around image
+  xr&lt;- range(x) +  c(-.08, .08)* diff( range(x))
+  yr&lt;- range(y) +  c(-.08, .08)* diff( range(y))
+  
+# changing these graphics parameters tends to push 
+# text closer to the axes. 
+  par( mgp=c(1.5,.5,0),mar=c(2.5,2.5,.5,1), cex=.8)
+  
+  image.plot(x,y,z, 
+             col = viridis(128), 
+   legend.shrink = .27,
+            xlim = xr, 
+            ylim = yr,
+    legend.width = 1.5,
+      legend.mar = 3,
+     legend.args = list( text = "z",
+                          cex = .8,
+                         side = 3,
+                         line = .5)
+   )
+
+
+## End(Not run)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

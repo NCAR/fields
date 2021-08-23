@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Cubic spline interpolation</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for splint {fields}"><tr><td>splint {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Cubic spline interpolation 
+</h2>
+
+<h3>Description</h3>
+
+<p>A fast, FORTRAN based function for cubic spline interpolation. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+splint(x, y, xgrid, wt = NULL, derivative = 0, lam = 0, df =
+                 NA, lambda = NULL, nx = NULL, digits = 8)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>The x values that define the curve or a two column matrix of  
+x and y values. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>The y values that are paired with the x's. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>xgrid</code></td>
+<td>
+
+<p>The grid to evaluate the fitted cubic interpolating curve. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>derivative</code></td>
+<td>
+
+<p>Indicates whether the function or a a first or second derivative 
+should be evaluated. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>wt</code></td>
+<td>
+<p>Weights for different obsrevations in the scale of reciprocal 
+variance.</p>
+</td></tr>
+<tr valign="top"><td><code>lam</code></td>
+<td>
+<p> Value for smoothing parameter. Default value is zero giving 
+interpolation.</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+<p>Same as <code>lam</code> just to make this easier to remember.</p>
+</td></tr>
+<tr valign="top"><td><code>df</code></td>
+<td>
+<p> Effective degrees of freedom. Default is to use lambda =0 or a  
+df equal to the number of observations.</p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+<p>If not NULL this should be the number of points
+to evaluate on an equally spaced grid in the
+range of <code>x</code></p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>Number of significant digits uused to determine what is a replicate x value.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Fits a piecewise interpolating or smoothing cubic 
+polynomial to the x and y values. 
+This code is designed to be fast but does not many options in  
+<code>sreg</code> or other more statistical implementations.  
+To make the solution well posed the
+the second and third derivatives are set to zero at the limits of the  x 
+values. Extrapolation outside the range of the x 
+values will be a linear function. 
+</p>
+<p>It is assumed that there are no repeated x values; use sreg followed by
+predict if you do have replicated data. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>A vector consisting of the spline evaluated at the grid values in <code>xgrid</code>. 
+</p>
+
+
+<h3>References</h3>
+
+<p>See Additive Models by Hastie and Tibshriani. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>sreg,  Tps  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x&lt;- seq( 0, 120,,200)
+
+# an interpolation
+splint(rat.diet$t, rat.diet$trt,x )-&gt; y
+
+plot( rat.diet$t, rat.diet$trt)
+lines( x,y)
+#( this is weird and not appropriate!)
+
+# the following two smooths should be the same
+
+splint( rat.diet$t, rat.diet$con,x, df= 7)-&gt; y1
+
+# sreg function has more flexibility than splint but will
+# be slower for larger data sets. 
+
+sreg( rat.diet$t, rat.diet$con, df= 7)-&gt; obj
+predict(obj, x)-&gt; y2 
+
+# in fact predict.sreg interpolates the predicted values using splint!
+
+# the two predicted lines (should) coincide
+lines( x,y1, col="red",lwd=2)
+lines(x,y2, col="blue", lty=2,lwd=2)
+ 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

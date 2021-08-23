@@ -36,7 +36,7 @@ quilt.plot(x, y, z, nx = 64, ny = 64,  grid = NULL,
            nrow=NULL, ncol=NULL,FUN =
                  NULL, plot=TRUE, na.rm=FALSE, ...)
                  
-bubblePlot(x, y, z, col = viridis(256), 
+bubblePlot(x, y, z, col = viridis::viridis(256), 
        zlim=NULL, horizontal = FALSE,
                  legend.cex = 1, legend.lab = NULL, legend.line = 2,
                  legend.shrink = 0.9, legend.width = 1.2, legend.mar =

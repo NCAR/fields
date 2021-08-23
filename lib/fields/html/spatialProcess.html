@@ -1,0 +1,623 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Estimates a spatial process model.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for spatialProcess {fields}"><tr><td>spatialProcess {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Estimates a spatial process model. 
+
+</h2>
+
+<h3>Description</h3>
+
+<p>For a given covariance function  estimates the covariance parameters by maximum   likelihood and then evaluates the 
+spatial model with these estimated parameters. The returned object can be used for spatial prediction, conditional simulation, and profiling the likelihood function. For fixed values of the covariance parameters this process estimate is also known as Kriging. 
+</p>
+
+
+
+<h3>Usage</h3>
+
+<pre>
+spatialProcess(x, y,  weights = rep(1, nrow(x)),   Z = NULL,
+                  mKrig.args = NULL,
+                cov.function = NULL, 
+                    cov.args = NULL,
+                     parGrid = NULL, 
+                      reltol = 1e-4,
+                       na.rm = TRUE,
+                     verbose = FALSE,
+                        REML = FALSE, 
+            cov.params.start = NULL,
+                       gridN = 5,
+               profileLambda = FALSE,
+               profileARange = FALSE,
+               profileGridN  = 15, 
+                  gridARange = NULL,
+                  gridLambda = NULL,
+                 CILevel= .95,
+                           ...)
+## S3 method for class 'spatialProcess'
+summary(object,  ...)
+## S3 method for class 'spatialProcess'
+print(x, digits = 4, ...)
+## S3 method for class 'spatialProcessSummary'
+print(x, digits = 4, ...)
+## S3 method for class 'spatialProcess'
+plot(x, digits = 4, which = 1:4, ...)
+
+                           
+spatialProcessSetDefaults(x, cov.function, cov.args, cov.params.start, parGrid,
+                 mKrig.args, extraArgs = NULL, gridN = 5, verbose =
+                 FALSE)
+    
+confidenceIntervalMLE( obj, CILevel, verbose=FALSE)
+
+profileMLE (obj, parName, parGrid=NULL, gridN=15,
+                       cov.params.start=NULL, GCV=FALSE, REML=FALSE,
+                       verbose=FALSE)
+
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>Observation locations</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+<p>Observation values</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+<p>Weights for the error term (nugget) in units of
+reciprocal variance.</p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+<p>A matrix of extra covariates for the fixed part of spatial
+model.
+E.g. elevation for fitting climate data over space. </p>
+</td></tr>
+<tr valign="top"><td><code>CILevel</code></td>
+<td>
+<p>Confidence level for intervals for the estimated
+parameters.</p>
+</td></tr>
+<tr valign="top"><td><code>cov.args</code></td>
+<td>
+<p> A list specifying parameters and other components 
+of the
+covariance function. Default is not extra arguments required.]
+(But see the next item.). </p>
+</td></tr>
+<tr valign="top"><td><code>cov.function</code></td>
+<td>
+<p>A character string giving the name of the 
+covariance function
+for the spatial component.
+If NULL, the default,  this is  filled in as 
+<code>stationary.cov</code> and then
+if <code>cov.args</code> is also NULL this is filled in as 
+<code> list(Covariance = "Matern", smoothness = 1.0)</code> by the spatialProcessSetDefaults 
+function. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>cov.params.start</code></td>
+<td>
+<p> A list where the names are  parameter names
+that appear in the covariance function. The values of each component
+are assumed to be the starting values when optimizing to find MLEs. If
+lambda does not appear
+as additional
+argument when calling spatialProcess it is added internally to this
+list with the starting value .5.</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>Number of significant digits in printed summary</p>
+</td></tr>
+<tr valign="top"><td><code>extraArgs</code></td>
+<td>
+<p>Extra arguments passed using the ... device in R.
+Typically these are extra covariance parameters specified in
+<code>spatialProcess</code> and then passed to
+<code>spatialProcessSetDefaults</code> </p>
+</td></tr>
+<tr valign="top"><td><code>GCV</code></td>
+<td>
+<p>A future argument not currently implemented. If TRUE will
+find parameters by minimizing an approximate generalized 
+cross-validation function. </p>
+</td></tr>
+<tr valign="top"><td><code>gridARange</code></td>
+<td>
+<p>A grid for profiling  over the range parameter. If
+omitted, default is  based on a grid of profileGridN points centered at the
+MLE. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>gridLambda</code></td>
+<td>
+<p>A grid for profiling over lambda. </p>
+</td></tr>
+<tr valign="top"><td><code>gridN</code></td>
+<td>
+<p>Number of grid points for intital fgrid search to find starting values. </p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>If TRUE NAs are removed from the data.</p>
+</td></tr>
+<tr valign="top"><td><code>mKrig.args</code></td>
+<td>
+<p>Arguments as a list passed to the mKrig function. For example use
+mKrig.args=list( m = 1) to set the fixed part of the model to just a constant function , 
+or 0 to omit any fixed part. (The default is m=2 a linear function, which is recommend for most data analysis.) See <code><a href="../../fields/help/mKrig.html">mKrig</a></code> for more details. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>A spatialProcess object returned from the spatialProcess function.</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p> See <code>obj</code>.</p>
+</td></tr>
+<tr valign="top"><td><code>parGrid</code></td>
+<td>
+<p> A data frame with the values of covariance parameters
+to use as an initial grid search for starting values.</p>
+</td></tr>
+<tr valign="top"><td><code>parName</code></td>
+<td>
+<p>Text string that is the name of the parameter to 
+profile .</p>
+</td></tr>
+<tr valign="top"><td><code>profileARange</code></td>
+<td>
+<p>If TRUE profile likelihood on aRange. Default is
+TRUE if aRange is omitted.</p>
+</td></tr>
+<tr valign="top"><td><code>profileGridN</code></td>
+<td>
+<p>Number of grid points to use for profiling.</p>
+</td></tr>
+<tr valign="top"><td><code>profileLambda</code></td>
+<td>
+<p>If TRUE profile likelihood on lambda. This takes
+extra time and is not necessary so the default is FALSE. </p>
+</td></tr>
+<tr valign="top"><td><code>reltol</code></td>
+<td>
+<p> Relative tolerance used in optim for convergence.</p>
+</td></tr>
+<tr valign="top"><td><code>REML</code></td>
+<td>
+<p> If TRUE the parameters are found by restricted maximum likelihood.</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE print out intermediate information for debugging.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Any other arguments that will be passed to the <code>mKrig</code> function and interpreted
+as additional arguments to the covariance function.  This is a lazy way of specifying these. 
+E.g. <code>aRange =.1</code> will set the covariance argument aRange to .1. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>which</code></td>
+<td>
+<p>The vector 1:4 or any subset of 1:4, giving the plots
+to draw. See the description of these plots below.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function makes many choices for the user in terms of defaults and it is 
+important to be aware of these. 
+The spatial model is 
+</p>
+<p>Y.k= P(x.k) + Z(x.k)%*%beta2 + g(x.k) + e.k
+</p>
+<p>where &quot;.k&quot; means subscripted by k, Y.k is the dependent variable
+observed at location x.k. P is a low degree polynomial (default is a
+linear function in the spatial coordinates, m=2 ) and Z is a
+matrix of covariates (optional) that
+enter as a linear model the fixed part. g is a mean zero,
+Gaussian stochastic process with a marginal variance of sigma and a
+scale (or range) parameter, aRange. The measurement errors, e.k, are
+assumed to be uncorrelated, normally distributed with mean zero and
+standard deviation tau. If weights are supplied then the variance of e is assumed to be
+<code>tau^2/ weights</code>. The polynomial if specified and extra covariates define
+the fixed part of this spatial model and the coefficients are found by
+generalized least squares (GLS).
+</p>
+<p>Perhaps the most important aspect of this function is that
+the range parameter (aRange), nugget (tau**2) and process variance (sigma) parameters
+for the covariance are estimated by maximum
+likelihood and this is the model that is then  used for spatial
+prediction. Geostatistics usually refers to tau^2 + sigma^2 as the 
+&quot;sill&quot; and often these parameters are estimated by variogram fitting rather
+than maximum likelihood. To be consistent with spline models and to focus
+on the key part of model we reparametrize as lambda= tau**2/
+sigma^2 and sigma. Thinking about h as the spatial signal and e as the noise  1/lambda
+can be interpreted  as the &quot;signal to noise &quot; ratio in this spatial
+context.(See also the comparison with fitting the geoR model in the
+examples section.)
+</p>
+<p>For an isotropic covariance function, the likelihood and the cross-validation function
+can be concentrated to only depend on lambda and aRange and so
+in reporting the optimization of these two criterion we focus
+on this form of the parameters.  Once lambda and aRange are
+found, the MLE for sigma has a closed form and of course then
+tau is then determined from lambda and sigma. The estimates of the coefficients 
+for the fixed part of the model, determined by GLS, will also be the MLEs. 
+</p>
+<p>Often the lambda
+parameter is difficult to interpret when covariates and a
+linear function of the coordinates is included and also when
+the range becomes large relative to the size of the spatial
+domain. For this reason it is convenient to report the
+effective degrees of freedom (also referred to trA in R code and
+the output summaries) associated with the predicted
+surface or curve. This measure has a one-to-one relationship
+with lambda and is easier to interpret. For example an eff
+degrees of freedom that is very small suggests that the
+surface is well represented by a low order
+polynomial. Degrees of freedom close to the number of
+locations indicates a surface that is close to interpolating
+the observations and suggests a small or zero value for the
+nugget variance.
+</p>
+<p>The default covariance model is assumed to follow a Matern
+with smoothness set to 1.0.  This is implemented using the
+<code>stationary.cov</code> covariance that can take a argument for
+the form of the covariance, a sill and range parameters and
+possibly additional parameter might control the shape.
+</p>
+<p>See the example below how to switch to another model. (Note
+that the exponential is also part of the Matern family with
+smoothness set to .5. )
+</p>
+<p>The parameter estimation is done by <code>MLESpatialProcess</code>
+and the returned list from this function is added to the Krig
+output object that is returned by this function. The estimate
+is a version of maximum likelihood where the observations are
+transformed to remove the fixed linear part of the model.  If
+the user just wants to fix the range parameter aRange then
+<code>Krig</code> can be used.
+</p>
+<p>NOTE: The defaults for the <code>optim</code> function used in MLESpatialProcess are:
+</p>
+<pre>
+  list(method = "BFGS", 
+       control=list(fnscale = -1,
+                      ndeps = rep(log(1.1),length(cov.params.start)+1),
+                     reltol = reltol,
+                      maxit = 20))
+</pre>
+<p>There is always a hazard in providing a simple to use method that
+makes many default choices for the spatial model. As in any analysis
+be aware of these choices and try alternative models and parameter
+values to assess the robustness of your conclusions. Also examine the
+residuals to check the adequacy of the fit. See the examples below for
+some help in how to do this easily in fields. Also see quilt.plot to
+get an quick plot of a spatial field  to discern obvious spatial patterns.
+</p>
+<p><strong>summary</strong> method forms a list of class <code>spatialProcessSummary</code> that has a
+subset of information from the output object and also creates a table of the estimates
+of the linear parameters in the fixed part of the model.
+With replicated fields there is an option to estimate different linear parameters for each field
+( <code> collapseFixedEffect = FALSE </code> ) and in this case a table is not created because
+there is more than one estimate. See (<code>Omega</code> and <code>fixedEffectsCov</code>) in the
+<code>mKrig</code> object to build the standard errors.
+</p>
+<p><strong>plot</strong> method  provides potentially  four diagnostic plots of the fit.Use the <code>which</code>
+to pick and choose among them 
+or use <code>set.panel</code> to see  them all.
+The third and fourth plots, however, are only available if the profile computations been done. 
+If lambda is profiled (<code>lambdaProfile</code> is not
+<code>NULL</code> ) the third plot is the profile log
+likelihood for lambda and with the GCV function on a
+second vertical scale.
+This is based on the grid evaluations in the component 
+<code> lambdaProfile\$MLEProfileLambda</code> .
+The fourth
+plot is a profile log likelihood trace for aRange
+based on <code> aRangeProfile\$MLEProfileLambda</code>.
+</p>
+<p><strong>print</strong> method prints the  <code>spatialProcessSummary</code> object of the fit, adding
+some details and explanations.
+</p>
+<p><strong>spatialProcessSetDefaults</strong> This is a useful way to fill in defaults for the function in one place. The main choices are choosing the Matern family, smoothness and a default fixed model (aka spatial drift). The grids for profiling are also created if they have not been supplied. 
+</p>
+
+
+
+<h3>Value</h3>
+
+<p>An object of classes <code>mKrig</code> and  <code>SpatialProcess</code>. The difference
+from mKrig are some extra  components. The more useful ones are listed below
+</p>
+<p><strong>MLESummary</strong> A named array that has the fixed and estimated parameters along with likelihood values and some optim info.     
+</p>
+<p><strong>profileSummaryLambda and profileSummaryARange</strong> The output list from 
+mKrigMLEGrid for searching over over a grid of lambda and aRange. 
+</p>
+<p><strong>CITable</strong> Approximate confidence intervals based on the inverse hessian of the log likelihood function. 
+</p>
+<p><strong>MLEInfo</strong> A list that has a full documentation of the maximization including all parameters  and likelihood values that were tried by the optim function. 
+</p>
+<p><strong>InitialGridSearch</strong> Results from initial grid search to get good starting values for lambda and/or aRange.
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="../../fields/help/Tps.html">Tps</a>,   <a href="../../fields/help/mKrigMLEGrid.html">mKrigMLEGrid</a>,
+<a href="../../fields/help/mKrigMLEJoint.html">mKrigMLEJoint</a>,  <a href="../../fields/help/plot.Krig.html">plot.Krig</a>,  <a href="../../fields/help/predict.mKrig.html">predict.mKrig</a>,
+<a href="../../fields/help/predictSE.mKrig.html">predictSE.mKrig</a> 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data( ozone2)
+# x is a two column matrix where each row is a location in lon/lat 
+# coordinates
+  x&lt;- ozone2$lon.lat
+# y is a vector of ozone measurements at day 16. Note some missing values. 
+  y&lt;- ozone2$y[16,]
+  
+# artifically reduce size of data for a quick example to pass CRAN ...
+  x&lt;- x[1:75,]
+  y&lt;- y[1:75]
+  
+# lots of default choices  made here -- see gridN to increase 
+# the number of points in grid searches for MLEs
+# without specifying  lambda or aRange both are found in a robust 
+# way uses grid searches 
+# profiling over lambda and aRange  is not reuqired but completes the full 
+# example.  Omit this for a faster computation.
+
+  obj&lt;- spatialProcess( x, y, profileLambda=TRUE, profileARange=TRUE)
+  
+# summary of model
+  summary( obj)
+  
+# diagnostic plots
+  set.panel(2,2)
+  plot(obj)
+  
+# plot 1 data vs. predicted values
+# plot 2 residuals vs. predicted
+# plot 3 criteria to select the smoothing
+#        parameter lambda = tau^2 / sigma
+#        the x axis has log10 lambda
+#        Note that here the GCV function is minimized
+#        while the log profile likelihood  is maximzed. 
+# plot 4 the log profile likelihood used to 
+#        determine range parameter aRange. 
+#
+
+set.panel()
+# predictions on a grid 
+surface( obj, xlab="longitude", ylab="latitude")
+US( add=TRUE, col="grey", lwd=2)
+title("Predicted ozone (in PPB)  June 18, 1987 ")  
+#(see also predictSurface for more control on evaluation grid, predicting
+# outside convex hull of the data. and plotting)
+
+# prediction standard errors, note two steps now to generate
+# and then plot surface
+look&lt;- predictSurfaceSE( obj)
+surface( look, xlab="longitude", ylab="latitude")
+points( x, col="magenta")
+title("prediction standard errors (PPB)")
+
+# here  is a sanity check -- call spatialProcess with the MLEs found
+# above, better get the same predictions!
+
+objTest&lt;- spatialProcess( x, y,
+                          lambda=obj$MLESummary["lambda"],
+                          aRange=obj$MLESummary["aRange"]
+                          )
+                          
+test.for.zero(objTest$fitted.values, obj$fitted.values, 
+            tag="sanity check" )
+
+## Not run: 
+##################################
+# working with covariates and filling in missing station data
+# using an ensemble method
+# see the example under  help(sim.spatialProcess) to see how to 
+# handle a conditional simulation on a grid of predictions with 
+# covariates. 
+data(COmonthlyMet)
+  fit1E&lt;- spatialProcess(CO.loc,CO.tmin.MAM.climate, Z=CO.elev, 
+                  profileLambda=TRUE, profileARange=TRUE
+			       )
+  set.panel( 2,2)                             
+  plot( fit1E)
+  
+  set.panel(1,2)
+  
+# plots of the fitted surface and surface of prediction standard errors   
+  out.p&lt;-predictSurface( fit1E, grid.list=CO.Grid,
+                             ZGrid= CO.elevGrid, extrap=TRUE)
+
+  imagePlot( out.p, col=larry.colors())
+  US(add=TRUE, col="grey")
+  contour( CO.elevGrid, add=TRUE, levels=seq(1000,3000,,5), col="black")
+  title("Average Spring daily min. temp in CO")
+
+  out.p2&lt;-predictSurfaceSE( fit1E, grid.list=CO.Grid,
+                         ZGrid= CO.elevGrid,
+                         extrap=TRUE, verbose=FALSE) 
+
+  imagePlot( out.p2, col=larry.colors())
+  US(add=TRUE, col="grey")
+  points( fit1E$x, pch=".")
+  title("Prediction SE")
+  set.panel()
+
+## End(Not run)
+
+## Not run: 
+###################################
+# conditional simulation 
+###################################
+#  first a small application  at missing data
+  notThere&lt;- is.na(CO.tmin.MAM.climate )
+  xp &lt;- CO.loc[notThere,]
+  Zp &lt;- CO.elev[notThere]
+  infill&lt;- sim.spatialProcess( fit1E, xp=xp,
+                      Z= Zp, M= 10)
+  dim( infill)
+#  
+# interpretation is that these infilled values are all equally plausible 
+# given the observations and also given the estimated covariance model
+#  
+# EXTRA CREDIT:  standardize the infilled values to have
+# conditional mean and variance from the exact computations
+#  e.g. predict( fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])
+#  and  predictSE(fit1E, xp=CO.loc[!good,],  Z= CO.elev[!good])  
+# with these standardization one would still preserve the correlations
+# among the infilled values that is also important for considering them as a
+# multivariate prediction.
+
+# conditional simulation on a grid but not using the covariate of elevation
+
+ fit2&lt;- spatialProcess(CO.loc,CO.tmin.MAM.climate,
+                        gridARange= seq(.25, 2.0, length.out=10)
+                       )
+# note larger range parameter
+# create 2500 grid points using a handy fields function
+  gridList &lt;- fields.x.to.grid( fit2$x, nx=50,ny=50)
+  xGrid&lt;- make.surface.grid( gridList)
+  ensemble&lt;- sim.spatialProcess( fit2, xp=xGrid, M = 6)
+# this is an "n^3" computation so increasing the grid size 
+# can slow things down for computation 
+# The 6 ensemble members 
+   set.panel( 3,2)
+   for( k in 1:6){
+    imagePlot( as.surface( xGrid, ensemble[k,]))
+   }
+  set.panel()
+
+## End(Not run)
+
+## Not run: 
+## changing the covariance model.
+
+data(ozone2)
+
+  x&lt;- ozone2$lon.lat
+  y&lt;- ozone2$y[16,]
+  
+# a comparison to using an exponential and Wendland covariance function
+# and great circle distance -- just to make range easier to interpret.
+  obj &lt;- spatialProcess( x, y,
+                              Distance = "rdist.earth")
+	obj2&lt;- spatialProcess( x, y,
+	        cov.args = list(Covariance = "Exponential"), 
+                              Distance = "rdist.earth" )
+	obj3&lt;- spatialProcess( x, y,
+	        cov.args = list(Covariance = "Wendland",
+	                        dimension  = 2,
+	                                 k = 2),
+	                          Distance = "rdist.earth")
+# obj2 could be also be fit using the argument:
+#   cov.args = list(Covariance = "Matern", smoothness=.5)
+#	                          
+# Note very different range parameters - BTW these are in miles
+# but similar nugget variances. 
+ rbind( Whittle= obj$summary,
+ Exp= obj2$summary,
+Wendland= obj3$summary
+)
+
+# since the exponential is Matern with smoothness == .5 the first two
+# fits can be compared in terms of their likelihoods
+# the ln likelihood   value is slightly higher for obj verses obj2 (-613.9 &gt;  -614.9)
+# these are the _negative_ log  likelihoods so suggests a preference for the
+# smoothness = 1.0 (Whittle)  model 
+# 
+# does it really matter in terms of spatial prediction?
+set.panel( 3,1)
+surface( obj)
+US( add=TRUE)
+title("Matern sm= 1.0")
+surface( obj2)
+US( add=TRUE)
+title("Matern sm= .5")
+surface( obj3)
+US( add=TRUE)
+title("Wendland k =2")
+# prediction standard errors
+# these take a while because prediction errors are based 
+# directly on the Kriging weight matrix
+# see mKrig for an alternative.
+set.panel( 2,1)
+out.p&lt;- predictSurfaceSE( obj, nx=40,ny=40)
+surface( out.p)
+US( add=TRUE)
+title("Matern sm= 1.0")
+points( x, col="magenta")
+#
+out.p&lt;- predictSurfaceSE( obj, nx=40,ny=40)
+surface( out.p)
+US( add=TRUE)
+points( x, col="magenta")
+title("Matern sm= .5")
+set.panel(1,1)
+
+## End(Not run)
+
+
+## Not run: 
+### comparison with GeoR
+data(ozone2)
+    x&lt;- ozone2$lon.lat
+    y&lt;- ozone2$y[16,]
+    good&lt;-!is.na(y)
+    x1&lt;- x[good,]
+    y1&lt;- y[good]
+    
+# spatialProcess takes longer because of grid search on aRange.    
+    obj&lt;- spatialProcess( x1, y1,
+                          mKrig.args = list(m=1),
+  			                  smoothness = .5)
+    library( geoR)
+    ml.n &lt;- likfit(coords= x1, data=y1, ini = c(570, 3), nug = 50)
+    # compare to 
+    stuffFields&lt;- obj$MLESummary[c("lnProfileLike.FULL",
+                                   "aRange","tau","sigma2")]
+    stuffGeoR&lt;- c( ml.n$loglik, ml.n$phi, sqrt(ml.n$nugget),
+                   ml.n$sigmasq) 
+    test.for.zero(  max(stuffFields/stuffGeoR), 1, tol=.004)
+   
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

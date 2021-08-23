@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Conversion of formats for sparse matrices</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for spam2lz {fields}"><tr><td>spam2lz {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Conversion of formats for sparse matrices</h2>
+
+<h3>Description</h3>
+
+<p>Some supporting functions that are internal to fields top level
+methods. These are used to convert between the efficient but 
+opaque format used by spam and more easily checked format based directly
+on the row and column indices of non zero elements.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+spind2full(obj)
+
+spam2full(obj)
+
+spind2spam(obj, add.zero.rows=TRUE)
+
+spam2spind(obj)
+
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+
+<p>Either a list with the sparse index components (spind) or an 
+obj of class spam.</p>
+</td></tr>
+<tr valign="top"><td><code>add.zero.rows</code></td>
+<td>
+<p>If TRUE an entire row is zero add a hard zero value to the element in the first  column for each zero row. The spam format requires at least one element in each row to have an explicit value. It is OK if this value is zero but one must be specified. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The differencee in formats is best illustarted by an example:
+</p>
+<p>A 4X5 sparse matrix:
+</p>
+<pre>
+     [,1] [,2] [,3] [,4] [,5]
+[1,]    1    9    0    0   33
+[2,]    0    0    0   26   34
+[3,]    3   11    0   27   35
+[4,]    0   12   20    0   36
+</pre>
+<p>spind format is a list with components &quot;ind&quot;, &quot;ra&quot; and &quot;da&quot;
+here is how the matrix above would be encoded:
+</p>
+<pre>
+ind
+      I  
+ [1,] 1 1
+ [2,] 1 2
+ [3,] 1 5
+ [4,] 2 4
+ [5,] 2 5
+ [6,] 3 1
+ [7,] 3 2
+ [8,] 3 4
+ [9,] 3 5
+[10,] 4 2
+[11,] 4 3
+[12,] 4 5
+
+da
+[1] 4 5
+
+ra
+ [1]  1  9 33 26 34  3 11 27 35 12 20 36
+</pre>
+<p>spam format is an S4 class with slot names 
+&quot;entries&quot;,  &quot;colindices&quot;,  &quot;rowpointers&quot; and &quot;dimension&quot;.
+</p>
+<p>entries
+</p>
+<p>[1]  1  9 33 26 34  3 11 27 35 12 20 36
+</p>
+<p>colindices
+</p>
+<p>[1] 1 2 5 4 5 1 2 4 5 2 3 5
+</p>
+<p>rowpointers
+</p>
+<p>[1]  1  4  6 10 13
+</p>
+<p>dimension
+</p>
+<p>[1] 4 5
+</p>
+<p>The row pointers are the position in the array of entries where the next row
+starts. 
+</p>
+<p>NOTE: It is possible for the spind format to have a missing row of all
+zeroes but this not allowed in spam format and produces an error message. 
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka</p>
+
+
+<h3>See Also</h3>
+
+<p>as.spam</p>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

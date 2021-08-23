@@ -1,0 +1,71 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plot of the world</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for world {fields}"><tr><td>world {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Plot of the world</h2>
+
+<h3>Description</h3>
+
+<p>Plots quickly, medium resolution outlines of large land masses. This
+is a simple wrapper for the map function from the maps package. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+world(...)
+world.land(  ...)
+world.color( ... )
+in.land.grid(...)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Same arguments used by the <code>map</code> function from the
+maps package.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>See the longstanding <code>maps</code> package for documentation on this
+function.  The functions world.land, world.color and in.land.grid have
+been depreciated but can be recovered from versions of fields 6.7.1 or
+older.
+</p>
+
+
+<h3>See Also</h3>
+
+<p>US, in.poly, in.poly.grid</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+world()
+# add the US
+US( add=TRUE,col="blue")
+
+world( fill=TRUE) # land filled in black 
+
+## Western Europe
+world( xlim=c(-10,18),ylim=c(36,60),fill=TRUE, col="darkgreen",
+border="green1")
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

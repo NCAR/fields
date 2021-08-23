@@ -19,7 +19,7 @@
 # test of sreg and related functions
 
 suppressMessages(library(fields))
-options(echo=FALSE)
+#options(echo=FALSE)
 
 test.for.zero.flag<- 1
 
@@ -144,9 +144,11 @@ test.for.zero( sparseObj$predictionVariance,
               predVar )
 
 
+# this switch will just give a warning instead of an error
 
 
-
+#sparseObj1<-  offGridWeights( s, list( x= 1:4, y=1:4),
+#                             mKrigObject = mKrigObj, np=np, give.warning=TRUE)
 
 
 

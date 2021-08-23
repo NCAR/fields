@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Some simple functions for subsetting images</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for image2lz {fields}"><tr><td>image2lz {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Some simple functions for subsetting images</h2>
+
+<h3>Description</h3>
+
+<p>These function help in subsetting images or reducing its
+size by averaging adjecent cells.</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+
+crop.image(obj, loc=NULL,...)
+which.max.matrix(z)
+which.max.image(obj)
+get.rectangle()
+average.image(obj, Q=2)
+half.image(obj)
+in.poly( xd, xp, convex.hull=FALSE, inflation=1e-07)
+in.poly.grid( grid.list,xp, convex.hull=FALSE, inflation=1e-07)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>A list in image format with the usual x,y  defining the
+grid and z a matrix of image values.</p>
+</td></tr>
+<tr valign="top"><td><code>loc</code></td>
+<td>
+<p>A 2 column matrix of locations within the image region
+that define the subset. If not specified then the image is plotted and
+the rectangle can be specified interactively.</p>
+</td></tr>
+<tr valign="top"><td><code>Q</code></td>
+<td>
+<p>Number of pixels to average.</p>
+</td></tr>
+<tr valign="top"><td><code>xd</code></td>
+<td>
+<p> A 2 column matrix of locations that are the points to check 
+for being inside a polygon.</p>
+</td></tr>
+<tr valign="top"><td><code>xp</code></td>
+<td>
+<p> A 2 column matrix of locations that are vertices of a 
+polygon. The last point is assumed to be connected to the first.</p>
+</td></tr>
+<tr valign="top"><td><code>convex.hull</code></td>
+<td>
+<p>If TRUE then the convex hull of <code>xp</code> is used 
+instead of the polygon.</p>
+</td></tr>
+<tr valign="top"><td><code>grid.list</code></td>
+<td>
+<p>A list with components x and y specifing the 2-d grid values.
+(See help( grid.list) for more details.)</p>
+</td></tr>
+<tr valign="top"><td><code>inflation</code></td>
+<td>
+<p>A small expansion factor to insure that points 
+precisely on the boundaries and vertices of the convex hull are included 
+as members.</p>
+</td></tr>
+<tr valign="top"><td><code>z</code></td>
+<td>
+<p> A matrix of numerical values</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p> Graphics arguments passed to image.plot. This 
+is only relevant when loc is NULL and the locator function is called via 
+<code>get.rectangle</code>. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p> If <code>loc</code> has more than 2 rows then the largest rectangle 
+containing the locations is used. 
+</p>
+
+<dl>
+<dt>crop.image</dt><dd><p>Creates a subset of the image <code>obj</code> by taking 
+using the largest rectangle in the locations <code>loc</code>. This is useful 
+if one needs to extract a image that is no bigger in extant than som 
+edata location.  If locations are omitted the parent image is plotted 
+and the locations from two mouse clicks on the image. Returned value is 
+an image with appropriate <code>x,y</code> and <code>z</code> components.</p>
+</dd>
+<dt>get.rectangle</dt><dd><p>Given an image plots and waits for two mouse 
+clicks that are returned.</p>
+</dd>
+<dt>which.max.image</dt><dd><p>Returns a list with components <code>x, y, z</code>
+, and <code>ind</code> giving the
+location of the maximun and value of the maximum in the image based
+on the grid values and also on the indicies of the image matrix.</p>
+</dd>
+<dt>average.image, half.image</dt><dd><p>Takes passed image and averages the 
+pixel values and adjusts the grid to create an image that has a smaller 
+number of elements. If <code>Q=2</code> in <code>average.image</code> it has the 
+same effect as <code>half.image</code> but might be slower &ndash; if the original 
+image is mXn then half image will be an image (m/2)X(n/2). This begs the 
+question what happens when m or n is odd or when (m/Q) or (n/Q) are not 
+integers. In either case the largest rows or columns are dropped. (For 
+large <code>Q</code> the function might be modified to drop about half the 
+pixels at both edges.)  </p>
+</dd>
+<dt>in.poly, in.poly.grid</dt><dd><p>Determines whether the points xd,yd are 
+inside a polygon or outside. Return value is a logical vector with TRUE 
+being inside or on boundary of polygon. The test expands the polygon 
+slightly in size (on the order of single precision zero) to include 
+points that are at the vertices. <code>in.poly</code> does not really depend 
+on an image format however the grid version <code>in.poly.grid</code> is more 
+efficient for considering the locations on a regular grid
+See also <code>in.land.grid</code> that is hard coded to work with the
+fields world map.</p>
+</dd>
+</dl>
+
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka</p>
+
+
+<h3>See Also</h3>
+
+<p> drape.plot, image.plot,
+interp.surface, interp.surface.grid, in.land.grid</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+data(RMelevation)
+
+# region defining Colorado Front Range
+
+  loc&lt;- rbind( c(-106.5, 40.8),
+             c(-103.9, 37.5))
+
+# extract elevations for just CO frontrange.
+   FR&lt;- crop.image(RMelevation, loc)
+   image.plot( FR, col=terrain.colors(256))
+   
+   which.max.image( FR)
+
+# average cells  4 to 1 by doing this twice!
+   temp&lt;-  half.image( RMelevation)
+   temp&lt;- half.image( temp)
+
+# or in one step
+   temp&lt;-  average.image( RMelevation, Q=4)-&gt; temp
+   image.plot( temp, col=terrain.colors(256))
+
+# a polygon (no special meaning entered with just locator)
+x1p&lt;- c(
+ -106.2017, -104.2418, -102.9182, -102.8163, -102.8927, -103.3254, -104.7763,
+ -106.5581, -108.2889, -109.1035, -109.3325, -108.7980)
+
+x2p&lt;- c(
+  43.02978, 42.80732, 41.89727, 40.84566, 39.81427, 38.17618, 36.53810, 36.29542,
+  36.90211, 38.29752, 39.45025, 41.02767)
+xp&lt;- cbind( x1p,x2p)
+
+ image.plot( temp)
+ polygon( xp[,1], xp[,2], lwd=2)
+
+# find all grid points inside poly
+ fullset&lt;- make.surface.grid( list( x= temp$x, y= temp$y))
+ ind&lt;-  in.poly( fullset,xp)
+
+# take a look 
+ plot( fullset, pch=".")
+ polygon( xp[,1], xp[,2], lwd=2)
+ points( fullset[ind,], pch="o", col="red", cex=.5)
+
+# masking out the image NA == white in the image plot
+ temp$z[!ind] &lt;- NA
+ image.plot( temp)
+ polygon( xp[,1], xp[,2], lwd=2)
+
+# This is more efficient for large grids:
+# because the large number of grid location ( xg above) is 
+# never explicitly created.
+
+ ind&lt;- in.poly.grid( list( x= temp$x, y= temp$y), xp)
+
+# now use ind in the same way as above to mask points outside of polygon
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

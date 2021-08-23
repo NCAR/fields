@@ -47,10 +47,10 @@ simLocal.mKrig(mKrigObject,
         gridRefinement = 1, 
                     np = 2, 
                      M = 1,
-                    nx = 256,
-                    ny = 256, 
+                    nx = 80,
+                    ny = 80, 
                verbose = FALSE,
-               delta = NULL, 
+               delta = NULL, giveWarnings = TRUE,
                           ...)
 sim.mKrig.approx(mKrigObject, predictionPoints = NULL,
                  predictionPointsList = NULL, simulationGridList =
@@ -87,6 +87,8 @@ circulant covariance function.  }
   \item{gridExpansion}{Amount to increase the size of teh simulation
 grid. This is used to increase the simulation domain so that the
 circulant embedding algorithm works.}
+
+\item{giveWarnings}{If true will warn when more than one observation is in a grid box. This is instead of giving an error and stopping.}
 
   \item{mKrigObject}{An mKrig Object (or spatialProcess object)}
 
@@ -284,17 +286,32 @@ print( look$timing)
 \dontrun{
 ## A simple example for setting up a bootstrap 
 ## M below should be
-## set to much larger sample size ( e.g. M <- 1000) for better
+## set to much larger sample size ( e.g. M <- 200) for better
 ## statistics
 
 data( ozone2)
 obj<- spatialProcess( ozone2$lon.lat,ozone2$y[16,] )
 aHat<- obj$summary["aRange"]
 lambdaHat<- obj$summary["lambda"]
+
 ######### boot strap 
-set.seed(123)
+# create M independent copies of the observation vector
+# here we just grab the model information from the 
+# spatialProcess object above.
+#  
+# However, one could just create the list 
+#  obj<- list( x= ozone2$lon.lat,
+#       cov.function.name="stationary.cov",
+#     summary= c( tau= 9.47, sigma2= 499.79, aRange= .700),
+#    cov.args= list( Covariance="Matern", smoothness=1.0),
+#     weights= rep( 1, nrow(ozone2$lon.lat) )
+# )
+# Here summary component  has the parameters
+# tau, sigma2 and aRange
+# and cov.args component has the remaining ones.
+
+set.seed(223)
 M<- 25
-# create M indepedent copies of the observation vector
 ySynthetic<- simSpatialData( obj, M)
 
 bootSummary<- NULL
@@ -343,7 +360,7 @@ cat( fill= TRUE)
  # Rocky Mountain elevation fields data set.   
    data( RMelevation)
    COElevGrid<- interp.surface( RMelevation, COGridPoints )
-# NOTE call to sim.Krig treats the grid points as just a matrix
+# NOTE call to sim.spatialProcess treats the grid points as just a matrix
 # of locations the plot has to "reshape" these into a grid 
 # to use with image.plot 
    SEout<- sim.spatialProcess( fit1E, xp=COGridPoints,  Z= COElevGrid, M= 30)

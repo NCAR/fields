@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plots a surface and contours</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for surface.Krig {fields}"><tr><td>surface.Krig {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Plots a surface and contours 
+</h2>
+
+<h3>Description</h3>
+
+<p>Creates different plots of the fitted surface of a Krig object. This is a
+quick way to look at the fitted function over reasonable default
+ranges.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'Krig'
+surface(object, grid.list = NULL, extrap = FALSE,
+                 graphics.reset = NULL, xlab = NULL, ylab = NULL, main
+                 = NULL, zlab = NULL, zlim = NULL, levels = NULL, type
+                 = "C", nx = 80, ny = 80, col = viridis(256), ...)
+## S3 method for class 'mKrig'
+surface(
+object, grid.list = NULL, extrap = FALSE,
+                 graphics.reset = NULL, xlab = NULL, ylab = NULL, main
+                 = NULL, zlab = NULL, zlim = NULL, levels = NULL, type
+                 = "C", nx = 80, ny = 80, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>object</code></td>
+<td>
+
+<p>A Krig object or an mKrig object.
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid.list</code></td>
+<td>
+
+<p>A list with as many components as variables describing the surface. 
+All components should have a single value except the two that give the 
+grid points for evaluation. If the matrix or data frame has column names,  
+these must appear in the grid list. If grid.list is missing an the
+surface has just two dimensions the grid is based on the ranges of the
+observed data.
+</p>
+</td></tr>
+<tr valign="top"><td><code>extrap</code></td>
+<td>
+
+<p>Extrapolation beyond the range of the data. If false only the
+convex hull of the observations is plotted. Default is false. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>graphics.reset</code></td>
+<td>
+
+<p>Reset to original graphics parameters after function plotting. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>Type of plot as a character. &quot;p&quot; perspective plot (persp). &quot;c&quot; contour
+plot (contour). &quot;b&quot; a two panel figure with perspective and contour
+plots. &quot;I&quot; image plot with legend strip (image.plot). &quot;C&quot; image plot
+with contours overlaid.  Image with  contour is the default.
+</p>
+</td></tr>
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>Title of plot</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x axis label</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y axis label</p>
+</td></tr>
+<tr valign="top"><td><code>zlab</code></td>
+<td>
+
+<p>z axis label if &quot;p&quot; or &quot;b&quot; type is used.</p>
+</td></tr>
+<tr valign="top"><td><code>zlim</code></td>
+<td>
+
+<p>Z limits passed to persp</p>
+</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+
+<p>Contour levels passed to contour. </p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+
+<p>Number of grid points to evaluate surface on the horizontal 
+axis (the x-axis). </p>
+</td></tr>
+<tr valign="top"><td><code>ny</code></td>
+<td>
+
+<p>Number of grid points to evaluate surface on the vertical  
+axis (the y-axis). </p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>Color scale.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Any other plotting options. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function is essentially a combination of predictSurface and
+plot.surface. It may not always give a great rendition but is easy to use
+for checking the fitted surface. The default of extrap=F is designed to
+discourage looking at the estimated surface outside the range of
+the observations.  
+</p>
+<p>NOTE: that any Z covariates will b edropped and only the spatial part of
+the model will be evaluated. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p><code><a href="../../fields/help/Krig.html">Krig</a></code> 
+predictSurface, plot.surface, image.plot
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+fit&lt;- Krig(ChicagoO3$x,ChicagoO3$y, aRange=30)  # krig fit 
+
+#Image plot of surface with nice, smooth  contours and shading
+
+surface(fit, type="C", nx=128, ny=128) 
+ 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

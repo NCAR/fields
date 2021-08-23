@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Plots a surface</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for plot.surface {fields}"><tr><td>plot.surface {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Plots a surface 
+</h2>
+
+<h3>Description</h3>
+
+<p>Plots a surface object in several different ways to give 3-d
+information e.g. a contour plots, perspective plots.  
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+## S3 method for class 'surface'
+plot(x, main = NULL, type = "C", zlab = NULL, xlab = NULL,
+    ylab = NULL, levels = NULL, zlim = NULL, graphics.reset = NULL,
+     labcex = 0.6, add.legend=TRUE, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>A surface object. At the minimum a list with components x,y and z 
+in the same form as the input list for the standard contour, persp
+or image functions. This can also be an object from predictSurface. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>main</code></td>
+<td>
+
+<p>Title for plot. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>type</code></td>
+<td>
+
+<p>type=&quot;p&quot; for a perspective/drape plot (see drape.plot), 
+type=&quot;I&quot; for an image plot with a legend
+strip (see image.plot), type=&quot;c&quot; draws a contour plot,  type=&quot;C&quot; is the &quot;I&quot; option but with contours lines
+added. type=&quot;b&quot; gives both  &quot;p&quot; and &quot;C&quot; as a 2X1 panel </p>
+</td></tr>
+<tr valign="top"><td><code>zlab</code></td>
+<td>
+
+<p>z-axes label 
+</p>
+</td></tr>
+<tr valign="top"><td><code>xlab</code></td>
+<td>
+
+<p>x-axes label 
+</p>
+</td></tr>
+<tr valign="top"><td><code>ylab</code></td>
+<td>
+
+<p>y-axes labels 
+</p>
+</td></tr>
+<tr valign="top"><td><code>levels</code></td>
+<td>
+
+<p>Vector of levels to be passed to contour function. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>graphics.reset</code></td>
+<td>
+
+<p>Reset to original graphics parameters after function plotting. 
+Default is to reset if type =&quot;b&quot; but not for the single plot options.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>zlim</code></td>
+<td>
+
+<p>Sets z limits on perspective plot. </p>
+</td></tr>
+<tr valign="top"><td><code>labcex</code></td>
+<td>
+
+<p>Label sizes for axis labeling etc. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>add.legend</code></td>
+<td>
+<p> If TRUE adds a legend to the draped perspective plot</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Other graphical parameters that are passed along to either drape.persp 
+or image.plot 
+</p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p>surface, predictSurface, as.surface, drape.plot, image.plot  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+x&lt;- seq( -2,2,,80)
+y&lt;- seq( -2,2,,80)
+# a lazy way to create some test image
+z&lt;- outer( x,y, "+")
+
+# create basic image/surface object
+obj&lt;- list(x=x, y=y,z=z)
+
+# basic contour plot
+# note how graphical parameters appropriate to contour are passed
+plot.surface( obj, type="c", col="red")
+
+# using a fields function to fit a surface and evaluate as surface object.
+fit&lt;- Tps( BD[,1:4], BD$lnya) # fit surface to data 
+# surface of variables 2 and 3 holding 1 and 4 fixed at their median levels
+ out.p&lt;-predictSurface(fit, xy=c(2,3))  
+
+ plot.surface(out.p) # surface plot  
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Some useful color tables for images and tools to handle them.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for tim.colors {fields}"><tr><td>tim.colors {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Some useful color tables for images and tools to handle them. </h2>
+
+<h3>Description</h3>
+
+<p>Several color scales useful for image plots: a pleasing rainbow style
+color table patterned after that used in Matlab by Tim Hoar and also
+some simple color interpolation schemes between two or more
+colors. There is also a function that converts between colors and a
+real valued vector.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+tim.colors(n = 64, alpha=1.0)
+
+larry.colors()
+
+snow.colors(n=256, alpha=1)
+
+two.colors(n=256, start="darkgreen", end="red", middle="white",
+alpha=1.0)
+
+designer.colors( n=256, col= c("darkgreen", "white", "darkred"), x=
+                              seq(0,1,, length(col)) ,alpha=1.0)
+
+color.scale(z, col = tim.colors, NC = 256, zlim = NULL,
+                 transparent.color = "white", eps = 1e-08)
+
+fieldsPlotColors( col,...)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+<p>The transparency of the color &ndash; 1.0 is opaque and 0 is
+transparent.  This is useful for overlays of color and
+still being able to view the graphics that is covered. </p>
+</td></tr>
+<tr valign="top"><td><code>n</code></td>
+<td>
+<p> Number of color levels. The setting <code>n</code>=64 is the
+orignal definition.</p>
+</td></tr>
+<tr valign="top"><td><code>start</code></td>
+<td>
+<p>Starting color for lowest values in color scale</p>
+</td></tr>
+<tr valign="top"><td><code>end</code></td>
+<td>
+<p> Ending color.</p>
+</td></tr>
+<tr valign="top"><td><code>middle</code></td>
+<td>
+<p>Color scale passes through this color at halfway</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p>A list of colors (names or hex values) to interpolate.
+But for the <code>color.scale</code> function this can be also be a function that
+returns <code>NC</code> colors when called with just the
+<code>NC</code> argument.</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+<p>Positions of colors on a [0,1] scale. Default is to assume
+that the x values are equally spacesd from 0 to 1.</p>
+</td></tr>
+<tr valign="top"><td><code>z</code></td>
+<td>
+<p>Real vector to encode in a color table.</p>
+</td></tr>
+<tr valign="top"><td><code>zlim</code></td>
+<td>
+<p>Range to use for color scale. Default is the
+<code>range(z)</code> inflated by 1- eps and 1+eps.</p>
+</td></tr>
+<tr valign="top"><td><code>transparent.color</code></td>
+<td>
+<p>Color value to use for NA's or values outside
+<code>zlim</code></p>
+</td></tr>
+<tr valign="top"><td><code>eps</code></td>
+<td>
+<p>A small inflation of the range to avoid the  boundary values of
+<code>z</code> being coded as NAs.</p>
+</td></tr>
+<tr valign="top"><td><code>NC</code></td>
+<td>
+<p>The number of colors to return from calling the function passed in the <code>col</code> argument. This is only used if <code>col</code> is a function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Additional plotting arguments to codeimage.plot</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The color in R can be represented as three vectors in RGB coordinates
+and these coordinates are interpolated separately using a cubic spline
+to give color values that intermediate to the specified colors.
+</p>
+<p>Ask Tim Hoar about <code>tim.colors</code>! He is a Mattlab black belt and
+this is his favorite scale in that system.  <code>two.colors</code> is
+really about three different colors. For other colors try
+<code>fields.color.picker</code> to view possible choices.
+<code>start="darkgreen", end="azure4"</code> are the options used to get a
+nice color scale for rendering aerial photos of ski trails.  (See
+<a href="https://github.com/dnychka/MJProject">https://github.com/dnychka/MJProject</a>.)  <code>larry.colors</code>
+is a 13 color palette used by Larry McDaniel (retired software engineer from NCAR) and is particularly
+useful for visualizing fields of climate variables.
+</p>
+<p><code>snow.colors</code> is the scale used by Will Klieber's team for
+visualizing snow cover from remotely sensed data products. See the commented code for the script as to how how this was formed from an orignal raw 256 level scale. Note the that first color in this table is grey and is desigend to represent the minimum value of the range ( e.g. 0). If the image in in percent snow cover then <code>zlim=c(0,100)</code>
+would make sense as a range to fit grey pixels to zero and white to 100 percent.
+</p>
+<p><code>designer.color</code> is the master function for the otther scales. 
+It can be useful if one wants to customize the color
+table to match quantiles of a distribution.  e.g. if the median of the
+data is at .3 with respect to the range then set <code>x</code> equal to
+c(0,.3,1) and specify three colors to provide a transtion that matches
+the median value. In fields language this function interpolates
+between a set of colors at locations x. While you can be creative
+about these colors just using another color scale as the basis is
+easy. For example
+</p>
+<p><code>designer.color( 256, rainbow(4), x= c( 0,.2,.8,1.0))</code>
+</p>
+<p>leaves the choice of the colors to Dr. R after a thunderstorm.
+See also colorBrewer to choose sequences of colors that form a good palette. 
+</p>
+<p><code>color.scale</code> assigns colors to a numerical vector in the same way as 
+the <code>image</code> function. This is useful to kept the assigment of colors consistent
+across several vectors by specifiying a common <code>zlim</code> range.  
+</p>
+<p><code>plotColorScale</code> A simple function to plot a vector of colors to examine their values. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>A vector giving the colors in a hexadecimal format, two extra hex
+digits are added for the alpha channel.
+</p>
+
+
+<h3>See Also</h3>
+
+<p> topo.colors, terrain.colors, image.plot, quilt.plot, grey.scale,
+fields.color.picker </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+tim.colors(10) 
+# returns an array of 10 character strings encoding colors in hex format
+
+# e.g. (red, green,  blue) values of   (16,255, 239)
+#   translates to "#10FFEF" 
+# rgb( 16/255, 255/255, 239/255, alpha=.5)
+#   gives   "#10FFEF80"  note extra "alpha channel"
+
+# view some color table choices
+set.panel( 4,1)
+fieldsPlotColors( tim.colors())
+title("tim.colors")
+fieldsPlotColors( larry.colors())
+title("larry.colors")
+fieldsPlotColors( two.colors())
+title("two.colors")
+fieldsPlotColors( snow.colors())
+title("snow.colors")
+
+# a bubble plot with some transparency for overlapping dots
+set.seed(123)
+loc&lt;- matrix( rnorm( 200), 100,2)
+Z&lt;- loc[,1] + loc[,2]
+colorMap&lt;- color.scale( Z, col=tim.colors(10, alpha=.8))
+par( mar=c(5,5,5,5)) # extra room on right for color bar
+plot( loc, col=colorMap, pch=16, cex=2)
+#  add a color scale
+ image.plot(legend.only=TRUE, zlim=range( Z), col=tim.colors(10))
+
+# using tranparency without alpha the image plot would cover points
+
+obj&lt;- list( x= 1:8, y=1:10, z= outer( 1:8, 1:10, "+") )
+plot( 1:10,1:10)
+
+image(obj, col=two.colors(alpha=.5), add=TRUE)
+
+coltab&lt;- designer.colors(col=c("blue", "grey", "green"),
+                   x= c( 0,.3,1) )
+		   
+
+image( obj, col= coltab )
+
+# peg colors at some desired quantiles  of data.
+# NOTE need 0 and 1 for the color scale to make sense
+x&lt;- quantile( c(obj$z), c(0,.25,.5,.75,1.0) )
+# scale these to [0,1]
+zr&lt;- range( c(obj$z))
+x&lt;- (x-zr[1])/ (zr[2] - zr[1])  
+
+coltab&lt;- designer.colors(256,rainbow(5), x)
+image( obj$z, col= coltab )
+# see image.plot for adding all kinds of legends
+
+
+set.panel()
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

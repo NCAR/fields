@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Adds an image to an existing plot.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for add.image {fields}"><tr><td>add.image {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2> Adds an image to an existing plot.</h2>
+
+<h3>Description</h3>
+
+<p>Adds an image to an existing plot. Simple arguments control the 
+location and size. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+add.image(xpos, ypos, z, adj.x = 0.5, adj.y = 0.5, 
+image.width = 0.15, image.height = NULL, col = tim.colors(256), ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>xpos</code></td>
+<td>
+<p>X position of  image in user coordinates </p>
+</td></tr>
+<tr valign="top"><td><code>ypos</code></td>
+<td>
+<p> Y position of  image in user coordinates </p>
+</td></tr>
+<tr valign="top"><td><code>z</code></td>
+<td>
+<p> Matrix of intensities comprising the image. </p>
+</td></tr>
+<tr valign="top"><td><code>adj.x</code></td>
+<td>
+<p> Location of image relative to x coordinate. 
+Most
+common values are .5 (centered), 0 (right side of image at x) and  1 
+(left side  of
+image at x). These are the same conventions that are used for <code>adj</code> 
+in
+positioning text.</p>
+</td></tr>
+<tr valign="top"><td><code>adj.y</code></td>
+<td>
+<p>Location of image relative to y coordinate.
+Same rules as <code>adj.x</code>
+</p>
+</td></tr>
+<tr valign="top"><td><code>image.width</code></td>
+<td>
+<p> Width of image as a fraction of the 
+plotting region in horizontal direction. </p>
+</td></tr>
+<tr valign="top"><td><code>image.height</code></td>
+<td>
+<p> Height of image as a fraction of the
+plotting region in horizontal direction. If NULL height is scaled to 
+make image pixels square.</p>
+</td></tr>
+<tr valign="top"><td><code>col</code></td>
+<td>
+<p> Color table for image. Default is tim.colors.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Any other plotting arguments that are passed to the image 
+function  </p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p> image.plot, colorbar.plot, image, tim.colors </p>
+
+
+<h3>Examples</h3>
+
+<pre>
+plot( 1:10, 1:10, type="n")
+data( lennon)
+
+add.image( 5,4,lennon, col=grey( (0:256)/256))
+# reference lines 
+xline( 5, col=2)
+yline( 4,col=2) 
+
+#
+# add lennon right in the corner beyond the plotting region
+# 
+
+par(new=TRUE, plt=c(0,1,0,1), mar=c(0,0,0,0), usr=c(0,1,0,1))
+add.image( 0,0, lennon, adj.x=0, adj.y=0) 
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

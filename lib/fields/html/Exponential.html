@@ -1,0 +1,201 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Covariance functions</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Exponential, Matern, Radial Basis {fields}"><tr><td>Exponential, Matern, Radial Basis {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Covariance functions</h2>
+
+<h3>Description</h3>
+
+<p>Functional form of covariance function assuming the argument is a
+distance between locations.  As they are defined here, they are in 
+fact correlation functions.  To set the marginal variance (sill) 
+parameter, use the <code>sigma</code> argument in <code>mKrig</code> or <code>Krig</code>.  
+To set the nugget variance, use te <code>tau2</code> argument in 
+<code>mKrig</code> or <code>Krig</code>.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+Exponential(d, range = 1, alpha = 1/range, phi=1.0,theta = NULL)
+Matern(d , range = 1,alpha=1/range, smoothness = 0.5, 
+       nu= smoothness, phi=1.0) 
+Matern.cor.to.range(d, nu, cor.target=.5, guess=NULL,...)
+RadialBasis(d,M,dimension, derivative = 0)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>d</code></td>
+<td>
+<p> Vector of distances or for <code>Matern.cor.to.range</code> just a single distance. </p>
+</td></tr>
+<tr valign="top"><td><code>range</code></td>
+<td>
+<p> Range parameter default is one. Note 
+that the scale can also be specified  through the &quot;aRange&quot; 
+scaling argument  used in fields covariance functions) </p>
+</td></tr>
+<tr valign="top"><td><code>alpha</code></td>
+<td>
+<p>1/range </p>
+</td></tr>
+<tr valign="top"><td><code>theta</code></td>
+<td>
+<p>Same as alpha</p>
+</td></tr>
+<tr valign="top"><td><code>phi</code></td>
+<td>
+<p>This parameter option is added to be compatible with older
+versions of fields and refers to the marginal variance of the process.
+e.g. <code>phi* exp( -d/aRange)</code> is the exponential covariance for points
+separated by distance and range aRange. Throughout fields this parameter
+is equivalent to sigma and it recommended that sigma be used. If one is
+simulating random fields. See the help on <code><a href="../../fields/help/sim.rf.html">sim.rf</a></code> for
+more details. </p>
+</td></tr> 
+<tr valign="top"><td><code>smoothness</code></td>
+<td>
+<p> Smoothness parameter in Matern. Controls the number
+of derivatives in the process. Default is 1/2 corresponding to an exponential 
+covariance.</p>
+</td></tr>
+<tr valign="top"><td><code>nu</code></td>
+<td>
+<p> Same as smoothness</p>
+</td></tr>
+<tr valign="top"><td><code>M</code></td>
+<td>
+<p>Interpreted as a spline M is the order of the derivatives in the
+penalty.</p>
+</td></tr>
+<tr valign="top"><td><code>dimension</code></td>
+<td>
+<p>Dimension of function</p>
+</td></tr> 
+<tr valign="top"><td><code>cor.target</code></td>
+<td>
+<p>Correlation used to match the range parameter. Default is .5.</p>
+</td></tr>
+<tr valign="top"><td><code>guess</code></td>
+<td>
+<p>An optional starting guess for solution. This should not be needed.</p>
+</td></tr>
+<tr valign="top"><td><code>derivative</code></td>
+<td>
+<p>If greater than zero finds the first derivative of this function.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Additional arguments to pass to the bisection search function.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>Exponential: 
+</p>
+<p>exp( -d/range)
+</p>
+<p>Matern:
+</p>
+<p>con*(d\^nu) * besselK(d , nu )
+</p>
+<p>Matern covariance function transcribed from Stein's book page 31
+nu==smoothness, alpha ==  1/range
+</p>
+<p>GeoR parameters map to kappa==smoothness and phi == range
+check for negative distances
+</p>
+<p><code>con</code> is a constant that normalizes the expression to be 1.0 when d=0. 
+</p>
+<p>Matern.cor.to.range: 
+This function is useful to find  Matern covariance parameters that are 
+comparable for different smoothness parameters. Given a distance <code>d</code>, 
+smoothness <code>nu</code>,  target correlation <code>cor.target</code> and
+range <code>aRange</code>, this function determines numerically the value of 
+aRange so that
+</p>
+<p><code>Matern( d, range=aRange, nu=nu) == cor.target</code>
+</p>
+<p>See the example for how this might be used.
+</p>
+<p>Radial basis functions:
+</p>
+<pre>
+   C.m,d  r**(2m-d)        d- odd
+
+   C.m,d  r**(2m-d)ln(r)    d-even
+</pre>
+<p>where C.m.d is a constant based on spline theory and r is the radial distance
+between points. See <code>radbas.constant</code> for the computation of the constant.
+NOTE: Earlier versions of fields used ln(r^2) instead of ln(r) and so differ by a factor of 2. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>For the covariance functions: a vector of covariances.
+</p>
+<p>For Matern.cor.to.range: the value of the range parameter.  
+</p>
+
+
+<h3>Author(s)</h3>
+
+<p>Doug Nychka</p>
+
+
+<h3>References</h3>
+
+<p> Stein, M.L. (1999) Statistical Interpolation of Spatial Data: Some Theory for Kriging. Springer, New York.</p>
+
+
+<h3>See Also</h3>
+
+<p>stationary.cov, stationary.image.cov, Wendland,stationary.taper.cov
+rad.cov</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# a Matern correlation function 
+ d&lt;- seq( 0,10,,200)
+ y&lt;- Matern( d, range=1.5, smoothness=1.0)
+ plot( d,y, type="l")
+
+# Several Materns of different smoothness with a similar correlation 
+# range
+
+# find ranges for nu = .5, 1.0 and 2.0 
+# where the correlation drops to .1 at a distance of 10 units.
+
+ r1&lt;- Matern.cor.to.range( 10, nu=.5, cor.target=.1)
+ r2&lt;- Matern.cor.to.range( 10, nu=1.0, cor.target=.1)
+ r3&lt;- Matern.cor.to.range( 10, nu=2.0, cor.target=.1)
+
+# note that these equivalent ranges
+# with respect to this correlation length are quite different
+# due the different smoothness parameters. 
+
+ d&lt;- seq( 0, 15,,200)
+ y&lt;- cbind(  Matern( d, range=r1, nu=.5),
+             Matern( d, range=r2, nu=1.0),
+             Matern( d, range=r3, nu=2.0))
+
+ matplot( d, y, type="l", lty=1, lwd=2)
+ xline( 10)
+ yline( .1)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

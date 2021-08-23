@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Weights to predict off grid locations from a rectangular grid...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for offGridWeights {fields}"><tr><td>offGridWeights {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Weights to predict off grid locations from a rectangular  grid using nearest neighbors and Kriging. 
+
+</h2>
+
+<h3>Description</h3>
+
+<p>Based on a stationary Gaussian process model creates a sparse matrix to predict off grid values (aka interpoltate) from an equally spaced rectangular grid. The sparsity comes about because only a fixed number of neighboring grid points (np) are used in the prediction.  The prediction variance is also give in the returned object. This function is used as the basis for approximate conditional simulation for large spatial datasets. 
+</p>
+
+
+
+<h3>Usage</h3>
+
+<pre>
+offGridWeights(s, gridList, np = 2, mKrigObject = NULL, Covariance = NULL, covArgs = NULL, aRange = NULL, sigma2 = NULL,giveWarnings = TRUE)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>s</code></td>
+<td>
+
+<p>Off grid spatial locations
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>gridList</code></td>
+<td>
+
+<p>A list as the gridList format ( x and y components) that describes the rectagular grid. The grid must have at least np extra grid points beyond the range of the points in <code>s</code>
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>np</code></td>
+<td>
+
+<p>Number of nearest neighbor grid points to use for prediction.  <code>np = 1</code> will use the 4 grid points that bound the off grid point.  <code>np = 2</code> will be a 4X4 subgrid with the middle grid box containing the off gird point. In general there will be  <code>(2*np)^2</code> neighboring points uses. 
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>mKrigObject</code></td>
+<td>
+
+<p>The output object (aka list) from either mKrig or spatialProcess. This has the information about the covariance function used to do the Kriging. 
+The following items are coded in place of not supplying this object.  See the example below for more details.
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>Covariance</code></td>
+<td>
+
+<p>The stationary covariance function  (taking pairwise distances as its first argument.)
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>covArgs</code></td>
+<td>
+
+<p>If <code>mKrigObject</code> is not specified  a list giving any additional arguments for the covariance function. 
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>aRange</code></td>
+<td>
+
+<p>The range parameter. 
+</p>
+
+</td></tr>
+<tr valign="top"><td><code>sigma2</code></td>
+<td>
+
+<p>Marginal variance of the process. 
+
+</p>
+</td></tr>
+<tr valign="top"><td><code>giveWarnigs</code></td>
+<td>
+<p>If TRUE will warn if two or more observations
+are in the same grid box.
+</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>This function creates the interpolation weights taking advantage of some
+efficiency in the covariance function being stationary, use
+of a fixed configuration of nearest neighbors, and Kriging
+predictions from a rectangular grid. 
+</p>
+<p>The returned matrix is in spam sparse matrix format. See
+example below for the &quot;one-liner&quot; to make the prediction
+once the weights are computed. Although created primarily
+for conditional simulation of a spatial process this
+function is also useful for interpolating to off grid
+locations from a rectangular field. 
+</p>
+<p>The user is also referred to the testing script
+<code>offGridWeights.test.R</code> in <code>tests</code> where the 
+Kriging is computed explicitly and tested against the sparse
+matrix computation. This is helpful in defining exactly what
+is being computed.  
+</p>
+
+
+
+<h3>Value</h3>
+
+<table summary="R valueblock">
+<tr valign="top"><td><code>B</code></td>
+<td>
+<p>A sparse matrix that is of dimension mXn with m the number of locations (rows) in <code>s</code> and n being the total number of grid points. <code>n = length(gridList$x)*length(gridList$y) </code>
+</p>
+</td></tr>
+</table>
+
+
+<table summary="R valueblock">
+<tr valign="top"><td><code>predictionVariance</code></td>
+<td>
+<p>A vector of length as the rows of <code>s</code> with the Kriging prediction variance based on the nearest neighbor prediction and the specified covariance function. </p>
+</td></tr>
+</table>
+
+
+
+
+<h3>Author(s)</h3>
+
+<p> Douglas Nychka and Maggie Bailey
+
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="../../fields/help/interp.surface.html">interp.surface</a> 
+
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+# a 200X200 grid
+xGrid&lt;- seq( -1, 1, length.out=200)
+gridList&lt;- list( x= xGrid,
+                 y= xGrid
+                 )
+ np&lt;- 3   
+# sample 6000 locations but avoid margins 
+set.seed(123)
+s&lt;- matrix(    runif(6000*2, xGrid[(np+1)],xGrid[(200-np)]),
+               6000, 2 )
+
+                  
+obj&lt;- offGridWeights( s, gridList, np=3,
+                   Covariance="Matern",
+                   aRange = .1, sigma2= 1.0,
+                   covArgs= list( smoothness=1.0)
+                   )
+# make the predictions  by obj$B%*%c(y)
+# where y is the matrix of values on the grid
+ 
+# try it out on a simulated  Matern field  
+CEobj&lt;- circulantEmbeddingSetup( gridList,  
+                  cov.args=list(
+                  Covariance="Matern",
+                   aRange = .1,
+                    smoothness=1.0)
+                    )
+ set.seed( 333)                   
+Z&lt;- circulantEmbedding(CEobj)
+
+#
+# Note that grid values are "unrolled" as a vector
+# for multiplication
+# predOffGrid&lt;- obj$B%*% c( Z)
+
+predOffGrid&lt;- obj$B%*% c( Z)
+
+set.panel( 1,2)
+zr&lt;- range( c(Z))
+image.plot(gridList$x, gridList$y, Z, zlim=zr)
+bubblePlot( s[,1],s[,2], z= predOffGrid , size=.5,
+highlight=FALSE, zlim=zr)
+ set.panel()
+ 
+                  
+  
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

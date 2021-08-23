@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Draw horizontal lines</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for yline {fields}"><tr><td>yline {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Draw horizontal lines 
+</h2>
+
+<h3>Description</h3>
+
+<p>Adds  horizontal lines in the plot region. 
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+yline(y, ...)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>Values on y axis specifying location of vertical lines. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>Any ploting options for abline. 
+</p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p>xline, abline 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+world( col=3)
+yline( seq( -80,80,10),col=4, lty=2)
+xline( seq( -180,180,10),col=4,lty=2)
+yline( 0, lwd=2, col=4)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

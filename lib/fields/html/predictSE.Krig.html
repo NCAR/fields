@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Standard errors of predictions for Krig spatial process...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for predictSE {fields}"><tr><td>predictSE {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Standard errors of predictions for Krig spatial process estimate 
+</h2>
+
+<h3>Description</h3>
+
+<p>Finds the standard error ( or covariance) of prediction based on a linear
+combination of
+the observed data. The linear combination is usually the &quot;Best Linear
+Unbiased Estimate&quot; (BLUE) found from the Kriging equations. 
+This statistical computation is done under the assumption that the
+covariance function is known.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+predictSE(object, ...) 
+## S3 method for class 'Krig'
+predictSE(object, x = NULL, cov = FALSE, verbose = FALSE,...)
+## S3 method for class 'mKrig'
+predictSE(object, xnew = NULL, Z = NULL, verbose = FALSE, drop.Z
+                 = FALSE, ...)
+ </pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>drop.Z</code></td>
+<td>
+<p>If FALSE find standard error without including the additional spatial covariates
+described by <code>Z</code>. If TRUE find full standard error with spatial covariates if they are part of the model.</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p> A fitted object that can be used to find prediction standard errors. This is usually from fitting a spatial model to data. e.g. a Krig or mKrig object.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>xnew</code></td>
+<td>
+
+<p>Points to compute the predict standard error or the prediction 
+cross covariance matrix.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Same as <code>xnew</code> &ndash; points to compute the predict standard error or the prediction 
+cross covariance matrix.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>cov</code></td>
+<td>
+
+<p>If TRUE the full covariance matrix for the predicted values is returned.
+Make sure this will not be big if this option is used. ( e.g. 50X50 grid
+will return a matrix that is 2500X2500!)  If FALSE just the marginal
+standard deviations of the predicted values are returned. Default is
+FALSE &ndash; of course.
+</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+<p>If TRUE will print out various information for debugging.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+
+<p>These additional arguments passed to the predictSE function.
+</p>
+</td></tr>
+<tr valign="top"><td><code>Z</code></td>
+<td>
+<p>Additional matrix of spatial covariates used for prediction. These are used to 
+determine the additional covariance contributed in teh fixed part of the model.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The predictions are represented as a linear combination of the dependent 
+variable, Y. Call this LY.  Based on this representation the conditional 
+variance is the same as the expected value of (P(x) + Z(X) - LY)**2.
+where 
+P(x)+Z(x) is the value of the surface at x and LY is the linear 
+combination that estimates this point. Finding this expected value is 
+straight forward given the unbiasedness of LY for P(x) and the covariance 
+for Z and Y. 
+</p>
+<p>In these calculations it is assumed that the covariance parameters are fixed.
+This is an approximation since in most cases they have been estimated from the 
+data. It should also be noted that if one assumes a Gaussian field and known 
+parameters in the covariance, the usual Kriging estimate is the 
+conditional mean of the field given the data. This function finds the 
+conditional standard deviations (or full covariance matrix) of the 
+fields given the data.  
+</p>
+<p>There are two useful extensions supported by this function.  Adding the 
+variance to the estimate of the spatial mean if this is a correlation 
+model. (See help file for Krig) and calculating the variances under 
+covariance misspecification.  The function <code>predictSE.KrigA</code> uses 
+the smoother matrix ( A(lambda) ) to find the standard errors or 
+covariances directly from the linear combination of the spatial 
+predictor. Currently this is also the calculation in 
+<code>predictSE.Krig</code> although a shortcut is used 
+<code>predictSE.mKrig</code> for mKrig objects.
+</p>
+
+
+<h3>Value</h3>
+
+<p>A vector of standard errors for the predicted values of the Kriging fit. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Krig, predict.Krig, predictSurfaceSE
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# 
+# Note: in these examples predictSE will default to predictSE.Krig using 
+# a Krig object  
+
+  fit&lt;- Krig(ChicagoO3$x,ChicagoO3$y,cov.function="Exp.cov", aRange=10)    # Krig fit 
+  predictSE.Krig(fit)      # std errors of predictions at obs.
+
+# make a  grid of X's  
+  xg&lt;-make.surface.grid( 
+  list(East.West=seq(-27,34,,20),North.South=seq(-20,35,,20)))     
+  out&lt;- predictSE(fit,xg)   # std errors of predictions 
+
+#at the grid points out is a vector of length 400 
+#reshape the grid points into a 20X20 matrix etc.  
+
+   out.p&lt;-as.surface( xg, out) 
+   surface( out.p, type="C") 
+
+# this is equivalent to  the single step function  
+# (but default is not to extrapolation beyond data
+# out&lt;- predictSurfaceSE( fit) 
+# image.plot( out) 
+
+
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

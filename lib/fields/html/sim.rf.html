@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Efficiently Simulates a Stationary 1 and 2D Gaussian random...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for circulantEmbedding {fields}"><tr><td>circulantEmbedding {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Efficiently Simulates a Stationary  1 and 2D Gaussian random fields  
+</h2>
+
+<h3>Description</h3>
+
+<p>Simulates a stationary Gaussian random field on a regular grid with
+unit marginal variance. Makes use of the efficient algorithm based on the FFT know as 
+circulant embedding.
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sim.rf(obj)
+circulantEmbedding(obj)
+circulantEmbeddingSetup( 
+     grid, M = NULL, cov.function="stationary.cov", cov.args=NULL,delta=NULL,
+        ...)
+
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>obj</code></td>
+<td>
+<p>A list (aka covariance object) that includes information about the covariance
+function and the grid for evaluation. Usually this is created by a
+setup call to Exp.image.cov, stationary.image.cov, matern.image.cov or
+other related covariance functions for <code>sim.rf</code> (See details below.)
+or to <code>circulantEmbeddingSetup</code> for <code>circulantEmbedding</code> </p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+<p>A list describing the regular grid. <code>length(grid)</code> is the dimension of the field
+(1D 2D etc) and each component are the regular locations in that dimension. </p>
+</td></tr>
+<tr valign="top"><td><code>M</code></td>
+<td>
+<p>A vector of dimensions to embed the field. Simulation will be exact if each <code>M[i]</code> is
+larger than <code>2*length(grid)</code>. The default is to choose a power of 2 larger than this
+minima bound.</p>
+</td></tr>
+<tr valign="top"><td><code>cov.function</code></td>
+<td>
+<p>A text string with the name of the stationary covariance function to use.
+Default is <code>stationary.cov</code> and general function that takes advantage of some efficiency
+in finding distances.</p>
+</td></tr>
+<tr valign="top"><td><code>cov.args</code></td>
+<td>
+<p>A list of arguments to include with the covariance function, Eg. aRange and 
+smoothness for the Matern.</p>
+</td></tr>
+<tr valign="top"><td><code>delta</code></td>
+<td>
+<p>If NULL the spatial domain is artifically doubled in size in all dimensions to account for the periodic wrapping of the fft. If  passed this is the amount to extend the domain and can be less than double if a compact covariance function is used. </p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>For convenience any other arguments to pass to the covariance function. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The functions <code>circulantEmbedding</code> and <code>circulantEmbeddingSetup</code> are more recent <code>fields</code>
+functions, more easy to read, and recommended over <code>sim.rf</code>. <code>sim.rf</code> is limited to 2D fields
+while <code>circulantEmbedding</code> can handle any number of dimensions and has some shortcuts to be efficient for the 2D case. 
+</p>
+<p>The simulated field has the marginal variance that is determined by
+the covariance function for zero distance. Within fields the
+exponential and matern set this equal to one ( e.g. Matern(0) ==1) so
+that one simulates a random field with a marginal variance of one. For
+stationary.cov the marginal variance is whatever <code>Covariance(0)</code>  evaluates to and we
+recommend that alternative covariance functions also be normalized so
+that this is one.
+</p>
+<p>Of course if one requires a Gaussian field with different marginal
+variance one can simply scale the result of this function. See the
+third example below. 
+</p>
+<p>Both <code>sim.rf</code> and <code>circulantEmbedding</code>
+take an object that includes some preliminary
+calculations and so is more efficient for simulating more than one
+field from the same covariance. 
+</p>
+<p>The algorithm using an FFT
+known as circulant embedding, may not always work if the correlation
+range is large. Specifically the weight function obtained from the FFT of the covariance field will have some negative values. 
+A simple fix is to increase the size of the domain 
+so that the correlation scale becomes smaller relative to the extent
+of the domain. Increasing the size can be computationally expensive,
+however, and so this method has some limitations. But when it works it is
+an exact simulation of the random field. 
+</p>
+<p>For a stationary model the covariance object ( or list) for <code>circulantEmbedding</code> should have minmally, the components:
+That is 
+<code>names( obj)</code>
+should give
+<code> "m" "grid"    "M"    "wght" </code>
+</p>
+<p>where <code>m</code> is the number of grid points in each dimension, <code>grid</code> is a list
+with components giving the grid points in each coordinate.  
+<code>M</code> is the size of the larger grid that is used for &quot;embedding&quot; and 
+simulation. Usually <code>M = 2*m</code>  and results in an exact
+simulation of the stationary Gaussian field. The default  if <code>M</code> is not passed
+is to find the smallest power of 2 greater than 2*m.  <code>wght</code> is an array from
+the FFT of the covariance function with dimensions <code>M</code>.
+Keep in mind that for the final results only the array
+that is within the indices   <code>1: m[i]</code>  for each dimension <code>i</code> is retained.
+This can give a much larger intermediate array, however, in the computation. 
+E.g. if <code>m[1] = 100</code> and <code>m[2]=200</code> by default then <code>M[1] = 256</code> 
+and  <code>M[2] = 512</code>. A 256 X 512 array 
+is simluated with to get the 100 by 200 result. 
+</p>
+<p>The easiest way to create the
+object for simulation is to use <code>circulantEmbeddingSetup</code>. 
+</p>
+<p>For the older function <code>sim.rf</code> one uses the image based covariance functions with <code>setup=TRUE</code> to create the list for simulation.
+See the example below for this usage.
+</p>
+<p>The classic reference for this algorithm is 
+Wood, A.T.A. and Chan, G. (1994).
+Simulation of Stationary Gaussian Processes in [0,1]^d . Journal of
+Computational and Graphical Statistics, 3, 409-432. Micheal Stein and
+Tilman Gneiting have also made some additional contributions to the
+algortihms and theory.
+</p>
+
+
+<h3>Value</h3>
+
+<p><strong>sim.rf</strong>:
+A matrix with the random field values.
+</p>
+<p><strong>circulantEmbedding</strong>: An array according to the grid values specified in the setup.
+</p>
+<p><strong>circulantEmbeddingetup</strong>: A list with components 
+</p>
+<p><code> "m"    "grid" "dx"   "M"    "wght" "call"</code>
+</p>
+<p>With the information needed to simulate the field.
+</p>
+
+
+<h3>See Also</h3>
+
+<p><a href="../../fields/help/stationary.cov.html">stationary.cov</a>,  <a href="../../fields/help/stationary.image.cov.html">stationary.image.cov</a>
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+
+#Simulate a Gaussian random field with an exponential covariance function,  
+#range parameter = 2.0 and the domain is  [0,5]X [0,5] evaluating the 
+#field at a 100X100 grid.  
+  grid&lt;- list( x= seq( 0,5,,100), y= seq(0,5,,100)) 
+  obj&lt;- circulantEmbeddingSetup( grid, Covariance="Exponential", aRange=.5)
+  set.seed( 223)
+  look&lt;-  circulantEmbedding( obj)
+# Now simulate another ... 
+  look2&lt;- circulantEmbedding( obj)
+# take a look at first two  
+ set.panel(2,1)
+ image.plot( grid[[1]], grid[[2]], look) 
+ title("simulated gaussian fields")
+ image.plot( grid[[1]], grid[[2]], look2) 
+ title("another realization ...")
+ 
+# Suppose one requires an exponential, range = 2
+# but marginal variance = 10 ( sigma in fields notation)
+look3&lt;- sqrt( 10)*circulantEmbedding( obj)
+
+## Not run: 
+# an interesting 3D field
+
+grid&lt;- list(  1:40,  1:40, 1:16  )
+
+obj&lt;- circulantEmbeddingSetup( grid,
+                         cov.args=list( Covariance="Matern", aRange=2, smoothness=1.0)
+                         )
+# NOTE: choice of aRange is close to giving a negative weight array
+set.seed( 122)
+look&lt;- circulantEmbedding( obj )
+# look at slices in the 3rd dimension 
+set.panel( 4,4)
+zr&lt;- range( look)
+par( mar=c(1,1,0,0))
+for(  k in 1:16){
+image( grid[[1]], grid[[2]], look[,,k], zlim= zr, col=tim.colors(256),
+       axes=FALSE, xlab="", ylab="")
+}
+
+
+
+## End(Not run)
+
+
+# same as first example using the older sim.rf
+
+grid&lt;- list( x= seq( 0,10,length.out=100) , y= seq( 0,10,length.out=100) )
+obj&lt;-Exp.image.cov( grid=grid, aRange=.75, setup=TRUE)
+set.seed( 223)
+look&lt;- sim.rf( obj)
+# Now simulate another ... 
+look2&lt;- sim.rf( obj)
+
+ 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

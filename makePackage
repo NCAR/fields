@@ -47,9 +47,11 @@ cp  fields.Rcheck/tests/mKrigMLETest.Rout  fields/tests/mKrigMLETest.Rout.save
 cp  fields.Rcheck/tests/mKrigREMLTest.Rout  fields/tests/mKrigREMLTest.Rout.save
 cp  fields.Rcheck/tests/SEFixedParameters.Rout  fields/tests/SEFixedParameters.Rout.save
 
+cp  fields.Rcheck/tests/offGridWeights.test.Rout  fields/tests/offGridWeights.test.Rout.save
+
 
 #Adding help files
-R CMD INSTALL --library=lib --html fields_9.9.tar.gz
+R CMD INSTALL --library=lib --html fields_12.6.tar.gz
 cp lib/fields/html/* currentHelp
 
 ### looping through files to make global changes

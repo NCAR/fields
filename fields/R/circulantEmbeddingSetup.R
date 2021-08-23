@@ -37,17 +37,26 @@ circulantEmbeddingSetup <- function(
           m[i]<- length( gridTmp)
         }
        
-# M is the larger grid size the includes m should be at least 2*m for embedding to be exact.         
+# M is the larger grid  for circulant covariance that includes m 
+# should be at least 2*m for embedding to be exact.   
         if( !is.null(delta)){
             M<- rep( NA, L)
             for( i in 1:L){
                 M[i]<- m[i] + ceiling( delta/ dx[i])
             }  
         }
+# choose a good composite M is not specified        
         if( is.null(M)){
+# table of composite M with factors of 2 and 3
+            p23<-expand.grid( 0:15, 0:15)
+            value<-  2^p23[,1] * 3^p23[,2]
+            # all values from 2 and 3 up to 100000
+            value<- sort( value[ value <= 1e6])
           M<- rep( NA, L)
           for( i in 1:L){
-            M[i]<- 2**(ceiling(log2(2*m[i]) ))
+              # smallest composite choice >= to 2*m
+              valueGreater<- value[ value >= 2*m[i] ]
+            M[i]<- min( valueGreater )
           }
         }
         if( length(M)!= length( grid)){

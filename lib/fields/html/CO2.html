@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Simulated global CO2 observations</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for CO2 {fields}"><tr><td>CO2 {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>Simulated global CO2 observations</h2>
+
+<h3>Description</h3>
+
+<p>This is an example of moderately large spatial data set and consists of 
+simulated CO2 concentrations that are irregularly sampled from a lon/lat 
+grid. Also included is the complete CO2 field  (CO2.true) used to generate the 
+synthetic observations.</p>
+
+
+<h3>Usage</h3>
+
+<pre>data(CO2)  </pre>
+
+
+<h3>Format</h3>
+
+<p>The format of <code>CO2</code> is a list with two components:
+</p>
+
+<ul>
+<li><p> lon.lat: 26633x2 matrix of the longitude/latitude locations. 
+These are a subset of  a larger lon/lat grid (see example below).
+</p>
+</li>
+<li><p> y:   26633 CO2 concentrations in parts per million.
+</p>
+</li></ul>
+
+<p>The format of <code>CO2.true</code>
+is a list in  &quot;image&quot; format with components:
+</p>
+
+<ul>
+<li><p> x longitude grid values.
+</p>
+</li>
+<li><p> y latitude grid values.
+</p>
+</li>
+<li><p> z an image matrix with CO2 concentration in parts per million
+</p>
+</li>
+<li><p> mask a logical image that indicates with grid locations were 
+selected for the synthetic data set <code>CO2</code>.
+</p>
+</li></ul>
+
+
+
+<h3>Details</h3>
+
+ 
+<p>This data was generously provided by Dorit Hammerling and Randy Kawa as a 
+test example for the spatial analysis of remotely sensed (i.e. 
+satellite) and irregular observations. The synthetic data is based on a 
+true CO2 field simulated from a geophysical, numerical model. 
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+## Not run: 
+
+data(CO2)
+#
+# A quick look at the observations with world map
+quilt.plot( CO2$lon.lat, CO2$y)
+world( add=TRUE)
+
+# Note high concentrations in Borneo (biomass burning), Amazonia and
+# ... Michigan (???).
+
+# spatial smoothing using the wendland compactly supported covariance
+# see help( fastTps) for details
+# First smooth using locations and Euclidean distances 
+# note taper is in units of degrees 
+out&lt;-fastTps( CO2$lon.lat, CO2$y, aRange=4, lambda=2.0) 
+#summary of fit note about 7300 degrees of freedom 
+# associated with fitted surface
+ print( out)
+# image plot on a grid  (this takes a while)
+surface( out, type="I", nx=300, ny=150)
+# smooth with respect to great circle distance 
+out2&lt;-fastTps( CO2$lon.lat, CO2$y, lon.lat=TRUE,lambda=1.5, aRange=4*68) 
+print(out2)
+#surface( out2, type="I", nx=300, ny=150)
+
+# these data are actually subsampled from a grid. 
+# create the image object that holds the data
+#
+
+temp&lt;- matrix( NA, ncol=ncol(CO2.true$z), nrow=nrow(CO2.true$z))
+temp[ CO2.true$mask] &lt;- CO2$y
+
+# look at gridded object. 
+ image.plot(CO2.true$x,CO2.true$y, temp)
+
+# to predict _exactly_ on this grid for the second fit;
+# (this take a while)
+look&lt;- predictSurface( out2, grid.list=list( x=CO2.true$x, y=CO2.true$y))
+image.plot(look)
+
+
+## End(Not run)
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

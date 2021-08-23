@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Data frame of the effect of buffer compositions on DNA strand...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for BD {fields}"><tr><td>BD {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Data frame of the effect of buffer compositions on DNA strand displacement 
+amplification. A 4-d regression data set with 
+with replication. This is a useful test data set for exercising function
+fitting methods. 
+</h2>
+
+<h3>Description</h3>
+
+<p>The <code>BD</code> data frame has 89 rows and 5 columns. There are 89 runs with  
+four buffer components (KCL, MgCl2, KP04, dnTP) systematically varied in 
+a space-filliing design. The response is the DNA amplification rate.  
+</p>
+
+
+<h3>Format</h3>
+
+<p>This data frame contains the following columns: 
+</p>
+
+<dl>
+<dt>KCl</dt><dd>
+<p>Buffer component. 
+</p>
+</dd>
+<dt>MgCl2</dt><dd>
+<p>Buffer component. 
+</p>
+</dd>
+<dt>KPO4</dt><dd>
+<p>Buffer component. 
+</p>
+</dd>
+<dt>dNTP</dt><dd>
+<p>Buffer component, deoxyribonucleotides. 
+</p>
+</dd>
+<dt>lnya</dt><dd>
+<p>Exponential amplification rate on a log scale, i.e. the actual amplification 
+rate. 
+</p>
+</dd>
+</dl>
+
+
+
+<h3>Source</h3>
+
+<p>Thanks to Perry Haaland and Michael OConnell.
+</p>
+<p>Becton Dickinson Research Center 
+Research Triangle Park, NC 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Tps  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# fitting a DNA strand 
+# displacement amplification  surface to various buffer compositions 
+fit&lt;- Tps(BD[,1:4],BD$lnya,scale.type="range") 
+surface(fit)  # plots fitted surface and contours 
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Data set of ozone measurements at 20 Chicago monitoring...</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for Chicago ozone test data {fields}"><tr><td>Chicago ozone test data {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Data set of ozone measurements at 20 Chicago monitoring stations. 
+</h2>
+
+<h3>Description</h3>
+
+<p>This data set used be named  <code>ozone</code> but was 
+changed to avoid conflict with other packages.
+The <code>ChicagoO3</code> data is a list of 
+components, x and y.  x 
+component is longitude and latitude position of each of the 20 
+Chicago monitoring stations, y is the average 
+daily ozone values over the time period 6/3/87-8/30/87.
+These data are used extensively for the test scripts and 
+simple examples. The lasting scientific value is probably 
+minimal. 
+</p>
+
+
+<h3>Format</h3>
+
+<p>This data set is a list containing the following components: 
+</p>
+
+<dl>
+<dt>lon.lat</dt><dd><p> Longitude-latitude positions of monitoring stations.  </p>
+</dd>
+<dt>x</dt><dd><p>An approximate Cartesian set of coordinates for the locations 
+where the units are in miles. The origin is in the center of the 
+locations. </p>
+</dd>
+<dt>y</dt><dd><p> Average daily ozone values over 1987 summer. </p>
+</dd>
+</dl>
+
+
+
+<h3>Source</h3>
+
+<p>AIRS, the EPA air quality data base. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>Tps, Krig  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+fit&lt;- Tps(ChicagoO3$x, ChicagoO3$y) 
+# fitting a surface to ozone measurements. 
+surface( fit, type="I")
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

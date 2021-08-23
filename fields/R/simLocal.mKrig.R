@@ -24,10 +24,11 @@
         gridRefinement = 1, 
                     np = 2, 
                      M = 1,
-                    nx = 256,
-                    ny = 256, 
+                    nx = 80,
+                    ny = 80, 
                verbose = FALSE,
                  delta = NULL, giveWarnings=TRUE,
+                 
                           ...)
     {
    if (ncol(mKrigObject$x) != 2) {
@@ -38,15 +39,23 @@
     if (is.null(predictionGridList)) {
         # these adjustments insure there are enough grid
         # points beyond the range of the locations. 
+        # Put xr[1] in the middle of the  npth grid box
+        # and xr[2] in to the  nx - np
         xr<- range(mKrigObject$x[,1] )
-        dx<- (xr[2]-xr[1])/(nx- 1 - 2*np )
         yr<- range(mKrigObject$x[,2] )
-        dy<- (yr[2]-yr[1])/(ny - 1 - 2*np)
-        predictionGridList<- list( x = seq( xr[1] - dx*np, xr[2] +dx*np, 
-                                          length.out=nx), 
-                                   y = seq( yr[1]- dy*np, yr[2] +dy*np,
-                                          length.out=ny)
-                                 )
+        dx<- (xr[2]-xr[1])/(nx - 2*np)
+        dy<- (yr[2]-yr[1])/(ny - 2*np)
+        #xg<- seq( xr[1] - dx*(np-1), xr[2] + dx*(np),
+        #           length.out=nx)  - dx/2
+        xg <- 0:(nx-1)*dx +  (xr[1] - dx*(np-1/2) )
+        #yg<- seq( yr[1] - dy*(np-1), yr[2] + dy*(np),
+        #           length.out=ny)  - dy/2
+        yg <- 0:(ny-1)*dy +  (yr[1] - dy*(np-1/2) )
+        predictionGridList<- list( x = xg, y=yg)
+        if( verbose){
+          cat("predictionGridList", fill=TRUE)
+          print( predictionGridList)
+        }
     }
     else{
 
@@ -56,37 +65,47 @@
     
    
 # check that predictionGrid is equally spaced
-    dx<- predictionGridList$x[2]- predictionGridList$x[1]
-    if( any( diff (predictionGridList$x)!=dx)){
+    testX<- sd(diff(predictionGridList$x))/ mean(diff(predictionGridList$x) )
+    if(  testX > 1e-9  ){
       stop( "predictionGridList$x must be equally spaced")
-    }
-    dy<- predictionGridList$y[2]- predictionGridList$y[1]
-    if( any( diff (predictionGridList$y)!=dy)){
+     }
+    testY<- sd(diff(predictionGridList$x))/ mean(diff(predictionGridList$x) )
+    if(  testY > 1e-9  ){
       stop( "predictionGridList$y must be equally spaced")
     }
     #
     #
-    
+    dx<- predictionGridList$x[2] - predictionGridList$x[1]
+    dy<- predictionGridList$y[2] - predictionGridList$y[1]
     
      if (is.null(simulationGridList)) {
+         
          simulationGridList<- list( x= seq( min(predictionGridList$x), 
                                             max(predictionGridList$x),
-                                             length.out = nx*gridRefinement ),
+                                            dx/gridRefinement)
+                                              ,
                                     y= seq( min(predictionGridList$y), 
                                             max(predictionGridList$y),
-                                             length.out = ny*gridRefinement )
+                                             dy/gridRefinement )
          )
-         indexSubset<-  list( x= match(predictionGridList$x,
-                                       simulationGridList$x),
+# round off the grids so that they match
+         predictionGridList$x<- signif(predictionGridList$x, 9)
+         predictionGridList$y<- signif(predictionGridList$y, 9)
+         simulationGridList$x<- signif(simulationGridList$x, 9)
+         simulationGridList$y<- signif(simulationGridList$y, 9)
+        
+         indexSubset<-  list( x=  match(predictionGridList$x,
+                                        simulationGridList$x),
                               y = match(predictionGridList$y,
                                         simulationGridList$y)
                               )
+         
          if( any( is.na( indexSubset))){
-             stop("predict grid is not a subset 
+             stop("prediction grid is not a subset 
                   of the simulation grid")
          }
      }
-    
+ # core covariance parameters from spatial model   
     tau <-    mKrigObject$summary["tau"]
     sigma2 <- mKrigObject$summary["sigma2"]
     aRange<-  mKrigObject$summary["aRange"]
@@ -114,7 +133,7 @@
                                         delta=delta )
     )[3]
     if (verbose) {
-        cat("dim of full circulant matrix ", dim(CEObject$wght), 
+        cat("dim of full circulant matrix ", CEObject$M, 
             fill = TRUE)
     }
     timeOffGridSetup<- system.time(
@@ -192,6 +211,8 @@
                              OffGrid = median(t2),
                                 mKrig = median(t3)
                           ),
+                M= CEObject$M,
+                simulationGridList= simulationGridList,
                 timingFull = cbind( t1, t2,t3),
              call = match.call()))
 }

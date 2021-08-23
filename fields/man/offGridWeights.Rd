@@ -6,12 +6,12 @@ Weights to predict off grid locations from a rectangular  grid using nearest nei
 %%  ~~function to do ... ~~
 }
 \description{
-Based on a stationary Gaussian process model creates a sparse matrix to predict off grid value from an equally spaced rectangular grid. The sparsity comes about because on ly a fixed number of neighboring grid points are used in the prediction.  The prediction variance is also give in the returned object. This function is used as the basis for approximate conditional simulation for large spatial datasets. 
+Based on a stationary Gaussian process model creates a sparse matrix to predict off grid values (aka interpoltate) from an equally spaced rectangular grid. The sparsity comes about because only a fixed number of neighboring grid points (np) are used in the prediction.  The prediction variance is also give in the returned object. This function is used as the basis for approximate conditional simulation for large spatial datasets. 
 
 %%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-offGridWeights(s, gridList, np = 2, mKrigObject = NULL, Covariance = NULL, covArgs = NULL, aRange = NULL, sigma2 = NULL)
+offGridWeights(s, gridList, np = 2, mKrigObject = NULL, Covariance = NULL, covArgs = NULL, aRange = NULL, sigma2 = NULL,giveWarnings = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -37,7 +37,7 @@ offGridWeights(s, gridList, np = 2, mKrigObject = NULL, Covariance = NULL, covAr
 %%     ~~Describe \code{Covariance} here~~
 }
   \item{covArgs}{
-  If \code{mKrigObject} not specified  a list giving any additional arguments for the covariance function. 
+  If \code{mKrigObject} is not specified  a list giving any additional arguments for the covariance function. 
 %%     ~~Describe \code{covArgs} here~~
 }
   \item{aRange}{
@@ -49,14 +49,17 @@ offGridWeights(s, gridList, np = 2, mKrigObject = NULL, Covariance = NULL, covAr
   Marginal variance of the process. 
 %%     ~~Describe \code{sigma2} here~~
 }
+ \item{giveWarnigs}{If TRUE will warn if two or more observations
+ are in the same grid box.
+}
 }
 \details{
-This function creates the weights taking advantage of some
+This function creates the interpolation weights taking advantage of some
 efficiency in the covariance function being stationary, use
-of a fixed configuration of nearest neighbors and Kriging
-predict using a rectagualr grid. 
+of a fixed configuration of nearest neighbors, and Kriging
+predictions from a rectangular grid. 
 
-The returned matrix  is in spam sparse matrix format. See
+The returned matrix is in spam sparse matrix format. See
 example below for the "one-liner" to make the prediction
 once the weights are computed. Although created primarily
 for conditional simulation of a spatial process this
@@ -98,16 +101,18 @@ is being computed.
 }
 \examples{
 
-# a 200X200 grid
-xGrid<- seq( -1, 1, length.out=200)
+# an M by M  grid
+M<- 400
+xGrid<- seq( -1, 1, length.out=M)
 gridList<- list( x= xGrid,
                  y= xGrid
                  )
- np<- 3   
-# sample 6000 locations but avoid margins 
+ np<- 3 
+ n<- 100
+# sample n locations but avoid margins 
 set.seed(123)
-s<- matrix(    runif(6000*2, xGrid[(np+1)],xGrid[(200-np)]),
-               6000, 2 )
+s<- matrix(    runif(n*2, xGrid[(np+1)],xGrid[(M-np)]),
+               n, 2 )
 
                   
 obj<- offGridWeights( s, gridList, np=3,

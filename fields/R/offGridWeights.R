@@ -2,7 +2,7 @@ offGridWeights<-function(s, gridList, np=2,
                          mKrigObject=NULL, 
                          Covariance=NULL, covArgs=NULL,
                          aRange=NULL, sigma2=NULL, 
-                         giveWarnings=TRUE
+                         giveWarnings=FALSE
                    ){
   #
   # function assumes the grid is 
@@ -49,18 +49,27 @@ offGridWeights<-function(s, gridList, np=2,
                trunc( (s[,2]- gridList$y[1] )/dy) + 1
                ) 
   
-  # index when 2D array is unrolled
-  s0Index<- s0[,1] + (s0[,2]-1)*m
-  if( giveWarnings){
-  tableLoc<- table( s0Index)
-  if( any( tableLoc>=2)){
-    ind<-tableLoc >=2
-    cat("Found", length(ind), "grid boxes", fill=TRUE)
-    print( s0[ind,])
-    warning( "grid boxes include more than one off grid location.
-             See row/column indices listed above.")
-  }
-  }
+  # index  of locations when 2D array is unrolled
+  s0Index<- as.integer( s0[,1] + (s0[,2]-1)*m)
+  # check for more than one obs in a grid box
+ 
+    tableLoc<- table( s0Index)
+    ind<- (tableLoc > 1)
+    if( any( ind)){
+      
+      cat("Found", sum(ind), 
+        "grid box(es) containing more than 1 obs location", fill=TRUE)
+      cat("row/column indices and count", fill=TRUE)
+      print( cbind( rbind(s0[ind,]),   tableLoc[ind]) )
+        
+      #In most cases want this to stop the computation
+      if( !giveWarnings){
+            stop("Need the grid to separate observations")
+        }
+      else{
+        warning( "grid boxes include more than one off grid location.")
+      }
+    }
   # np=2
   # specific to 2nd degree neighborhood
   #   (2*np)^2 = 16  points total 

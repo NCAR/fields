@@ -1,0 +1,145 @@
+BD                      Data frame of the effect of buffer compositions
+                        on DNA strand displacement amplification. A 4-d
+                        regression data set with with replication. This
+                        is a useful test data set for exercising
+                        function fitting methods.
+CO2                     Simulated global CO2 observations
+COmonthlyMet            Monthly surface meterology for Colorado
+                        1895-1997
+ChicagoO3               Data set of ozone measurements at 20 Chicago
+                        monitoring stations.
+Exp.cov                 Exponential family, radial basis
+                        functions,cubic spline, compactly supported
+                        Wendland family and stationary covariances.
+Exponential             Covariance functions
+ExponentialUpper        Evaluate covariance over upper triangle of
+                        distance matrix
+Krig                    Kriging surface estimate
+Krig.Amatrix            Smoother (or "hat") matrix relating predicted
+                        values to the dependent (Y) values.
+Krig.engine.default     Basic linear algebra utilities and other
+                        computations supporting the Krig function.
+Krig.null.function      Default function to create fixed matrix part of
+                        spatial process model.
+Krig.replicates         Collapse repeated spatial locations into unique
+                        locations
+KrigFindLambda          Finds profile likelihood and GCV estimates of
+                        smoothing parameters for splines and Kriging.
+NorthAmericanRainfall   Observed North American summer precipitation
+                        from the historical climate network.
+QTps                    Robust and Quantile smoothing using a
+                        thin-plate spline
+RCMexample              3-hour precipitation fields from a regional
+                        climate model
+RMprecip                Monthly total precipitation (mm) for August
+                        1997 in the Rocky Mountain Region and some
+                        gridded 4km elevation data sets (m).
+Tps                     Thin plate spline regression
+US                      Plot of the US with state boundaries
+US.dat                  Outline of coterminous US and states.
+Wendland                Wendland family of covariance functions and
+                        supporting numerical functions
+WorldBankCO2            Carbon emissions and demographic covariables by
+                        country for 1999.
+add.image               Adds an image to an existing plot.
+addToDiagC              Information objects that register C and FORTRAN
+                        functions.
+arrow.plot              Adds arrows to a plot
+as.image                Creates image from irregular x,y,z
+as.surface              Creates an "surface" object from grid values.
+bplot                   boxplot
+bplot.xy                Boxplots for conditional distribution
+circulantEmbedding      Efficiently Simulates a Stationary 1 and 2D
+                        Gaussian random fields
+colorbar.plot           Adds color scale strips to an existing plot.
+compactToMat            Convert Matrix from Compact Vector to Standard
+                        Form
+cover.design            Computes Space-Filling "Coverage" designs using
+                        Swapping Algorithm
+drape.plot              Perspective plot draped with colors in the
+                        facets.
+envelopePlot            Add a shaded the region between two functions
+                        to an existing plot
+fields                  fields - tools for spatial data
+fields.duplicated.matrix
+                        Fields supporting functions
+fields.hints            fields - graphics hints
+fields.tests            Testing fields functions
+flame                   Response surface experiment ionizing a reagent
+grid list               Some simple functions for working with gridded
+                        data and the grid format (grid.list) used in
+                        fields.
+image.plot              Draws an image plot with a legend strip for the
+                        color scale based on either a regular grid or a
+                        grid of quadrilaterals.
+image.smooth            Kernel smoother for irregular 2-d data
+image2lz                Some simple functions for subsetting images
+imagePlot               Draws an image plot with a legend strip for the
+                        color scale based on either a regular grid or a
+                        grid of quadrilaterals.
+interp.surface          Fast bilinear interpolator from a grid.
+lennon                  Gray image of John Lennon.
+mKrig                   "micro Krig" Spatial process estimate of a
+                        curve or surface, "kriging" with a known
+                        covariance function.
+mKrig.grid              Using MKrig for predicting on a grid.
+mKrigMLEJoint           Maximizes likelihood for the process marginal
+                        variance (sigma) and nugget standard deviation
+                        (tau) parameters (e.g. lambda) over a many
+                        covariance models or covariance parameter
+                        values.
+minitri                 Mini triathlon results
+offGridWeights          Weights to predict off grid locations from a
+                        rectangular grid using nearest neighbors and
+                        Kriging.
+ozone2                  Daily 8-hour ozone averages for sites in the
+                        Midwest
+plot.Krig               Diagnostic and summary plots of a Kriging,
+                        spatialProcess or spline object.
+plot.surface            Plots a surface
+poly.image              Image plot for cells that are irregular
+                        quadrilaterals.
+predict.Krig            Evaluation of Krig spatial process estimate.
+predictSE               Standard errors of predictions for Krig spatial
+                        process estimate
+predictSurface          Evaluates a fitted function or the prediction
+                        error as a surface that is suitable for
+                        plotting with the image, persp, or contour
+                        functions.
+print.Krig              Print kriging fit results.
+pushpin                 Adds a "push pin" to an existing 3-d plot
+qsreg                   Quantile or Robust spline regression
+quilt.plot              Useful plots for visualizing irregular spatial
+                        data.
+rat.diet                Experiment studying an appetite supressant in
+                        rats.
+rdist                   Euclidean distance matrix or vector
+rdist.earth             Great circle distance matrix or vector
+ribbon.plot             Adds to an existing plot, a ribbon of color,
+                        based on values from a color scale, along a
+                        sequence of line segments.
+set.panel               Specify a panel of plots
+sim.spatialProcess      Conditional simulation of a spatial process
+smooth.2d               Kernel smoother for irregular 2-d data
+spatialProcess          Estimates a spatial process model.
+spind2spam              Conversion of formats for sparse matrices
+splint                  Cubic spline interpolation
+sreg                    Cubic smoothing spline regression
+stationary.image.cov    Exponential, Matern and general covariance
+                        functions for 2-d gridded locations.
+stats                   Calculate summary statistics
+stats.bin               Bins data and finds some summary statistics.
+summary.Krig            Summary for Krig or spatialProcess estimated
+                        models.
+summary.ncdf            Summarizes a netCDF file handle
+supportsArg             Tests if function supports a given argument
+surface.Krig            Plots a surface and contours
+tim.colors              Some useful color tables for images and tools
+                        to handle them.
+transformx              Linear transformation
+vgram                   Traditional or robust variogram methods for
+                        spatial data
+vgram.matrix            Computes a variogram from an image
+world                   Plot of the world
+xline                   Draw a vertical line
+yline                   Draw horizontal lines

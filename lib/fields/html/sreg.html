@@ -1,0 +1,448 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Cubic smoothing spline regression</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for sreg {fields}"><tr><td>sreg {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Cubic smoothing spline regression
+</h2>
+
+<h3>Description</h3>
+
+<p>Fits a cubic smoothing spline to univariate data. The amount of
+smoothness can be specified or estimated from the data by GCV. 
+&lt;!&ndash;brief description&ndash;&gt;
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+sreg(x, y, lambda = NA, df = NA, offset = 0, weights =
+                 rep(1, length(x)), cost = 1, nstep.cv = 80, tol =
+                 1e-05, find.diagA = TRUE, trmin = 2.01, trmax = NA,
+                 lammin = NA, lammax = NA, verbose = FALSE, do.cv =
+                 TRUE, method = "GCV", rmse = NA, na.rm = TRUE, digits
+                 = 8)
+
+
+## S3 method for class 'sreg'
+predict(object, x, derivative = 0, model = 1,...) 
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Vector of x value</p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>Vector of y values</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+
+<p>Single smoothing parameter or a vector of values . If omitted 
+smoothing parameter estimated by GCV. NOTE: lam here is equivalent to 
+the value lambda*N  in Tps/Krig  where N is the number of unique observations.
+See example below.</p>
+</td></tr>
+<tr valign="top"><td><code>object</code></td>
+<td>
+<p>An sreg object.</p>
+</td></tr>
+<tr valign="top"><td><code>derivative</code></td>
+<td>
+<p>Order of deriviatve to evaluate. Must be 0,1, or 2.</p>
+</td></tr>
+<tr valign="top"><td><code>df</code></td>
+<td>
+
+<p>Amount of smoothing in term of effective degrees of freedom for the
+spline</p>
+</td></tr>
+<tr valign="top"><td><code>offset</code></td>
+<td>
+
+<p>an offset added to the term cost*degrees of freedom in the denominator of
+the GCV function. (This would be used for adjusting the df from fitting
+other models such as in back-fitting additive models.)</p>
+</td></tr>
+<tr valign="top"><td><code>model</code></td>
+<td>
+<p>Specifies which model parameters to use.</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>A vector that is proportional to the reciprocal variances of the
+errors.</p>
+</td></tr>
+<tr valign="top"><td><code>cost</code></td>
+<td>
+
+<p>Cost value to be used in the GCV criterion.</p>
+</td></tr>
+<tr valign="top"><td><code>nstep.cv </code></td>
+<td>
+
+<p>Number of grid points of smoothing parameter for GCV grid search.</p>
+</td></tr>
+<tr valign="top"><td><code>tol</code></td>
+<td>
+<p>Tolerance for convergence in minimizing the GCV or other
+criteria to estimate the smoothing parameter.</p>
+</td></tr>
+<tr valign="top"><td><code>find.diagA</code></td>
+<td>
+
+<p>If TRUE  calculates the diagonal elements of the smoothing matrix. The
+effective
+number of degrees of freedom is the sum of these diagonal elements.
+Default is true. This requires more stores if a grid of smoothing
+parameters is passed. ( See returned values below.)</p>
+</td></tr>
+<tr valign="top"><td><code>trmin</code></td>
+<td>
+
+<p>Sets the minimum of the smoothing parameter range  for the GCV grid
+search in terms of effective degrees of freedom.</p>
+</td></tr>
+<tr valign="top"><td><code>trmax</code></td>
+<td>
+
+<p>Sets the maximum of the smoothing parameter range  for the GCV grid
+search in terms of effective degrees of freedom. If NA the range is set
+to .99 of number of unique locations.</p>
+</td></tr>
+<tr valign="top"><td><code>lammin</code></td>
+<td>
+
+<p>Same function as trmin but in the lambda scale.</p>
+</td></tr>
+<tr valign="top"><td><code>lammax</code></td>
+<td>
+
+<p>Same function as trmax but in the lambda scale.</p>
+</td></tr>
+<tr valign="top"><td><code>verbose</code></td>
+<td>
+
+<p>Print out all sorts of debugging info. Default is falseof course!</p>
+</td></tr>
+<tr valign="top"><td><code>do.cv</code></td>
+<td>
+
+<p>Evaluate the spline at the GCV minimum. Default is true.</p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>A character string giving the 
+method for determining the smoothing
+parameter. Choices are
+&quot;GCV&quot;, &quot;GCV.one&quot;, &quot;GCV.model&quot;, &quot;pure error&quot;, &quot;RMSE&quot;. Default is &quot;GCV&quot;. </p>
+</td></tr>
+<tr valign="top"><td><code>rmse</code></td>
+<td>
+
+<p>Value of the root mean square error to match by varying lambda.</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+<p>If TRUE NA's are removed from y before analysis.</p>
+</td></tr>
+<tr valign="top"><td><code>digits</code></td>
+<td>
+<p>Number of significant digits used to determine replicate x values.</p>
+</td></tr>
+<tr valign="top"><td><code>...</code></td>
+<td>
+<p>Other optional arguments to pass to the predict function.</p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>MODEL: The assumed model is Y.k=f(x.k) +e.k where e.k should be
+approximately
+normal and independent errors with variances tau**2/w.k
+</p>
+<p>ESTIMATE: A smoothing spline is a locally weighted average of the y's
+based 
+on the relative locations of the x values. Formally the estimate is 
+the curve that minimizes the criterion: 
+</p>
+<p>(1/n) sum(k=1,n) w.k( Y.k - f( X.k))**2  + lambda R(f) 
+</p>
+<p>where R(f) is the integral of the squared second derivative of f over 
+the range of the X values. Because of the inclusion of the (1/n) in the
+sum of squares the lambda parameter in sreg corresponds to the a value of
+lambda*n in the Tps function and in the Krig function. 
+</p>
+<p>The solution to this minimization is a piecewise cubic polynomial with
+the join points at the unique set of X values. The polynomial segments
+are constructed so that the entire curve has continuous first and second
+derivatives and the second and third derivatives are zero at the
+boundaries.  The smoothing has the range [0,infinity]. Lambda equal to
+zero gives a cubic spline interpolation of the data. As lambda diverges
+to infinity ( e.g lambda =1e20) the estimate will converge to the
+straight line estimated by least squares.
+</p>
+<p>The values of the estimated function at the data points can be
+expressed in the matrix form:
+</p>
+<p>predicted values= A(lambda)Y 
+</p>
+<p>where A is an nXn symmetric matrix that does NOT depend on Y. 
+The diagonal elements are the leverage values for the estimate and the 
+sum of these  (trace(A(lambda)) can be interpreted as the effective 
+number of parameters that are used to define the spline function. 
+IF there are replicate points the A matrix is the result of finding group
+averages and applying a weighted spline to the means. 
+The A matrix is also used to find &quot;Bayesian&quot; confidence intervals for the 
+estimate, see the example below. 
+</p>
+<p>CROSS-VALIDATION:The GCV criterion with no replicate points for a fixed
+value of lambda is
+</p>
+<p>(1/n)(Residual sum of squares)/((1-(tr(A)-offset)*cost + offset)/n)**2, 
+</p>
+<p>Usually offset =0 and cost =1. Variations on GCV with replicate points are
+described in the documentation help file for Krig.  With an appropriate
+choice for the smoothing parameter, the estimate of tau**2 is found by
+(Residual sum of squares)/tr(A).
+</p>
+<p>COMPUTATIONS: The computations for 1-d splines exploit the banded
+structure of the matrices needed to solve for the spline coefficients.
+Banded structure also makes it possible to get the diagonal elements of A
+quickly. This approach is different from the algorithms in Tps and
+tremendously more efficient for larger numbers of unique x values ( say &gt;
+200). The advantage of Tps is getting &quot;Bayesian&quot; standard errors at
+predictions different from the observed x values. This function is similar
+to the S-Plus smooth.spline. The main advantages are more information and
+control over the choice of lambda and also the FORTRAN source code is
+available (css.f). 
+</p>
+<p>See also the function <code>splint</code> which is designed to be a bare bones
+but fast smoothing spline. 
+</p>
+
+
+<h3>Value</h3>
+
+<p>Returns a list of class sreg. 
+Some of the returned components are 
+</p>
+<table summary="R valueblock">
+<tr valign="top"><td><code>call</code></td>
+<td>
+
+<p>Call to the function 
+</p>
+</td></tr>
+<tr valign="top"><td><code>yM</code></td>
+<td>
+
+<p>Vector of dependent variables. If replicated data is given these are the
+replicate group means. </p>
+</td></tr>
+<tr valign="top"><td><code>xM</code></td>
+<td>
+
+<p>Unique x values matching the y's. </p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>Proportional to reciprocal variance of each data point.
+</p>
+</td></tr>
+<tr valign="top"><td><code>weightsM</code></td>
+<td>
+
+<p>Proportional to reciprocal pooled variance of each 
+replicated mean data value (xM).</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Original x data. </p>
+</td></tr>
+<tr valign="top"><td><code>y</code></td>
+<td>
+
+<p>Original y data. </p>
+</td></tr>
+<tr valign="top"><td><code>method</code></td>
+<td>
+
+<p>Method used to find the smoothing parameter.</p>
+</td></tr>
+<tr valign="top"><td><code>pure.ss</code></td>
+<td>
+
+<p>Pure error sum of squares from replicate groups. </p>
+</td></tr>
+<tr valign="top"><td><code>tauHat.pure.error</code></td>
+<td>
+
+<p>Estimate of tau from replicate groups.</p>
+</td></tr>
+<tr valign="top"><td><code>tauHat.GCV</code></td>
+<td>
+
+<p>Estimate of tau using estimated lambda from GCV minimization </p>
+</td></tr>
+<tr valign="top"><td><code>trace</code></td>
+<td>
+
+<p>Effective degrees of freedom for the spline estimate(s)</p>
+</td></tr>
+<tr valign="top"><td><code>gcv.grid</code></td>
+<td>
+
+<p>Values of trace, GCV, tauHat. etc. for a grid of smoothing parameters.
+If lambda ( or df) is specified those values are used. </p>
+</td></tr>
+<tr valign="top"><td><code>lambda.est</code></td>
+<td>
+
+<p>Summary of various estimates of the smoothing parameter</p>
+</td></tr>
+<tr valign="top"><td><code>lambda</code></td>
+<td>
+
+<p>If lambda is specified the passed  vector, if missing the estimated value.</p>
+</td></tr>
+<tr valign="top"><td><code>residuals</code></td>
+<td>
+
+<p>Residuals from spline(s). If lambda or df is specified the residuals from
+these values. If lambda and df are omitted then the spline having
+estimated lambda. This will be a matrix with as many columns as the values
+of lambda. </p>
+</td></tr>
+<tr valign="top"><td><code>fitted.values</code></td>
+<td>
+
+<p>Matrix of fitted values. See notes on residuals. </p>
+</td></tr>
+<tr valign="top"><td><code>predicted</code></td>
+<td>
+
+<p>A list with components  x and y. x is the unique values of xraw in sorted
+order. y is a matrix of the spline estimates at these values. </p>
+</td></tr>
+<tr valign="top"><td><code>eff.df</code></td>
+<td>
+
+<p>Same as trace.</p>
+</td></tr>
+<tr valign="top"><td><code>diagA</code></td>
+<td>
+
+<p>Matrix containing diagonal elements of the smoothing matrix. Number of
+columns is the number of lambda values. 
+WARNING: If there is replicated data the
+diagonal elements are those for the smoothing the group means at the
+unique x locations. </p>
+</td></tr>
+</table>
+
+
+<h3>See Also</h3>
+
+<p>Krig, Tps, splint
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# fit a GCV spline to  
+# control group of rats.  
+fit&lt;- sreg(rat.diet$t,rat.diet$con)
+summary( fit)
+
+set.panel(2,2)
+plot(fit)                       # four diagnostic plots of  fit 
+set.panel()
+
+predict( fit) # predicted values at data points 
+
+xg&lt;- seq(0,110,,50) 
+sm&lt;-predict( fit, xg) # spline fit at 50 equally spaced points 
+der.sm&lt;- predict( fit, xg, deriv=1) # derivative of spline fit 
+set.panel( 2,1) 
+plot( fit$x, fit$y) # the data 
+lines( xg, sm) # the spline 
+plot( xg,der.sm, type="l") # plot of estimated derivative 
+set.panel() # reset panel to 1 plot
+
+
+# the same fit using  the thin plate spline numerical algorithms 
+# sreg does not scale the obs so instruct Tps not to sacel either
+# this will make lambda comparable within factor of n. 
+
+   fit.tps&lt;-Tps( rat.diet$t,rat.diet$con, scale="unscaled")
+   summary( fit.tps) 
+
+# compare sreg and Tps results to show the adjustment to lambda.
+
+   predict( fit)-&gt; look
+   predict( fit.tps, lambda=fit$lambda*fit$N)-&gt; look2
+   test.for.zero( look, look2) # silence means it checks to 1e-8
+
+# finding approximate standard errors at observations
+
+SE&lt;- fit$tauHat.GCV*sqrt(fit$diagA)
+
+# compare to predictSE( fit.tps) differences are due to 
+# slightly different lambda values and using tauHat.MLE instad of tauHat.GCV
+#
+
+# 95% pointwise prediction intervals
+Zvalue&lt;-  qnorm(.0975)
+upper&lt;- fit$fitted.values + Zvalue* SE
+lower&lt;- fit$fitted.values - Zvalue* SE
+#
+# conservative, simultaneous Bonferroni bounds
+#
+ZBvalue&lt;-  qnorm(1- .025/fit$N)
+upperB&lt;- fit$fitted.values + ZBvalue* SE
+lowerB&lt;- fit$fitted.values - ZBvalue* SE
+#
+# take a look
+
+plot( fit$x, fit$y, type="n")
+envelopePlot(fit$x, lowerB,fit$x, upperB, col = "grey90",
+             lineCol="grey")
+envelopePlot(fit$x, lower,fit$x, upper, lineCol="grey")
+lines( fit$predicted, col="red",lwd=2)
+points( fit$x, fit$y,pch=16)
+
+title( "95 pct pointwise  and simultaneous intervals")
+
+# or try the more visually  honest not connecting points
+plot( fit$x, fit$y, type="n")
+segments(  fit$x, lowerB, fit$x, upperB, col="grey",lwd=3)
+segments(  fit$x, lower, fit$x, upper, col="thistle3", lwd=6)
+lines( fit$predicted, lwd=2,col="red")
+points( fit$x, fit$y,pch=16)
+title( "95 pct pointwise  and simultaneous intervals")
+
+set.panel( 1,1)
+
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

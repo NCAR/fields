@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>R: Creates image from irregular x,y,z</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="R.css" />
+</head><body>
+
+<table width="100%" summary="page for as.image {fields}"><tr><td>as.image {fields}</td><td style="text-align: right;">R Documentation</td></tr></table>
+
+<h2>
+Creates image from irregular x,y,z  
+</h2>
+
+<h3>Description</h3>
+
+<p>Discretizes a set of  2-d locations to a grid and produces a image object  
+with the z values in the right cells. For cells with more than one Z
+value the average is used.   
+</p>
+
+
+<h3>Usage</h3>
+
+<pre>
+as.image(Z, ind=NULL, grid=NULL, x=NULL,weights=rep(1, length(Z)),
+ na.rm=FALSE, nx=64, ny=64, boundary.grid=FALSE,  nrow=NULL, ncol=NULL,
+ FUN = NULL)
+</pre>
+
+
+<h3>Arguments</h3>
+
+<table summary="R argblock">
+<tr valign="top"><td><code>Z</code></td>
+<td>
+
+<p>Values of image. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>ind</code></td>
+<td>
+
+<p>A matrix giving the row and column subscripts for each image 
+value in Z. (Not needed if x is specified.) 
+</p>
+</td></tr>
+<tr valign="top"><td><code>grid</code></td>
+<td>
+
+<p>A list with components x and y of equally spaced values describing the 
+centers of the grid points. The default is to use nrow and ncol and the 
+ranges of the data locations (x)  to construct a grid.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>x</code></td>
+<td>
+
+<p>Locations of image values. Not needed if  ind  is specified.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>nrow</code></td>
+<td>
+
+<p>Same as nx this is depreciated. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>ncol</code></td>
+<td>
+
+<p>Same as ny this is depreciated.  
+</p>
+</td></tr>
+<tr valign="top"><td><code>weights</code></td>
+<td>
+
+<p>If two or more values fall into the same  
+pixel a weighted average is used to represent the pixel value. Default is 
+equal weights. 
+</p>
+</td></tr>
+<tr valign="top"><td><code>na.rm</code></td>
+<td>
+ 
+<p>If true NA's are removed from the Z vector.</p>
+</td></tr>
+<tr valign="top"><td><code>nx</code></td>
+<td>
+<p>Number of grid point in X coordinate.</p>
+</td></tr>
+<tr valign="top"><td><code>ny</code></td>
+<td>
+<p>Number of grid points in Y coordinate.</p>
+</td></tr>
+<tr valign="top"><td><code>boundary.grid</code></td>
+<td>
+<p>If FALSE grid points are assumed to be the 
+grid midpoints. If TRUE they are the grid box boundaries.</p>
+</td></tr>
+<tr valign="top"><td><code>FUN</code></td>
+<td>
+<p>The function to apply to common values in a grid box. 
+The default is a mean (or weighted mean). If FUN is specified the 
+weights are not used. </p>
+</td></tr>
+</table>
+
+
+<h3>Details</h3>
+
+<p>The discretization is straightforward once the grid is determined.  
+If two or more Z values have locations in the same cell the weighted 
+average value is taken as the value. The weights component that is
+returned can be used to account for means that have different numbers
+(or precisions) of observations contributing to the grid point averages. 
+The default weights are taken to be one for each observation. 
+See the source code to modify this to get more 
+information about coincident locations. (See the call to fast.1way) 
+</p>
+
+
+<h3>Value</h3>
+
+<p>An list in image format with a few more components. Components x and y are 
+the grid values , z is a 
+nrow X ncol matrix 
+with the Z values. NA's are placed at cell locations where Z data has 
+not been supplied.  
+Component ind is a 2 column matrix with subscripts for the locations of 
+the values in the image matrix.  
+Component weights is an image matrix with the  sum of the
+individual weights for each cell. If no weights are specified the
+default for each observation is one and so the weights will be the
+number of observations in each bin. 
+</p>
+
+
+<h3>See Also</h3>
+
+<p>image.smooth, image.plot, Krig.discretize, Krig.replicates  
+</p>
+
+
+<h3>Examples</h3>
+
+<pre>
+# convert precip data to 50X50 image  
+look&lt;- as.image( RMprecip$y, x= RMprecip$x, nx=50, ny=50)
+image.plot( look) 
+
+# reduced grid extent compared to the domain
+gridList&lt;- list( x = seq(-105,-101,length.out=10),
+                 y = seq(  38, 42,length.out=10) )
+look2&lt;- as.image( RMprecip$y, x= RMprecip$x,grid=gridList)
+image.plot( look2) 
+
+# number of obs in each cell -- in this case equal to the 
+# aggregated weights because each obs had equal weight in the call
+
+image.plot( look$x ,look$y, look$weights, col=terrain.colors(50)) 
+# hot spot is around Denver
+</pre>
+
+<hr /><div style="text-align: center;">[Package <em>fields</em> version 12.6 <a href="00Index.html">Index</a>]</div>
+</body></html>

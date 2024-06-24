@@ -3,6 +3,7 @@
 ```{r, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, cache=TRUE)
 library(fields)
+data(WorldBankCO2)
 ```
 
 While the `fields` package is primarily concerned with methods for fitting spatial data and higher dimensional surfaces, it also includes functions for one dimensional curve fitting as special cases with $d=1$. These functions can be used for interpolating and smoothing data, and allow for statistical inference of uncertainty.
